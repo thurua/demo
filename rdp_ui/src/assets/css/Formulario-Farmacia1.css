@@ -1,0 +1,22 @@
+.col-derecha {
+  margin-top:0px;
+}
+
+.h3, h3 {
+  color:#3f4246;
+}
+
+p {
+  color:#000000;
+}
+
+.form-horizontal .control-label {
+  color:#8e959e;
+  font-weight: 100;
+}
+
+.form-horizontal .title {
+  font-weight: 700;
+  font-size: 17px;
+  color: #213F71;
+}

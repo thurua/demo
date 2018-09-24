@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<style>
+.cs-head-large {
+	background-color: #595959;
+	color: white;
+}
+
+td {
+	padding: 1px 10px 1px 10px;
+}
+
+.cs-td-left {
+	background-color: #D9D9D9;
+}
+
+.cs-line-breaker {
+	white-space: pre-wrap;
+}
+
+.parrent, .parrent>tr, .parrent>tr>td {
+	border: solid 0.4px #000000;
+}
+
+.width40 {
+	width: 45%;
+}
+
+.width60 {
+	width: 55%;
+}
+
+div.header {
+	padding-top: 26px;
+	display: block;
+	font-weight: bold;
+	background-color: #ffffff;
+	font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+	color: #808080;
+	font-size: 12.8px;
+	position: running(header);
+	display: block;
+}
+
+div.footer {
+	font-size: 11px;
+	display: block;
+	background-color: #ffffff;
+	position: running(footer);
+	font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+	color: #808080;
+	display: block;
+}
+
+div.content {
+	padding-top: 29px;
+	font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+	font-size: 11.3px;
+	page-break-after: always;
+}
+
+div.finalPage {
+	padding-top: 36px;
+	font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+	font-size: 11.3px;
+}
+
+.container #inline {
+	clear: both;
+	text-align: right;
+	float: right;
+}
+
+@page { @top-center { content:element(header) } }
+@page { @bottom-center { content:element(footer) } }
+@page {
+	size: A4;
+	margin: 0.6in 0.58in 1.37in 0.82in;
+}
+
+#pagenumber:before {
+	content: counter(page);
+}
+
+#pagecount:before {
+	content: counter(pages);
+}
+</style>
+</head>
+
+<body>
+	<div class='header'>
+		<div style="width: 100%; position: relative;">
+			<img src="https://www.reddotpower.com.sg/assets/img/logo.png"
+				style="height: 56px; top: 0; left: 0;" /> <span
+				style="position: absolute; bottom: 20%; right: 0;">ELECTRICITY
+				SUPPLY CONTRACT FACT SHEET</span>
+		</div>
+	</div>
+	<div class="footer">
+		<div style="width: 100%; position: relative;">
+			<div>
+				<strong>Red Dot Power Pte Ltd</strong><br /> A vTrium Energy Group
+				Company • Registration Number 201003305K<br /> 40 Sin Ming Lane,
+				#01-00 Midview City, Singapore 573958<br /> T: +65 6816 6699 • F:
+				+65 6659 8812 • www.reddotpower.com.sg
+			</div>
+			<div style="position: absolute; right: 0; top: 0;" class="container">
+				<span id="inline">Page <span id="pagenumber"></span> of <span
+					id="pagecount"></span></span>
+			</div>
+		</div>
+	</div>
+	<div class="content">
+		<table class="parrent" border="1" cellspacing="0" cellpadding="0"
+			width="100%">
+			<tbody>
+				<tr>
+					<td colspan="2" valign="top" style="font-size: 11px;">
+						<table border="0" cellspacing="0" cellpadding="0"
+							style="font-size: 10px;">
+							<tr>
+								<td colspan="2"><strong>Note:</strong></td>
+							</tr>
+							<tr>
+								<td valign="top">1)</td>
+								<td>The Energy Market Authority requires your electricity
+									retailer to provide you this Fact Sheet before you enter into
+									an Electricity Supply Contract with the retailer. This Fact
+									Sheet aims to provide you with key information about the
+									contract.</td>
+							</tr>
+							<tr>
+								<td>2)</td>
+								<td>If you require any explanation on this Fact Sheet, the
+									retailer is obliged to provide you with the explanation.</td>
+							</tr>
+							<tr>
+								<td>3)</td>
+								<td>Unless otherwise stated, all fees and charges stated in
+									this Fact Sheet are exclusive of GST.</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr class="cs-head-large">
+					<td colspan="2" valign="top"><strong>A. GENERAL
+							INFORMATION</strong></td>
+				</tr>
+				<tr>
+					<td class="cs-td-left width40" valign="top"><strong>Name
+							of Electricity Retailer:</strong></td>
+					<td width="60%" valign="top">Red Dot Power</td>
+				</tr>
+				<tr>
+					<td class="cs-td-left width40" valign="top"><strong>Fact
+							Sheet Version Date:</strong></td>
+					<td class="width60" valign="top">17/05/2018</td>
+				</tr>
+				<tr class="cs-head-large">
+					<td colspan="2" valign="top"><strong>B. ELECTRICITY
+							PRICE PLAN INFORMATION</strong></td>
+				</tr>
+				<tr>
+					<td class="cs-td-left width40" valign="top"><strong>Name
+							of Price Plan:</strong></td>
+					<td class="width60" valign="top"><span
+						th:text="${NameOfPricePlan}"></span></td>
+				</tr>
+				<tr>
+					<td class="cs-td-left width40" valign="top"><strong>
+							Type of Price Plan (See <em>footnote 1</em>):
+					</strong></td>
+					<td class="width60" valign="top"><span
+						th:text="${TypeOfPricePlan}"></span></td>
+				</tr>
+				<tr>
+					<td class="cs-td-left width40" valign="top"><strong>
+							For <u>Standard</u> Price Plan, the electricity rate payable by
+							you is as follows*:
+					</strong></td>
+					<td class="width60" valign="top"><span
+						th:text="${ForStandardPricePlan}"></span><br /> <span
+						th:text="${ForStandardPricePlan1}"></span><br /> <span
+						th:text="${ForStandardPricePlan2}"></span><br /> <span
+						th:text="${ForStandardPricePlan3}"></span></td>
+				</tr>
+				<tr>
+					<td class="cs-td-left width40" valign="top"><strong>
+							The electricity retailer should clearly specify any incentives
+							(including the terms and conditions) to be given to you if you
+							contract for the electricity price plan (see <em>footnote 2</em>):*
+					</strong></td>
+					<td class="width60" valign="top"><span class="cs-line-breaker"
+						th:text="${PackageDescription}"></span></td>
+				</tr>
+				<tr>
+					<td class="cs-td-left width40" valign="top"><strong>
+							Contract Duration (see <em>footnote 3</em>):
+					</strong></td>
+					<td class="width60" valign="top"><span
+						th:text="${ContractDuration}"></span></td>
+				</tr>
+				<tr>
+					<td class="cs-td-left width40" valign="top"><strong>Contract
+							Renewal:*</strong></td>
+					<td class="width60" valign="top">Yes. Red Dot Power will
+						notify you no less than ten (10) business days before the expiry
+						of the contract. If you fail to respond within five (5) business
+						days, you will be supplied automatically at the prevailing Red Dot
+						Power published rate on our website <a
+						href="www.reddotpower.com.sg">www.reddotpower.com.sg</a> at the
+						time of the expiry of the existing contract. You will remain on
+						the existing plan type and the renewal will be for twelve (12)
+						months.
+					</td>
+				</tr>
+				<tr>
+					<td class="cs-td-left width40" valign="top"><strong>
+							To use smart meter (see <em>footnote 4</em>):*
+					</strong></td>
+					<td class="width60" valign="top"><span
+						th:text="${ToUseSmartMeter}"></span></td>
+				</tr>
+				<tr>
+					<td class="cs-td-left width40" valign="top"><strong>
+							Retailer to bill electricity charges directly (see <em>footnote
+								5</em>):*
+					</strong></td>
+					<td class="width60" valign="top">No</td>
+				</tr>
+				<tr class="cs-head-large">
+					<td colspan="2" valign="top"><strong> C. ADDITIONAL
+							FEES OR CHARGES TO BE BORNE BY YOU FOR ELECTRICITY </strong></td>
+				</tr>
+				<tr>
+					<td class="cs-td-left width40" valign="top"><strong>One-time
+							registration fee:</strong></td>
+					<td class="width60" valign="top">Not Applicable</td>
+				</tr>
+				<tr>
+					<td class="cs-td-left width40" valign="top"><strong>Late
+							payment charge:</strong></td>
+					<td class="width60" valign="top">An interest rate of 1% per
+						month will be charged on the outstanding amount if payment is not
+						received within fourteen (14) days of invoice date. If the payment
+						is not received within thirty (30) days from the due date, written
+						notices will be sent.</td>
+				</tr>
+				<tr>
+					<td class="cs-td-left width40" valign="top"><strong>Early
+							Termination Charges:</strong></td>
+					<td class="width60" valign="top">
+						HDB 1 or 2 rooms: $60<br/>
+						HDB 3, 4 or 5 rooms: $100<br/>
+						HDB Executive / HUDC Flat / Terrace House: $150<br/>
+						Condominium / Semi-Detached House / Private Apartment: $250<br/>
+						Bungalow / Penthouse / Townhouse: $400
+					</td>
+				</tr>
+				<tr>
+					<td class="cs-td-left width40" valign="top"><strong>AMI
+							meter installation fee:</strong></td>
+					<td class="width60" valign="top"><span
+						th:text="${PrevailingMeterCharge}"></span></td>
+				</tr>
+				<tr>
+					<td class="cs-td-left width40" valign="top"><strong>Security
+							deposit (see footnote 6):</strong></td>
+					<td class="width60" valign="top">A consumer who has already
+						paid a deposit to SP Group is not required to pay any new or
+						additional deposit on being transferred to Red Dot Power (RDP)
+						from SP Group. If the consumer is transferred to RDP from another
+						retailer who is not SP Group then SP Group will collect a deposit
+						on behalf of RDP, please see <a
+						href="http://www.spgroup.com.sg/faq">http://www.spgroup.com.sg/faq</a>
+						for amount details.
+					</td>
+				</tr>
+				<tr>
+					<td class="cs-td-left width40" valign="top"><strong>
+							Any other fees and charges (see <em>footnote </em>7):*
+					</strong></td>
+					<td class="width60" valign="top">Not Applicable</td>
+				</tr>
+				<tr class="cs-head-large">
+					<td colspan="2" valign="top"><strong> D. BUNDLED
+							PRODUCT OR SERVICES <em>(SEE FOOTNOTE 8)</em>
+					</strong></td>
+				</tr>
+				<tr>
+					<td class="cs-td-left width40" valign="top"><strong>
+							There are other products or services bundled with the electricity
+							price plan: </strong></td>
+					<td class="width60" valign="top">No</td>
+				</tr>
+				<tr>
+					<td class="cs-td-left width40" valign="top"><strong>
+							If yes, the electricity retailer should specify below what are
+							the bundled products or services. You should discuss the details
+							with the electricity retailer such as the applicable fees and
+							charges as well as the terms and conditions for accepting the
+							bundled products or services: </strong></td>
+					<td class="width60" valign="top">Not Applicable</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="finalPage">
+		<table class="parrent" border="1" cellspacing="0" cellpadding="0"
+			width="100%">
+			<tbody>
+				<tr class="cs-head-large">
+					<td valign="top"><strong>E. FOOTNOTES</strong></td>
+				</tr>
+				<tr>
+					<td valign="top">1) You can visit the online information
+						platform at <a href="http://compare.openelectricitymarket.sg/">
+							<strong> http://compare.openelectricitymarket.sg </strong> <strong>
+						</strong>
+					</a> to easily compare the standard price plans offered by different
+						electricity retailers.
+						<p>Standard price plans refer to the following:</p>
+						<ul>
+							<li><u>Fixed price plan</u> that charges you a single rate
+								for electricity that you consume throughout your contract
+								duration.</li>
+							<li><u>Discount off regulated tariff plan</u> that charges
+								you a rate that is based on a discount off the prevailing
+								regulated tariff throughout your contract duration.</li>
+							<li><u>Peak/off-peak plan</u> that charges you a single rate
+								for electricity that you use during peak periods (e.g. day
+								time), and another rate for off-peak periods (e.g. night time).</li>
+						</ul>
+						<p>2) The electricity retailer may offer you incentives in
+							return for contracting for the electricity price plan. The
+							incentives may include:</p>
+						<ul>
+							<li>free gifts, promotions, rewards or services; and/or</li>
+							<li>conditional discount that reduces your electricity bill
+								if you meet certain conditions such as making payment promptly
+								or via certain payment modes.</li>
+						</ul>
+						<p>3) During the contract duration, the electricity retailer
+							will charge you a fee for early termination of the contract or
+							switching to buy electricity from another retailer or SP Group.</p>
+						<p>4) A smart meter is a digital meter capable of measuring
+							your electricity consumption every half-hour. It can also be read
+							remotely and provide you with timely and useful information on
+							your electricity consumption. It is optional to install a smart
+							meter to measure your half-hourly electricity consumption, unless
+							the price plan you sign up for requires one. Your retailer will
+							advise you on this. Where a smart meter needs to be installed, SP
+							Group will impose a one-time installation fee of $40 per meter
+							(exclusive of GST).</p>
+						<p>
+							5) Under indirect billing, you will receive a <u>single</u>
+							monthly bill from SP Group covering the charges for electricity
+							supply by the electricity retailer as well as the charges for
+							other utilities (such as water and gas supply). With direct
+							billing, the electricity retailer will bill you directly for
+							electricity supply, and SP Group will issue you a separate bill
+							for the other utilities.
+						</p>
+						<p>6) Electricity retailer requiring you to provide a security
+							deposit should indicate the amount of security deposit for
+							electricity supply. If you are a residential consumer, the
+							maximum amount of security deposit an electricity retailer is
+							allowed to collect is equivalent to 2 months of your average
+							monthly electricity bill at the point of contracting, contract
+							renewal or during the term of the contract.</p>
+						<p>
+							7) The electricity retailer may require you to pay one or more of
+							the prevailing market-related charges. You may refer to<a
+								href="http://www.openelectricitymarket.sg/">
+								http://www.openelectricitymarket.sg </a> for more information on
+							market-related charges.
+						</p>
+						<p>8) The electricity retailer may bundle the supply of
+							electricity with other products and/or services, such as the
+							provision of phone or internet services, home energy management
+							systems, newspaper or magazine subscription, etc.</p> <br />
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<p style="margin-top: 16%; line-height: 2.5;">
+			<strong> <em>I hereby acknowledge that I have read and
+					understood the information on this factsheet.</em>
+			</strong>
+		</p>
+		<div style="margin-top: 15%; width: 55%;">
+			This document has been digitally signed on <span
+				th:text="${CurrentDateTime}"></span>.
+			<hr />
+			<strong> Signature<br /> <br /> Name: <span
+				th:text="${Name}"></span> <br /> Date: <span
+				th:text="${CurrentDate}"></span>
+			</strong>
+		</div>
+	</div>
+</body>
+
+</html>

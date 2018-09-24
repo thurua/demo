@@ -1,0 +1,30 @@
+.navbar-default .navbar-nav>.active>a,
+.navbar-default .navbar-nav>.active>a:focus,
+.navbar-default .navbar-nav>li>a:hover,
+.highlight-header {
+    color: #1f9cde !important;
+    border-bottom-color: #1f9cde !important;
+    text-decoration: none;
+    margin: 0 0 0 1px;
+    line-height: normal;
+    border: none;
+    border-bottom: solid 5px #1f9cde;
+}
+
+.cs-logo {
+    width: 310px !important;
+    height: 62px !important;
+    margin: -7px 0 0 5px;
+    margin-right: 20px;
+}
+
+.navbar-toggle {
+    margin-right: 6px !important;
+    padding: 10px 5px 10px 7px;
+}
+
+@media only screen and (max-width: 500px) {
+    .cs-logo {
+        margin-right: 0px;
+    }
+}

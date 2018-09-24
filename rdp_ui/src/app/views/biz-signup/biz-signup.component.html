@@ -1,0 +1,224 @@
+<section style="padding-top:20px; padding-bottom:20px;">
+    <input id="welcomeDiv">
+    <div id="bootstrap-touch-slider" class="carousel slide  control-round indicators-line" data-ride="carousel" data-pause="hover" data-interval="5000">
+        <div class="carousel-inner" role="listbox">
+            <!-- Third Slide -->
+            <div class="item active">
+                <!-- Slide Background -->
+                <img src="../assets/img/BusinessRetailCover.jpg" alt="" class="slide-image" />
+                <div class="bs-slider-overlay"></div>
+                <div class="container">
+                    <div class="row">
+                        <!-- Slide Text Layer -->
+                        <div class="slide-text slide_style_center">
+                            <div class="grey-box">
+                                <h1 data-animation="animated zoomInRight" style="color: #ff0000;">Business Retail Electricity</h1>
+                                <p data-animation="animated fadeInLeft">Electricity plans tailored for small or large businesses</p>
+                            </div>
+                            <a (click)="scrollElement()" class="btn btn-primary a-hover" data-animation="animated fadeInRight">Enquire Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="text-center">
+            <h2 class="cs-header-tab">START SAVING WITH RED DOT POWER TODAY!</h2>
+            <div class="cs-font-description">
+                <p>Enjoy savings instantly when you switch to Red Dot Power for your business electricity needs. Customised plans available for all types of businesses from retail shop and small offices to large enterprise and industrial consumers.</p>
+            </div>
+            <br/><br/><br/>
+            <h2 class="cs-header-tab">WHY RED DOT POWER?</h2>
+            <div class="row cs-font-description">
+                <div class="col-md-2"></div>
+                <div class="col-md-4" style="margin-bottom: 6%">
+                    <img src="assets/img/Img1.png" width="200">
+                    <br/><br/>
+                    <p>No. 1 Independent Electricity Retailer.</p>
+                </div>
+                <div class="col-md-4" style="margin-bottom: 6%">
+                    <img src="assets/img/Img2.png" width="200">
+                    <br/><br/>
+                    <p>Price Plans Tailored to Your Needs.</p>
+                </div>
+                <div class="col-md-2"></div>
+            </div>
+            <h2 class="cs-header-tab">WHO IS ELIGIBLE?</h2>
+            <div id="business" class="row cs-font-description">
+                <p>ALL businesses in Jurong with postal code starting with 60, 61, 62, 63 and 64.</p>
+                <p class="space-line">OR businesses with an average monthly electricity consumption of at least 2,000 kWh (monthly bill of around $400) islandwide.</p>
+            </div>
+            <br/><br/><br/>
+            <h2 class="cs-header-tab">MAKE AN ENQUIRY</h2>
+            <div class="cs-font-description" style="margin-bottom: 4%">
+                <p>If you are interested to start saving, provide us your information below and one of our of energy consultants will get in touch with you shortly.
+                </p>
+            </div>
+        </div>
+        <form ngNoForm class="form-horizontal form-break" action="{{vm.f4}}" method="POST">
+            <input type=hidden name="oid" value="{{vm.f3}}">
+            <input type=hidden name="retURL" value="{{vm.f2}}">
+            <div class="row">
+                <div class="col-lg-10 col-lg-offset-1 col-md-12">
+                    <div class="row">
+                        <div class="col-sm-2">
+                        </div>
+                        <div class="col-sm-10">
+                            <p class="title" style="color: #1f9cde">Company Information</p>
+                            <div class="form-group">
+                                <div class="col-sm-5">
+                                    <label class="control-label" for="company">Company Name *</label>
+                                </div>
+                                <div class="col-sm-7">
+                                    <input class="form-control text-left" id="company" maxlength="40" name="company" size="20" type="text" #company="ngModel" [(ngModel)]="vm.company" required>
+                                    <span [hidden]="company.valid || company.pristine" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="company" data-valmsg-for="company" id="company_validationMessage" role="alert">
+                                        <i class="fa fa-exclamation-triangle"></i> Required!
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-5">
+                                    <label class="control-label" for="industry">Industry *</label>
+                                </div>
+                                <div class="col-sm-7">
+                                    <select class="form-control" id="industry" name="industry" #industry="ngModel" [(ngModel)]="vm.industry" required>
+                                        <option value="" selected="selected">-- Please Select --</option>
+                                        <option value="Education">Education</option>
+                                        <option value="F&amp;B">F&amp;B</option>
+                                        <option value="Government">Government</option>
+                                        <option value="Healthcare">Healthcare</option>
+                                        <option value="Hospitality">Hospitality</option>
+                                        <option value="Manufacturing">Manufacturing</option>
+                                        <option value="Non-Profit Organisation">Non-Profit Organisation</option>
+                                        <option value="Office Complex">Office Complex</option>
+                                        <option value="Other">Other</option>
+                                        <option value="Place Of Worship">Place Of Worship</option>
+                                        <option value="Recreation and Sports Complex">Recreation and Sports Complex</option>
+                                        <option value="Retail">Retail</option>
+                                        <option value="Services">Services</option>
+                                        <option value="Transportation">Transportation</option>
+                                        <option value="Utilities">Utilities</option>
+                                        <option value="Warehouses">Warehouses</option>
+                                        <option value="Wholesale">Wholesale</option>
+                                    </select>
+                                    <span [hidden]="industry.valid || industry.pristine" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="industry" data-valmsg-for="industry" id="industry_validationMessage" role="alert">
+                                        <i class="fa fa-exclamation-triangle"></i> Required!
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                        </div>
+                        <div class="col-md-10">
+                            <p class="title" style="color: #1f9cde">Director / Owner Name</p>
+                            <div class="form-group">
+                                <div class="col-sm-5">
+                                    <label class="control-label" for="salutation">Salutation *</label>
+                                </div>
+                                <div class="col-sm-7">
+                                    <select class="form-control" id="salutation" name="salutation" #salutation="ngModel" [(ngModel)]="vm.salutation" required>
+                                        <option value="">-- Please Select --</option>
+                                        <option value="7">Mr.</option>
+                                        <option value="Ms.">Ms.</option>
+                                        <option value="Mrs.">Mrs.</option>
+                                        <option value="Dr.">Dr.</option>
+                                        <option value="Prof.">Prof.</option>
+                                    </select>
+                                    <span [hidden]="salutation.valid || salutation.pristine" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="salutation" data-valmsg-for="salutation" id="salutation_validationMessage" role="alert">
+                                        <i class="fa fa-exclamation-triangle"></i> Required!
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-5">
+                                    <label class="control-label text-left" for="lastName">Name *</label>
+                                </div>
+                                <div class="col-sm-7">
+                                    <input class="form-control text-left" id="last_name" maxlength="80" name="last_name" size="20" type="text" #lastName="ngModel" [(ngModel)]="vm.lastName" required>
+                                    <span [hidden]="lastName.valid || lastName.pristine " class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="lastName" data-valmsg-for="lastName" id="lastName_validationMessage" role="alert">
+                                        <i class="fa fa-exclamation-triangle"></i> Required!
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-5">
+                                    <label class="control-label text-left" for="email">Email *</label>
+                                </div>
+                                <div class="col-sm-7">
+                                    <input class="form-control text-left" id="email" maxlength="80" name="email" size="20" type="text" #email="ngModel" [(ngModel)]="vm.email" required pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$">
+                                    <span [hidden]="email.valid || email.pristine" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="email" data-valmsg-for="email" id="email_validationMessage" role="alert">
+                                        <span *ngIf="email.errors?.required">
+                                            <i class="fa fa-exclamation-triangle"></i> Required!
+                                        </span>
+                                    <span *ngIf="email.errors?.pattern">
+                                            <i class="fa fa-exclamation-triangle"></i> Invalid email format!
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-5">
+                                    <label class="control-label text-left" for="mobile">Mobile *</label>
+                                </div>
+                                <div class="col-sm-7">
+                                    <input class="form-control text-left" id="mobile" maxlength="40" name="mobile" size="20" type="text" #mobile="ngModel" [(ngModel)]="vm.mobile" required>
+                                    <span [hidden]="mobile.valid || mobile.pristine " class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="mobile" data-valmsg-for="mobile" id="mobile_validationMessage" role="alert">
+                                        <i class="fa fa-exclamation-triangle"></i> Required!
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2">
+                        </div>
+                        <div class="col-sm-10">
+                            <p class="title" style="color: #1f9cde">Premise Information</p>
+                            <div class="form-group">
+                                <div class="col-sm-5">
+                                    <label class="control-label" for="00N2800000I9xcK">Premise Address 1 (Blk/Street) *</label>
+                                </div>
+                                <div class="col-sm-7">
+                                    <input class="form-control text-left" id="00N2800000I9xcK" maxlength="255" name="00N2800000I9xcK" size="20" type="text" #address1="ngModel" [(ngModel)]="vm.address1" required minlength="5" maxlength="255">
+                                    <span [hidden]="address1.valid || address1.pristine" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="address1" data-valmsg-for="address1" id="address1_validationMessage" role="alert">
+                                        <i class="fa fa-exclamation-triangle"></i> Required!
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-5">
+                                    <label class="control-label" for="address2">Premise Address 2 (Unit No./Bldg)</label>
+                                </div>
+                                <div class="col-sm-7">
+                                    <input class="form-control text-left" type="text" name="address2" #address2="ngModel" [(ngModel)]="vm.address2" minlength="5" maxlength="255">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-5">
+                                    <label class="control-label" for="postalCode">Premise Postal Code*</label>
+                                </div>
+                                <div class="col-sm-7">
+                                    <input class="form-control text-left" id="00N2800000I9xcj" maxlength="6" name="00N2800000I9xcj" size="20" type="text" #postalCode="ngModel" [(ngModel)]="vm.postalCode" required maxlength="7">
+                                    <span [hidden]="postalCode.valid || postalCode.pristine" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="postalCode" data-valmsg-for="postalCode" id="postalCode_validationMessage" role="alert">
+                                        <i class="fa fa-exclamation-triangle"></i> Required!
+                                    </span>
+                                </div>
+                            </div>
+                            <input type="hidden" id="recordType" name="recordType" value="01228000000TDif">
+                            <input type="hidden" id="00N2800000J8ksN" name="00N2800000J8ksN" value="1" />
+                            <input type="hidden" id="{{vm.f1}}" name="{{vm.f1}}" value="1" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row text-center">
+                <div class="col-md-12" style="padding:15px;">
+                    <button type="submit" class="btn btn-primary btn-lg btn-hover" role="button" style="margin:0 5px;">Submit </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>

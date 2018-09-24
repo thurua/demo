@@ -1,0 +1,95 @@
+{
+    "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+    "project": {
+        "name": "rdpweb"
+    },
+    "apps": [{
+        "root": "src",
+        "outDir": "dist",
+        "assets": [
+            "assets",
+            "favicon.ico"
+        ],
+        "index": "index.html",
+        "main": "main.ts",
+        "polyfills": "polyfills.ts",
+        "test": "test.ts",
+        "tsconfig": "tsconfig.app.json",
+        "testTsconfig": "tsconfig.spec.json",
+        "prefix": "app",
+        "styles": [
+            "styles.scss",
+            "../node_modules/bootstrap/dist/css/bootstrap.min.css",
+            "../node_modules/font-awesome/css/font-awesome.min.css",
+            "../src/assets/fonts/font-awesome.min.css",
+            "../src/assets/fonts/ionicons.min.css",
+            "../src/assets/css/KD_Header2.css",
+            "../src/assets/css/Animated-Scrolled-Down-Heading.css",
+            "../src/assets/css/bootstrap-social.css",
+            "../src/assets/css/File-Input---Beautiful-Input--Button-Approach-Jasny-Bootstrap1.css",
+            "../src/assets/css/Footer-Basic.css",
+            "../src/assets/css/Formulario-Farmacia1.css",
+            "../src/assets/css/Highlight-Blue.css",
+            "../src/assets/css/KD_Header.css",
+            "../src/assets/css/KD_Header1.css",
+            "../src/assets/css/Pricing-Tables1.css",
+            "../src/assets/css/Pricing-Tables.css",
+            "../src/assets/css/Minimal-tabs.css",
+            "../src/assets/css/MUSA_timeline.css",
+            "../src/assets/css/MUSA_timeline1.css",
+            "../src/assets/css/Navigation-with-Button1.css",
+            "../src/assets/css/Simple-Slider.css",
+            "../src/assets/css/Slider_Carousel_webalgustocom.css",
+            "../src/assets/css/Slider_Carousel_webalgustocom1.css",
+            "../src/assets/css/Slider_Carousel_webalgustocom2.css",
+            "../src/assets/css/Steps-Progressbar.css",
+            "../src/assets/css/style.css",
+            "styles.css"
+        ],
+        "scripts": [
+            "../node_modules/jquery/dist/jquery.min.js",
+            "../node_modules/bootstrap/dist/js/bootstrap.min.js",
+            "../src/assets/js/Animated-Scrolled-Down-Heading.js",
+            "../src/assets/js/barChart.js",
+            "../src/assets/js/custom.js",
+            "../src/assets/js/File-Input---Beautiful-Input--Button-Approach-Jasny-Bootstrap.js",
+            "../src/assets/js/kendo.all.min.js",
+            "../src/assets/js/Pricing-Tables.js",
+            "../src/assets/js/Pricing-Tables1.js",
+            "../src/assets/js/Simple-Slider.js",
+            "../src/assets/js/Slider_Carousel_webalgustocom.js"
+        ],
+        "environmentSource": "environments/environment.ts",
+        "environments": {
+            "dev": "environments/environment.ts",
+            "prod": "environments/environment.prod.ts"
+        }
+    }],
+    "e2e": {
+        "protractor": {
+            "config": "./protractor.conf.js"
+        }
+    },
+    "lint": [{
+            "project": "src/tsconfig.app.json",
+            "exclude": "**/node_modules/**"
+        },
+        {
+            "project": "src/tsconfig.spec.json",
+            "exclude": "**/node_modules/**"
+        },
+        {
+            "project": "e2e/tsconfig.e2e.json",
+            "exclude": "**/node_modules/**"
+        }
+    ],
+    "test": {
+        "karma": {
+            "config": "./karma.conf.js"
+        }
+    },
+    "defaults": {
+        "styleExt": "css",
+        "component": {}
+    }
+}

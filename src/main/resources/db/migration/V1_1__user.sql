@@ -1,0 +1,33 @@
+DROP TABLE IF EXISTS public.user;
+CREATE TABLE public.user
+(
+  id serial,
+  company text,
+  contact_no text,
+  country text,
+  created_by integer NOT NULL,
+  created_on timestamp with time zone,
+  email text,
+  eoth uuid,
+  eoth_expiry_on timestamp with time zone,
+  first_name text,
+  is_delete boolean,
+  is_email_verified boolean,
+  is_phone_verified boolean,
+  kyc_status character varying(4),
+  last_name text,
+  modified_by integer NOT NULL,
+  modified_on timestamp with time zone,
+  password_hash character varying,
+  password_salt character varying,
+  poth character varying(50),
+  poth_expiry_on timestamp with time zone,
+  remarks text,
+  source text,
+  status text,
+  user_name text,
+  uuid uuid NOT NULL,
+  password_reminder_token character varying(200),
+  password_reminder_expire timestamp with time zone,
+  CONSTRAINT user_pkey PRIMARY KEY (id)
+);

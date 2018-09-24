@@ -1,0 +1,30 @@
+<div style="width: 100%">
+    <nav class="navbar navbar-default navbar-fixed-top navigation-clean-button" style="padding-top: 20px;">
+        <div class="container">
+            <div class="navbar-header">
+                <a href="#">
+                    <img src="assets/img/logo-nav.png" class="cs-logo">
+                </a>
+                <button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navcol-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse" id="navcol-1">
+                <ul class="nav navbar-nav">
+                    <li routerLinkActive="active current" role="presentation" data-toggle="collapse" data-target=".navbar-collapse.in">
+                        <a routerLink="/residential/signup" id="residentialTab">Residential</a>
+                    </li>
+                    <li routerLinkActive="active current" role="presentation" data-toggle="collapse" data-target=".navbar-collapse.in">
+                        <a routerLink="/business/signup">Business</a>
+                    </li>
+                </ul>
+                <p class="navbar-text navbar-right actions cs-cursor" style="padding-top: 10px; text-decoration: underline;" data-toggle="collapse" data-target=".navbar-collapse.in">
+                    <a class="navbar-link login" (click)="redirectLink()">Visit Corporate Site</a>
+                </p>
+            </div>
+        </div>
+    </nav>
+</div>

@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<link rel="stylesheet"
+	href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" />
+<style>
+td {
+	padding: 6px 5px 6px 5px;
+}
+
+.header {
+	background-color: #404040;
+	color: white;
+}
+
+.border-left {
+	border-left: white;
+}
+
+table, tr, td {
+	border: solid 0.4px #000000;
+}
+
+.border-right {
+	border-right: white;
+}
+
+.border-top {
+	border-top: white;
+}
+
+.border-bottom {
+	border-bottom: white;
+}
+/*
+.grey {
+	color: #808080;
+	display: block;
+}
+footer {
+	padding-top: 5%;
+	font-size: 13px;
+    position: running(footer);
+}
+header {
+	font-weight: 600;
+    position: running(header);
+}
+*/
+td>ol {
+	margin-top: 1px;
+}
+
+div.header {
+	padding-top: 26px;
+	display: block;
+	font-weight: bold;
+	background-color: #ffffff;
+	font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+	color: #000000;
+	position: running(header);
+	display: block;
+}
+
+div.footer {
+	font-size: 11px;
+	display: block;
+	background-color: #ffffff;
+	position: running(footer);
+	font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+	color: #000000;
+	display: block;
+}
+
+div.content {
+	padding-top: 36px;
+	font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+	font-size: 12.2px;
+	page-break-after: always;
+}
+
+div.finalPage {
+	padding-top: 36px;
+	font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+	font-size: 12.2px;
+}
+
+.container #inline {
+	clear: both;
+	text-align: right;
+	float: right;
+}
+
+@page { @top-center { content:element(header) } }
+@page { @bottom-center { content:element(footer) } }
+@page {
+	size: A4;
+	margin: 0.6in 0.58in 1.37in 0.82in;
+}
+
+#pagenumber:before {
+	content: counter(page);
+}
+
+#pagecount:before {
+	content: counter(pages);
+}
+</style>
+</head>
+
+<body>
+	<div class='header'>
+		<div style="width: 100%; position: relative;">
+			<img src="https://www.reddotpower.com.sg/assets/img/logo.png"
+				style="height: 56px; top: 0; left: 0;" /> <span
+				style="position: absolute; top: 10%; right: 0; width: 100%; text-align: right;">
+				SALES AGREEMENT FOR<br /> ELECTRICITY SUPPLY (RESIDENTIAL)
+			</span>
+		</div>
+	</div>
+	<div class="footer">
+		<div style="width: 100%; position: relative;">
+			<div>
+				<strong>Red Dot Power Pte Ltd</strong><br /> A vTrium Energy Group
+				Company • Registration Number 201003305K<br /> Customer Service
+				Centre: 40 Sin Ming Lane, #01-00 Midview City, Singapore 573958<br />
+				Customer Service Hotline: (+65) 6816 6699 • www.reddotpower.com.sg
+			</div>
+			<div style="position: absolute; right: 0; top: 0;" class="container">
+				<span id="inline">Page <span id="pagenumber"></span> of <span
+					id="pagecount"></span></span><br /> <span id="inline">Version 2.6
+					- 17.05.2018</span>
+			</div>
+		</div>
+	</div>
+	<div class='content' style="padding-top: 29px;">
+		<table width="100%" border="1" cellspacing="0" cellpadding="0">
+			<tbody>
+				<tr class="header">
+					<td width="696" colspan="4"><strong>Premises Details</strong></td>
+				</tr>
+				<tr>
+					<td width="395" colspan="3">Name: <span th:text="${Name}" /></td>
+					<td width="301">Email: <span th:text="${Email}"></span></td>
+				</tr>
+				<tr>
+					<td width="198">Mobile No: <span th:text="${MobileNo}"></span></td>
+					<td width="197" colspan="2">Tel No: <span
+						th:text="${TelephoneName}"></span></td>
+					<td width="301">NRIC/ FIN: <span th:text="${NricNo}"></span></td>
+				</tr>
+				<tr>
+					<td width="696" colspan="4">Address of Supply (The Premise): <br />
+						<span th:text="${AddressOfSupply}"></span>
+					</td>
+				</tr>
+				<tr>
+					<td width="696" colspan="4">Residence Type: <span
+						th:text="${ResidenceType}"></span></td>
+				</tr>
+				<tr>
+					<td width="696" colspan="4">EBS/MSSL Account Number: <span
+						th:text="${AccountNumber}"></span></td>
+				</tr>
+				<tr>
+					<td width="696" colspan="4">Request for meter change to AMI
+						meter*: <span th:text="${RequestForMeterChangeToAMI}"></span> <br />
+						Current Meter Type: <span th:text="${CurrentMeterType}"></span>
+					</td>
+				</tr>
+				<tr>
+					<td width="696" colspan="4">Registration Date: <span
+						th:text="${RegistrationDate}"></span><br />Preferred Date of
+						Supply Commencement (Approx)**: <span
+						th:text="${PreferredDateOfSupply}"></span></td>
+				</tr>
+				<tr>
+					<td width="696" colspan="4">Contract End Date (Expiry Date): <span
+						th:text="${ContractEndDate}"></span></td>
+				</tr>
+				<tr>
+					<td width="696" colspan="4">Meter Self-Read Option***: <span
+						th:text="${MeterSelfRead}"></span></td>
+				</tr>
+				<tr>
+					<td width="696" colspan="4" class="header"><strong>Plan
+							Options****</strong></td>
+				</tr>
+				<tr>
+					<td width="369" valign="top" colspan="2" class="border-right">
+						<input type="checkbox" readonly="true" th:checked="${eFIX}" /> <strong>eFIX</strong>
+						<br /> <br />Fixed Tariff at ($/kWh): <span
+						th:text="${RateDollars}"></span>
+					</td>
+					<td width="327" valign="top" colspan="2" class="border-left">
+						<span th:text="${DurationEFIX}"></span><br /> <span
+						th:text="${TimeEFIX}"></span>
+					</td>
+				</tr>
+				<tr>
+					<td width="369" valign="top" colspan="2" class="border-right">
+						<input type="checkbox" readonly="true" th:checked="${eSAVE}" /> <strong>eSAVE</strong>
+						<br /> <br /> Tariff at: <span th:text="${Discount}"></span> (%)
+						discount off prevailing SP Tariff
+					</td>
+					<td width="327" valign="top" colspan="2" class="border-left">
+						<span th:text="${DurationESAVE}"></span><br /> <span
+						th:text="${TimeESAVE}"></span>
+					</td>
+				</tr>
+				<tr>
+					<td width="369" valign="top" colspan="2"
+						class="border-right border-bottom"><input type="checkbox"
+						readonly="true" th:checked="${eQPlus}" /> <strong> eQ+</strong></td>
+					<td width="327" valign="top" colspan="2"
+						class="border-left border-bottom"><span
+						th:text="${DurationEQPlus}"></span><br /> <span
+						th:text="${TimeEQPlus}"></span></td>
+				</tr>
+				<tr>
+					<td colspan="4" class="border-top" style="color: red;"><strong>
+							Revised quarterly as published on Red Dot Power website. </strong></td>
+				</tr>
+			</tbody>
+		</table>
+		<span style="font-size: 11px; line-height: 1.4em;"> * Consumers
+			may request for AMI meter instead of their existing meter. If the
+			Consumer selects the option for an AMI meter, the Consumer will have
+			to pay $40 for a one-time only installation charge. Consumer is
+			advised that it may take up to 2 months for AMI meter to be fitted.
+			Consumer will continue to be supplied electricity on a SRLP meter
+			reading basis pending AMI meter fitting. <br /> ** Preferred Date of
+			Supply Commencement must be a date no less than 5 business days after
+			the below signing date. <br /> *** If the consumer chooses to submit
+			a self-read meter reading, then the Consumer must provide the reading
+			within 3 business days from the signing of this agreement to SP
+			Group, if consumer prefers not to or are unable to submit the meter
+			reading, SP Group will estimate the reading and proceed to effect the
+			customer transfer request (CTR) on the action date indicated. Please
+			see <a href="https://www.spgroup.com.sg/faq">https://www.spgroup.com.sg/faq</a>
+			(self-read) for submission details. <br /> **** All other fees are
+			absorbed by Red Dot Power including Transmission Lost Factor charges.<br />
+		</span> <br />
+		<table width="100%" border="1" cellspacing="0" cellpadding="0">
+			<tbody>
+				<tr>
+					<td width="693"><strong>PAYMENT OPTIONS AND BILLING
+							ENQUIRIES</strong></td>
+				</tr>
+				<tr>
+					<td width="693" valign="top">For the convenience of household
+						consumers Red Dot Power has engaged SP Group as a billing agent.
+						This means that the consumer will continue to pay (through the
+						various payment options offered) and be billed by SP Group.
+						Therefore, for billing enquiries, please contact SP Group at 1800
+						2222 333 or visit <a href="https://www.spgroup.com.sg">www.spgroup.com.sg.</a>
+					</td>
+				</tr>
+				<tr>
+					<td width="693"><strong>CUSTOMER SERVICE</strong></td>
+				</tr>
+				<tr>
+					<td width="693" valign="top">For all other enquiries, please
+						do not hesitate to contact Red Dot Power directly at
+						homes@reddotpower.com.sg or 6816 6699.</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class='content'>
+		<table width="100%" border="1" cellspacing="0" cellpadding="0">
+			<tbody>
+				<tr class="header">
+					<td><strong>Standard Terms and Conditions</strong></td>
+				</tr>
+				<tr>
+					<td><br /> <strong><u>General</u></strong>
+						<ol>
+							<li>The Agreement term shall commence on the “Start Date”
+								which is the date as advised by Market Support Service License
+								holder (MSSL) (SP Group) and expire on the “Expiry Date”, which
+								is the end of the term of the Agreement.</li>
+							<li>Service Commitment: The Consumer commits to use the
+								service provided by Red Dot Power under this Agreement for the
+								period specified in this Agreement. The Service Commitment shall
+								commence on the Start Date.</li>
+							<li>The Consumer must immediately notify Red Dot Power in
+								writing if the Consumer is in breach of the Agreement or if the
+								Agreement ceases to be in force or in effect.</li>
+							<li>Red Dot Power may by written notice to the Consumer
+								modify the Terms and Conditions of this Agreement where Red Dot
+								Power may reasonably consider necessary or due to a regulatory
+								change or change in the governing law, including the Retailer’s
+								Code, MSS Code, Metering Code and other Electricity Law, within
+								the Laws of Singapore, the modification shall take effect on the
+								date it is notified by Red Dot Power or such dates of regulatory
+								change or change in the governing law, whichever is earlier.</li>
+							<li>Neither party may transfer, sell or assign this
+								agreement or any part of the Agreement without the prior consent
+								of the other party.</li>
+							<li>This agreement shall be governed by and construed in
+								accordance with the laws of Singapore and is in accordance with
+								the Code of Conduct for Retail Electricity Licensees, as
+								prescribed by the Energy Market Authority (EMA).</li>
+						</ol> <strong><u>Meter</u></strong>
+						<ol start="7">
+							<li>The Consumer is responsible for his own safe, proper and
+								suitable use of electrical equipment within his premises.</li>
+							<li>The usage charges invoiced will be determined from
+								metering data, including any estimated metering data as provided
+								by the MSSL.</li>
+							<li>The Consumer acknowledges and agrees that the MSSL, and
+								not Red Dot Power, has the responsibility relating to the
+								Metering Equipment, in accordance to the Metering Code and other
+								Electricity Law.</li>
+							<li>The Consumer acknowledges and agrees that the MSSL, and
+								not Red Dot Power, is responsible for meter reading and meter
+								data management in accordance with the Metering Code, the MSS
+								code and other Electricity Law.</li>
+							<li>In case of inaccurate or omitted readings of electricity
+								usage as provided by MSSL, SP Group on behalf of Red Dot Power
+								will invoice the Consumer the correct or un-billed amount in the
+								subsequent billing cycle.</li>
+						</ol> <strong><u>Billing and Metering Enquiries</u></strong>
+						<ol start="12">
+							<li>Red Dot Power has engaged SP Group for billing services,
+								as such SP Group will act on behalf of Red Dot Power for all
+								billing related enquires, the Consumer must contact SP Group and
+								not Red Dot Power for billing related enquiries.</li>
+							<li>The MSSL as the meter reading provider and meter data
+								management provider as per the metering code should be contact
+								in the event of any meter reading enquiries.</li>
+							<li>In the event of the Consumer being undercharged through
+								an incorrect meter reading and/or computational error, the
+								amount undercharged will be brought forward and added into the
+								total amount of the new invoice, likewise in the event the
+								Consumer is overcharged through an incorrect meter reading
+								and/or computational error, the amount overcharged will be
+								brought forward and deducted from the total amount of the new
+								invoice.</li>
+						</ol> <strong><u>Plans</u></strong>
+						<ol start="15">
+							<li>Change of Plan: The Consumer may switch from their
+								current Plan to any other available Red Dot Power Plan, at the
+								prevailing rate at time of switch, by officially notifying Red
+								Dot Power, at least Thirty (30) working days before the intended
+								date of change by completing a Change of Plan Form. The Consumer
+								is entitled to a maximum of One (1) switch per contract year.
+								The new service agreement is subjected to an extension of Three
+								(3) months to the remaining term of the contract.</li>
+						</ol> <strong><u>Deposit, U-Save &amp; Credit</u></strong>
+						<ol start="16">
+							<li>With reference to clause 12 above, a Consumer who has
+								already paid a deposit to SP Group is not required to pay any
+								new or additional deposit on being transferred to Red Dot Power
+								from SP Group. If the Consumer is transferred to Red Dot Power
+								from another retailer who is not SP Group then SP Group will
+								collect a deposit on behalf of Red Dot Power, please see <a
+								href="http://www.spgroup.com.sg/faq">
+									http://www.spgroup.com.sg/faq </a> (security deposit) for amount
+								details.
+							</li>
+						</ol></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class='content'>
+		<table width="100%" border="1" cellspacing="0" cellpadding="0">
+			<tbody>
+				<tr>
+					<td>
+						<ol start="17">
+							<li>Red Dot Power may utilize, at any time, whole or part of
+								the deposit in settlement of any sum due to Red Dot Power from
+								the Consumer. Any remaining deposit in the hands of Red Dot
+								Power shall be refunded to the Consumer, free of interest,
+								within One (1) month of the termination date.</li>
+							<li>In the event that the Consumer overpays an invoice then
+								that positive balance will be shown in the next invoice and
+								deducted from the total amount of the aforementioned invoice. If
+								the Consumer underpays the invoice, that amount will be
+								reflected in the following month’s invoice and the amount will
+								be added to the new month’s invoice balance.</li>
+							<li>In the event that the Consumer account is in credit at
+								the time of termination then such a balance shall be returned to
+								the Consumer within One (1) month of the termination date.</li>
+							<li>Singaporean (not Permanent Residents, S-Pass or other
+								employment pass holders) Consumers may be entitled to U-Save
+								rebates. U-Save rebates are part of the GST Voucher Scheme
+								introduced by the Singapore Government for eligible residential
+								Consumers to offset their various utilities including their
+								electricity in their utilities bill.</li>
+							<li>Red Dot Power has engaged SP Group as its billing agent,
+								as such all matters pertaining to U-Save shall be administered
+								by SP Group, including Rebates of any unused portion of U-Save.</li>
+						</ol> <strong><u>Late Payment Charge</u></strong>
+						<ol start="22">
+							<li>The Consumer shall pay the due and payable amount in
+								full within Fourteen (14) days of invoice date. An interest rate
+								of 12% per annum will be charged on the outstanding amount
+								thereafter. If the payment is not received within Thirty (30)
+								days from the due date, written notices will be sent, if the
+								Consumer does not make payment (or payment arrangements) the
+								Consumer may be transferred to the MSSL.</li>
+						</ol> <strong><u>Renewal</u></strong>
+						<ol start="23">
+							<li>Red Dot Power will notify the Consumer no less than Ten
+								(10) business days before the Expiry of the Contract. If the
+								Consumer fails to respond within Five (5) business days, the
+								Consumer will be supplied automatically at the prevailing Red
+								Dot Power published rate on the Red Dot Power website <a
+								href="www.reddotpower.com.sg">www.reddotpower.com.sg</a> at the
+								time of the expiry of the existing contract. The Consumer will
+								remain on the existing plan type and the renewal will be for a
+								One (1) year supply agreement. For example, a Consumer who is on
+								an eFIX plan who fails to respond to Red Dot Power will
+								automatically be renewed on an eFIX plan for One (1) year at the
+								rate published on the Red Dot Power website.
+							</li>
+						</ol> <strong><u>Termination</u></strong>
+						<ol start="24">
+							<li>Early Termination: If the service is terminated by Red
+								Dot Power due to non-payment or any other default(s) by the
+								Consumer before the end of the term of the Agreement, the
+								Consumer agrees to pay Red Dot Power, in addition to all other
+								amounts owed, an Early Termination Fee in the amount specified
+								under Clause 26. Red Dot Power will provide Ten (10) business
+								days’ notice of the termination date, where upon the Consumer
+								will be transferred to the MSSL’s regulated tariff or wholesale
+								electricity prices, as the case may be.</li>
+							<li>Early Termination: If the Consumer should terminate this
+								service agreement before the expiry date for any reason other
+								than vacation of the premises (written proof of reason for
+								vacation of property will be required) then the early
+								termination fee Clause 26 shall apply.</li>
+							<li>Early Termination Fee: Early Termination Fee shall be
+								$60 for a HDB 1 or 2 rooms, $100 for a HDB 3,4 or 5 rooms, $150
+								for a HDB Executive / HUDC Flat / Terrace House, $250 for a
+								Condominium / Semi-Detached House / Private Apartment and $400
+								for a Bungalow / Penthouse/ Townhouse.</li>
+						</ol> <strong><u>Retailer of Last Resort Event (RoLR)</u></strong>
+						<ol start="27">
+							<li>A Retailer of Last Resort Event is an event upon which
+								the Consumer’s retailer is unable to continue operations for
+								various reasons. As a Retail Electricity Licensee, Red Dot Power
+								will publish via its website that it is undergoing a RoLR event
+								within one business day of its occurrence, the Consumer will
+								also be informed via SMS or email.</li>
+							<li>In the event of a RoLR event, Red Dot Power Consumers
+								will be transferred to the MSSL on the default supply effective
+								date unless the Consumer makes a customer transfer request
+								before the default effective supply date.</li>
+							<li>Upon the transfer of Consumers due to a RoLR event the
+								MSSL will supply small Consumers at the regulated Tariff and
+								large Consumers at wholesale electricity prices. Small Consumers
+								are commercial/industrial Consumers with an average monthly
+								consumption of no more than 2 MWh, or any residential Consumers.</li>
+							<li>Consumers physical supply of electricity will not be
+								affected during a RoLR event.</li>
+						</ol>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="finalPage">
+		<table width="100%" border="1" cellspacing="0" cellpadding="0">
+			<tbody>
+				<tr>
+					<td><br />
+						<ol start="31">
+							<li>During a RoLR event, the Consumer should be aware that
+								Red Dot Power is required by the authority (EMA) to transfer the
+								Consumers contact information (including but not limited to
+								mailing address, electronic mailing address and telephone
+								number) to the MSSL to facilitate the implementation of the RoLR
+								Framework.</li>
+						</ol> <strong> <u>Dispute Resolution </u>
+					</strong>
+						<ol start="32">
+							<li>In the event of a dispute between the Consumer and Red
+								Dot Power, the Consumer shall note that Red Dot Power shall be
+								the first point of contact for the Consumer to resolve the said
+								dispute.</li>
+						</ol>
+						<ol start="33">
+							<li>Residential Consumers have Two (2) years from the issue
+								date of the relevant bill to contest a dispute.</li>
+							<li>It is Red Dot Power’s intention to resolve any dispute
+								arising between the Consumer and Red Dot Power amicably within
+								Thirty (30) days of becoming aware of the dispute, however
+								subject to provision of clause 35 &amp; 36 here under.</li>
+							<li>In the event the nature of a dispute is regarding a
+								metering dispute then Red Dot Power shall facilitate resolution
+								of the dispute which is between the Consumer and the MSSL.</li>
+							<li>In the event of a dispute between the Consumer and Red
+								Dot Power that the Consumer and Red Dot Power cannot resolve
+								between themselves then either party may seek access to an
+								“’Alternative Dispute Resolution’’ (ADR) Body for mediation. SP
+								Group as both the MSSL and as the billing agent of Red Dot Power
+								may also be required to attend such ADR Body as required.</li>
+						</ol> <strong> <u>Personal Data </u></strong>
+						<ol start="37">
+							<li>Red Dot Power as a registered Retailer of electricity is
+								obligated to be in compliance with the Personal Data Protection
+								Act 2012 (PDPA).</li>
+							<li>Red Dot Power will not transfer any data given to Red
+								Dot Power except when obligated to do so in its normal course of
+								business of electricity retail. In its normal course of business
+								as retailer of electricity Red Dot Power will share Consumer’s
+								personal data with the MSSL.</li>
+							<li>By the signing of this agreement, the Consumer is
+								agreeing to allow Red Dot Power access to their Personal Data,
+								to allow Red Dot Power to share Data with the MSSL and/or the
+								EMA as required. Red Dot Power will not share the Consumer’s
+								Data to any other third party without the Consumer permission in
+								writing.</li>
+							<li>Under the Dispute Resolution clause from the Retailers
+								Code of Conduct, Red Dot Power shall retain your personal data
+								for a period of up to Two (2) years after contract ends, for
+								facilitation of any dispute as per clause 33.</li>
+						</ol></td>
+				</tr>
+			</tbody>
+		</table>
+		<p style="margin-top: 25%; line-height: 2.5;">
+			<strong> <em> I, the undersigned, confirm that I have
+					read, and accept on behalf of the Consumer stated overleaf the
+					Terms and Conditions for the Sale Agreement for Electricity Supply.
+			</em>
+			</strong>
+		</p>
+		<div style="margin-top: 15%; width: 60%;">
+			This document has been digitally signed on <span
+				th:text="${CurrentDateTime}"></span>.
+			<hr />
+			<strong> Signature<br /> <br /> Name: <span
+				th:text="${Name}"></span> <br /> Date: <span
+				th:text="${CurrentDate}"></span>
+			</strong>
+		</div>
+	</div>
+</body>
+
+</html>

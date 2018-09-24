@@ -1,0 +1,56 @@
+.btn-primary {
+    background-color: #1f9cde !important;
+    border-color: #1f9cde !important;
+}
+
+#balance {
+    background: rgb(92, 92, 92);
+    color: rgb(253, 250, 254);
+}
+
+.text-primary {
+    color: #1f9cde;
+}
+
+.round-button {
+    width: 91px;
+    height: 91px;
+    border-radius: 50%;
+}
+
+.timeline-centered .timeline-entry {
+    position: relative;
+    width: 50%;
+    float: right;
+    margin-bottom: 20px !important;
+    clear: both;
+}
+
+.bg-primary {
+    background-color: #1f9cde !important;
+}
+
+.timeline-centered .timeline-entry .timeline-entry-inner .timeline-label {
+    padding: 1em;
+}
+
+.label.label-secondary {
+    background-color: #ec0927;
+}
+
+.horizontal-divider {
+    width: 100%;
+    text-align: center;
+    border-bottom: 1px solid rgba(34, 36, 38, .15);
+    line-height: 0.0em;
+    margin: 25px 0;
+}
+
+.horizontal-divider span {
+    padding: 0 10px;
+    background-color: white;
+}
+
+.show-saving {
+    display: block;
+}
