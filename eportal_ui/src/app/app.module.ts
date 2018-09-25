@@ -5,6 +5,21 @@ import { AppSettings } from './app.settings';
 import { AppComponent } from './app.component';
 import { NotFoundComponent } from './pages/errors/not-found/not-found.component';
 
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { FileUploadModule } from 'ng2-file-upload';
+
+// Import providers
+import {
+    ApiProvider,
+    UserProvider,
+    FileProvider,
+    CommonProvider
+} from './providers/provider';
+
+// Import utilities
+import { RsaService } from './utilities/utility';
+
 @NgModule({
     declarations: [
         AppComponent,
@@ -12,9 +27,19 @@ import { NotFoundComponent } from './pages/errors/not-found/not-found.component'
     ],
     imports: [
         BrowserModule,
-        routing
+        routing,
+        HttpClientModule,
+        FormsModule,
+        FileUploadModule
     ],
-    providers: [AppSettings],
+    providers: [
+        AppSettings,
+        ApiProvider,
+        UserProvider,
+        FileProvider,
+        CommonProvider,
+        RsaService
+    ],
     bootstrap: [AppComponent]
 })
 
