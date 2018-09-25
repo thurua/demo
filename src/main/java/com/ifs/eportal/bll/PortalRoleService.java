@@ -44,28 +44,35 @@ public class PortalRoleService {
 	}
 
 	// end
+
 	public String save(PortalRole m) {
 		String res = "";
 
 		Integer id = m.getId();
 		// int userId = m.getUserId();
 
+		PortalRole m1;
 		if (id == null || id == 0) {
 
 			// m.setActive(true);
-			m.setIsDeleted(false);
 			m.setCreatedDate(new Date());
 
-			portalRoleDao.save(m);
+			m1 = portalRoleDao.save(m);
 
 		} else {
-			PortalRole m1 = portalRoleDao.getBy(id);
+			m1 = portalRoleDao.getBy(id);
 			if (m1 == null) {
 				res = "Id does not exist";
 			} else {
 				m1 = portalRoleDao.getBy(id);
 				// m1.setModifyBy(userId);
 				// m1.setModifyOn(new Date());
+
+				m1.setHcErr(m.getHcErr());
+				m1.setHcLastop(m.getHcLastop());
+				m1.setName(m.getName());
+				m1.setSfid(m.getSfid());
+				m1.setSystemModStamp(m.getSystemModStamp());
 
 				portalRoleDao.save(m1);
 			}
@@ -74,7 +81,7 @@ public class PortalRoleService {
 		return res;
 	}
 
-	public String delete(PortalRole m, Integer userId) {
+	public String delete(PortalRole m) {
 		String res = "";
 
 		if (m == null) {

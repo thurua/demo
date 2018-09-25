@@ -9,10 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ifs.eportal.bll.PortalRoleService;
@@ -62,8 +64,8 @@ public class PortalRoleController<ExpenseReq> {
 			// PayloadDto pl = Utils.getTokenInfor(header);
 			// int userId = pl.getId();
 
+			Integer id = req.getId();
 			Date createdDate = req.getCreatedDate();
-			Boolean isDeleted = req.getIsDeleted();
 			String name = req.getName();
 			Date systemModStamp = req.getSystemModStamp();
 			String sfid = req.getSfid();
@@ -71,8 +73,9 @@ public class PortalRoleController<ExpenseReq> {
 			String hcErr = req.get_hc_Err();
 
 			PortalRole m = new PortalRole();
+
+			m.setId(id);
 			m.setCreatedDate(createdDate);
-			m.setIsDeleted(isDeleted);
 			m.setName(name);
 			m.setSystemModStamp(systemModStamp);
 			m.setSfid(sfid);
@@ -80,6 +83,21 @@ public class PortalRoleController<ExpenseReq> {
 			m.setHcErr(hcErr);
 
 			portalRoleService.save(m);
+		} catch (Exception ex) {
+			res.setError(ex.getMessage());
+		}
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity<?> delete(@RequestHeader HttpHeaders header, @PathVariable("id") int id) {
+		BaseRsp res = new BaseRsp();
+
+		try {
+			PortalRole m = portalRoleService.getBy(id);
+
+			portalRoleService.delete(m);
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}
