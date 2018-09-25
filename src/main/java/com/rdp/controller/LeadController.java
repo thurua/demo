@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -94,6 +96,46 @@ public class LeadController {
 		MultipleRsp res = new MultipleRsp();
 
 		try {
+			//-Start of Pen Test validations
+			String inerrmsg = "Failed to create Lead!";
+			boolean isNumeric = req.getEbsNumber().chars().allMatch( Character::isDigit );
+			
+			Pattern pattern = Pattern.compile("^.+@.+\\..+$");
+			Matcher emailmatcher = pattern.matcher(req.getEmail());
+			
+			
+			pattern = Pattern.compile("^[6][0-4]\\d{4}$");
+			Matcher postalcodematcher = pattern.matcher(req.getPostalCode());
+			
+			
+			/*System.out.println("isNumeric: " + !isNumeric
+							+ ",req.getEbsNumber().length() : " + req.getEbsNumber().length() != 10 
+							+ ",emailmatcher.matches() : " + emailmatcher.matches()
+							+ ",postalcodematcher.matches():" + postalcodematcher.matches()
+							+ ",Math.round(req.getDuration()):" + ( Math.round(req.getDuration()) != 12 && Math.round(req.getDuration()) != 24 )
+							+ ",req.getAgreedFactSheet():" + !req.getAgreedFactSheet()
+							+ ",req.getAgreedTermsConditions():" + !req.getAgreedTermsConditions()
+							+ ",req.getStatus(): " + !(req.getStatus().equalsIgnoreCase("New"))
+							);*/
+			
+			if(!isNumeric ||
+				req.getEbsNumber().length() != 10 ||
+				!emailmatcher.matches() || !postalcodematcher.matches() ||
+				( Math.round(req.getDuration()) != 12 && Math.round(req.getDuration()) != 24 ) ||
+				!req.getAgreedFactSheet() || !req.getAgreedTermsConditions() ||
+				!(req.getStatus().equalsIgnoreCase("New"))
+				) {
+				
+				System.out.println("Error on data validation!!!");
+				res.setCallstatus("error");
+				res.setMessage(inerrmsg);
+				return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+			}
+			
+			
+			//-End of Pen Test validations
+			
+			
 			// Validate both ebsNumber and nricNo
 			String ebsNumber = req.getEbsNumber();
 			String nricNo = req.getNricNo();
