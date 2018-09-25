@@ -1,13 +1,36 @@
-.login-container{
-    position: absolute;
-    .card{
-        .card-header{
-            width: 80px;
-            height: 80px;
-            margin: 0 auto;
-            margin-top: -40px;
-            border-radius: 50%;
-            font-size: 36px;
-        }
-    }
+.app.combined .login-container .card,
+.app.combined .register-container .card,
+.app.combined .error-container .card {
+    background-color: white;
+    height: 100%;
+    width: 100%
+}
+
+.format-footer {
+    display:flex;
+    margin: auto;
+}
+.center{
+    margin: 0px auto;
+    height: 100%;
+    padding-top : 15px;
+}
+
+.password {
+    float: left;
+    color: black;
+}
+
+.fomat-pw.row {
+    text-align: left;
+}
+
+.login {
+    float: left;
+    color: black;
+}
+
+.signin {
+    width: 100%;
+    background-color: #305496 !important;
 }
