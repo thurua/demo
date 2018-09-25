@@ -43,6 +43,7 @@ export class ResSignupComponent implements OnInit, AfterContentChecked {
     public aMIMeterInstallationFee: String = '';
     public decode_planName: string;
     public existingMeterTypePop: string = '';
+    public siteKey: string = '';
     public accountNumberTooltip: string = `
     <div>
       <img class="img-width" src="../assets/img/AccountNumber.jpg" />
@@ -79,6 +80,19 @@ export class ResSignupComponent implements OnInit, AfterContentChecked {
         private meta: Meta) { }
 
     ngOnInit() {
+        var rurl = window.location.href;
+        if (rurl.indexOf("reddotpower.com.sg") != -1 || rurl.indexOf("reddotpower.herokuapp.com") != -1) {
+            this.siteKey = "6LfV_HEUAAAAAF-riAePSZAe7zc1MYGNEH_oLgs_";
+        } else if (rurl.indexOf("uat.reddotpower.com.sg") != -1 || rurl.indexOf("rdp-uat.herokuapp.com") != -1) {
+            this.siteKey = "6LftAHIUAAAAAOGAJANTcBv7QiKTRNJG8vEnJfU1";
+        }
+        else if (rurl.indexOf("rdp-dev.herokuapp.com") != -1) {
+            this.siteKey = "6LeT2nEUAAAAAL8Dzz5LdwFqUwq6W4CGo_m_VcH6";
+        }
+        else {
+            this.siteKey = "6Lf6xnEUAAAAAD_JEOlb3zfayVHTlxAkCiVKCMNp";
+        }
+
         this.tit.setTitle("Red Dot Power | Electricity Retailer Singapore | Residential");
         this.meta.updateTag({ name: "description", content: "Red Dot Power is Singapore's No. 1 independent electricity retailer. Switch to us to enjoy best discount off your electricity bill with fixed rate, discount off tariff and peak and off-peak plan. A power company licensed by Singapore Energy Market Authority (EMA) to supply to residential, commercial and industrial." });
 
@@ -117,7 +131,7 @@ export class ResSignupComponent implements OnInit, AfterContentChecked {
         if (response.length === 0) {
             this.captchaError = true;
             return;
-          }
+        }
 
         if (!valid || !this.vm.agreedTermsConditions
             || !this.vm.agreedFactSheet
