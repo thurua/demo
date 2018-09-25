@@ -72,7 +72,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/", "/user/sign-in", "/user/sign-up", "/user/refresh-token", "/user/verify-mail",
 						"/user/forgot-password", "/user/verify-active-code", "/file/upload", "/file/read", "/file/call",
 						"/common/search-account", "/common/search-client-account", "/common/call",
-						"/portal-role/search", "/portal-role/save", "/portal-role/delete/{id}")
+						"/portal-role/search", "/portal-role/save", "/portal-role/{id}")
 				.permitAll().antMatchers("/user/reset-password").hasAuthority(Const.Authentication.ROLE_ADMIN)
 				.anyRequest().authenticated().and().exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
 				.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
