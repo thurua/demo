@@ -472,6 +472,7 @@ public class LeadController {
 			String eSaveSfid = System.getenv("SFID_ESAVE");
 			String eFixSfid = System.getenv("SFID_EFIX");
 			String eQPlusSfid = System.getenv("SFID_EQ_PLUS");
+			String siteKey = System.getenv("CAPTCHA_SITE_KEY");
 
 			List<Package> tmp;
 			if (isPromo == null || !isPromo) {
@@ -496,6 +497,7 @@ public class LeadController {
 			data.put("eSaveName", eSaveName);
 			data.put("eFixName", eFixName);
 			data.put("eQPlusName", eQPlusName);
+			data.put("siteKey", siteKey);
 			res.setResult(data);
 		} catch (Exception ex) {
 			res.setCallstatus("error");
