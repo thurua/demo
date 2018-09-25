@@ -1,0 +1,13 @@
+.header {
+    border: 1px solid gray;
+}
+
+.body {
+    border: 1px solid gray;
+}
+
+.lookup {
+    width: 500px;
+    border-radius: 5px;
+    padding-left: 10px;
+}
