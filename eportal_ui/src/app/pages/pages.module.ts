@@ -18,6 +18,7 @@ import { BackTopComponent } from '../theme/components/back-top/back-top.componen
 import { UserMenuComponent } from '../theme/components/user-menu/user-menu.component';
 import { BlankComponent } from './blank/blank.component';
 import { SearchComponent } from './search/search.component';
+import { ProfileComponent } from './profile/profile.component';
 
 
 @NgModule({
@@ -37,7 +38,8 @@ import { SearchComponent } from './search/search.component';
         BackTopComponent,
         UserMenuComponent,
         BlankComponent,
-        SearchComponent
+        SearchComponent,
+        ProfileComponent
     ],
     providers: [
         {
