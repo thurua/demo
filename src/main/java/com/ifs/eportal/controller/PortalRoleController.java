@@ -19,10 +19,8 @@ import com.ifs.eportal.bll.PortalRoleService;
 import com.ifs.eportal.model.PortalRole;
 import com.ifs.eportal.req.BaseReq;
 import com.ifs.eportal.req.PortalRoleReq;
-import com.ifs.eportal.rsp.MultipleRsp;
-//import com.ifs.eportal.common.Utils;
-//import com.ifs.eportal.dto.PayloadDto;
 import com.ifs.eportal.rsp.BaseRsp;
+import com.ifs.eportal.rsp.MultipleRsp;
 
 @RestController
 @RequestMapping("/portal-role")
