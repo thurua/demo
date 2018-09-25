@@ -9,6 +9,11 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { FileUploadModule } from 'ng2-file-upload';
 
+import { SignInComponent } from './views/sign-in/sign-in.component';
+import { SignUpComponent } from './views/sign-up/sign-up.component';
+import { FileComponent } from './views/file/file.component';
+import { ProfileComponent } from './views/profile/profile.component';
+
 // Import providers
 import {
     ApiProvider,
@@ -23,7 +28,11 @@ import { RsaService } from './utilities/utility';
 @NgModule({
     declarations: [
         AppComponent,
-        NotFoundComponent
+        NotFoundComponent,
+        SignInComponent,
+        SignUpComponent,
+        FileComponent,
+        ProfileComponent
     ],
     imports: [
         BrowserModule,

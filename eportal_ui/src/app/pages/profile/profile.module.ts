@@ -5,17 +5,17 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProfileComponent } from './profile.component';
 
 export const routes = [
-  { path: '', component: ProfileComponent, pathMatch: 'full' }
+    { path: '', component: ProfileComponent, pathMatch: 'full' }
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    RouterModule.forChild(routes)
-  ],
-  declarations: [ProfileComponent]
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        RouterModule.forChild(routes)
+    ],
+    declarations: [ProfileComponent]
 })
 
 export class ProfileModule { }
