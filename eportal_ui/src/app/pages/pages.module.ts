@@ -4,7 +4,7 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
-  suppressScrollX: true
+    suppressScrollX: true
 };
 import { routing } from './pages.routing';
 import { PagesComponent } from './pages.component';
@@ -21,29 +21,29 @@ import { SearchComponent } from './search/search.component';
 
 
 @NgModule({
-  imports: [
-    CommonModule,
-    PerfectScrollbarModule,
-    routing
-  ],
-  declarations: [
-    PagesComponent,
-    HeaderComponent,
-    FooterComponent,
-    SidebarComponent,
-    VerticalMenuComponent,
-    HorizontalMenuComponent,
-    BreadcrumbComponent,
-    BackTopComponent,
-    UserMenuComponent,
-    BlankComponent,
-    SearchComponent
-  ],
-  providers:[
-    {
-      provide: PERFECT_SCROLLBAR_CONFIG,
-      useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
-    }
-  ]
+    imports: [
+        CommonModule,
+        PerfectScrollbarModule,
+        routing
+    ],
+    declarations: [
+        PagesComponent,
+        HeaderComponent,
+        FooterComponent,
+        SidebarComponent,
+        VerticalMenuComponent,
+        HorizontalMenuComponent,
+        BreadcrumbComponent,
+        BackTopComponent,
+        UserMenuComponent,
+        BlankComponent,
+        SearchComponent
+    ],
+    providers: [
+        {
+            provide: PERFECT_SCROLLBAR_CONFIG,
+            useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
+        }
+    ]
 })
 export class PagesModule { }

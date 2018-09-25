@@ -4,17 +4,17 @@ import { RouterModule } from '@angular/router';
 import { DashboardComponent } from './dashboard.component';
 
 export const routes = [
-  { path: '', component: DashboardComponent, pathMatch: 'full' }
+    { path: '', component: DashboardComponent, pathMatch: 'full' }
 ];
 
 @NgModule({
-  imports: [
-    CommonModule,
-    RouterModule.forChild(routes)
-  ],
-  declarations: [
-    DashboardComponent
-  ]
+    imports: [
+        CommonModule,
+        RouterModule.forChild(routes)
+    ],
+    declarations: [
+        DashboardComponent
+    ]
 })
 
 export class DashboardModule { }
