@@ -6,3 +6,11 @@
 export const environment = {
     production: false
 };
+
+export const config = {
+    apiUrl: 'http://localhost:8080/',
+    imgUrl: 'http://localhost:8080/assets/img/',
+
+    //apiUrl: 'https://ifscapital-dev.herokuapp.com/',
+    //imgUrl: 'https://ifscapital-dev.herokuapp.com/assets/img/'
+}
