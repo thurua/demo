@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
+import { RecaptchaModule } from 'ng-recaptcha';
 
 import { AppRoutingModule } from './/app-routing.module';
 import { TopMenuComponent } from './views/shared/top-menu/top-menu.component';
@@ -42,7 +43,8 @@ import {
         FormsModule,
         ModalModule.forRoot(),
         BsDatepickerModule.forRoot(),
-        TooltipModule.forRoot()
+        TooltipModule.forRoot(),
+        RecaptchaModule.forRoot()
     ],
     providers: [
         ApiProvider,
