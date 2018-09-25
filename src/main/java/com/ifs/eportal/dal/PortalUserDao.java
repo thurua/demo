@@ -12,6 +12,9 @@ public interface PortalUserDao extends CrudRepository<PortalUser, Integer> {
 	@Query("FROM PortalUser a WHERE a.id = :id")
 	public PortalUser getBy(@Param("id") int id);
 
+	@Query("FROM PortalUser a WHERE a.email = :email")
+	public PortalUser getBy(@Param("email") String email);
+
 	@Query("FROM PortalUser")
 	public List<PortalUser> search();
 }

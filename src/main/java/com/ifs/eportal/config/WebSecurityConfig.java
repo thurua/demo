@@ -30,7 +30,7 @@ import com.ifs.eportal.common.Const;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	// region -- Fields --
 
-	@Resource(name = "userService")
+	@Resource(name = "portalUserService")
 	private UserDetailsService userDetailsService;
 
 	@Autowired

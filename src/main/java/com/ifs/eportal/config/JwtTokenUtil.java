@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.ifs.eportal.common.Const;
 import com.ifs.eportal.dto.PayloadDto;
-import com.ifs.eportal.model.Users;
+import com.ifs.eportal.model.PortalUser;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -40,8 +40,8 @@ public class JwtTokenUtil implements Serializable {
 		return claimsResolver.apply(claims);
 	}
 
-	public String doGenerateToken(Users m, List<SimpleGrantedAuthority> authorities) {
-		Claims claims = Jwts.claims().setSubject(m.getUserName());
+	public String doGenerateToken(PortalUser m, List<SimpleGrantedAuthority> authorities) {
+		Claims claims = Jwts.claims().setSubject(m.getEmail());
 		claims.put("scopes", authorities);
 		claims.put(Const.Authentication.PAYLOAD_NAME, getPayload(m));
 
@@ -64,18 +64,13 @@ public class JwtTokenUtil implements Serializable {
 		return expiration.before(new Date());
 	}
 
-	private PayloadDto getPayload(Users m) {
+	private PayloadDto getPayload(PortalUser m) {
 		PayloadDto res = new PayloadDto();
 
 		res.setId(m.getId());
-		res.setUserName(m.getUserName());
+		res.setUserName(m.getEmail());
 		res.setFirstName(m.getFirstName());
 		res.setLastName(m.getLastName());
-		res.setAccountNo(m.getAccountNo());
-		res.setEmail(m.getEmail());
-		res.setContactNo(m.getContactNo());
-		res.setRemarks(m.getRemarks());
-		res.setUuid(m.getUuid());
 
 		return res;
 	}

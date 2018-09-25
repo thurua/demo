@@ -82,6 +82,13 @@ public class PortalUser {
 	@Column(columnDefinition = "float", name = "external_id__c")
 	private float externalId;
 
+	@Column(columnDefinition = "varchar(255)", name = "password_hash__c")
+	private String passwordHash;
+
+	// end
+
+	// region -- Get set --
+
 	public Integer getId() {
 		return id;
 	}
@@ -240,6 +247,14 @@ public class PortalUser {
 
 	public void setExternalId(float externalId) {
 		this.externalId = externalId;
+	}
+
+	public String getPasswordHash() {
+		return passwordHash;
+	}
+
+	public void setPasswordHash(String passwordHash) {
+		this.passwordHash = passwordHash;
 	}
 
 	// end

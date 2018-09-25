@@ -1,26 +1,64 @@
 package com.ifs.eportal.bll;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ifs.eportal.dal.PortalRoleDao;
 import com.ifs.eportal.dal.PortalUserDao;
 import com.ifs.eportal.model.PortalUser;
 
 @Service(value = "portalUserService")
 @Transactional
-public class PortalUserService {
+public class PortalUserService implements UserDetailsService {
 	// region -- Fields --
 
 	@Autowired
 	private PortalUserDao portalUserDao;
 
+	@Autowired
+	private PortalRoleDao portalRoleDao;
+
 	// end
 
 	// region -- Methods --
+
+	@Override
+	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+		PortalUser u = portalUserDao.getBy(userName);
+
+		if (u == null) {
+			throw new UsernameNotFoundException("Invalid username or password.");
+		}
+
+		List<String> roles = new ArrayList<String>();// = portalRoleDao.getRoleByUserId(u.getId());
+		roles.add("Test");
+
+		String hash = u.getPasswordHash();
+
+		return new User(userName, hash, getAuthority(roles));
+	}
+
+	public List<SimpleGrantedAuthority> getRole(int id) {
+		List<String> roles = new ArrayList<String>();// = portalRoleDao.getRoleByUserId(u.getId());
+		roles.add("Test");
+		List<SimpleGrantedAuthority> res = getAuthority(roles);
+		return res;
+	}
+
+	private List<SimpleGrantedAuthority> getAuthority(List<String> roles) {
+		return roles.stream().map(r -> new SimpleGrantedAuthority(r)).collect(Collectors.toList());
+	}
 
 	/**
 	 * Get by
