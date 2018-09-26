@@ -14,7 +14,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ifs.eportal.dal.PortalRoleDao;
 import com.ifs.eportal.dal.PortalUserDao;
 import com.ifs.eportal.model.PortalUser;
 
@@ -25,9 +24,6 @@ public class PortalUserService implements UserDetailsService {
 
 	@Autowired
 	private PortalUserDao portalUserDao;
-
-	@Autowired
-	private PortalRoleDao portalRoleDao;
 
 	// end
 
@@ -112,7 +108,7 @@ public class PortalUserService implements UserDetailsService {
 		return res;
 	}
 
-	public String delete(PortalUser m, Integer userId) {
+	public String delete(PortalUser m) {
 		String res = "";
 
 		if (m == null) {

@@ -71,6 +71,10 @@ public class PortalUserAccess {
 	@Column(columnDefinition = "float", name = "external_id__c")
 	private float externalId;
 
+	// end
+	
+	// region -- Get set --
+	
 	public Integer getId() {
 		return id;
 	}

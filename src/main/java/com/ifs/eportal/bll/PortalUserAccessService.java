@@ -74,7 +74,7 @@ public class PortalUserAccessService {
 		return res;
 	}
 
-	public String delete(PortalUserAccess m, Integer userId) {
+	public String delete(PortalUserAccess m) {
 		String res = "";
 
 		if (m == null) {

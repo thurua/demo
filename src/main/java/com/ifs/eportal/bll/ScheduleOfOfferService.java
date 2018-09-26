@@ -73,7 +73,7 @@ public class ScheduleOfOfferService {
 		return res;
 	}
 
-	public String delete(ScheduleOfOffer m, Integer userId) {
+	public String delete(ScheduleOfOffer m) {
 		String res = "";
 
 		if (m == null) {

@@ -74,7 +74,7 @@ public class ReasonService {
 		return res;
 	}
 
-	public String delete(Reason m, Integer userId) {
+	public String delete(Reason m) {
 		String res = "";
 
 		if (m == null) {

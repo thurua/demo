@@ -1,104 +1,87 @@
-package com.ifs.eportal.model;
+package com.ifs.eportal.req;
 
-import java.util.Date;
+import java.sql.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@Entity
-@Table(name = "credit_note__c", schema = "salesforce")
-public class CreditNote {
+public class CreditNoteReq {
 	// region -- Fields --
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "credit_note__c_id_seq_generator")
-	@SequenceGenerator(name = "credit_note__c_id_seq_generator", sequenceName = "salesforce.credit_note__c_id_seq", allocationSize = 1)
-	@Column(columnDefinition = "SERIAL")
+	@JsonProperty(value = "id")
 	private Integer id;
 
-	@Column(columnDefinition = "varchar(255)", name = "customer_branch__c")
+	@JsonProperty(value = "customerBranch")
 	private String customerBranch;
-
-	@Column(columnDefinition = "varchar(255)", name = "customer_from_excel__c")
+	
+	@JsonProperty(value = "customerFromExcel")
 	private String customerFromExcel;
-
-	@Column(columnDefinition = "varchar(3)", name = "currencyisocode")
+	
+	@JsonProperty(value = "currencyIsoCode")
 	private String currencyIsoCode;
 
-	@Column(columnDefinition = "text", name = "client_remarks__c")
+	@JsonProperty(value = "clientRemarks")
 	private String clientRemarks;
-
-	@Column(columnDefinition = "float8", name = "credit_amount__c")
+	
+	@JsonProperty(value = "creditAmount")
 	private Float creditAmount;
-
-	@Column(columnDefinition = "varchar(18)", name = "customer__c")
+	
+	@JsonProperty(value = "customer")
 	private String customer;
-
-	@Column(columnDefinition = "varchar(18)", name = "schedule_of_offer__c")
+	
+	@JsonProperty(value = "scheduleOfOffer")
 	private String scheduleOfOffer;
-
-	@Column(columnDefinition = "varchar(18)", name = "client_account__c")
+	
+	@JsonProperty(value = "clientAccount")
 	private String clientAccount;
-
-	@Column(columnDefinition = "varchar(80)", name = "name")
+	
+	@JsonProperty(value = "name")
 	private String name;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "credit_note_date__c")
+	
+	@JsonProperty(value = "creditNoteDate")
 	private Date creditNoteDate;
-
-	@Column(columnDefinition = "bool", name = "isdeleted")
+	
+	@JsonProperty(value = "isDeleted")
 	private boolean isDeleted;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "systemmodstamp")
+	
+	@JsonProperty(value = "systemModStamp")
 	private Date systemModStamp;
-
-	@Column(columnDefinition = "varchar(255)", name = "status__c")
+	
+	@JsonProperty(value = "status")
 	private String status;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "cn_application_date__c")
+	
+	@JsonProperty(value = "cnApplicationDate")
 	private Date cnApplicationDate;
-
-	@Column(columnDefinition = "float8", name = "cn_applied_amount__c")
+	
+	@JsonProperty(value = "cnAppliedAmount")
 	private Float cnAppliedAmount;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "createddate")
+	
+	@JsonProperty(value = "createdDate")
 	private Date createdDate;
-
-	@Column(columnDefinition = "bool", name = "flag__c")
+	
+	@JsonProperty(value = "flag")
 	private boolean flag;
-
-	@Column(columnDefinition = "varchar(18)", name = "client__c")
+	
+	@JsonProperty(value = "client")
 	private String client;
-
-	@Column(columnDefinition = "varchar(255)", name = "applied_invoice__c")
+	
+	@JsonProperty(value = "appliedInvoice")
 	private String appliedInvoice;
-
-	@Column(columnDefinition = "bool", name = "apply_credit_note__c")
+	
+	@JsonProperty(value = "applyCreditNote")
 	private boolean applyCreditNote;
-
-	@Column(columnDefinition = "bool", name = "isselected__c")
+	
+	@JsonProperty(value = "isSelected")
 	private boolean isSelected;
-
-	@Column(columnDefinition = "varchar(18)", name = "sfid")
+	
+	@JsonProperty(value = "sfid")
 	private String sfid;
-
-	@Column(columnDefinition = "varchar(32)", name = "_hc_lastop")
+	
+	@JsonProperty(value = "hcLastop")
 	private String hcLastop;
-
-	@Column(columnDefinition = "text", name = "_hc_err")
+	
+	@JsonProperty(value = "hcErr")
 	private String hcErr;
-
+	
 	// end
 
 	// region -- Get set --
@@ -191,11 +174,11 @@ public class CreditNote {
 		this.creditNoteDate = creditNoteDate;
 	}
 
-	public boolean getIsDeleted() {
+	public boolean isDeleted() {
 		return isDeleted;
 	}
 
-	public void setIsDeleted(boolean isDeleted) {
+	public void setDeleted(boolean isDeleted) {
 		this.isDeleted = isDeleted;
 	}
 
@@ -304,12 +287,11 @@ public class CreditNote {
 	}
 
 	// end
-
+	
 	// region -- Methods --
-
-	public CreditNote() {
-
+	
+	public CreditNoteReq() {
 	}
-
+	
 	// end
 }

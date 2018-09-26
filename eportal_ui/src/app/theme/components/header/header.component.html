@@ -2,7 +2,8 @@
     <div class="d-flex flex-column w-100">
         <div class="d-flex justify-content-start align-items-center top-navbar">
             <a class="logo" routerLink="/" (click)="closeSubMenus()">
-                <span class="start">start</span><span class="ng">IFS</span>
+                <!-- <span class="start">start</span><span class="ng">IFS</span> -->
+                <img style="width: 82%;" src="../../../assets/img/app/logo.jpg" />
             </a>
             <span class="navbar-text menu-icon transition ml-3 mr-3" [ngClass]="{'open': settings.theme.showMenu}" (click)="settings.theme.showMenu = !settings.theme.showMenu">
                 <div class="line"></div>
