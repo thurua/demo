@@ -69,12 +69,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		}
 
 		http.authorizeRequests()
-				.antMatchers("/", "/user/sign-in", "/user/sign-up", "/user/refresh-token", "/user/verify-mail",
+				.antMatchers("/", "/portal-user/sign-in", "/user/sign-up", "/user/refresh-token", "/user/verify-mail",
 						"/user/forgot-password", "/user/verify-active-code", "/file/upload", "/file/read", "/file/call",
 						"/common/search-account", "/common/search-client-account", "/common/call",
-						"/portal-role/search", "/portal-role/save", "/portal-role/{id}","/portal-user-access/save",
-						"/portal-user-access/{id}", "/reason/save", "/reason/{id}", "/portal-user/save", "/portal-user/{id}",
-						"/schedule-of-offer/save","/schedule-of-offer/{id}","/credit-note/save","/credit-note/{id}")
+						"/portal-role/search", "/portal-role/save", "/portal-role/{id}", "/portal-user-access/save",
+						"/portal-user-access/{id}", "/reason/save", "/reason/{id}", "/portal-user/save",
+						"/portal-user/{id}", "/schedule-of-offer/save", "/schedule-of-offer/{id}", "/credit-note/save",
+						"/credit-note/{id}")
 				.permitAll().antMatchers("/user/reset-password").hasAuthority(Const.Authentication.ROLE_ADMIN)
 				.anyRequest().authenticated().and().exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
 				.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

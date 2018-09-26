@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ifs.eportal.bll.PortalUserAccessService;
-import com.ifs.eportal.model.PortalRole;
 import com.ifs.eportal.model.PortalUserAccess;
 import com.ifs.eportal.req.BaseReq;
 import com.ifs.eportal.req.PortalUserAccessReq;
@@ -89,7 +88,7 @@ public class PortalUserAccessController {
 
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
-	
+
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@RequestHeader HttpHeaders header, @PathVariable("id") int id) {
 		BaseRsp res = new BaseRsp();
@@ -104,6 +103,6 @@ public class PortalUserAccessController {
 
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
-	
+
 	// end
 }

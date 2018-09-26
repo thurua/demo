@@ -72,9 +72,9 @@ public class PortalUserAccess {
 	private float externalId;
 
 	// end
-	
+
 	// region -- Get set --
-	
+
 	public Integer getId() {
 		return id;
 	}

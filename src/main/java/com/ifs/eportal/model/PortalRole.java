@@ -45,13 +45,13 @@ public class PortalRole {
 
 	@Column(columnDefinition = "text", name = "_hc_err")
 	private String hcErr;
-	
+
 	@Column(columnDefinition = "varchar(4099)", name = "access_rights__c")
 	private String accessRights;
-	
+
 	@Column(columnDefinition = "bool", name = "active__c")
 	private boolean active;
-	
+
 	@Column(columnDefinition = "text", name = "role_description__c")
 	private String roleDescription;
 

@@ -12,50 +12,50 @@ public class ReasonReq {
 
 	@JsonProperty(value = "currencyIsoCode")
 	private String currencyIsoCode;
-	
+
 	@JsonProperty(value = "creditNote")
 	private String creditNote;
-	
+
 	@JsonProperty(value = "amount")
 	private float amount;
-	
+
 	@JsonProperty(value = "name")
 	private String name;
-	
+
 	@JsonProperty(value = "isDeleted")
 	private boolean isDeleted;
-	
+
 	@JsonProperty(value = "systemModStamp")
 	private Date systemModStamp;
-	
+
 	@JsonProperty(value = "remarks")
 	private String remarks;
-	
+
 	@JsonProperty(value = "date")
 	private Date date;
-	
+
 	@JsonProperty(value = "invoice")
 	private String invoice;
-	
+
 	@JsonProperty(value = "createdDate")
 	private Date createdDate;
-	
+
 	@JsonProperty(value = "reason")
 	private String reason;
-	
+
 	@JsonProperty(value = "sfid")
 	private String sfid;
-	
+
 	@JsonProperty(value = "hcLastop")
 	private String hcLastop;
-	
+
 	@JsonProperty(value = "hcErr")
 	private String hcErr;
 
-	// end 
-	
+	// end
+
 	// region -- Get set --
-	
+
 	public Integer getId() {
 		return id;
 	}
@@ -177,7 +177,5 @@ public class ReasonReq {
 	}
 
 	// end
-	
-	
-	
+
 }

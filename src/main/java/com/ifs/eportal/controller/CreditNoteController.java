@@ -54,15 +54,15 @@ public class CreditNoteController {
 		}
 
 		return new ResponseEntity<>(res, HttpStatus.OK);
-		
+
 	}
-	
+
 	@PostMapping("/save")
 	public ResponseEntity<?> save(@RequestHeader HttpHeaders header, @RequestBody CreditNote req) {
 		BaseRsp res = new BaseRsp();
-		
+
 		try {
-			
+
 			Integer id = req.getId();
 			String customerBranch = req.getCustomerBranch();
 			String customerFromExcel = req.getCustomerFromExcel();
@@ -84,9 +84,9 @@ public class CreditNoteController {
 			String sfid = req.getSfid();
 			String hcLastop = req.getHcLastop();
 			String hcErr = req.getHcErr();
-			
+
 			CreditNote m = new CreditNote();
-			
+
 			m.setId(id);
 			m.setCustomerBranch(customerBranch);
 			m.setCustomerFromExcel(customerFromExcel);
@@ -109,15 +109,15 @@ public class CreditNoteController {
 			m.setSfid(sfid);
 			m.setHcErr(hcErr);
 			m.setHcLastop(hcLastop);
-			
+
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}
-		
+
 		return new ResponseEntity<>(res, HttpStatus.OK);
-		
+
 	}
-	
+
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@RequestHeader HttpHeaders header, @PathVariable("id") int id) {
 		BaseRsp res = new BaseRsp();

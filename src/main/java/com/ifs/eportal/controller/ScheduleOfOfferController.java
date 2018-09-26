@@ -111,6 +111,6 @@ public class ScheduleOfOfferController {
 
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
-	
+
 	// end
 }

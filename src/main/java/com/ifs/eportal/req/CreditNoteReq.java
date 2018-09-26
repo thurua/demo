@@ -12,76 +12,76 @@ public class CreditNoteReq {
 
 	@JsonProperty(value = "customerBranch")
 	private String customerBranch;
-	
+
 	@JsonProperty(value = "customerFromExcel")
 	private String customerFromExcel;
-	
+
 	@JsonProperty(value = "currencyIsoCode")
 	private String currencyIsoCode;
 
 	@JsonProperty(value = "clientRemarks")
 	private String clientRemarks;
-	
+
 	@JsonProperty(value = "creditAmount")
 	private Float creditAmount;
-	
+
 	@JsonProperty(value = "customer")
 	private String customer;
-	
+
 	@JsonProperty(value = "scheduleOfOffer")
 	private String scheduleOfOffer;
-	
+
 	@JsonProperty(value = "clientAccount")
 	private String clientAccount;
-	
+
 	@JsonProperty(value = "name")
 	private String name;
-	
+
 	@JsonProperty(value = "creditNoteDate")
 	private Date creditNoteDate;
-	
+
 	@JsonProperty(value = "isDeleted")
 	private boolean isDeleted;
-	
+
 	@JsonProperty(value = "systemModStamp")
 	private Date systemModStamp;
-	
+
 	@JsonProperty(value = "status")
 	private String status;
-	
+
 	@JsonProperty(value = "cnApplicationDate")
 	private Date cnApplicationDate;
-	
+
 	@JsonProperty(value = "cnAppliedAmount")
 	private Float cnAppliedAmount;
-	
+
 	@JsonProperty(value = "createdDate")
 	private Date createdDate;
-	
+
 	@JsonProperty(value = "flag")
 	private boolean flag;
-	
+
 	@JsonProperty(value = "client")
 	private String client;
-	
+
 	@JsonProperty(value = "appliedInvoice")
 	private String appliedInvoice;
-	
+
 	@JsonProperty(value = "applyCreditNote")
 	private boolean applyCreditNote;
-	
+
 	@JsonProperty(value = "isSelected")
 	private boolean isSelected;
-	
+
 	@JsonProperty(value = "sfid")
 	private String sfid;
-	
+
 	@JsonProperty(value = "hcLastop")
 	private String hcLastop;
-	
+
 	@JsonProperty(value = "hcErr")
 	private String hcErr;
-	
+
 	// end
 
 	// region -- Get set --
@@ -287,11 +287,11 @@ public class CreditNoteReq {
 	}
 
 	// end
-	
+
 	// region -- Methods --
-	
+
 	public CreditNoteReq() {
 	}
-	
+
 	// end
 }

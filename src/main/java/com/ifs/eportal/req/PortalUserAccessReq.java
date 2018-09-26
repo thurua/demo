@@ -7,53 +7,53 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class PortalUserAccessReq {
 
 	// region -- Fields --
-	
+
 	@JsonProperty(value = "name")
 	private String name;
-	
+
 	@JsonProperty(value = "loginOn")
 	private Date loginOn;
-	
+
 	@JsonProperty(value = "logoutOn")
 	private Date logoutOn;
 
 	@JsonProperty(value = "isDeleted")
 	private boolean isDeleted;
-	
+
 	@JsonProperty(value = "systemModStamp")
 	private Date systemModStamp;
-	
+
 	@JsonProperty(value = "lastAccessOn")
 	private Date lastAccessOn;
-	
+
 	@JsonProperty(value = "createdDate")
 	private Date createdDate;
 
 	@JsonProperty(value = "user")
 	private String user;
-	
+
 	@JsonProperty(value = "otp")
 	private String otp;
-	
+
 	@JsonProperty(value = "otpExpireOn")
 	private Date otpExpireOn;
-	
+
 	@JsonProperty(value = "sfid")
 	private String sfid;
-	
+
 	@JsonProperty(value = "hcLastop")
 	private String hcLastop;
-	
+
 	@JsonProperty(value = "hcErr")
 	private String hcErr;
-	
+
 	@JsonProperty(value = "externalId")
 	private float externalId;
 
 	// end
-	
+
 	// region -- Get set --
-	
+
 	public String getName() {
 		return name;
 	}
@@ -167,11 +167,11 @@ public class PortalUserAccessReq {
 	}
 
 	// end
-	
+
 	// region -- Fields --
 	public PortalUserAccessReq() {
-		
+
 	}
 	// end
-	
+
 }

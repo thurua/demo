@@ -30,88 +30,88 @@ public class ReasonController {
 
 	// region -- Fields --
 
-		@Autowired
-		private ReasonService reasonService;
+	@Autowired
+	private ReasonService reasonService;
 
-		// end
+	// end
 
-		// region -- Methods --
+	// region -- Methods --
 
-		@PostMapping("/search")
-		public ResponseEntity<?> search(@RequestHeader HttpHeaders header, @RequestBody BaseReq req) {
-			MultipleRsp res = new MultipleRsp();
+	@PostMapping("/search")
+	public ResponseEntity<?> search(@RequestHeader HttpHeaders header, @RequestBody BaseReq req) {
+		MultipleRsp res = new MultipleRsp();
 
-			try {
-				// PayloadDto pl = Utils.getTokenInfor(header);
-				// int id = pl.getId();
+		try {
+			// PayloadDto pl = Utils.getTokenInfor(header);
+			// int id = pl.getId();
 
-				// Get data
-				// String keyword = req.getKeyword();
-				// Boolean isOptional = req.getIsOptional();
+			// Get data
+			// String keyword = req.getKeyword();
+			// Boolean isOptional = req.getIsOptional();
 
-				// Handle
-				List<Reason> tmp = reasonService.search();
+			// Handle
+			List<Reason> tmp = reasonService.search();
 
-				// Set data
-				Map<String, Object> data = new LinkedHashMap<>();
-				data.put("count", tmp.size());
-				data.put("data", tmp);
-				res.setResult(data);
-			} catch (Exception ex) {
-				res.setError(ex.getMessage());
-			}
-
-			return new ResponseEntity<>(res, HttpStatus.OK);
+			// Set data
+			Map<String, Object> data = new LinkedHashMap<>();
+			data.put("count", tmp.size());
+			data.put("data", tmp);
+			res.setResult(data);
+		} catch (Exception ex) {
+			res.setError(ex.getMessage());
 		}
 
-		@PostMapping("/save")
-		public ResponseEntity<?> save(@RequestHeader HttpHeaders header, @RequestBody ReasonReq req) {
-			BaseRsp res = new BaseRsp();
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
 
-			try {
-				// PayloadDto pl = Utils.getTokenInfor(header);
-				// int userId = pl.getId();
+	@PostMapping("/save")
+	public ResponseEntity<?> save(@RequestHeader HttpHeaders header, @RequestBody ReasonReq req) {
+		BaseRsp res = new BaseRsp();
 
-				Integer id = req.getId();
-				Date createdDate = req.getCreatedDate();
-				String name = req.getName();
-				Date systemModStamp = req.getSystemModStamp();
-				String sfid = req.getSfid();
-				String hcLastop = req.getHcLastop();
-				String hcErr = req.getHcErr();
+		try {
+			// PayloadDto pl = Utils.getTokenInfor(header);
+			// int userId = pl.getId();
 
-				Reason m = new Reason();
+			Integer id = req.getId();
+			Date createdDate = req.getCreatedDate();
+			String name = req.getName();
+			Date systemModStamp = req.getSystemModStamp();
+			String sfid = req.getSfid();
+			String hcLastop = req.getHcLastop();
+			String hcErr = req.getHcErr();
 
-				m.setId(id);
-				m.setCreatedDate(createdDate);
-				m.setName(name);
-				m.setSystemModStamp(systemModStamp);
-				m.setSfid(sfid);
-				m.setHcLastop(hcLastop);
-				m.setHcErr(hcErr);
+			Reason m = new Reason();
 
-				reasonService.save(m);
-			} catch (Exception ex) {
-				res.setError(ex.getMessage());
-			}
+			m.setId(id);
+			m.setCreatedDate(createdDate);
+			m.setName(name);
+			m.setSystemModStamp(systemModStamp);
+			m.setSfid(sfid);
+			m.setHcLastop(hcLastop);
+			m.setHcErr(hcErr);
 
-			return new ResponseEntity<>(res, HttpStatus.OK);
+			reasonService.save(m);
+		} catch (Exception ex) {
+			res.setError(ex.getMessage());
 		}
 
-		@DeleteMapping("/{id}")
-		public ResponseEntity<?> delete(@RequestHeader HttpHeaders header, @PathVariable("id") int id) {
-			BaseRsp res = new BaseRsp();
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
 
-			try {
-				Reason m = reasonService.getBy(id);
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> delete(@RequestHeader HttpHeaders header, @PathVariable("id") int id) {
+		BaseRsp res = new BaseRsp();
 
-				reasonService.delete(m);
-			} catch (Exception ex) {
-				res.setError(ex.getMessage());
-			}
+		try {
+			Reason m = reasonService.getBy(id);
 
-			return new ResponseEntity<>(res, HttpStatus.OK);
+			reasonService.delete(m);
+		} catch (Exception ex) {
+			res.setError(ex.getMessage());
 		}
-		
-		// end
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
+	// end
 }

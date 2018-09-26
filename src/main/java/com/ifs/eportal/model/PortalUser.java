@@ -80,10 +80,17 @@ public class PortalUser {
 	private String hcErr;
 
 	@Column(columnDefinition = "float", name = "external_id__c")
-	private float externalId;
+	private Float externalId;
 
 	@Column(columnDefinition = "varchar(255)", name = "password_hash__c")
 	private String passwordHash;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "pass_reminder_expire__c")
+	private Date passReminderExpire;
+
+	@Column(columnDefinition = "varchar(255)", name = "pass_reminder_token__c")
+	private String passReminderToken;
 
 	// end
 
@@ -241,11 +248,11 @@ public class PortalUser {
 		this.hcErr = hcErr;
 	}
 
-	public float getExternalId() {
+	public Float getExternalId() {
 		return externalId;
 	}
 
-	public void setExternalId(float externalId) {
+	public void setExternalId(Float externalId) {
 		this.externalId = externalId;
 	}
 
@@ -255,6 +262,22 @@ public class PortalUser {
 
 	public void setPasswordHash(String passwordHash) {
 		this.passwordHash = passwordHash;
+	}
+
+	public Date getPassReminderExpire() {
+		return passReminderExpire;
+	}
+
+	public void setPassReminderExpire(Date passReminderExpire) {
+		this.passReminderExpire = passReminderExpire;
+	}
+
+	public String getPassReminderToken() {
+		return passReminderToken;
+	}
+
+	public void setPassReminderToken(String passReminderToken) {
+		this.passReminderToken = passReminderToken;
 	}
 
 	// end
