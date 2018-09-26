@@ -17,6 +17,7 @@ import { BreadcrumbComponent } from '../theme/components/breadcrumb/breadcrumb.c
 import { BackTopComponent } from '../theme/components/back-top/back-top.component';
 import { UserMenuComponent } from '../theme/components/user-menu/user-menu.component';
 import { BlankComponent } from './blank/blank.component';
+import { FileComponent } from './file/file.component';
 import { SearchComponent } from './search/search.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ModalModule } from 'ngx-bootstrap/modal';
@@ -41,6 +42,7 @@ import { FormsModule } from '@angular/forms';
         BackTopComponent,
         UserMenuComponent,
         BlankComponent,
+        FileComponent,
         SearchComponent,
         ProfileComponent
     ],

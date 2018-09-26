@@ -22,7 +22,7 @@ import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.dto.PayloadDto;
 import com.ifs.eportal.model.Invoice;
 import com.ifs.eportal.req.BaseReq;
-import com.ifs.eportal.req.InvoiceServiceReq;
+import com.ifs.eportal.req.InvoiceReq;
 import com.ifs.eportal.rsp.BaseRsp;
 import com.ifs.eportal.rsp.MultipleRsp;
 
@@ -66,7 +66,7 @@ public class InvoiceController {
 	}
 
 	@PostMapping("/save")
-	public ResponseEntity<?> save(@RequestHeader HttpHeaders header, @RequestBody InvoiceServiceReq req) {
+	public ResponseEntity<?> save(@RequestHeader HttpHeaders header, @RequestBody InvoiceReq req) {
 		BaseRsp res = new BaseRsp();
 
 		try {
