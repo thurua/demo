@@ -17,4 +17,7 @@ public interface PortalUserDao extends CrudRepository<PortalUser, Integer> {
 
 	@Query("FROM PortalUser")
 	public List<PortalUser> search();
+
+	@Query(nativeQuery = true, value = "SELECT b.name FROM salesforce.portal_user__c a JOIN salesforce.portal_role__c b on a.role__c = b.sfid WHERE a.id = :id")
+	public List<String> getRoleBy(@Param("id") int id);
 }

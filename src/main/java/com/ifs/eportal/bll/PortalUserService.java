@@ -1,6 +1,5 @@
 package com.ifs.eportal.bll;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,24 +29,21 @@ public class PortalUserService implements UserDetailsService {
 	// region -- Methods --
 
 	@Override
-	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-		PortalUser u = portalUserDao.getBy(userName);
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+		PortalUser m = portalUserDao.getBy(email);
 
-		if (u == null) {
-			throw new UsernameNotFoundException("Invalid username or password.");
+		if (m == null) {
+			throw new UsernameNotFoundException("Invalid email or password.");
 		}
 
-		List<String> roles = new ArrayList<String>();// = portalRoleDao.getRoleByUserId(u.getId());
-		roles.add("Test");
+		String hash = m.getPasswordHash();
+		List<SimpleGrantedAuthority> auths = getRole(m.getId());
 
-		String hash = u.getPasswordHash();
-
-		return new User(userName, hash, getAuthority(roles));
+		return new User(email, hash, auths);
 	}
 
 	public List<SimpleGrantedAuthority> getRole(int id) {
-		List<String> roles = new ArrayList<String>();// = portalRoleDao.getRoleByUserId(u.getId());
-		roles.add("Test");
+		List<String> roles = portalUserDao.getRoleBy(id);
 		List<SimpleGrantedAuthority> res = getAuthority(roles);
 		return res;
 	}
@@ -68,6 +64,17 @@ public class PortalUserService implements UserDetailsService {
 	}
 
 	/**
+	 * Get by
+	 * 
+	 * @param email
+	 * @return
+	 */
+	public PortalUser getBy(String email) {
+		PortalUser res = portalUserDao.getBy(email);
+		return res;
+	}
+
+	/**
 	 * Search all
 	 * 
 	 * @return
@@ -77,7 +84,6 @@ public class PortalUserService implements UserDetailsService {
 		return res;
 	}
 
-	// end
 	public String save(PortalUser m) {
 		String res = "";
 
@@ -125,4 +131,6 @@ public class PortalUserService implements UserDetailsService {
 
 		return res;
 	}
+
+	// end
 }

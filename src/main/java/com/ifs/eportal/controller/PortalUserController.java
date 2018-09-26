@@ -9,6 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,11 +23,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ifs.eportal.bll.PortalUserService;
+import com.ifs.eportal.config.JwtTokenUtil;
 import com.ifs.eportal.model.PortalUser;
 import com.ifs.eportal.req.BaseReq;
 import com.ifs.eportal.req.PortalUserReq;
+import com.ifs.eportal.req.PortalUserSignInReq;
 import com.ifs.eportal.rsp.BaseRsp;
 import com.ifs.eportal.rsp.MultipleRsp;
+import com.ifs.eportal.rsp.SingleRsp;
+import com.ifs.eportal.security.CustomAuthenticationProvider;
 
 @RestController
 @RequestMapping("/portal-user")
@@ -31,6 +40,12 @@ public class PortalUserController {
 
 	@Autowired
 	private PortalUserService portalUserService;
+
+	@Autowired
+	private CustomAuthenticationProvider customAuthenticationProvider;
+
+	@Autowired
+	private JwtTokenUtil jwtTokenUtil;
 
 	// end
 
@@ -104,6 +119,39 @@ public class PortalUserController {
 
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
-	
+
+	@PostMapping("/sign-in")
+	public ResponseEntity<?> signIn(@RequestBody PortalUserSignInReq req) {
+		SingleRsp res = new SingleRsp();
+
+		try {
+			// Get data
+			String email = req.getEmail();
+			String password = req.getPassword();
+
+			// Handle
+			PortalUser m = portalUserService.getBy(email);
+			if (m == null) {
+				res.setError("Email doesn't exist!");
+			} else {
+				UsernamePasswordAuthenticationToken x;
+				x = new UsernamePasswordAuthenticationToken(email, password);
+				Authentication y = customAuthenticationProvider.authenticate(x);
+				SecurityContextHolder.getContext().setAuthentication(y);
+
+				List<SimpleGrantedAuthority> z = portalUserService.getRole(m.getId());
+				String t = jwtTokenUtil.doGenerateToken(m, z);
+
+				res.setResult(t);
+			}
+		} catch (AuthenticationException e) {
+			res.setError("Unauthorized/Invalid email or password!");
+		} catch (Exception ex) {
+			res.setError(ex.getMessage());
+		}
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
 	// end
 }
