@@ -89,7 +89,7 @@ export class ApiProvider {
         return this.http.patch(this.apiUrl + endpoint, body, reqOpts);
     }
 
-    public upload(endpoint: string, data: FormData): Observable<HttpEvent<{}>> {        
+    public upload(endpoint: string, data: FormData): Observable<HttpEvent<{}>> {
         let req = new HttpRequest('POST',
             this.apiUrl + endpoint,
             data,
@@ -117,16 +117,13 @@ export class ApiProvider {
     public saveToken(token: string) {
         let jwt = new JwtHelperService();
         let t = jwt.decodeToken(token);
-
+        //console.log(t);
         let user: any = {
             token: token,
             userId: t.user.id,
-            firstName: t.user.firstname,
-            lastName: t.user.lastname,
-            email: t.user.email,
-            kycStatus: t.user.kycstatus,
-            status: t.user.status,
-            accessRights: t.user.accessrights
+            firstName: t.user.firstName,
+            lastName: t.user.lastName,
+            email: t.user.userName
         };
 
         localStorage.removeItem('CURRENT_TOKEN');

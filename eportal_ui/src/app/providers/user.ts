@@ -18,7 +18,7 @@ export class UserProvider {
      */
     public signIn(info: any) {
         //info.password = this.rsa.encrypt(info.password); // encrypt password
-        return this.api.post('user/sign-in', info);
+        return this.api.post('portal-user/sign-in', info);
     }
 
     /**
@@ -117,15 +117,15 @@ export class UserProvider {
         let t = this.api.saveToken(token);
         //this.timerLogout = Observable.interval(this.api.milliseconds);
 
-        this.subscriptionLogout = this.timerLogout.subscribe(x => {
+        /*this.subscriptionLogout = this.timerLogout.subscribe(x => {
             let now = new Date();
             if (now > this.api.nextRun && this.api.allowLogout) {
                 this.signOut();
             }
-        });
+        });*/
 
         if (redirect) {
-            this.rou.navigate(['/dashboard']);
+            //this.rou.navigate(['/dashboard']);
             //this.checkRedirect(t.user.accessrights);
         }
     }
