@@ -23,7 +23,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ifs.eportal.bll.PortalUserService;
+import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.config.JwtTokenUtil;
+import com.ifs.eportal.dto.PayloadDto;
 import com.ifs.eportal.model.PortalUser;
 import com.ifs.eportal.req.BaseReq;
 import com.ifs.eportal.req.PortalUserReq;
@@ -56,6 +58,9 @@ public class PortalUserController {
 		MultipleRsp res = new MultipleRsp();
 
 		try {
+			PayloadDto pl = Utils.getTokenInfor(header);
+			int userId = pl.getId();
+
 			// Handle
 			List<PortalUser> tmp = portalUserService.search();
 

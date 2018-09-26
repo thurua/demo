@@ -68,17 +68,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			http.headers().frameOptions().sameOrigin().httpStrictTransportSecurity().disable();
 		}
 
-		http.authorizeRequests()
-				.antMatchers("/", "/portal-user/sign-in", "/user/sign-up", "/user/refresh-token", "/user/verify-mail",
-						"/user/forgot-password", "/user/verify-active-code", "/file/upload", "/file/read", "/file/call",
-						"/common/search-account", "/common/search-client-account", "/common/call",
-						"/portal-role/search", "/portal-role/save", "/portal-role/{id}", "/portal-user-access/save",
-						"/portal-user-access/{id}", "/reason/save", "/reason/{id}", "/portal-user/save",
-						"/portal-user/{id}", "/schedule-of-offer/save", "/schedule-of-offer/{id}", "/credit-note/save",
-						"/credit-note/{id}")
-				.permitAll().antMatchers("/user/reset-password").hasAuthority(Const.Authentication.ROLE_ADMIN)
-				.anyRequest().authenticated().and().exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
-				.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		http.authorizeRequests().antMatchers("/", "/portal-user/sign-in").permitAll()
+				.antMatchers("/user/reset-password").hasAuthority(Const.Authentication.ROLE_ADMIN).anyRequest()
+				.authenticated().and().exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
 		http.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
 	}
