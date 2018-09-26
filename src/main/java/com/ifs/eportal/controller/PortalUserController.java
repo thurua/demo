@@ -22,10 +22,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ifs.eportal.bll.PortalRoleService;
 import com.ifs.eportal.bll.PortalUserService;
 import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.config.JwtTokenUtil;
 import com.ifs.eportal.dto.PayloadDto;
+import com.ifs.eportal.dto.ProfileDto;
 import com.ifs.eportal.model.PortalUser;
 import com.ifs.eportal.req.BaseReq;
 import com.ifs.eportal.req.PortalUserReq;
@@ -42,6 +44,9 @@ public class PortalUserController {
 
 	@Autowired
 	private PortalUserService portalUserService;
+
+	@Autowired
+	private PortalRoleService portalRoleService;
 
 	@Autowired
 	private CustomAuthenticationProvider customAuthenticationProvider;
@@ -151,6 +156,26 @@ public class PortalUserController {
 			}
 		} catch (AuthenticationException e) {
 			res.setError("Unauthorized/Invalid email or password!");
+		} catch (Exception ex) {
+			res.setError(ex.getMessage());
+		}
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
+	@PostMapping(value = "/view")
+	public ResponseEntity<?> view(@RequestHeader HttpHeaders header) {
+		SingleRsp res = new SingleRsp();
+
+		try {
+			// Handle
+			PayloadDto pl = Utils.getTokenInfor(header);
+			int userId = pl.getId();
+
+			ProfileDto m = portalUserService.getProfile(userId);
+
+			// Set data;
+			res.setResult(m);
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}

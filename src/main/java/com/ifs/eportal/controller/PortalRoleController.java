@@ -1,6 +1,6 @@
 package com.ifs.eportal.controller;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,8 +69,11 @@ public class PortalRoleController<ExpenseReq> {
 			String name = req.getName();
 			Date systemModStamp = req.getSystemModStamp();
 			String sfid = req.getSfid();
-			String hcLastop = req.get_hc_Lastop();
-			String hcErr = req.get_hc_Err();
+			String hcLastop = req.getHcLastop();
+			String hcErr = req.getHcErr();
+			String accessRights = req.getAccessRights();
+			Boolean active = req.getActive();
+			String roleDescription = req.getRoleDescription();
 
 			PortalRole m = new PortalRole();
 
@@ -81,6 +84,9 @@ public class PortalRoleController<ExpenseReq> {
 			m.setSfid(sfid);
 			m.setHcLastop(hcLastop);
 			m.setHcErr(hcErr);
+			m.setAccessRights(accessRights);
+			m.setActive(active);
+			m.setRoleDescription(roleDescription);
 
 			portalRoleService.save(m);
 		} catch (Exception ex) {

@@ -1,4 +1,4 @@
-<form>
+<form enctype="multipart/form-data" class="form-horizontal" novalidate #frm="ngForm" (ngSubmit)="save(frm.valid)" *ngIf="vm">
     <div class="card" style="margin-top: 30px">
         <div class="card-header">
             <strong>Details</strong>
@@ -8,18 +8,26 @@
                 <div class="col-md-6">
                     <div class="form-group row">
                         <div class="col-md-4">
-                            <strong>First Name</strong>
+                            <strong>First Name </strong>
+                            <span class="text-danger">*</span>
                         </div>
                         <div class="col-md-8">
-                            <input type="text" name="firstName" class="form-control" required>
+                            <input type="text" name="firstName" #firstName="ngModel" [(ngModel)]="vm.firstName" value="{{vm.firstName}}" class="form-control" required>
+                            <span [hidden]="firstName.valid || (firstName.pristine && !frm.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error">
+                                <i class="fa fa-exclamation-triangle"></i> Required!
+                            </span>
                         </div>
                     </div>
                     <div class="form-group row">
                         <div class="col-md-4">
-                            <strong>Salutation</strong>
+                            <strong>Salutation </strong>
+                            <span class="text-danger">*</span>
                         </div>
                         <div class="col-md-8">
-                            <input type="text" name="salutation" class="form-control" required>
+                            <input type="text" name="salutation" #salutation="ngModel" [(ngModel)]="vm.salutation" value="{{vm.salutation}}" class="form-control" required>
+                            <span [hidden]="salutation.valid || (salutation.pristine && !frm.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error">
+                                <i class="fa fa-exclamation-triangle"></i> Required!
+                            </span>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -27,18 +35,21 @@
                             <strong>Role</strong>
                         </div>
                         <div class="col-md-8">
-                            <label class="col-form-label">Admin</label>
+                            <label class="col-form-label">{{vm.role}}</label>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group row">
                         <div class="col-md-4">
-                            <strong>Last Name</strong>
+                            <strong>Last Name </strong>
+                            <span class="text-danger">*</span>
                         </div>
                         <div class="col-md-8">
-                            <input type="text" name="lastName" class="form-control" required>
-                            <!-- <input type="text" name="lastName" #lastName="ngModel" [(ngModel)]="vm.lastName" value="{{vm.lastName}}" class="form-control" required> -->
+                            <input type="text" name="lastName" #lastName="ngModel" [(ngModel)]="vm.lastName" value="{{vm.lastName}}" class="form-control" required>
+                            <span [hidden]="lastName.valid || (lastName.pristine && !frm.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error">
+                                <i class="fa fa-exclamation-triangle"></i> Required!
+                            </span>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -51,7 +62,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-md-12">
-                            <a href="javascript:void(0)">Change Password</a>
+                            <a href="javascript:void(0)" (click)="changePasswordModal.show()">Change Password</a>
                         </div>
                     </div>
                 </div>
@@ -70,12 +81,12 @@
                             <strong>Mobile No.</strong>
                         </div>
                         <div class="col-md-8">
-                            <input type="text" name="mobileNo" class="form-control">
+                            <input type="text" name="mobile" #mobile="ngModel" [(ngModel)]="vm.mobile" value="{{vm.mobile}}" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row" style="text-align: center;">
                         <div class="col-md-12">
-                            <button class="btn" type="button" routerLink="/pages/dashboard">Cancel</button>
+                            <button class="btn margin-button" type="button" routerLink="/pages/dashboard">Cancel</button>
                             <button class="btn btn-primary" type="submit">Save</button>
                         </div>
                     </div>
@@ -86,7 +97,7 @@
                             <strong>Email</strong>
                         </div>
                         <div class="col-md-8">
-                            <label class="col-form-label">admin@gmail.com</label>
+                            <label class="col-form-label">{{vm.email}}</label>
                         </div>
                     </div>
                 </div>
@@ -94,3 +105,62 @@
         </div>
     </div>
 </form>
+
+<div bsModal #changePasswordModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Change Password</h4>
+                <button type="button" class="close" (click)="changePasswordModal.hide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal form-label-left input_mask" novalidate #changePasswordFrm="ngForm" *ngIf="entity">
+                    <div class="form-group row">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-4">
+                            <strong>Old Password </strong>
+                            <span class="text-danger">*</span>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="password" name="oldPassword" class="form-control">
+                        </div>
+                        <div class="col-md-1"></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-4">
+                            <strong>New Password </strong>
+                            <span class="text-danger">*</span>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="password" name="newPassword" class="form-control">
+                        </div>
+                        <div class="col-md-1"></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-4">
+                            <strong>Confirm Password </strong>
+                            <span class="text-danger">*</span>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="password" name="confirmPassword" class="form-control">
+                        </div>
+                        <div class="col-md-1"></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-5"></div>
+                        <div class="col-md-7">
+                            <button type="button" class="btn btn-primary margin-button" (click)="changePasswordModal.hide()">Cancel</button>
+                            <button type="button" class="btn btn-primary">Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>

@@ -55,6 +55,10 @@ public class PortalRole {
 	@Column(columnDefinition = "text", name = "role_description__c")
 	private String roleDescription;
 
+	// end
+
+	// region -- Get set --
+
 	public Integer getId() {
 		return id;
 	}
@@ -117,6 +121,30 @@ public class PortalRole {
 
 	public void setHcErr(String hcErr) {
 		this.hcErr = hcErr;
+	}
+
+	public String getAccessRights() {
+		return accessRights;
+	}
+
+	public void setAccessRights(String accessRights) {
+		this.accessRights = accessRights;
+	}
+
+	public boolean getActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	public String getRoleDescription() {
+		return roleDescription;
+	}
+
+	public void setRoleDescription(String roleDescription) {
+		this.roleDescription = roleDescription;
 	}
 
 	// end

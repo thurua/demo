@@ -1,4 +1,7 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
+import { ModalDirective} from 'ngx-bootstrap';
+import { UserProvider} from 'app/providers/user';
+import { HTTP } from '../../utilities/utility';
 
 @Component({
     selector: 'app-profile',
@@ -8,7 +11,31 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 })
 
 export class ProfileComponent implements OnInit {
-    constructor() { }
+    public vm: any = {};
+    public entity: any = {};
 
-    ngOnInit() { }
+    @ViewChild('addBuyTokensModal') public addBuyTokensModal: ModalDirective;
+
+    constructor(private pro: UserProvider) { }
+
+    ngOnInit() {
+        this.view();
+    }
+
+    public save(valid: boolean){
+        if (!valid) {
+            return;
+        }
+    }
+
+    private view() {
+        this.pro.view().subscribe((rsp: any) => {
+            if (rsp.status === HTTP.STATUS_SUCCESS) {
+                this.vm = rsp.result;
+                console.log(this.vm);
+            }
+        }, (err) => {
+            console.log(err);
+        });
+    }
 }

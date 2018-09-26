@@ -42,7 +42,8 @@ export class UserProvider {
      * View user
      */
     public view() {
-        return this.api.get('user/view');
+        let x = {};
+        return this.api.post('portal-user/view',x);
     }
 
     /**

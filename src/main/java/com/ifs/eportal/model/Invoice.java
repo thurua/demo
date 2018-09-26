@@ -32,7 +32,8 @@ public class Invoice {
 	@Column(columnDefinition = "varchar(3)", name = "currencyisocode")
 	private String currencyIsoCode;
 
-	@Column(columnDefinition = "date", name = "invoice_date__c")
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "invoice_date__c")
 	private Date invoiceDate;
 
 	@Column(columnDefinition = "varchar(18)", name = "client_name__c")
@@ -106,6 +107,7 @@ public class Invoice {
 	// end
 
 	// region -- Get set --
+
 	public Integer getId() {
 		return id;
 	}
@@ -130,12 +132,12 @@ public class Invoice {
 		this.customerFromExcel = customerFromExcel;
 	}
 
-	public String getCurrencyisocode() {
+	public String getCurrencyIsoCode() {
 		return currencyIsoCode;
 	}
 
-	public void setCurrencyisocode(String currencyisocode) {
-		this.currencyIsoCode = currencyisocode;
+	public void setCurrencyIsoCode(String currencyIsoCode) {
+		this.currencyIsoCode = currencyIsoCode;
 	}
 
 	public Date getInvoiceDate() {
@@ -218,11 +220,11 @@ public class Invoice {
 		this.name = name;
 	}
 
-	public boolean isDeleted() {
+	public boolean getIsDeleted() {
 		return isDeleted;
 	}
 
-	public void setDeleted(boolean isDeleted) {
+	public void setIsDeleted(boolean isDeleted) {
 		this.isDeleted = isDeleted;
 	}
 

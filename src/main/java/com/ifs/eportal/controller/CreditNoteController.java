@@ -110,6 +110,8 @@ public class CreditNoteController {
 			m.setHcErr(hcErr);
 			m.setHcLastop(hcLastop);
 
+			creditNoteService.save(m);
+
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}

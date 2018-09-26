@@ -55,6 +55,7 @@ public class PortalRoleService {
 		if (id == null || id == 0) {
 
 			// m.setActive(true);
+			m.setIsDeleted(false);
 			m.setCreatedDate(new Date());
 
 			m1 = portalRoleDao.save(m);
@@ -68,11 +69,15 @@ public class PortalRoleService {
 				// m1.setModifyBy(userId);
 				// m1.setModifyOn(new Date());
 
-				m1.setHcErr(m.getHcErr());
-				m1.setHcLastop(m.getHcLastop());
+				m1.setCreatedDate(m.getCreatedDate());
 				m1.setName(m.getName());
-				m1.setSfid(m.getSfid());
 				m1.setSystemModStamp(m.getSystemModStamp());
+				m1.setSfid(m.getSfid());
+				m1.setHcLastop(m.getHcLastop());
+				m1.setHcErr(m.getHcErr());
+				m1.setAccessRights(m.getAccessRights());
+				m1.setActive(m.getActive());
+				m1.setRoleDescription(m.getRoleDescription());
 
 				portalRoleDao.save(m1);
 			}

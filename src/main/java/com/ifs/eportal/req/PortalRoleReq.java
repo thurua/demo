@@ -7,6 +7,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class PortalRoleReq {
 	// region -- Fields --
 
+	@JsonProperty(value = "id")
+	private Integer id;
+
 	@JsonProperty(value = "createdDate")
 	private Date createdDate;
 
@@ -22,18 +25,32 @@ public class PortalRoleReq {
 	@JsonProperty(value = "sfid")
 	private String sfid;
 
-	@JsonProperty(value = "id")
-	private Integer id;
+	@JsonProperty(value = "hcLastop")
+	private String hcLastop;
 
-	@JsonProperty(value = "_hc_Lastop")
-	private String _hc_Lastop;
+	@JsonProperty(value = "hcErr")
+	private String hcErr;
 
-	@JsonProperty(value = "_hc_Err")
-	private String _hc_Err;
+	@JsonProperty(value = "accessRights")
+	private String accessRights;
+
+	@JsonProperty(value = "active")
+	private boolean active;
+
+	@JsonProperty(value = "roleDescription")
+	private String roleDescription;
 
 	// end
 
 	// region -- Get set --
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
 	public Date getCreatedDate() {
 		return createdDate;
@@ -75,28 +92,44 @@ public class PortalRoleReq {
 		this.sfid = sfid;
 	}
 
-	public String get_hc_Lastop() {
-		return _hc_Lastop;
+	public String getHcLastop() {
+		return hcLastop;
 	}
 
-	public Integer getId() {
-		return id;
+	public void setHcLastop(String hcLastop) {
+		this.hcLastop = hcLastop;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
+	public String getHcErr() {
+		return hcErr;
 	}
 
-	public void set_hc_Lastop(String _hc_Lastop) {
-		this._hc_Lastop = _hc_Lastop;
+	public void setHcErr(String hcErr) {
+		this.hcErr = hcErr;
 	}
 
-	public String get_hc_Err() {
-		return _hc_Err;
+	public String getAccessRights() {
+		return accessRights;
 	}
 
-	public void set_hc_Err(String _hc_Err) {
-		this._hc_Err = _hc_Err;
+	public void setAccessRights(String accessRights) {
+		this.accessRights = accessRights;
+	}
+
+	public boolean getActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	public String getRoleDescription() {
+		return roleDescription;
+	}
+
+	public void setRoleDescription(String roleDescription) {
+		this.roleDescription = roleDescription;
 	}
 
 	// end
@@ -104,6 +137,7 @@ public class PortalRoleReq {
 	// region -- Methods --
 
 	public PortalRoleReq() {
+
 	}
 
 	// end

@@ -19,13 +19,16 @@ import { UserMenuComponent } from '../theme/components/user-menu/user-menu.compo
 import { BlankComponent } from './blank/blank.component';
 import { SearchComponent } from './search/search.component';
 import { ProfileComponent } from './profile/profile.component';
-
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
     imports: [
         CommonModule,
         PerfectScrollbarModule,
-        routing
+        routing,
+        ModalModule.forRoot(),
+        FormsModule
     ],
     declarations: [
         PagesComponent,

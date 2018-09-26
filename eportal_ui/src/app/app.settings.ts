@@ -4,7 +4,7 @@ import { Settings } from './app.settings.model';
 @Injectable()
 export class AppSettings {
     public settings = new Settings(
-        'StartNG',
+        'IFS',
         'Angular Admin Template with Bootstrap 4',
         {
             menu: 'vertical', //horizontal , vertical

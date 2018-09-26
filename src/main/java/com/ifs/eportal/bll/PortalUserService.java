@@ -1,5 +1,6 @@
 package com.ifs.eportal.bll;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ifs.eportal.dal.PortalUserDao;
+import com.ifs.eportal.dto.ProfileDto;
 import com.ifs.eportal.model.PortalUser;
 
 @Service(value = "portalUserService")
@@ -131,6 +133,31 @@ public class PortalUserService implements UserDetailsService {
 
 		return res;
 	}
+	
+	/**
+	 * Get Profile
+	 * 
+	 * @return
+	 */
+	public ProfileDto getProfile(int id)
+	{
+		ProfileDto res = new ProfileDto();
+		
+		List<Object[]> l = portalUserDao.getProfile(id);
+		for (Object[] i : l) {
+			
+			res.setEmail((String) i[0]);
+			res.setFirstName((String) i[1]);
+			res.setLastName((String) i[2]);
+			res.setSalutation((String) i[3]);
+			res.setRoleName((String) i[4]);
+			res.setCompanyName((String) i[5]);
+			res.setMobile((String) i[6]);
+			
+		}
+		return res;
+	}
+
 
 	// end
 }
