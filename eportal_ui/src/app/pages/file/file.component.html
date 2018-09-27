@@ -25,7 +25,7 @@
     <input class="lookup" type="text" name="input" />
     <br /><br />
     <div class="">
-        <input type="file" name="photo" (change)="fileChanged($event)" />
+        <input type="file" name="photo" ng2FileSelect [uploader]="uploader" (change)="fileChanged($event)" />
         <button type="button" class="btn btn-success" (click)="uploadDocument()">Upload</button>
     </div>
 </div>

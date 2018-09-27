@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FileUploadModule } from 'ng2-file-upload';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
@@ -31,7 +32,8 @@ import { AddScheduleComponent } from './add-schedule/add-schedule.component';
         PerfectScrollbarModule,
         routing,
         ModalModule.forRoot(),
-        FormsModule
+        FormsModule,
+        FileUploadModule
     ],
     declarations: [
         PagesComponent,
