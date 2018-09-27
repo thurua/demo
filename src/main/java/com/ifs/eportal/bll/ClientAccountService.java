@@ -45,7 +45,7 @@ public class ClientAccountService {
 		for (Object[] item : t) {
 			ClientAccountDto t1 = new ClientAccountDto();
 			t1.setId(item[0].toString());
-			t1.setName(item[0].toString());
+			t1.setName(item[1].toString());
 			res.add(t1);
 		}
 		return res;

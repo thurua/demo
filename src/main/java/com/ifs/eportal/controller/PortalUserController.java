@@ -86,7 +86,7 @@ public class PortalUserController {
 		BaseRsp res = new BaseRsp();
 
 		try {
-			//PayloadDto pl = Utils.getTokenInfor(header);
+			// PayloadDto pl = Utils.getTokenInfor(header);
 			// int userId = pl.getId();
 
 			Integer id = req.getId();
@@ -108,10 +108,10 @@ public class PortalUserController {
 			String mobile = req.getMobile();
 			String password = req.getPassword();
 			String role = req.getRole();
-			String salutation = req.getSalutation();		
-			
+			String salutation = req.getSalutation();
+
 			PortalUser m = new PortalUser();
-			
+
 			m.setId(id);
 			m.setActive(active);
 			m.setClient(client);
@@ -132,7 +132,7 @@ public class PortalUserController {
 			m.setSalutation(salutation);
 			m.setSfid(sfid);
 			m.setSystemModStamp(systemModStamp);
-			
+
 			portalUserService.save(m);
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());

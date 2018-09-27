@@ -18,9 +18,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ifs.eportal.bll.ScheduleOfOfferService;
+import com.ifs.eportal.dto.SheduleOfOfferDto;
 import com.ifs.eportal.model.ScheduleOfOffer;
-import com.ifs.eportal.req.BaseReq;
 import com.ifs.eportal.req.ScheduleOfOfferReq;
+import com.ifs.eportal.req.ScheduleSearchReq;
 import com.ifs.eportal.rsp.BaseRsp;
 import com.ifs.eportal.rsp.MultipleRsp;
 
@@ -37,19 +38,21 @@ public class ScheduleOfOfferController {
 	// region -- Methods --
 
 	@PostMapping("/search")
-	public ResponseEntity<?> search(@RequestHeader HttpHeaders header, @RequestBody BaseReq req) {
+	public ResponseEntity<?> search(@RequestHeader HttpHeaders header, @RequestBody ScheduleSearchReq req) {
 		MultipleRsp res = new MultipleRsp();
 
 		try {
 			// PayloadDto pl = Utils.getTokenInfor(header);
 			// int id = pl.getId();
-
+			String client = req.getClient();
+			String clientAccount = req.getClientAccount();
+			String status = req.getStatus();
 			// Get data
 			// String keyword = req.getKeyword();
 			// Boolean isOptional = req.getIsOptional();
 
 			// Handle
-			List<ScheduleOfOffer> tmp = scheduleOfOfferService.search();
+			List<SheduleOfOfferDto> tmp = scheduleOfOfferService.search(client, clientAccount, status);
 
 			// Set data
 			Map<String, Object> data = new LinkedHashMap<>();

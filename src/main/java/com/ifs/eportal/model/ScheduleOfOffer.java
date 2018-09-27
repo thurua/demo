@@ -13,7 +13,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-@Table(name = "schedule_of_offer__c", schema = "public")
+@Table(name = "schedule_of_offer__c", schema = "salesforce")
 public class ScheduleOfOffer {
 	// region -- Fields --
 

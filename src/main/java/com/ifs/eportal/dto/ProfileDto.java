@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ProfileDto {
 	// region -- Fields --
 
+	@JsonProperty(value = "id")
+	private int id;
+
 	@JsonProperty(value = "email")
 	private String email;
 
@@ -84,6 +87,14 @@ public class ProfileDto {
 
 	public void setMobile(String mobile) {
 		this.mobile = mobile;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	// end

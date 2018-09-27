@@ -171,7 +171,7 @@ public class PortalUserService implements UserDetailsService {
 			res.setRoleName((String) i[4]);
 			res.setCompanyName((String) i[5]);
 			res.setMobile((String) i[6]);
-
+			res.setId((int) i[7]);
 		}
 		return res;
 	}

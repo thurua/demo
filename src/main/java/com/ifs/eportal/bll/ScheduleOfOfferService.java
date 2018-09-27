@@ -1,5 +1,6 @@
 package com.ifs.eportal.bll;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ifs.eportal.dal.ScheduleOfOfferDao;
+import com.ifs.eportal.dto.ClientAccountDto;
+import com.ifs.eportal.dto.SheduleOfOfferDto;
 import com.ifs.eportal.model.ScheduleOfOffer;
 
 @Service(value = "scheduleOfOfferService")
@@ -90,4 +93,25 @@ public class ScheduleOfOfferService {
 
 		return res;
 	}
+	/**
+	 * Search schedule Of Offer
+	 * 
+	 * @return
+	 */
+	public List<SheduleOfOfferDto> search(String client,String clientAccount,String status) {
+		List<SheduleOfOfferDto> res = new ArrayList<>();
+		List<Object[]> t = scheduleOfOfferDao.search(client,clientAccount,status);
+		for (Object[] item : t) {
+			SheduleOfOfferDto t1 = new SheduleOfOfferDto();
+			t1.setScheduleNo(item[0].toString());
+			t1.setClientAccount(item[1].toString());
+			t1.setScheduleDate(item[2].toString());
+			t1.setDocumentType(item[3].toString());
+			t1.setScheduleStatus(item[4].toString());
+			t1.setCreatedDate(item[5].toString());			
+			res.add(t1);
+		}
+		return res;
+	}
+
 }
