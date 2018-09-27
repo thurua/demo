@@ -81,15 +81,14 @@ export class ResSignupComponent implements OnInit, AfterContentChecked {
 
     ngOnInit() {
         var rurl = window.location.href;
-        if (rurl.indexOf("reddotpower.com.sg") != -1 || rurl.indexOf("reddotpower.herokuapp.com") != -1) {
-            this.siteKey = "6LfV_HEUAAAAAF-riAePSZAe7zc1MYGNEH_oLgs_";
-        } else if (rurl.indexOf("uat.reddotpower.com.sg") != -1 || rurl.indexOf("rdp-uat.herokuapp.com") != -1) {
+        if (rurl.indexOf("uat.reddotpower.com.sg") != -1 || rurl.indexOf("rdp-uat.herokuapp.com") != -1) {
             this.siteKey = "6LftAHIUAAAAAOGAJANTcBv7QiKTRNJG8vEnJfU1";
+        } else if (rurl.indexOf("reddotpower.com.sg") != -1 || rurl.indexOf("reddotpower.herokuapp.com") != -1) {
+            this.siteKey = "6LfV_HEUAAAAAF-riAePSZAe7zc1MYGNEH_oLgs_";
         }
         else if (rurl.indexOf("rdp-dev.herokuapp.com") != -1) {
             this.siteKey = "6LeT2nEUAAAAAL8Dzz5LdwFqUwq6W4CGo_m_VcH6";
-        }
-        else {
+        } else {
             this.siteKey = "6Lf6xnEUAAAAAD_JEOlb3zfayVHTlxAkCiVKCMNp";
         }
 

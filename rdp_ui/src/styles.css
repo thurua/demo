@@ -253,3 +253,74 @@ body {
 .cs-font-description {
     font-size: 20px;
 }
+
+.div-captcha {
+    padding: 0 15px 0 15px;
+    margin-left: 18%;
+}
+
+
+/* Galaxy S5 */
+
+@media only screen and (max-width: 640px) {
+    .div-captcha {
+        margin-left: 5% !important;
+        transform: scale(0.9);
+        transform-origin: 0 0;
+    }
+}
+
+
+/* Iphone Pixel2 / Pixel 2 XL */
+
+@media only screen and (max-width: 450px) {
+    .div-captcha {
+        margin-left: 8% !important;
+        transform: scale(1);
+        transform-origin: 0 0;
+    }
+}
+
+
+/* Iphone 5/SE */
+
+@media only screen and (max-width: 320px) {
+    .div-captcha {
+        margin-left: 4.5% !important;
+        transform: scale(0.8);
+        transform-origin: 0 0;
+    }
+}
+
+
+/* Iphone 6/7/8 */
+
+@media only screen and (max-width: 375px) {
+    .div-captcha {
+        margin-left: 8% !important;
+        transform: scale(0.9);
+        transform-origin: 0 0;
+    }
+}
+
+
+/* Iphone Ipad */
+
+@media only screen and (max-width: 768px) {
+    .div-captcha {
+        margin-left: 11% !important;
+        transform: scale(1);
+        transform-origin: 0 0;
+    }
+}
+
+
+/* Iphone Ipad Pro */
+
+@media only screen and (max-width: 1024px) {
+    .div-captcha {
+        margin-left: 18% !important;
+        transform: scale(1);
+        transform-origin: 0 0;
+    }
+}

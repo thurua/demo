@@ -98,7 +98,7 @@ public class LeadController {
 		try {
 			//-Start of Pen Test validations
 			String inerrmsg = "Failed to create Lead!";
-			boolean isNumeric = req.getEbsNumber().chars().allMatch( Character::isDigit );
+			boolean isebsNumeric = req.getEbsNumber().chars().allMatch( Character::isDigit );
 			
 			Pattern pattern = Pattern.compile("^.+@.+\\..+$");
 			Matcher emailmatcher = pattern.matcher(req.getEmail());
@@ -106,6 +106,17 @@ public class LeadController {
 			
 			pattern = Pattern.compile("^[6][0-4]\\d{4}$");
 			Matcher postalcodematcher = pattern.matcher(req.getPostalCode());
+			
+			pattern = Pattern.compile("^[89][0-9]\\d{6}$");
+			Matcher mobilematcher = pattern.matcher(req.getMobilePhone());
+			
+			pattern = Pattern.compile("^[689][0-9]\\d{6}$");
+			Matcher phonematcher = null;			
+			if(req.getPhone() != null && req.getPhone() != "")
+				phonematcher = pattern.matcher(req.getPhone());
+			
+			pattern = Pattern.compile("^[STFGstfg][0-9]{7}[a-zA-Z]$");
+			Matcher nricmatcher = pattern.matcher(req.getNricNo());
 			
 			
 			/*System.out.println("isNumeric: " + !isNumeric
@@ -118,15 +129,17 @@ public class LeadController {
 							+ ",req.getStatus(): " + !(req.getStatus().equalsIgnoreCase("New"))
 							);*/
 			
-			if(!isNumeric ||
+			if(!isebsNumeric ||
 				req.getEbsNumber().length() != 10 ||
 				!emailmatcher.matches() || !postalcodematcher.matches() ||
+				!mobilematcher.matches() || (phonematcher != null && !phonematcher.matches()) ||
+				!nricmatcher.matches() ||
 				( Math.round(req.getDuration()) != 12 && Math.round(req.getDuration()) != 24 ) ||
 				!req.getAgreedFactSheet() || !req.getAgreedTermsConditions() ||
 				!(req.getStatus().equalsIgnoreCase("New"))
 				) {
 				
-				System.out.println("Error on data validation!!!");
+				//System.out.println("Error on data validation!!!");
 				res.setCallstatus("error");
 				res.setMessage(inerrmsg);
 				return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
