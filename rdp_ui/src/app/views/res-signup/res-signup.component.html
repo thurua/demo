@@ -372,13 +372,13 @@
                                     This is mandatory field.
                                 </span>
                             </div>
-                            <div class="form-group div-captcha">
-                                <re-captcha siteKey="{{siteKey}}"></re-captcha>
-                                <div *ngIf="captchaError" class="error" style="color: red">Recaptcha not verified.</div>
-                            </div>
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="text-xs-center">
+                <re-captcha class="g-recaptcha" siteKey="{{siteKey}}"></re-captcha>
+                <div *ngIf="captchaError" class="error" style="color: red">Recaptcha not verified.</div>
             </div>
             <div class="row text-center">
                 <div class="col-md-12" style="padding:15px;">
