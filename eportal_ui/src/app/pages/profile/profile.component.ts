@@ -26,6 +26,15 @@ export class ProfileComponent implements OnInit {
         if (!valid) {
             return;
         }
+
+        this.pro.save(this.vm).subscribe((rsp: any)=>{
+            if (rsp.status === HTTP.STATUS_SUCCESS) {
+                alert('Success');
+            }
+            else{
+                alert('Fail');
+            }
+        })
     }
 
     private view() {

@@ -5,6 +5,8 @@ import { BlankComponent } from './blank/blank.component';
 import { FileComponent } from './file/file.component';
 import { SearchComponent } from './search/search.component';
 import { ProfileComponent } from './profile/profile.component';
+import { ScheduleComponent } from './schedule/schedule.component';
+import { AddScheduleComponent } from './add-schedule/add-schedule.component';
 
 export const routes: Routes = [
     {
@@ -16,7 +18,9 @@ export const routes: Routes = [
             { path: 'blank', component: BlankComponent, data: { breadcrumb: 'Blank page' } },
             { path: 'file', component: FileComponent, data: { breadcrumb: 'file page' } },
             { path: 'profile', component: ProfileComponent, data: { breadcrumb: 'User Profile' } },
-            { path: 'search', component: SearchComponent, data: { breadcrumb: 'Search' } }
+            { path: 'schedule', component: ScheduleComponent, data: { breadcrumb: 'Schedules' } },
+            { path: 'search', component: SearchComponent, data: { breadcrumb: 'Search' } },
+            { path: 'add-schedule', component: AddScheduleComponent, data: { breadcrumb: 'Schedules' } }
         ]
     }
 ];

@@ -1,6 +1,5 @@
 package com.ifs.eportal.bll;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -109,6 +108,26 @@ public class PortalUserService implements UserDetailsService {
 				// m1.setModifyBy(userId);
 				// m1.setModifyOn(new Date());
 
+				m1.setId(m.getId());
+				m1.setActive(m.isActive());
+				m1.setClient(m.getClient());
+				m1.setContact(m.getContact());
+				m1.setCurrencyIsoCode(m.getCurrencyIsoCode());
+				m1.setEmail(m.getEmail());
+				m1.setExternalId(m.getExternalId());
+				m1.setFirstName(m.getFirstName());
+				m1.setHcErr(m.getHcErr());
+				m1.setHcLastop(m.getHcLastop());
+				m1.setDeleted(m.isDeleted());
+				m1.setLastName(m.getLastName());
+				m1.setMobile(m.getMobile());
+				m1.setName(m.getMobile());
+				m1.setPassword(m.getPassword());
+				m1.setRole(m.getRole());
+				m1.setSalutation(m.getSalutation());
+				m1.setSfid(m.getSfid());
+				m1.setSystemModStamp(m.getSystemModStamp());
+
 				portalUserDao.save(m1);
 			}
 		}
@@ -133,19 +152,18 @@ public class PortalUserService implements UserDetailsService {
 
 		return res;
 	}
-	
+
 	/**
 	 * Get Profile
 	 * 
 	 * @return
 	 */
-	public ProfileDto getProfile(int id)
-	{
+	public ProfileDto getProfile(int id) {
 		ProfileDto res = new ProfileDto();
-		
+
 		List<Object[]> l = portalUserDao.getProfile(id);
 		for (Object[] i : l) {
-			
+
 			res.setEmail((String) i[0]);
 			res.setFirstName((String) i[1]);
 			res.setLastName((String) i[2]);
@@ -153,11 +171,10 @@ public class PortalUserService implements UserDetailsService {
 			res.setRoleName((String) i[4]);
 			res.setCompanyName((String) i[5]);
 			res.setMobile((String) i[6]);
-			
+
 		}
 		return res;
 	}
-
 
 	// end
 }

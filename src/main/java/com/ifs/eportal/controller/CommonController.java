@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -22,6 +23,10 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ifs.eportal.bll.AccountService;
 import com.ifs.eportal.bll.ClientAccountService;
+import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.dto.ClientAccountDto;
+import com.ifs.eportal.dto.PayloadDto;
+import com.ifs.eportal.dto.ProfileDto;
 import com.ifs.eportal.dto.TokenDto;
 import com.ifs.eportal.model.Account;
 import com.ifs.eportal.model.ClientAccount;
@@ -77,15 +82,16 @@ public class CommonController {
 		MultipleRsp res = new MultipleRsp();
 
 		try {
-			// PayloadDto pl = Utils.getTokenInfor(header);
-			// int id = pl.getId();
+			PayloadDto pl = Utils.getTokenInfor(header);
+			int id = pl.getId();
+			String clientId = "1";
 
 			// Get data
 			// String keyword = req.getKeyword();
 			// Boolean isOptional = req.getIsOptional();
 
 			// Handle
-			List<ClientAccount> tmp = clientAccountService.search();
+			List<ClientAccountDto> tmp = clientAccountService.search(clientId);
 
 			// Set data
 			Map<String, Object> data = new LinkedHashMap<>();
@@ -141,6 +147,5 @@ public class CommonController {
 
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
-
 	// end
 }

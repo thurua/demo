@@ -1,5 +1,6 @@
 package com.ifs.eportal.bll;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ifs.eportal.dal.ClientAccountDao;
+import com.ifs.eportal.dto.ClientAccountDto;
 import com.ifs.eportal.model.ClientAccount;
 
 @Service(value = "clientAccountService")
@@ -37,8 +39,15 @@ public class ClientAccountService {
 	 * 
 	 * @return
 	 */
-	public List<ClientAccount> search() {
-		List<ClientAccount> res = clientAccountDao.search();
+	public List<ClientAccountDto> search(String clientId) {
+		List<ClientAccountDto> res = new ArrayList<>();
+		List<Object[]> t = clientAccountDao.search(clientId);
+		for (Object[] item : t) {
+			ClientAccountDto t1 = new ClientAccountDto();
+			t1.setId(item[0].toString());
+			t1.setName(item[0].toString());
+			res.add(t1);
+		}
 		return res;
 	}
 

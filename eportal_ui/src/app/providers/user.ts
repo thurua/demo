@@ -35,7 +35,7 @@ export class UserProvider {
      * @param info
      */
     public save(info: any) {
-        return this.api.post('user/save', info);
+        return this.api.post('portal-user/save', info);
     }
 
     /**
@@ -43,7 +43,7 @@ export class UserProvider {
      */
     public view() {
         let x = {};
-        return this.api.post('portal-user/view',x);
+        return this.api.post('portal-user/view', x);
     }
 
     /**

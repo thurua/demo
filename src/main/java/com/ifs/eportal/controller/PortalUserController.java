@@ -86,7 +86,7 @@ public class PortalUserController {
 		BaseRsp res = new BaseRsp();
 
 		try {
-			// PayloadDto pl = Utils.getTokenInfor(header);
+			//PayloadDto pl = Utils.getTokenInfor(header);
 			// int userId = pl.getId();
 
 			Integer id = req.getId();
@@ -96,17 +96,43 @@ public class PortalUserController {
 			String sfid = req.getSfid();
 			String hcLastop = req.getHcLastop();
 			String hcErr = req.getHcErr();
-
+			String currencyIsoCode = req.getCurrencyIsoCode();
+			Boolean isDeleted = req.getIsDeleted();
+			String contact = req.getContact();
+			String email = req.getEmail();
+			Float externalId = req.getExternalId();
+			Boolean active = req.isActive();
+			String client = req.getClient();
+			String firstName = req.getFirstName();
+			String lastName = req.getLastName();
+			String mobile = req.getMobile();
+			String password = req.getPassword();
+			String role = req.getRole();
+			String salutation = req.getSalutation();		
+			
 			PortalUser m = new PortalUser();
-
+			
 			m.setId(id);
+			m.setActive(active);
+			m.setClient(client);
+			m.setContact(contact);
 			m.setCreatedDate(createdDate);
-			m.setName(name);
-			m.setSystemModStamp(systemModStamp);
-			m.setSfid(sfid);
-			m.setHcLastop(hcLastop);
+			m.setCurrencyIsoCode(currencyIsoCode);
+			m.setEmail(email);
+			m.setExternalId(externalId);
+			m.setFirstName(firstName);
 			m.setHcErr(hcErr);
-
+			m.setHcLastop(hcLastop);
+			m.setDeleted(isDeleted);
+			m.setLastName(lastName);
+			m.setMobile(mobile);
+			m.setName(name);
+			m.setPassword(password);
+			m.setRole(role);
+			m.setSalutation(salutation);
+			m.setSfid(sfid);
+			m.setSystemModStamp(systemModStamp);
+			
 			portalUserService.save(m);
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());

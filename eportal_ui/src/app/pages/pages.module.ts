@@ -22,6 +22,8 @@ import { SearchComponent } from './search/search.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { FormsModule } from '@angular/forms';
+import { ScheduleComponent } from './schedule/schedule.component';
+import { AddScheduleComponent } from './add-schedule/add-schedule.component';
 
 @NgModule({
     imports: [
@@ -44,7 +46,9 @@ import { FormsModule } from '@angular/forms';
         BlankComponent,
         FileComponent,
         SearchComponent,
-        ProfileComponent
+        ProfileComponent,
+        ScheduleComponent,
+        AddScheduleComponent
     ],
     providers: [
         {
