@@ -68,7 +68,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			http.headers().frameOptions().sameOrigin().httpStrictTransportSecurity().disable();
 		}
 
-		http.authorizeRequests().antMatchers("/", "/portal-user/sign-in").permitAll()
+		http.authorizeRequests().antMatchers("/", "/portal-user/sign-in", "/file/upload", "/file/call").permitAll()
 				.antMatchers("/user/reset-password").hasAuthority(Const.Authentication.ROLE_ADMIN).anyRequest()
 				.authenticated().and().exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -85,7 +85,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			web.ignoring().antMatchers("/*.html", "/*.css", "/*.js", "/*.png", "/*.ico", "/*.jpg", "/*.jpeg", "/*.gif",
 					"/*.bmp", "/assets/**", "/*.ttf", "/*.woff", "/*.woff2", "/*.eot", "/*.svg", "/webjars/**",
 					"/v2/api-docs", "/swagger-resources", "/swagger-resources/configuration/ui",
-					"/swagger-resources/configuration/security", "/swagger-ui.html");
+					"/swagger-resources/configuration/security", "/swagger-ui.html", "/portal-user/verify-mail");
 		} else {
 			web.ignoring().antMatchers("/*.html", "/*.css", "/*.js", "/*.png", "/*.ico", "/*.jpg", "/*.jpeg", "/*.gif",
 					"/*.bmp", "/assets/**", "/*.ttf", "/*.woff", "/*.woff2", "/*.eot", "/*.svg", "/webjars/**");

@@ -1,20 +1,16 @@
 package com.ifs.eportal.bll;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ifs.eportal.dal.ScheduleOfOfferDao;
-import com.ifs.eportal.dto.SheduleOfOfferDto;
+import com.ifs.eportal.dto.ExcelDto;
+import com.ifs.eportal.dto.ScheduleOfOfferDto;
 import com.ifs.eportal.model.ScheduleOfOffer;
-import com.ifs.eportal.req.PageableReq;
+import com.ifs.eportal.req.PagingReq;
 
 @Service(value = "scheduleOfOfferService")
 @Transactional
@@ -34,19 +30,9 @@ public class ScheduleOfOfferService {
 	 * @param id
 	 * @return
 	 */
-	public ScheduleOfOffer getBy(int id) {
-		ScheduleOfOffer res = scheduleOfOfferDao.getBy(id);
-		return res;
-	}
+	public ScheduleOfOfferDto getBy(int id) {
+		return scheduleOfOfferDao.getBy(id);
 
-	/**
-	 * Search all
-	 * 
-	 * @return
-	 */
-	public List<ScheduleOfOffer> search() {
-		List<ScheduleOfOffer> res = scheduleOfOfferDao.search();
-		return res;
 	}
 
 	/**
@@ -55,94 +41,26 @@ public class ScheduleOfOfferService {
 	 * @param req
 	 * @return
 	 */
-	public Page<ScheduleOfOffer> search(PageableReq req) {
-		// Get data
-		final int page = req.getPage();
-		final int size = req.getSize();
-		final String sort = req.getSort();
-
-		Sort sortable = null;
-		if (sort.equals("ASC")) {
-			sortable = Sort.by("id").ascending();
-		}
-		if (sort.equals("DESC")) {
-			sortable = Sort.by("id").descending();
-		}
-
-		Pageable pageable = PageRequest.of(page, size, sortable);
-		Page<ScheduleOfOffer> res = scheduleOfOfferDao.findAll(pageable);
-
-		return res;
-	}
-
-	// end
-	public String save(ScheduleOfOffer m) {
-		String res = "";
-
-		Integer id = m.getId();
-		// int userId = m.getUserId();
-
-		if (id == null || id == 0) {
-
-			// m.setActive(true);
-			m.setDeleted(false);
-			// m.setCreatedDate(new Date());
-
-			scheduleOfOfferDao.save(m);
-
-		} else {
-			ScheduleOfOffer m1 = scheduleOfOfferDao.getBy(id);
-			if (m1 == null) {
-				res = "Id does not exist";
-			} else {
-				m1 = scheduleOfOfferDao.getBy(id);
-				// m1.setModifyBy(userId);
-				// m1.setModifyOn(new Date());
-
-				scheduleOfOfferDao.save(m1);
-			}
-		}
-
-		return res;
-	}
-
-	public String delete(ScheduleOfOffer m) {
-		String res = "";
-
-		if (m == null) {
-			res = "Id does not exist";
-		} else {
-
-			// m.setModifyBy(userId);
-			// m.setModifyOn(new Date());
-
-			m.setDeleted(true);
-
-			scheduleOfOfferDao.save(m);
-		}
-
-		return res;
+	public List<ScheduleOfOfferDto> search(PagingReq req) {
+		return scheduleOfOfferDao.search(req);
 	}
 
 	/**
-	 * Search schedule Of Offer
+	 * Save
 	 * 
+	 * @param req
 	 * @return
 	 */
-	public List<SheduleOfOfferDto> search(String client, String clientAccount, String status) {
-		List<SheduleOfOfferDto> res = new ArrayList<>();
-		List<Object[]> t = scheduleOfOfferDao.search(client, clientAccount, status);
-		for (Object[] item : t) {
-			SheduleOfOfferDto t1 = new SheduleOfOfferDto();
-			t1.setScheduleNo(item[0].toString());
-			t1.setClientAccount(item[1].toString());
-			t1.setScheduleDate(item[2].toString());
-			t1.setDocumentType(item[3].toString());
-			t1.setScheduleStatus(item[4].toString());
-			t1.setCreatedDate(item[5].toString());
-			res.add(t1);
-		}
+	public String save(ExcelDto req) {
+		String res = "";
+
+		// Get data
+		String type = req.getClient();
+
+		// Handle
+
+		ScheduleOfOffer m = new ScheduleOfOffer();
+		scheduleOfOfferDao.create(m);
 		return res;
 	}
-
 }

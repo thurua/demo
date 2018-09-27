@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author ToanNguyen 2018-Sep-27
  *
  */
-public class PageableReq {
+public class PagingReq {
 	// region -- Fields --
 
 	@JsonProperty(value = "page")
@@ -19,6 +19,12 @@ public class PageableReq {
 	@JsonProperty(value = "sort")
 	private String sort;
 
+	@JsonProperty(value = "filter")
+	private Object filter;
+
+	@JsonProperty(value = "total")
+	private long total;
+
 	// end
 
 	// region -- Get set --
@@ -28,7 +34,7 @@ public class PageableReq {
 	}
 
 	public void setPage(int page) {
-		if (page < 0) {
+		if (page < 1) {
 			page = 1;
 		}
 
@@ -40,7 +46,7 @@ public class PageableReq {
 	}
 
 	public void setSize(int size) {
-		if (size < 0) {
+		if (size < 1) {
 			size = 1;
 		}
 
@@ -55,14 +61,32 @@ public class PageableReq {
 		this.sort = sort;
 	}
 
+	public Object getFilter() {
+		return filter;
+	}
+
+	public void setFilter(Object filter) {
+		this.filter = filter;
+	}
+
+	public long getTotal() {
+		return total;
+	}
+
+	public void setTotal(long total) {
+		this.total = total;
+	}
+
 	// end
 
 	// region -- Methods --
 
-	public PageableReq() {
+	public PagingReq() {
 		page = 1;
 		size = 1;
-		sort = "ASC";
+		sort = "";
+		filter = null;
+		total = 0;
 	}
 
 	// end

@@ -1,3 +1,135 @@
-<p>
-  add-schedule works!
-</p>
+<div class="card header-margin">
+    <div class="card-header">
+        <strong>Details</strong>
+    </div>
+    <div class="card-body">
+        <div class="body row">
+            <div class="col-md 6 left">
+                <div class="form-group row">
+                    <div class="col-md-4">
+                        <strong>Client Name</strong>
+                    </div>
+                    <div class="col-md-8">
+                        <form action="">
+                            <select class="form-control">
+                            <option *ngFor="let i of listClient" value="{{i.code}}">{{i.name}}</option>
+                        </select>
+                        </form>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-4">
+                        <strong>Schedule Type<span class="text-danger">*</span></strong>
+                    </div>
+                    <div class="col-md-8">
+                        <input class="schedule" list="browsers" name="browser" placeholder="Please Select">
+                        <datalist id="browsers">
+                          <option value="Invoice">
+                          <option value="Cash Disbursement">
+                          <option value="Credit note">
+                        </datalist>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-4">
+                        <strong>Amend Schedule &nbsp;<sup>&#9432;</sup></strong>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="checkbox">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md 6">
+                <div class="form-group row">
+                    <div class="col-md-4">
+                        <strong>Client Account<span class="text-danger">*</span></strong>
+                    </div>
+                    <div class="col-md-8">
+                        <form action="">
+                            <select class="form-control">
+                            <option *ngFor="let i of listClientAccount" value="{{i.code}}">{{i.name}}</option>
+                        </select>
+                        </form>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-4 sch-a-date">
+                        <strong>Schedule Acceptance Date</strong>
+                    </div>
+                    <div class="col-md-8">
+                        <input class="schedule-date" type="date" name="date">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-4">
+                        <strong>Amend Schedule No.</strong>
+                    </div>
+                    <div class="col-md-8">
+                        <input class="form-control none-border" name="client-account" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class=" footer">
+        <div class="card-header">
+            <strong>File Upload</strong>
+        </div>
+        <div class="card-body col-md-6">
+            <div class="form-group row">
+                <div class="col-md-6">
+                    <input type="file" name="ImportExcel" title="Select File" id="importData" accept=".xls,.xlsx" ng2FileSelect [uploader]="uploader" (change)="fileChanged($event)" />
+                </div>
+                <div class="col-md-4">
+                    <button class="btn btn-primary btn-block" type="button" (click)="uploadDocument()">Upload</button>
+                </div>
+                <div class="col-md-2 cancel">
+                    <button class="btn btn-primary btn-block" type="button" routerLink="../schedule">Cancel</button>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-6"></div>
+                <div class="col-md-4">
+                    <button class="btn btn-primary btn-block" type="button" data-toggle="modal" data-target="#Erors">Proceed</button>
+                </div>
+                <div class="col-md-2"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- The Modal -->
+<div class="modal" id="Erors">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Validation Erors</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                Follingwing validation errors are found in the uploaded excel. Please rectify and reupload the file.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- The Modal -->
+<div class="modal" id="Confirmation">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Confirmation</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                A schedule of offer has been created successfully, but thể are isues on Invoice/Credit Note/Cash Disbursement details.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

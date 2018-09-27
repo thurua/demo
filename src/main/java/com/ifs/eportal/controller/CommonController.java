@@ -37,9 +37,9 @@ public class CommonController {
 
 	@Autowired
 	private AccountService accountService;
-	private ClientAccountService clientAccountService;
 
-	// end
+	@Autowired
+	private ClientAccountService clientAccountService;
 
 	// region -- Methods --
 
@@ -81,7 +81,7 @@ public class CommonController {
 		try {
 			PayloadDto pl = Utils.getTokenInfor(header);
 			int id = pl.getId();
-			String clientId = "1";
+			String clientId = "0015D00000LJObGQAX";
 
 			// Get data
 			// String keyword = req.getKeyword();

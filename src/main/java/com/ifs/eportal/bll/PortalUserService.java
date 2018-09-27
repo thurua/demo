@@ -1,5 +1,6 @@
 package com.ifs.eportal.bll;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,15 +11,23 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.dal.PortalUserDao;
-import com.ifs.eportal.dto.PayloadDto;
-import com.ifs.eportal.dto.ProfileDto;
+import com.ifs.eportal.dto.PortalUserDto;
 import com.ifs.eportal.model.PortalUser;
+import com.ifs.eportal.req.ChangePasswordReq;
+import com.ifs.eportal.req.PagingReq;
 import com.ifs.eportal.req.ProfileReq;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Sep-27
+ *
+ */
 @Service(value = "portalUserService")
 @Transactional
 public class PortalUserService implements UserDetailsService {
@@ -27,46 +36,40 @@ public class PortalUserService implements UserDetailsService {
 	@Autowired
 	private PortalUserDao portalUserDao;
 
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
+
 	// end
 
 	// region -- Methods --
 
+	/**
+	 * Load user by email
+	 */
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		PayloadDto m = new PayloadDto();
-
-		List<Object[]> l = portalUserDao.getBy(email);
-		for (Object[] i : l) {
-			m.setId((Integer) i[0]);
-			m.setEmail((String) i[1]);
-			m.setPassword((String) i[2]);
-			m.setPasswordHash((String) i[3]);
-			m.setPassReminderToken((String) i[4]);
-			m.setPassReminderExpire((Date) i[5]);
-			m.setFirstName((String) i[6]);
-			m.setLastName((String) i[7]);
-			m.setClientId((String) i[8]);
-			m.setClientName((String) i[9]);
-		}
+		PortalUserDto m = portalUserDao.getBy(email);
 
 		if (m.getEmail().isEmpty()) {
 			throw new UsernameNotFoundException("Invalid email or password.");
 		}
 
 		String hash = m.getPassword();
-		List<SimpleGrantedAuthority> auths = getRole(m.getId());
+		List<SimpleGrantedAuthority> auths = getRoleBy(m.getId());
 
 		return new User(email, hash, auths);
 	}
 
-	public List<SimpleGrantedAuthority> getRole(int id) {
+	/**
+	 * Get role by
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public List<SimpleGrantedAuthority> getRoleBy(int id) {
 		List<String> roles = portalUserDao.getRoleBy(id);
 		List<SimpleGrantedAuthority> res = getAuthority(roles);
 		return res;
-	}
-
-	private List<SimpleGrantedAuthority> getAuthority(List<String> roles) {
-		return roles.stream().map(r -> new SimpleGrantedAuthority(r)).collect(Collectors.toList());
 	}
 
 	/**
@@ -75,9 +78,8 @@ public class PortalUserService implements UserDetailsService {
 	 * @param id
 	 * @return
 	 */
-	public PortalUser getBy(int id) {
-		PortalUser res = portalUserDao.getBy(id);
-		return res;
+	public PortalUserDto getBy(int id) {
+		return portalUserDao.getBy(id);
 	}
 
 	/**
@@ -86,35 +88,26 @@ public class PortalUserService implements UserDetailsService {
 	 * @param email
 	 * @return
 	 */
-	public PayloadDto getBy(String email) {
-		PayloadDto m = new PayloadDto();
-
-		List<Object[]> l = portalUserDao.getBy(email);
-		for (Object[] i : l) {
-			m.setId((Integer) i[0]);
-			m.setEmail((String) i[1]);
-			m.setPassword((String) i[2]);
-			m.setPasswordHash((String) i[3]);
-			m.setPassReminderToken((String) i[4]);
-			m.setPassReminderExpire((Date) i[5]);
-			m.setFirstName((String) i[6]);
-			m.setLastName((String) i[7]);
-			m.setClientId((String) i[8]);
-			m.setClientName((String) i[9]);
-		}
-		return m;
+	public PortalUserDto getBy(String email) {
+		return portalUserDao.getBy(email);
 	}
 
 	/**
-	 * Search all
+	 * Search by
 	 * 
+	 * @param req
 	 * @return
 	 */
-	public List<PortalUser> search() {
-		List<PortalUser> res = portalUserDao.search();
-		return res;
+	public List<PortalUserDto> search(PagingReq req) {
+		return portalUserDao.search(req);
 	}
 
+	/**
+	 * Save profile
+	 * 
+	 * @param req
+	 * @return
+	 */
 	public String save(ProfileReq req) {
 		String res = "";
 
@@ -125,115 +118,102 @@ public class PortalUserService implements UserDetailsService {
 		String salutation = req.getSalutation();
 		String mobile = req.getMobile();
 
-		if (id == 0) {
-			res = "101";
-		} else {
-			PortalUser m = portalUserDao.getBy(id);
-			if (m == null) {
-				res = "Id does not exist";
-			} else {
-
-				m.setFirstName(firstName);
-				m.setLastName(lastName);
-				m.setSalutation(salutation);
-				m.setMobile(mobile);
-
-				portalUserDao.save(m);
-			}
-		}
-
-		return res;
-	}
-
-	public String save(PortalUser m) {
-		String res = "";
-
-		Integer id = m.getId();
-		// int userId = m.getUserId();
-
-		if (id == null || id == 0) {
-
-			m.setActive(true);
-			m.setDeleted(false);
-			m.setCreatedDate(new Date());
-
-			portalUserDao.save(m);
-
-		} else {
-			PortalUser m1 = portalUserDao.getBy(id);
-			if (m1 == null) {
-				res = "Id does not exist";
-			} else {
-				m1 = portalUserDao.getBy(id);
-				// m1.setModifyBy(userId);
-				// m1.setModifyOn(new Date());
-
-				m1.setId(m.getId());
-				m1.setActive(m.isActive());
-				m1.setClient(m.getClient());
-				m1.setContact(m.getContact());
-				m1.setCurrencyIsoCode(m.getCurrencyIsoCode());
-				m1.setEmail(m.getEmail());
-				m1.setExternalId(m.getExternalId());
-				m1.setFirstName(m.getFirstName());
-				m1.setHcErr(m.getHcErr());
-				m1.setHcLastop(m.getHcLastop());
-				m1.setDeleted(m.isDeleted());
-				m1.setLastName(m.getLastName());
-				m1.setMobile(m.getMobile());
-				m1.setName(m.getMobile());
-				m1.setPassword(m.getPassword());
-				m1.setRole(m.getRole());
-				m1.setSalutation(m.getSalutation());
-				m1.setSfid(m.getSfid());
-				m1.setSystemModStamp(m.getSystemModStamp());
-
-				portalUserDao.save(m1);
-			}
-		}
-
-		return res;
-	}
-
-	public String delete(PortalUser m) {
-		String res = "";
-
+		// Handle
+		PortalUser m = portalUserDao.read(id);
 		if (m == null) {
 			res = "Id does not exist";
 		} else {
+			m.setFirstName(firstName);
+			m.setLastName(lastName);
+			m.setSalutation(salutation);
+			m.setMobile(mobile);
 
-			// m.setModifyBy(userId);
-			// m.setModifyOn(new Date());
-
-			m.setDeleted(true);
-
-			portalUserDao.save(m);
+			portalUserDao.update(m);
 		}
 
 		return res;
 	}
 
 	/**
-	 * Get Profile
+	 * Save password
 	 * 
+	 * @param req
+	 * @param id
 	 * @return
 	 */
-	public ProfileDto getProfile(int id) {
-		ProfileDto res = new ProfileDto();
+	public String save(ChangePasswordReq req) {
+		String res = "";
 
-		List<Object[]> l = portalUserDao.getProfile(id);
-		for (Object[] i : l) {
+		// Get data
+		Integer id = req.getId();
+		String oldPassword = req.getOldPassword();
+		String newPassword = req.getNewPassword();
+		newPassword = bCryptPasswordEncoder.encode(newPassword);
 
-			res.setId((Integer) i[0]);
-			res.setEmail((String) i[1]);
-			res.setFirstName((String) i[2]);
-			res.setLastName((String) i[3]);
-			res.setSalutation((String) i[4]);
-			res.setRoleName((String) i[5]);
-			res.setCompanyName((String) i[6]);
-			res.setMobile((String) i[7]);			
+		// Handle
+		PortalUser m = portalUserDao.read(id);
+		if (m == null) {
+			res = "Id does not exist";
+		} else {
+			if (oldPassword.equals(m.getPassword())) {
+				m.setPassword(newPassword);
+				m.setPasswordHash(newPassword);
+			} else {
+				res = "Password is not correct";
+			}
+
+			portalUserDao.update(m);
 		}
+
 		return res;
+	}
+
+	/**
+	 * Verify mail
+	 * 
+	 * @param email
+	 * @return
+	 */
+	public String verifyMail(String email) {
+		String res = "";
+
+		try {
+			PortalUserDto o = portalUserDao.getBy(email);
+			Integer id = o.getId();
+
+			// Generate password reminder token
+			String token = bCryptPasswordEncoder.encode(email);
+
+			// Get password reminder token expire time
+			Date expire = Utils.getTime(Calendar.MINUTE, 5);
+			if (expire == null) {
+				res = "102";
+			}
+
+			PortalUser m = portalUserDao.read(id);
+			if (m == null) {
+				res = "Id does not exist";
+			} else {
+				m.setPassReminderExpire(expire);
+				m.setPassReminderToken(token);
+
+				portalUserDao.update(m);
+			}
+		} catch (Exception e) {
+			System.out.println(e.getStackTrace());
+		}
+
+		return res;
+	}
+
+	/**
+	 * Get authority
+	 * 
+	 * @param roles
+	 * @return
+	 */
+	private List<SimpleGrantedAuthority> getAuthority(List<String> roles) {
+		return roles.stream().map(r -> new SimpleGrantedAuthority(r)).collect(Collectors.toList());
 	}
 
 	// end

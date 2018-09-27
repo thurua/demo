@@ -13,22 +13,20 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ifs.eportal.bll.PortalRoleService;
 import com.ifs.eportal.bll.PortalUserService;
 import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.config.JwtTokenUtil;
 import com.ifs.eportal.dto.PayloadDto;
-import com.ifs.eportal.dto.ProfileDto;
-import com.ifs.eportal.model.PortalUser;
+import com.ifs.eportal.dto.PortalUserDto;
 import com.ifs.eportal.req.BaseReq;
+import com.ifs.eportal.req.ChangePasswordReq;
+import com.ifs.eportal.req.PagingReq;
 import com.ifs.eportal.req.PortalUserSignInReq;
 import com.ifs.eportal.req.ProfileReq;
 import com.ifs.eportal.rsp.BaseRsp;
@@ -45,9 +43,6 @@ public class PortalUserController {
 	private PortalUserService portalUserService;
 
 	@Autowired
-	private PortalRoleService portalRoleService;
-
-	@Autowired
 	private CustomAuthenticationProvider customAuthenticationProvider;
 
 	@Autowired
@@ -57,21 +52,27 @@ public class PortalUserController {
 
 	// region -- Methods --
 
+	/**
+	 * Search by
+	 * 
+	 * @param req
+	 * @return
+	 */
 	@PostMapping("/search")
-	public ResponseEntity<?> search(@RequestHeader HttpHeaders header, @RequestBody BaseReq req) {
+	public ResponseEntity<?> search(@RequestBody PagingReq req) {
 		MultipleRsp res = new MultipleRsp();
 
 		try {
-			PayloadDto pl = Utils.getTokenInfor(header);
-			int userId = pl.getId();
-
 			// Handle
-			List<PortalUser> tmp = portalUserService.search();
+			List<PortalUserDto> tmp = portalUserService.search(req);
 
 			// Set data
 			Map<String, Object> data = new LinkedHashMap<>();
-			data.put("count", tmp.size());
+			data.put("page", req.getPage());
+			data.put("size", req.getSize());
+			data.put("total", req.getTotal());
 			data.put("data", tmp);
+
 			res.setResult(data);
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
@@ -80,11 +81,22 @@ public class PortalUserController {
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 
-	@PostMapping("/save")
+	/**
+	 * Save profile
+	 * 
+	 * @param header
+	 * @param req
+	 * @return
+	 */
+	@PostMapping("/save-profile")
 	public ResponseEntity<?> save(@RequestHeader HttpHeaders header, @RequestBody ProfileReq req) {
 		BaseRsp res = new BaseRsp();
 
 		try {
+			PayloadDto pl = Utils.getTokenInfor(header);
+			int id = pl.getId();
+			req.setId(id);
+
 			portalUserService.save(req);
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
@@ -93,14 +105,23 @@ public class PortalUserController {
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 
-	@DeleteMapping("/{id}")
-	public ResponseEntity<?> delete(@RequestHeader HttpHeaders header, @PathVariable("id") int id) {
+	/**
+	 * Save password
+	 * 
+	 * @param header
+	 * @param req
+	 * @return
+	 */
+	@PostMapping("/save-password")
+	public ResponseEntity<?> save(@RequestHeader HttpHeaders header, @RequestBody ChangePasswordReq req) {
 		BaseRsp res = new BaseRsp();
 
 		try {
-			PortalUser m = portalUserService.getBy(id);
+			PayloadDto pl = Utils.getTokenInfor(header);
+			int id = pl.getId();
+			req.setId(id);
 
-			portalUserService.delete(m);
+			portalUserService.save(req);
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}
@@ -108,6 +129,12 @@ public class PortalUserController {
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 
+	/**
+	 * Sign in
+	 * 
+	 * @param req
+	 * @return
+	 */
 	@PostMapping("/sign-in")
 	public ResponseEntity<?> signIn(@RequestBody PortalUserSignInReq req) {
 		SingleRsp res = new SingleRsp();
@@ -118,16 +145,17 @@ public class PortalUserController {
 			String password = req.getPassword();
 
 			// Handle
-			PayloadDto m = portalUserService.getBy(email);
-			if (m == null) {
+			PortalUserDto m = portalUserService.getBy(email);
+			if (m.getId() == 0) {
 				res.setError("Email doesn't exist!");
 			} else {
 				UsernamePasswordAuthenticationToken x;
 				x = new UsernamePasswordAuthenticationToken(email, password);
+
 				Authentication y = customAuthenticationProvider.authenticate(x);
 				SecurityContextHolder.getContext().setAuthentication(y);
 
-				List<SimpleGrantedAuthority> z = portalUserService.getRole(m.getId());
+				List<SimpleGrantedAuthority> z = portalUserService.getRoleBy(m.getId());
 				String t = jwtTokenUtil.doGenerateToken(m, z);
 
 				res.setResult(t);
@@ -141,19 +169,50 @@ public class PortalUserController {
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 
+	/**
+	 * View
+	 * 
+	 * @param header
+	 * @return
+	 */
 	@PostMapping(value = "/view")
 	public ResponseEntity<?> view(@RequestHeader HttpHeaders header) {
 		SingleRsp res = new SingleRsp();
 
 		try {
-			// Handle
-			PayloadDto pl = Utils.getTokenInfor(header);
-			int userId = pl.getId();
 
-			ProfileDto m = portalUserService.getProfile(userId);
+			PayloadDto pl = Utils.getTokenInfor(header);
+			Integer id = pl.getId();
+
+			// Handle
+			PortalUserDto o = portalUserService.getBy(id);
 
 			// Set data;
-			res.setResult(m);
+			res.setResult(o);
+		} catch (Exception ex) {
+			res.setError(ex.getMessage());
+		}
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
+	/**
+	 * Verify mail
+	 * 
+	 * @param req
+	 * @return
+	 */
+	@PostMapping("/verify-mail")
+	public ResponseEntity<?> verifyMail(@RequestBody BaseReq req) {
+		BaseRsp res = new BaseRsp();
+
+		try {
+			// Get data
+			String email = req.getKeyword();
+
+			// Handle
+			portalUserService.verifyMail(email);
+
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}

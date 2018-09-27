@@ -12,6 +12,6 @@ public interface ClientAccountDao extends CrudRepository<ClientAccount, Integer>
 	@Query("FROM ClientAccount a WHERE a.id = :id")
 	public ClientAccount getBy(@Param("id") int id);
 
-	@Query(nativeQuery = true, value = "SELECT a.id , a.name  FROM client_account__c a WHERE a.id = :clientId")
+	@Query(nativeQuery = true, value = "SELECT a.id , a.name  FROM salesforce.client_account__c a WHERE a.client__c = :clientId")
 	public List<Object[]> search(@Param("clientId") String clientId);
 }

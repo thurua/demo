@@ -32,7 +32,7 @@
                                 <div class="col-md-1"></div>
                                 <div class="col-md-5">
                                     <label>
-                                        <a routerLink="/sign-in">Forgot Password?</a>
+                                        <a style="cursor: pointer; color: #3E50B4" (click)="showForgotPasss()">Forgot Password?</a>
                                     </label>
                                 </div>
                                 <div class="col-md-5">
@@ -54,11 +54,105 @@
     <div class="col-md-8">
         <div class="format-footer">
             <div class="center">
-                <h4 style="color: #305496;text-align: center;">&copy; 2018 - Copyright is held by IFS Capital
-                    Limited. All right reserved.
+                <h4 style="color: #305496;text-align: center;">&copy; 2018 - Copyright is held by IFS Capital Limited. All right reserved.
                 </h4>
             </div>
         </div>
     </div>
     <div class="col-md-2"></div>
+</div>
+
+<div bsModal #forgotPassModal="bs-modal" [config]="{backdrop: 'static'}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <!-- loading spinner -->
+    <!-- <div *ngIf="model_loader" class="loading">Loading&#8230;</div> -->
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Forgot Password</h4>
+                <button type="button" class="close" (click)="forgotPassModal.hide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal form-label-left input_mask" name="forgotForm" #forgotForm="ngForm" (ngSubmit)="sendEmailVerificationLink(forgotForm.valid)">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <div class="row">
+                                <label>Please enter your email address below</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row input">
+                                <label for="femail">Email <span class="text-danger">*</span></label>
+                            </div>
+                            <div class="row">
+                                <input id="femail" name="femail" type="text" class="form-control" #femail="ngModel" [(ngModel)]="vm.email" required pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" maxlength="64" />
+                                <span [hidden]="femail.valid || (femail.pristine && !forgotForm.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error">
+                                    <span *ngIf="femail.errors?.required">
+                                        <i class="fa fa-exclamation-triangle"></i>Please enter email address.
+                                    </span>
+                                <span *ngIf="femail.errors?.pattern">
+                                        <i class="fa fa-exclamation-triangle"></i>Please enter valid email address.
+                                    </span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button type="button" class="btn btn-block" (click)="forgotPassModal.hide()">Cancel</button>
+                            </div>
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-primary btn-block">Next</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div bsModal #ForgotPassModel2="bs-modal" [config]="{backdrop: 'static'}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <!-- loading spinner -->
+    <!-- <div *ngIf="model_loader" class="loading">Loading&#8230;</div> -->
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Forgot Password</h4>
+                <button type="button" class="close" (click)="ForgotPassModel2.hide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal form-label-left input_mask" novalidate #forgotForm="ngForm">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <div class="row">
+                                <strong> A password reset email has been sent to your registered email.</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-3">
+
+                            </div>
+                            <div class="col-md-6">
+                                <button type="button" class="btn btn-primary btn-block" (click)="ForgotPassModel2.hide();">OK</button>
+                            </div>
+                            <div class="col-md-3">
+
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
 </div>

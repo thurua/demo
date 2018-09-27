@@ -61,10 +61,15 @@ public class FileController {
 			}
 
 			JSONObject o = new JSONObject(req);
-			String a = o.getString("amendScheduleNo");
+			String a = o.getString("clientName");
 			if (a != note.getClient()) {
 				res.setError("Client Name not found.");
 			}
+			a = o.getString("amendScheduleNo");
+			if (a != note.getScheduleNo()) {
+				res.setError("Duplicate Schedule Number found in Client Account.");
+			}
+
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}

@@ -1,9 +1,10 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup, FormControl, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { CustomValidators } from 'ng2-validation';
 import { UserProvider, CommonProvider } from '../../providers/provider';
 import { HTTP } from '../../utilities/utility';
+import { ModalDirective } from 'ngx-bootstrap';
 
 @Component({
     selector: 'app-login',
@@ -12,10 +13,20 @@ import { HTTP } from '../../utilities/utility';
     encapsulation: ViewEncapsulation.None
 })
 export class LoginComponent {
+    public vm: any = { email: "" }
     public router: Router;
     public form: FormGroup;
     public email: AbstractControl;
     public password: AbstractControl;
+    public txtForgotEmail = "";
+    public isExistingFEmail = false;
+    public isFEmail = false;
+    public isFormatEmail = false;
+    public messageForgot = '';
+    public msgExistingAccount = '';
+
+    @ViewChild('forgotPassModal') public forgotPassModal: ModalDirective;
+    @ViewChild('ForgotPassModel2') public ForgotPassModel2: ModalDirective;
 
     constructor(router: Router, fb: FormBuilder, private pro: UserProvider) {
         this.router = router;
@@ -26,6 +37,10 @@ export class LoginComponent {
 
         this.email = this.form.controls['email'];
         this.password = this.form.controls['password'];
+    }
+
+    public showForgotPasss() {
+        this.forgotPassModal.show();
     }
 
     public onSubmit(values: Object): void {
@@ -60,5 +75,24 @@ export class LoginComponent {
 
             //this.loader = false;
         }, err => console.log(err));
+    }
+
+    public sendEmailVerificationLink(valid: boolean) {
+        if (!valid) {
+            return;
+        }
+
+        //this.loader = true;
+        let obj = { keyword: this.vm.email };
+        this.pro.verifyMail(obj).subscribe((rsp: any) => {
+            if (rsp.status === HTTP.STATUS_SUCCESS) {
+                alert("Please check mail box to change your password!");
+            } else {
+                let msg = rsp.message;
+            }
+            //this.loader = false;
+            this.forgotPassModal.hide();
+            //this.show = false;
+        });
     }
 }

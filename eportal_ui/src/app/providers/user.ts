@@ -63,7 +63,7 @@ export class UserProvider {
     public changePassword(info: any) {
         //info.oldpassword = this.rsa.encrypt(info.oldpassword); // encrypt password
         //info.newpassword = this.rsa.encrypt(info.newpassword); // encrypt password
-        return this.api.post('user/change-password', info);
+        return this.api.post('portal-user/change-password', info);
     }
 
     /**
@@ -81,7 +81,7 @@ export class UserProvider {
      */
     public verifyMail(info: any) {
         //info.newpassword = this.rsa.encrypt(info.newpassword); // encrypt password
-        return this.api.post('user/verify-mail', info);
+        return this.api.post('portal-user/verify-mail', info);
     }
 
     /**

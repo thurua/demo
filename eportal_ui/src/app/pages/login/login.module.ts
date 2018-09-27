@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './login.component';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 export const routes = [
     { path: '', component: LoginComponent, pathMatch: 'full' }
@@ -13,7 +14,8 @@ export const routes = [
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
-        RouterModule.forChild(routes)
+        RouterModule.forChild(routes),
+        ModalModule.forRoot()
     ],
     declarations: [LoginComponent]
 })

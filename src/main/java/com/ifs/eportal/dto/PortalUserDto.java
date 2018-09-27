@@ -1,5 +1,7 @@
 package com.ifs.eportal.dto;
 
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -7,11 +9,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author ToanNguyen 2018-Sep-27
  *
  */
-public class PayloadDto {
+public class PortalUserDto extends BaseDto {
 	// region -- Fields --
-
-	@JsonProperty(value = "id")
-	private Integer id;
 
 	@JsonProperty(value = "email")
 	private String email;
@@ -28,6 +27,18 @@ public class PayloadDto {
 	@JsonProperty(value = "mobile")
 	private String mobile;
 
+	@JsonProperty(value = "password")
+	private String password;
+
+	@JsonProperty(value = "passwordHash")
+	private String passwordHash;
+
+	@JsonProperty(value = "passReminderToken")
+	private String passReminderToken;
+
+	@JsonProperty(value = "passReminderExpire")
+	private Date passReminderExpire;
+
 	@JsonProperty(value = "clientId")
 	private String clientId;
 
@@ -43,14 +54,6 @@ public class PayloadDto {
 	// end
 
 	// region -- Get set --
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
 
 	public String getEmail() {
 		return email;
@@ -92,6 +95,38 @@ public class PayloadDto {
 		this.mobile = mobile;
 	}
 
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getPasswordHash() {
+		return passwordHash;
+	}
+
+	public void setPasswordHash(String passwordHash) {
+		this.passwordHash = passwordHash;
+	}
+
+	public String getPassReminderToken() {
+		return passReminderToken;
+	}
+
+	public void setPassReminderToken(String passReminderToken) {
+		this.passReminderToken = passReminderToken;
+	}
+
+	public Date getPassReminderExpire() {
+		return passReminderExpire;
+	}
+
+	public void setPassReminderExpire(Date passReminderExpire) {
+		this.passReminderExpire = passReminderExpire;
+	}
+
 	public String getClientId() {
 		return clientId;
 	}
@@ -131,13 +166,18 @@ public class PayloadDto {
 	/**
 	 * Initialize
 	 */
-	public PayloadDto() {
-		id = 0;
+	public PortalUserDto() {
+		super();
+
 		email = "";
 		firstName = "";
 		lastName = "";
 		salutation = "";
 		mobile = "";
+		password = "";
+		passwordHash = "";
+		passReminderToken = "";
+		passReminderExpire = null;
 		clientId = "";
 		clientName = "";
 		roleName = "";
@@ -150,19 +190,23 @@ public class PayloadDto {
 	 * @param o
 	 * @return
 	 */
-	public static PayloadDto convert(PortalUserDto o) {
-		PayloadDto res = new PayloadDto();
+	public static PortalUserDto convert(Object[] o) {
+		PortalUserDto res = new PortalUserDto();
 
-		res.setId(o.getId());
-		res.setEmail(o.getEmail());
-		res.setFirstName(o.getFirstName());
-		res.setLastName(o.getLastName());
-		res.setSalutation(o.getSalutation());
-		res.setMobile(o.getMobile());
-		res.setClientId(o.getClientId());
-		res.setClientName(o.getClientName());
-		res.setRoleName(o.getRoleName());
-		res.setCompanyName(o.getCompanyName());
+		res.setId((Integer) o[0]);
+		res.setEmail((String) o[1]);
+		res.setFirstName((String) o[2]);
+		res.setLastName((String) o[3]);
+		res.setSalutation((String) o[4]);
+		res.setMobile((String) o[5]);
+		res.setPassword((String) o[6]);
+		res.setPasswordHash((String) o[7]);
+		res.setPassReminderToken((String) o[8]);
+		res.setPassReminderExpire((Date) o[9]);
+		res.setClientId((String) o[10]);
+		res.setClientName((String) o[11]);
+		res.setRoleName((String) o[12]);
+		res.setCompanyName((String) o[13]);
 
 		return res;
 	}

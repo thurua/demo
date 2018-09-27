@@ -62,15 +62,6 @@ public class ScheduleOfOfferReq {
 	@JsonProperty(value = "originalAcceptanceDate")
 	private Date originalAcceptanceDate;
 
-	@JsonProperty(value = "sfId")
-	private String sfId;
-
-	@JsonProperty(value = "hcLastop")
-	private String hcLastop;
-
-	@JsonProperty(value = "hcErr")
-	private String hcErr;
-
 	@JsonProperty(value = "sequence")
 	private Float sequence;
 
@@ -80,15 +71,18 @@ public class ScheduleOfOfferReq {
 	@JsonProperty(value = "listType")
 	private String listType;
 
-	@JsonProperty(value = "externalId")
-	private Float externalId;
-
-	@JsonProperty(value = "allowSubmit")
-	private boolean allowSubmit;
-
 	// end
 
 	// region -- Get set --
+
+	// end
+
+	// region -- Methods --
+
+	public ScheduleOfOfferReq() {
+
+	}
+
 	public Integer getId() {
 		return id;
 	}
@@ -233,30 +227,6 @@ public class ScheduleOfOfferReq {
 		this.originalAcceptanceDate = originalAcceptanceDate;
 	}
 
-	public String getSfId() {
-		return sfId;
-	}
-
-	public void setSfId(String sfId) {
-		this.sfId = sfId;
-	}
-
-	public String getHcLastop() {
-		return hcLastop;
-	}
-
-	public void setHcLastop(String hcLastop) {
-		this.hcLastop = hcLastop;
-	}
-
-	public String getHcErr() {
-		return hcErr;
-	}
-
-	public void setHcErr(String hcErr) {
-		this.hcErr = hcErr;
-	}
-
 	public Float getSequence() {
 		return sequence;
 	}
@@ -279,28 +249,6 @@ public class ScheduleOfOfferReq {
 
 	public void setListType(String listType) {
 		this.listType = listType;
-	}
-
-	public Float getExternalId() {
-		return externalId;
-	}
-
-	public void setExternalId(Float externalId) {
-		this.externalId = externalId;
-	}
-
-	public boolean isAllowSubmit() {
-		return allowSubmit;
-	}
-
-	public void setAllowSubmit(boolean allowSubmit) {
-		this.allowSubmit = allowSubmit;
-	}
-
-	// region -- Methods --
-
-	public ScheduleOfOfferReq() {
-
 	}
 
 	// end

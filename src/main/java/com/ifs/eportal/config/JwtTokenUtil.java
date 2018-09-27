@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.ifs.eportal.common.Const;
 import com.ifs.eportal.dto.PayloadDto;
+import com.ifs.eportal.dto.PortalUserDto;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -39,10 +40,10 @@ public class JwtTokenUtil implements Serializable {
 		return claimsResolver.apply(claims);
 	}
 
-	public String doGenerateToken(PayloadDto m, List<SimpleGrantedAuthority> authorities) {
+	public String doGenerateToken(PortalUserDto m, List<SimpleGrantedAuthority> authorities) {
 		Claims claims = Jwts.claims().setSubject(m.getEmail());
 		claims.put("scopes", authorities);
-		claims.put(Const.Authentication.PAYLOAD_NAME, getPayload(m));
+		claims.put(Const.Authentication.PAYLOAD_NAME, PayloadDto.convert(m));
 
 		return Jwts.builder().setClaims(claims).setIssuedAt(new Date(System.currentTimeMillis()))
 				.setExpiration(new Date(System.currentTimeMillis() + Const.Authentication.TOKEN_TIME * 1000))
@@ -61,19 +62,6 @@ public class JwtTokenUtil implements Serializable {
 	private Boolean isTokenExpired(String token) {
 		final Date expiration = getExpirationDateFromToken(token);
 		return expiration.before(new Date());
-	}
-
-	private PayloadDto getPayload(PayloadDto m) {
-		PayloadDto res = new PayloadDto();
-
-		res.setId(m.getId());
-		res.setEmail(m.getEmail());
-		res.setFirstName(m.getFirstName());
-		res.setLastName(m.getLastName());
-		res.setClientId(m.getClientId());
-		res.setClientName(m.getClientName());
-
-		return res;
 	}
 
 	// end
