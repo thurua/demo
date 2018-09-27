@@ -17,6 +17,7 @@ import com.ifs.eportal.dal.PortalUserDao;
 import com.ifs.eportal.dto.PayloadDto;
 import com.ifs.eportal.dto.ProfileDto;
 import com.ifs.eportal.model.PortalUser;
+import com.ifs.eportal.req.ProfileReq;
 
 @Service(value = "portalUserService")
 @Transactional
@@ -36,15 +37,16 @@ public class PortalUserService implements UserDetailsService {
 
 		List<Object[]> l = portalUserDao.getBy(email);
 		for (Object[] i : l) {
-			m.setEmail((String) i[0]);
-			m.setPassword((String) i[1]);
-			m.setPasswordHash((String) i[2]);
-			m.setPassReminderToken((String) i[3]);
-			m.setPassReminderExpire((Date) i[4]);
-			m.setFirstName((String) i[5]);
-			m.setLastName((String) i[6]);
-			m.setClientId((String) i[7]);
-			m.setClientName((String) i[8]);
+			m.setId((Integer) i[0]);
+			m.setEmail((String) i[1]);
+			m.setPassword((String) i[2]);
+			m.setPasswordHash((String) i[3]);
+			m.setPassReminderToken((String) i[4]);
+			m.setPassReminderExpire((Date) i[5]);
+			m.setFirstName((String) i[6]);
+			m.setLastName((String) i[7]);
+			m.setClientId((String) i[8]);
+			m.setClientName((String) i[9]);
 		}
 
 		if (m.getEmail().isEmpty()) {
@@ -89,15 +91,16 @@ public class PortalUserService implements UserDetailsService {
 
 		List<Object[]> l = portalUserDao.getBy(email);
 		for (Object[] i : l) {
-			m.setEmail((String) i[0]);
-			m.setPassword((String) i[1]);
-			m.setPasswordHash((String) i[2]);
-			m.setPassReminderToken((String) i[3]);
-			m.setPassReminderExpire((Date) i[4]);
-			m.setFirstName((String) i[5]);
-			m.setLastName((String) i[6]);
-			m.setClientId((String) i[7]);
-			m.setClientName((String) i[8]);
+			m.setId((Integer) i[0]);
+			m.setEmail((String) i[1]);
+			m.setPassword((String) i[2]);
+			m.setPasswordHash((String) i[3]);
+			m.setPassReminderToken((String) i[4]);
+			m.setPassReminderExpire((Date) i[5]);
+			m.setFirstName((String) i[6]);
+			m.setLastName((String) i[7]);
+			m.setClientId((String) i[8]);
+			m.setClientName((String) i[9]);
 		}
 		return m;
 	}
@@ -109,6 +112,36 @@ public class PortalUserService implements UserDetailsService {
 	 */
 	public List<PortalUser> search() {
 		List<PortalUser> res = portalUserDao.search();
+		return res;
+	}
+
+	public String save(ProfileReq req) {
+		String res = "";
+
+		// Get data
+		Integer id = req.getId();
+		String firstName = req.getFirstName();
+		String lastName = req.getLastName();
+		String salutation = req.getSalutation();
+		String mobile = req.getMobile();
+
+		if (id == 0) {
+			res = "101";
+		} else {
+			PortalUser m = portalUserDao.getBy(id);
+			if (m == null) {
+				res = "Id does not exist";
+			} else {
+
+				m.setFirstName(firstName);
+				m.setLastName(lastName);
+				m.setSalutation(salutation);
+				m.setMobile(mobile);
+
+				portalUserDao.save(m);
+			}
+		}
+
 		return res;
 	}
 
@@ -191,14 +224,14 @@ public class PortalUserService implements UserDetailsService {
 		List<Object[]> l = portalUserDao.getProfile(id);
 		for (Object[] i : l) {
 
-			res.setEmail((String) i[0]);
-			res.setFirstName((String) i[1]);
-			res.setLastName((String) i[2]);
-			res.setSalutation((String) i[3]);
-			res.setRoleName((String) i[4]);
-			res.setCompanyName((String) i[5]);
-			res.setMobile((String) i[6]);
-			res.setId((int) i[7]);
+			res.setId((Integer) i[0]);
+			res.setEmail((String) i[1]);
+			res.setFirstName((String) i[2]);
+			res.setLastName((String) i[3]);
+			res.setSalutation((String) i[4]);
+			res.setRoleName((String) i[5]);
+			res.setCompanyName((String) i[6]);
+			res.setMobile((String) i[7]);			
 		}
 		return res;
 	}

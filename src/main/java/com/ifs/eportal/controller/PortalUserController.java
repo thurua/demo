@@ -1,6 +1,5 @@
 package com.ifs.eportal.controller;
 
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,8 +29,8 @@ import com.ifs.eportal.dto.PayloadDto;
 import com.ifs.eportal.dto.ProfileDto;
 import com.ifs.eportal.model.PortalUser;
 import com.ifs.eportal.req.BaseReq;
-import com.ifs.eportal.req.PortalUserReq;
 import com.ifs.eportal.req.PortalUserSignInReq;
+import com.ifs.eportal.req.ProfileReq;
 import com.ifs.eportal.rsp.BaseRsp;
 import com.ifs.eportal.rsp.MultipleRsp;
 import com.ifs.eportal.rsp.SingleRsp;
@@ -82,58 +81,11 @@ public class PortalUserController {
 	}
 
 	@PostMapping("/save")
-	public ResponseEntity<?> save(@RequestHeader HttpHeaders header, @RequestBody PortalUserReq req) {
+	public ResponseEntity<?> save(@RequestHeader HttpHeaders header, @RequestBody ProfileReq req) {
 		BaseRsp res = new BaseRsp();
 
 		try {
-			// PayloadDto pl = Utils.getTokenInfor(header);
-			// int userId = pl.getId();
-
-			Integer id = req.getId();
-			Date createdDate = req.getCreatedDate();
-			String name = req.getName();
-			Date systemModStamp = req.getSystemModStamp();
-			String sfid = req.getSfid();
-			String hcLastop = req.getHcLastop();
-			String hcErr = req.getHcErr();
-			String currencyIsoCode = req.getCurrencyIsoCode();
-			Boolean isDeleted = req.getIsDeleted();
-			String contact = req.getContact();
-			String email = req.getEmail();
-			Float externalId = req.getExternalId();
-			Boolean active = req.isActive();
-			String client = req.getClient();
-			String firstName = req.getFirstName();
-			String lastName = req.getLastName();
-			String mobile = req.getMobile();
-			String password = req.getPassword();
-			String role = req.getRole();
-			String salutation = req.getSalutation();
-
-			PortalUser m = new PortalUser();
-
-			m.setId(id);
-			m.setActive(active);
-			m.setClient(client);
-			m.setContact(contact);
-			m.setCreatedDate(createdDate);
-			m.setCurrencyIsoCode(currencyIsoCode);
-			m.setEmail(email);
-			m.setExternalId(externalId);
-			m.setFirstName(firstName);
-			m.setHcErr(hcErr);
-			m.setHcLastop(hcLastop);
-			m.setDeleted(isDeleted);
-			m.setLastName(lastName);
-			m.setMobile(mobile);
-			m.setName(name);
-			m.setPassword(password);
-			m.setRole(role);
-			m.setSalutation(salutation);
-			m.setSfid(sfid);
-			m.setSystemModStamp(systemModStamp);
-
-			portalUserService.save(m);
+			portalUserService.save(req);
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}
