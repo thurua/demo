@@ -4,13 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ifs.eportal.dal.ScheduleOfOfferDao;
-import com.ifs.eportal.dto.ClientAccountDto;
 import com.ifs.eportal.dto.SheduleOfOfferDto;
 import com.ifs.eportal.model.ScheduleOfOffer;
+import com.ifs.eportal.req.PageableReq;
 
 @Service(value = "scheduleOfOfferService")
 @Transactional
@@ -42,6 +46,32 @@ public class ScheduleOfOfferService {
 	 */
 	public List<ScheduleOfOffer> search() {
 		List<ScheduleOfOffer> res = scheduleOfOfferDao.search();
+		return res;
+	}
+
+	/**
+	 * Search by
+	 * 
+	 * @param req
+	 * @return
+	 */
+	public Page<ScheduleOfOffer> search(PageableReq req) {
+		// Get data
+		final int page = req.getPage();
+		final int size = req.getSize();
+		final String sort = req.getSort();
+
+		Sort sortable = null;
+		if (sort.equals("ASC")) {
+			sortable = Sort.by("id").ascending();
+		}
+		if (sort.equals("DESC")) {
+			sortable = Sort.by("id").descending();
+		}
+
+		Pageable pageable = PageRequest.of(page, size, sortable);
+		Page<ScheduleOfOffer> res = scheduleOfOfferDao.findAll(pageable);
+
 		return res;
 	}
 
@@ -93,14 +123,15 @@ public class ScheduleOfOfferService {
 
 		return res;
 	}
+
 	/**
 	 * Search schedule Of Offer
 	 * 
 	 * @return
 	 */
-	public List<SheduleOfOfferDto> search(String client,String clientAccount,String status) {
+	public List<SheduleOfOfferDto> search(String client, String clientAccount, String status) {
 		List<SheduleOfOfferDto> res = new ArrayList<>();
-		List<Object[]> t = scheduleOfOfferDao.search(client,clientAccount,status);
+		List<Object[]> t = scheduleOfOfferDao.search(client, clientAccount, status);
 		for (Object[] item : t) {
 			SheduleOfOfferDto t1 = new SheduleOfOfferDto();
 			t1.setScheduleNo(item[0].toString());
@@ -108,7 +139,7 @@ public class ScheduleOfOfferService {
 			t1.setScheduleDate(item[2].toString());
 			t1.setDocumentType(item[3].toString());
 			t1.setScheduleStatus(item[4].toString());
-			t1.setCreatedDate(item[5].toString());			
+			t1.setCreatedDate(item[5].toString());
 			res.add(t1);
 		}
 		return res;

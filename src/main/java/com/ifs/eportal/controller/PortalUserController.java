@@ -166,7 +166,7 @@ public class PortalUserController {
 			String password = req.getPassword();
 
 			// Handle
-			PortalUser m = portalUserService.getBy(email);
+			PayloadDto m = portalUserService.getBy(email);
 			if (m == null) {
 				res.setError("Email doesn't exist!");
 			} else {

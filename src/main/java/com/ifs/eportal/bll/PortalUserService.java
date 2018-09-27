@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ifs.eportal.dal.PortalUserDao;
+import com.ifs.eportal.dto.PayloadDto;
 import com.ifs.eportal.dto.ProfileDto;
 import com.ifs.eportal.model.PortalUser;
 
@@ -31,13 +32,26 @@ public class PortalUserService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		PortalUser m = portalUserDao.getBy(email);
+		PayloadDto m = new PayloadDto();
 
-		if (m == null) {
+		List<Object[]> l = portalUserDao.getBy(email);
+		for (Object[] i : l) {
+			m.setEmail((String) i[0]);
+			m.setPassword((String) i[1]);
+			m.setPasswordHash((String) i[2]);
+			m.setPassReminderToken((String) i[3]);
+			m.setPassReminderExpire((Date) i[4]);
+			m.setFirstName((String) i[5]);
+			m.setLastName((String) i[6]);
+			m.setClientId((String) i[7]);
+			m.setClientName((String) i[8]);
+		}
+
+		if (m.getEmail().isEmpty()) {
 			throw new UsernameNotFoundException("Invalid email or password.");
 		}
 
-		String hash = m.getPasswordHash();
+		String hash = m.getPassword();
 		List<SimpleGrantedAuthority> auths = getRole(m.getId());
 
 		return new User(email, hash, auths);
@@ -70,9 +84,22 @@ public class PortalUserService implements UserDetailsService {
 	 * @param email
 	 * @return
 	 */
-	public PortalUser getBy(String email) {
-		PortalUser res = portalUserDao.getBy(email);
-		return res;
+	public PayloadDto getBy(String email) {
+		PayloadDto m = new PayloadDto();
+
+		List<Object[]> l = portalUserDao.getBy(email);
+		for (Object[] i : l) {
+			m.setEmail((String) i[0]);
+			m.setPassword((String) i[1]);
+			m.setPasswordHash((String) i[2]);
+			m.setPassReminderToken((String) i[3]);
+			m.setPassReminderExpire((Date) i[4]);
+			m.setFirstName((String) i[5]);
+			m.setLastName((String) i[6]);
+			m.setClientId((String) i[7]);
+			m.setClientName((String) i[8]);
+		}
+		return m;
 	}
 
 	/**

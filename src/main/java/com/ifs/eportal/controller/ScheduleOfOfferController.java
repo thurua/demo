@@ -1,11 +1,9 @@
 package com.ifs.eportal.controller;
 
 import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ifs.eportal.bll.ScheduleOfOfferService;
-import com.ifs.eportal.dto.SheduleOfOfferDto;
+import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.dto.PayloadDto;
 import com.ifs.eportal.model.ScheduleOfOffer;
+import com.ifs.eportal.req.PageableReq;
 import com.ifs.eportal.req.ScheduleOfOfferReq;
-import com.ifs.eportal.req.ScheduleSearchReq;
 import com.ifs.eportal.rsp.BaseRsp;
-import com.ifs.eportal.rsp.MultipleRsp;
+import com.ifs.eportal.rsp.SingleRsp;
 
 @RestController
 @RequestMapping("/schedule-of-offer")
@@ -38,27 +37,17 @@ public class ScheduleOfOfferController {
 	// region -- Methods --
 
 	@PostMapping("/search")
-	public ResponseEntity<?> search(@RequestHeader HttpHeaders header, @RequestBody ScheduleSearchReq req) {
-		MultipleRsp res = new MultipleRsp();
+	public ResponseEntity<?> search(@RequestHeader HttpHeaders header, @RequestBody PageableReq req) {
+		SingleRsp res = new SingleRsp();
 
 		try {
-			// PayloadDto pl = Utils.getTokenInfor(header);
-			// int id = pl.getId();
-			String client = req.getClient();
-			String clientAccount = req.getClientAccount();
-			String status = req.getStatus();
-			// Get data
-			// String keyword = req.getKeyword();
-			// Boolean isOptional = req.getIsOptional();
+			PayloadDto pl = Utils.getTokenInfor(header);
+			int id = pl.getId();
 
 			// Handle
-			List<SheduleOfOfferDto> tmp = scheduleOfOfferService.search(client, clientAccount, status);
+			Page<ScheduleOfOffer> t = scheduleOfOfferService.search(req);
 
-			// Set data
-			Map<String, Object> data = new LinkedHashMap<>();
-			data.put("count", tmp.size());
-			data.put("data", tmp);
-			res.setResult(data);
+			res.setResult(t);
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}
