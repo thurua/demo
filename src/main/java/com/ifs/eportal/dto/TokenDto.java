@@ -2,6 +2,11 @@ package com.ifs.eportal.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Sep-28
+ *
+ */
 public class TokenDto {
 	// region -- Fields --
 
@@ -79,8 +84,16 @@ public class TokenDto {
 
 	// region -- Methods --
 
+	/**
+	 * Initialize
+	 */
 	public TokenDto() {
-
+		accessToken = "";
+		instanceUrl = "";
+		id = "";
+		tokenType = "";
+		issuedAt = "";
+		signature = "";
 	}
 
 	// end

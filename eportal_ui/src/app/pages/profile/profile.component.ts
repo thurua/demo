@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
-import { ModalDirective} from 'ngx-bootstrap';
-import { UserProvider} from 'app/providers/user';
+import { ModalDirective } from 'ngx-bootstrap';
+import { UserProvider } from 'app/providers/user';
 import { HTTP } from '../../utilities/utility';
 
 @Component({
@@ -27,17 +27,17 @@ export class ProfileComponent implements OnInit {
         this.entity.confirmPassword = "";
     }
 
-    public save(valid: boolean){
+    public save(valid: boolean) {
         if (!valid) {
             return;
         }
 
-        this.pro.save(this.vm).subscribe((rsp: any)=>{
+        this.pro.updateProfile(this.vm).subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 this.msgInfo = "Profile updated successful!";
                 this.infoModal.show();
             }
-            else{
+            else {
                 this.msgInfo = "Profile updated fail!";
                 this.infoModal.show();
             }
@@ -47,7 +47,7 @@ export class ProfileComponent implements OnInit {
     }
 
     private view() {
-        this.pro.view().subscribe((rsp: any) => {
+        this.pro.read().subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 this.vm = rsp.result;
             }
@@ -56,12 +56,12 @@ export class ProfileComponent implements OnInit {
         });
     }
 
-    public changPassword(valid: boolean){
+    public changPassword(valid: boolean) {
         if (!valid) {
             return;
         }
 
-        if(this.entity.newPassword != this.entity.confirmPassword){
+        if (this.entity.newPassword != this.entity.confirmPassword) {
             this.msgInfo = "New Password and Confirm Password are not same.";
         }
 
@@ -70,11 +70,11 @@ export class ProfileComponent implements OnInit {
             oldPassword: this.entity.oldPassword
         };
 
-        this.pro.changePassword(x).subscribe((rsp: any)=>{
+        this.pro.updatePassword(x).subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 this.msgInfo = "Change password successfully!";
             }
-            else{
+            else {
                 this.msgInfo = "Change password fail!";
             }
         }, (err) => {

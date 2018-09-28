@@ -13,6 +13,48 @@ export class UserProvider {
         private rsa: RsaService) { }
 
     /**
+     * Read
+     */
+    public read() {
+        let x = {};
+        return this.api.post('portal-user/read', x);
+    }
+
+    /**
+     * Update profile
+     * @param info
+     */
+    public updateProfile(info: any) {
+        return this.api.post('portal-user/update-profile', info);
+    }
+
+    /**
+     * Update password
+     * @param info
+     */
+    public updatePassword(info: any) {
+        //info.oldpassword = this.rsa.encrypt(info.oldpassword); // encrypt password
+        //info.newpassword = this.rsa.encrypt(info.newpassword); // encrypt password
+        return this.api.post('portal-user/update-password', info);
+    }
+
+    /**
+     * Update token
+     * @param info
+     */
+    public updateToken(info: any) {
+        return this.api.post('portal-user/update-token', info);
+    }
+
+    /**
+     * Search by
+     * @param info
+     */
+    public search(info: any) {
+        return this.api.post('portal-user/search', info);
+    }
+
+    /**
      * Sign in
      * @param info
      */
@@ -22,91 +64,14 @@ export class UserProvider {
     }
 
     /**
-     * Sign up
-     * @param info
-     */
-    public signUp(info: any) {
-        //info.password = this.rsa.encrypt(info.password); // encrypt password
-        return this.api.post('user/sign-up', info);
-    }
-
-    /**
-     * Save user
-     * @param info
-     */
-    public save(info: any) {
-        return this.api.post('portal-user/save', info);
-    }
-
-    /**
-     * View user
-     */
-    public view() {
-        let x = {};
-        return this.api.post('portal-user/view', x);
-    }
-
-    /**
      * Sign out
      */
     public signOut() {
-        this.api.get('user/sign-out').subscribe((rsp: any) => {
+        this.api.get('portal-user/sign-out').subscribe((rsp: any) => {
         }, err => console.log(err));
+
         localStorage.removeItem('CURRENT_TOKEN');
         this.rou.navigate(['/']);
-    }
-
-    /**
-     * Change password
-     * @param info
-     */
-    public changePassword(info: any) {
-        //info.oldpassword = this.rsa.encrypt(info.oldpassword); // encrypt password
-        //info.newpassword = this.rsa.encrypt(info.newpassword); // encrypt password
-        return this.api.post('portal-user/change-password', info);
-    }
-
-    /**
-     * Reset password
-     * @param info
-     */
-    public resetPassword(info: any) {
-        //info.newpassword = this.rsa.encrypt(info.newpassword); // encrypt password
-        return this.api.post('user/reset-password', info);
-    }
-
-    /**
-     * Renew password
-     * @param info
-     */
-    public verifyMail(info: any) {
-        //info.newpassword = this.rsa.encrypt(info.newpassword); // encrypt password
-        return this.api.post('portal-user/verify-mail', info);
-    }
-
-    /**
-     * Forget password
-     * @param info
-     */
-    public forgotPassword(info: any) {
-        //info.newpassword = this.rsa.encrypt(info.newpassword); // encrypt password
-        return this.api.post('user/forgot-password', info);
-    }
-
-    /**
-     * Get configure
-     */
-    public getConfig() {
-        return this.api.get('common/config');
-    }
-
-    /**
-     * Get active code
-     * @param type Mail or SMS
-     */
-    public getActiveCode(type: string) {
-        let x = { keyword: type };
-        return this.api.post('user/active-code', x);
     }
 
     /**

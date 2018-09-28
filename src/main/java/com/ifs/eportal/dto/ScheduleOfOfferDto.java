@@ -1,9 +1,16 @@
 package com.ifs.eportal.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Sep-28
+ *
+ */
 public class ScheduleOfOfferDto extends BaseDto {
 	// region -- Fields --
 
@@ -111,6 +118,22 @@ public class ScheduleOfOfferDto extends BaseDto {
 		res.setScheduleStatus((String) o[4]);
 		res.setCreatedDate((Date) o[5]);
 		res.setDocumentType((String) o[6]);
+
+		return res;
+	}
+
+	/**
+	 * Convert
+	 * 
+	 * @param l
+	 * @return
+	 */
+	public static List<ScheduleOfOfferDto> convert(List<Object[]> l) {
+		List<ScheduleOfOfferDto> res = new ArrayList<ScheduleOfOfferDto>();
+
+		for (Object[] o : l) {
+			res.add(convert(o));
+		}
 
 		return res;
 	}

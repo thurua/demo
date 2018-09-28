@@ -1,6 +1,10 @@
 package com.ifs.eportal.req;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ifs.eportal.dto.SortDto;
 
 /**
  * 
@@ -17,7 +21,7 @@ public class PagingReq {
 	private int size;
 
 	@JsonProperty(value = "sort")
-	private String sort;
+	private List<SortDto> sort;
 
 	@JsonProperty(value = "filter")
 	private Object filter;
@@ -53,11 +57,11 @@ public class PagingReq {
 		this.size = size;
 	}
 
-	public String getSort() {
+	public List<SortDto> getSort() {
 		return sort;
 	}
 
-	public void setSort(String sort) {
+	public void setSort(List<SortDto> sort) {
 		this.sort = sort;
 	}
 
@@ -84,7 +88,7 @@ public class PagingReq {
 	public PagingReq() {
 		page = 1;
 		size = 1;
-		sort = "";
+		sort = new ArrayList<SortDto>();
 		filter = null;
 		total = 0;
 	}

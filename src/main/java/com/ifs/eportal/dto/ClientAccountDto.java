@@ -1,15 +1,20 @@
 package com.ifs.eportal.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ClientAccountDto {
+/**
+ * 
+ * @author ToanNguyen 2018-Sep-28
+ *
+ */
+public class ClientAccountDto extends BaseDto {
 	// region -- Fields --
 
 	@JsonProperty(value = "name")
 	private String name;
-
-	@JsonProperty(value = "id")
-	private String id;
 
 	// end
 
@@ -23,20 +28,48 @@ public class ClientAccountDto {
 		this.name = name;
 	}
 
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
 	// end
 
 	// region -- Methods --
 
+	/**
+	 * Initialize
+	 */
 	public ClientAccountDto() {
+		super();
 
+		name = "";
+	}
+
+	/**
+	 * Convert
+	 * 
+	 * @param o
+	 * @return
+	 */
+	public static ClientAccountDto convert(Object[] o) {
+		ClientAccountDto res = new ClientAccountDto();
+
+		res.setId((Integer) o[0]);
+		res.setName((String) o[1]);
+
+		return res;
+	}
+
+	/**
+	 * Convert
+	 * 
+	 * @param l
+	 * @return
+	 */
+	public static List<ClientAccountDto> convert(List<Object[]> l) {
+		List<ClientAccountDto> res = new ArrayList<ClientAccountDto>();
+
+		for (Object[] o : l) {
+			res.add(convert(o));
+		}
+
+		return res;
 	}
 
 	// end

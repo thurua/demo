@@ -1,6 +1,8 @@
 package com.ifs.eportal.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -207,6 +209,22 @@ public class PortalUserDto extends BaseDto {
 		res.setClientName((String) o[11]);
 		res.setRoleName((String) o[12]);
 		res.setCompanyName((String) o[13]);
+
+		return res;
+	}
+
+	/**
+	 * Convert
+	 * 
+	 * @param l
+	 * @return
+	 */
+	public static List<PortalUserDto> convert(List<Object[]> l) {
+		List<PortalUserDto> res = new ArrayList<PortalUserDto>();
+
+		for (Object[] o : l) {
+			res.add(convert(o));
+		}
 
 		return res;
 	}

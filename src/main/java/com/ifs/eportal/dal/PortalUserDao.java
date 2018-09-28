@@ -1,7 +1,6 @@
 package com.ifs.eportal.dal;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -11,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ifs.eportal.dto.PortalUserDto;
+import com.ifs.eportal.dto.SortDto;
 import com.ifs.eportal.filter.PortalUserFilter;
 import com.ifs.eportal.model.PortalUser;
 import com.ifs.eportal.req.PagingReq;
@@ -127,70 +127,74 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<PortalUserDto> search(PagingReq req) {
-		List<PortalUserDto> res = new ArrayList<PortalUserDto>();
-
-		// Get data
-		PortalUserFilter filter = PortalUserFilter.convert(req.getFilter());
-		String email = filter.getEmail();
-		String firstName = filter.getFirstName();
-		String lastName = filter.getLastName();
-		String mobile = filter.getMobile();
-
+		Object filter = req.getFilter();
 		int page = req.getPage();
 		int size = req.getSize();
-		String sort = req.getSort();
+		List<SortDto> sort = req.getSort();
 		int offset = (page - 1) * size;
 
-		// Where
-		String where = "";
-		if (!email.isEmpty()) {
-			where += " AND a.email__c LIKE '%" + email + "%'";
-		}
-		if (!firstName.isEmpty()) {
-			where += " AND a.first_name__c LIKE '%" + firstName + "%'";
-		}
-		if (!lastName.isEmpty()) {
-			where += " AND a.last_name__c LIKE '%" + lastName + "%'";
-		}
-		if (!mobile.isEmpty()) {
-			where += " AND a.mobile__c LIKE '%" + mobile + "%'";
+		// Order by
+		String orderBy = "";
+		for (SortDto o : sort) {
+			String field = o.getField();
+			String direction = o.getDirection();
+
+			if ("id".equals(field)) {
+				if (!orderBy.isEmpty()) {
+					orderBy += ",";
+				}
+				orderBy += " a.id " + direction;
+			}
+
+			if ("email".equals(field)) {
+				if (!orderBy.isEmpty()) {
+					orderBy += ",";
+				}
+				orderBy += " a.email__c " + direction;
+			}
+
+			if ("firstName".equals(field)) {
+				if (!orderBy.isEmpty()) {
+					orderBy += ",";
+				}
+				orderBy += " a.first_name__c " + direction;
+			}
+
+			if ("lastName".equals(field)) {
+				if (!orderBy.isEmpty()) {
+					orderBy += ",";
+				}
+				orderBy += " a.last_name__c " + direction;
+			}
+
+			if ("mobile".equals(field)) {
+				if (!orderBy.isEmpty()) {
+					orderBy += ",";
+				}
+				orderBy += " a.mobile__c " + direction;
+			}
 		}
 
-		// Replace first
-		if (!where.isEmpty()) {
-			where = where.replaceFirst("AND", "WHERE");
-		}
-
-		// Sort by
-		String sortBy = "";
-		if (sort.isEmpty() || "ASC".equals(sort)) {
-			sortBy = "a.id ASC";
-		} else {
-			sortBy = "a.id DESC";
+		if (!orderBy.isEmpty()) {
+			orderBy = " ORDER BY " + orderBy;
 		}
 
 		// Execute to count all
 		String sql = "SELECT \r\n" + "	count(*)\r\n" + "FROM salesforce.portal_user__c a \r\n"
 				+ "JOIN salesforce.portal_role__c b \r\n" + "	ON a.role__c = b.sfid \r\n"
-				+ "JOIN salesforce.account c \r\n" + "	ON a.client__c = c.sfid " + where;
-		Query q = _em.createNativeQuery(sql);
+				+ "JOIN salesforce.account c \r\n" + "	ON a.client__c = c.sfid ";
+		String limit = "";
+		Query q = createQuery(sql, filter, limit);
 		BigInteger total = (BigInteger) q.getSingleResult();
 		req.setTotal(total.longValue());
 
 		// Execute to search
-		String limit = " ORDER BY " + sortBy + " OFFSET " + offset + " LIMIT " + size;
-		sql = _sql + where + limit;
-		q = _em.createNativeQuery(sql);
-
+		sql = _sql;
+		limit = orderBy + " OFFSET " + offset + " LIMIT " + size;
+		q = createQuery(sql, filter, limit);
 		List<Object[]> l = q.getResultList();
 
-		// Convert
-		for (Object[] i : l) {
-			PortalUserDto o = PortalUserDto.convert(i);
-			res.add(o);
-		}
-
-		return res;
+		return PortalUserDto.convert(l);
 	}
 
 	/**
@@ -208,6 +212,65 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 
 		List<String> res = q.getResultList();
 		return res;
+	}
+
+	/**
+	 * Create query to prevent SQL injection
+	 * 
+	 * @param sql
+	 * @param o
+	 * @return
+	 */
+	private Query createQuery(String sql, Object o, String limit) {
+		PortalUserFilter filter = PortalUserFilter.convert(o);
+		String email = filter.getEmail();
+		String firstName = filter.getFirstName();
+		String lastName = filter.getLastName();
+		String mobile = filter.getMobile();
+
+		// Where
+		String where = "";
+		if (!email.isEmpty()) {
+			where += " AND a.email__c LIKE :email";
+		}
+		if (!firstName.isEmpty()) {
+			where += " AND a.first_name__c LIKE :firstName";
+		}
+		if (!lastName.isEmpty()) {
+			where += " AND a.last_name__c LIKE :lastName";
+		}
+		if (!mobile.isEmpty()) {
+			where += " AND a.mobile__c LIKE :mobile";
+		}
+
+		// Replace first
+		if (!where.isEmpty()) {
+			where = where.replaceFirst("AND", "WHERE");
+		}
+
+		Query q = _em.createNativeQuery(sql + where + limit);
+
+		// Set parameter
+		if (!where.isEmpty()) {
+			int i = where.indexOf(":email");
+			if (i > 0) {
+				q.setParameter("email", email);
+			}
+			i = where.indexOf(":firstName");
+			if (i > 0) {
+				q.setParameter("firstName", firstName);
+			}
+			i = where.indexOf(":lastName");
+			if (i > 0) {
+				q.setParameter("lastName", lastName);
+			}
+			i = where.indexOf(":mobile");
+			if (i > 0) {
+				q.setParameter("mobile", mobile);
+			}
+		}
+
+		return q;
 	}
 
 	// end

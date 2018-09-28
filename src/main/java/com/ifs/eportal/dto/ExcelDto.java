@@ -6,6 +6,11 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Sep-28
+ *
+ */
 public class ExcelDto {
 	// region -- Fields --
 
@@ -152,10 +157,18 @@ public class ExcelDto {
 
 	// region -- Methods --
 
+	/**
+	 * Initialize
+	 */
 	public ExcelDto() {
 		lineItems = new ArrayList<LineItemDto>();
 	}
 
+	/**
+	 * Add line item
+	 * 
+	 * @param item
+	 */
 	public void addLineItem(LineItemDto item) {
 		this.lineItems.add(item);
 	}

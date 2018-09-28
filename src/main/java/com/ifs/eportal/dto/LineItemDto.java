@@ -5,6 +5,11 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Sep-28
+ *
+ */
 public class LineItemDto {
 	// region -- Fields --
 
@@ -195,6 +200,9 @@ public class LineItemDto {
 
 	// region -- Methods --
 
+	/**
+	 * Initialize
+	 */
 	public LineItemDto() {
 
 	}

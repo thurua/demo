@@ -34,6 +34,11 @@ import com.ifs.eportal.rsp.MultipleRsp;
 import com.ifs.eportal.rsp.SingleRsp;
 import com.ifs.eportal.security.CustomAuthenticationProvider;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Sep-28
+ *
+ */
 @RestController
 @RequestMapping("/portal-user")
 public class PortalUserController {
@@ -51,6 +56,104 @@ public class PortalUserController {
 	// end
 
 	// region -- Methods --
+
+	/**
+	 * Read
+	 * 
+	 * @param header
+	 * @return
+	 */
+	@PostMapping(value = "/read")
+	public ResponseEntity<?> read(@RequestHeader HttpHeaders header) {
+		SingleRsp res = new SingleRsp();
+
+		try {
+			PayloadDto pl = Utils.getTokenInfor(header);
+			Integer id = pl.getId();
+
+			// Handle
+			PortalUserDto o = portalUserService.getBy(id);
+
+			// Set data;
+			res.setResult(o);
+		} catch (Exception ex) {
+			res.setError(ex.getMessage());
+		}
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
+	/**
+	 * Update profile
+	 * 
+	 * @param header
+	 * @param req
+	 * @return
+	 */
+	@PostMapping("/update-profile")
+	public ResponseEntity<?> update(@RequestHeader HttpHeaders header, @RequestBody ProfileReq req) {
+		BaseRsp res = new BaseRsp();
+
+		try {
+			PayloadDto pl = Utils.getTokenInfor(header);
+			int id = pl.getId();
+			req.setId(id);
+
+			portalUserService.save(req);
+		} catch (Exception ex) {
+			res.setError(ex.getMessage());
+		}
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
+	/**
+	 * Update password
+	 * 
+	 * @param header
+	 * @param req
+	 * @return
+	 */
+	@PostMapping("/update-password")
+	public ResponseEntity<?> update(@RequestHeader HttpHeaders header, @RequestBody ChangePasswordReq req) {
+		BaseRsp res = new BaseRsp();
+
+		try {
+			PayloadDto pl = Utils.getTokenInfor(header);
+			int id = pl.getId();
+			req.setId(id);
+
+			portalUserService.save(req);
+		} catch (Exception ex) {
+			res.setError(ex.getMessage());
+		}
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
+	/**
+	 * Update token
+	 * 
+	 * @param req
+	 * @return
+	 */
+	@PostMapping("/update-token")
+	public ResponseEntity<?> updateToken(@RequestBody BaseReq req) {
+		BaseRsp res = new BaseRsp();
+
+		try {
+			// Get data
+			String email = req.getKeyword();
+
+			// Handle
+			portalUserService.verifyMail(email);
+
+		} catch (Exception ex) {
+			res.setError(ex.getMessage());
+		}
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
 
 	/**
 	 * Search by
@@ -72,56 +175,7 @@ public class PortalUserController {
 			data.put("size", req.getSize());
 			data.put("total", req.getTotal());
 			data.put("data", tmp);
-
 			res.setResult(data);
-		} catch (Exception ex) {
-			res.setError(ex.getMessage());
-		}
-
-		return new ResponseEntity<>(res, HttpStatus.OK);
-	}
-
-	/**
-	 * Save profile
-	 * 
-	 * @param header
-	 * @param req
-	 * @return
-	 */
-	@PostMapping("/save-profile")
-	public ResponseEntity<?> save(@RequestHeader HttpHeaders header, @RequestBody ProfileReq req) {
-		BaseRsp res = new BaseRsp();
-
-		try {
-			PayloadDto pl = Utils.getTokenInfor(header);
-			int id = pl.getId();
-			req.setId(id);
-
-			portalUserService.save(req);
-		} catch (Exception ex) {
-			res.setError(ex.getMessage());
-		}
-
-		return new ResponseEntity<>(res, HttpStatus.OK);
-	}
-
-	/**
-	 * Save password
-	 * 
-	 * @param header
-	 * @param req
-	 * @return
-	 */
-	@PostMapping("/save-password")
-	public ResponseEntity<?> save(@RequestHeader HttpHeaders header, @RequestBody ChangePasswordReq req) {
-		BaseRsp res = new BaseRsp();
-
-		try {
-			PayloadDto pl = Utils.getTokenInfor(header);
-			int id = pl.getId();
-			req.setId(id);
-
-			portalUserService.save(req);
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}
@@ -157,62 +211,10 @@ public class PortalUserController {
 
 				List<SimpleGrantedAuthority> z = portalUserService.getRoleBy(m.getId());
 				String t = jwtTokenUtil.doGenerateToken(m, z);
-
 				res.setResult(t);
 			}
 		} catch (AuthenticationException e) {
 			res.setError("Unauthorized/Invalid email or password!");
-		} catch (Exception ex) {
-			res.setError(ex.getMessage());
-		}
-
-		return new ResponseEntity<>(res, HttpStatus.OK);
-	}
-
-	/**
-	 * View
-	 * 
-	 * @param header
-	 * @return
-	 */
-	@PostMapping(value = "/view")
-	public ResponseEntity<?> view(@RequestHeader HttpHeaders header) {
-		SingleRsp res = new SingleRsp();
-
-		try {
-
-			PayloadDto pl = Utils.getTokenInfor(header);
-			Integer id = pl.getId();
-
-			// Handle
-			PortalUserDto o = portalUserService.getBy(id);
-
-			// Set data;
-			res.setResult(o);
-		} catch (Exception ex) {
-			res.setError(ex.getMessage());
-		}
-
-		return new ResponseEntity<>(res, HttpStatus.OK);
-	}
-
-	/**
-	 * Verify mail
-	 * 
-	 * @param req
-	 * @return
-	 */
-	@PostMapping("/verify-mail")
-	public ResponseEntity<?> verifyMail(@RequestBody BaseReq req) {
-		BaseRsp res = new BaseRsp();
-
-		try {
-			// Get data
-			String email = req.getKeyword();
-
-			// Handle
-			portalUserService.verifyMail(email);
-
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}

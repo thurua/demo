@@ -84,7 +84,7 @@ export class LoginComponent {
 
         //this.loader = true;
         let obj = { keyword: this.vm.email };
-        this.pro.verifyMail(obj).subscribe((rsp: any) => {
+        this.pro.updateToken(obj).subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 alert("Please check mail box to change your password!");
             } else {
