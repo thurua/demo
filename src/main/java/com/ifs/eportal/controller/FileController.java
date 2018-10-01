@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -12,6 +13,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -28,16 +30,24 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ifs.eportal.bll.InvoiceService;
+import com.ifs.eportal.bll.ScheduleOfOfferService;
 import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.dto.ExcelDto;
 import com.ifs.eportal.dto.LineItemDto;
+import com.ifs.eportal.model.Invoice;
+import com.ifs.eportal.model.ScheduleOfOffer;
 import com.ifs.eportal.rsp.SingleRsp;
 
 @RestController
 @RequestMapping("/file")
 public class FileController {
 	// region -- Fields --
+	@Autowired
+	private ScheduleOfOfferService scheduleOfOfferService;
 
+	@Autowired
+	private InvoiceService invoiceService;
 	// end
 
 	// region -- Methods --
@@ -59,6 +69,8 @@ public class FileController {
 			} else {
 				note = getFactoringCn(file);
 			}
+
+			processInvoice(note, req);
 
 			JSONObject o = new JSONObject(req);
 			String a = o.getString("clientName");
@@ -150,9 +162,11 @@ public class FileController {
 			String s = resE.getBody();
 
 			ObjectMapper mapper = new ObjectMapper();
-			ExcelDto note = mapper.readValue(s, ExcelDto.class);
+			ExcelDto o = mapper.readValue(s, ExcelDto.class);
 
-			res.setResult(note);
+			processInvoice(o, req);
+
+			res.setResult(o);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -774,5 +788,51 @@ public class FileController {
 		return note;
 	}
 
+	/**
+	 * process Invoice by nlduong
+	 * 
+	 * @param o,req
+	 * @return
+	 */
+	private boolean processInvoice(ExcelDto o, String req) {
+
+		boolean res = true;
+		try {
+			JSONObject jso = new JSONObject(req);
+			String a = jso.getString("clientName");
+
+			a = jso.getString("amendScheduleNo");
+
+			ScheduleOfOffer so = new ScheduleOfOffer();
+			so.setScheduleNo(o.getScheduleNo());
+			so.setFactorCode(o.getFactorCode());
+			so.setListType(o.getListType());
+			so.setCurrencyIsoCode(o.getDocumentCurrency());
+			so.setClientName(jso.getString("clientName"));
+			// so.setClientAccount(jso.getString("clientAccount"));
+			so.setScheduleStatus("Draft");
+
+			scheduleOfOfferService.create(so);
+			ArrayList<LineItemDto> arr = o.getLineItems();
+
+			for (LineItemDto ob : arr) {
+				Invoice iv = new Invoice();
+				iv.setClientRemarks(ob.getRemarks());
+				iv.setInvoiceAmount(0);
+				iv.setStatus("Pending");
+				// iv.setClientAccount(jso.getString("clientAccount"));
+				iv.setClientName(jso.getString("clientName"));
+				iv.setScheduleOfOffer(so.getId().toString());
+				iv.setDocumentType(so.getDocumentType());
+				iv.setCurrencyIsoCode(so.getCurrencyIsoCode());
+				invoiceService.create(iv);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return res;
+
+	}
 	// end
 }

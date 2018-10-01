@@ -13,7 +13,7 @@ import { ModalDirective } from 'ngx-bootstrap';
     encapsulation: ViewEncapsulation.None
 })
 export class LoginComponent {
-    public vm: any = { email: "" }
+    public vm: any = { email: "" ,userName:"",password:""}
     public router: Router;
     public form: FormGroup;
     public email: AbstractControl;
@@ -24,7 +24,7 @@ export class LoginComponent {
     public isFormatEmail = false;
     public messageForgot = '';
     public msgExistingAccount = '';
-
+    public loader = false;
     @ViewChild('forgotPassModal') public forgotPassModal: ModalDirective;
     @ViewChild('ForgotPassModel2') public ForgotPassModel2: ModalDirective;
 
@@ -54,18 +54,15 @@ export class LoginComponent {
     }
 
     public signIn() {
-        //this.loader = true;
-
+        this.loader = true;
+        document.getElementById('preloader').classList.add('show');
         let obj = {
-            email: 'toan.nguyen@tanvieta.co',
-            password: 'Qwerty123!'
+            email: this.vm.userName,
+            password: this.vm.password
         };
-
         this.pro.signIn(obj).subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 //this.message = "";
-                //console.log(rsp);
-
                 this.pro.saveAuth(rsp.result); // save JWT
                 this.router.navigate(['pages/dashboard']);
 
@@ -73,7 +70,7 @@ export class LoginComponent {
                 //this.message = rsp.message;
             }
 
-            //this.loader = false;
+            this.loader = false;
         }, err => console.log(err));
     }
 

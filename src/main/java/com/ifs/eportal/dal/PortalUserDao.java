@@ -88,7 +88,8 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 	 * @return
 	 */
 	public PortalUserDto getBy(String email) {
-		String sql = _sql + " WHERE a.email__c = :email";
+		String sql = _sql + " WHERE a.email__c = :email OR (a.pass_reminder_expire__c >= now() "
+				+ " AND a.pass_reminder_token__c = :email)";
 
 		// Execute
 		Query q = _em.createNativeQuery(sql);

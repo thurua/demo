@@ -105,6 +105,18 @@ public class ScheduleOfOffer {
 	@Column(columnDefinition = "bool", name = "allow_submit__c")
 	private boolean allowSubmit;
 
+	@Column(columnDefinition = "varchar(255)", name = "document_type__c")
+	private String documentType;
+
+	@Column(columnDefinition = "varchar(18)", name = "lastmodifiedby_portaluserid__c")
+	private String lastModifiedByPortalUserId;
+
+	@Column(columnDefinition = "varchar(18)", name = "createdby_portaluserid__c")
+	private String createdByPortalUserId;
+
+	@Column(columnDefinition = "varchar(255)", name = "portal_status__c")
+	private String portal_status__c;
+
 	// end
 
 	// region -- Get set --
@@ -315,6 +327,38 @@ public class ScheduleOfOffer {
 
 	public void setAllowSubmit(boolean allowSubmit) {
 		this.allowSubmit = allowSubmit;
+	}
+
+	public String getDocumentType() {
+		return documentType;
+	}
+
+	public void setDocumentType(String documentType) {
+		this.documentType = documentType;
+	}
+
+	public String getLastModifiedByPortalUserId() {
+		return lastModifiedByPortalUserId;
+	}
+
+	public void setLastModifiedByPortalUserId(String lastModifiedByPortalUserId) {
+		this.lastModifiedByPortalUserId = lastModifiedByPortalUserId;
+	}
+
+	public String getCreatedByPortalUserId() {
+		return createdByPortalUserId;
+	}
+
+	public void setCreatedByPortalUserId(String createdByPortalUserId) {
+		this.createdByPortalUserId = createdByPortalUserId;
+	}
+
+	public String getPortal_status__c() {
+		return portal_status__c;
+	}
+
+	public void setPortal_status__c(String portal_status__c) {
+		this.portal_status__c = portal_status__c;
 	}
 
 	// end

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -20,19 +21,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ifs.eportal.bll.PortalUserService;
+import com.ifs.eportal.common.Const;
 import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.config.JwtTokenUtil;
 import com.ifs.eportal.dto.PayloadDto;
 import com.ifs.eportal.dto.PortalUserDto;
 import com.ifs.eportal.req.BaseReq;
-import com.ifs.eportal.req.ChangePasswordReq;
 import com.ifs.eportal.req.PagingReq;
+import com.ifs.eportal.req.PasswordReq;
 import com.ifs.eportal.req.PortalUserSignInReq;
 import com.ifs.eportal.req.ProfileReq;
 import com.ifs.eportal.rsp.BaseRsp;
 import com.ifs.eportal.rsp.MultipleRsp;
 import com.ifs.eportal.rsp.SingleRsp;
-import com.ifs.eportal.security.CustomAuthenticationProvider;
 
 /**
  * 
@@ -48,7 +49,7 @@ public class PortalUserController {
 	private PortalUserService portalUserService;
 
 	@Autowired
-	private CustomAuthenticationProvider customAuthenticationProvider;
+	private AuthenticationManager authenticationManager;
 
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
@@ -72,7 +73,7 @@ public class PortalUserController {
 			Integer id = pl.getId();
 
 			// Handle
-			PortalUserDto o = portalUserService.getBy(id);
+			PortalUserDto o = portalUserService.read(id);
 
 			// Set data;
 			res.setResult(o);
@@ -99,7 +100,7 @@ public class PortalUserController {
 			int id = pl.getId();
 			req.setId(id);
 
-			portalUserService.save(req);
+			portalUserService.update(req);
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}
@@ -115,7 +116,7 @@ public class PortalUserController {
 	 * @return
 	 */
 	@PostMapping("/update-password")
-	public ResponseEntity<?> update(@RequestHeader HttpHeaders header, @RequestBody ChangePasswordReq req) {
+	public ResponseEntity<?> update(@RequestHeader HttpHeaders header, @RequestBody PasswordReq req) {
 		BaseRsp res = new BaseRsp();
 
 		try {
@@ -123,7 +124,35 @@ public class PortalUserController {
 			int id = pl.getId();
 			req.setId(id);
 
-			portalUserService.save(req);
+			// Handle
+			String t = portalUserService.update(req, false);
+			if (!t.isEmpty()) {
+				res.setError(t);
+			}
+		} catch (Exception ex) {
+			res.setError(ex.getMessage());
+		}
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
+	/**
+	 * Reset password
+	 * 
+	 * @param header
+	 * @param req
+	 * @return
+	 */
+	@PostMapping("/reset-password")
+	public ResponseEntity<?> update(@RequestBody PasswordReq req) {
+		BaseRsp res = new BaseRsp();
+
+		try {
+			// Handle
+			String t = portalUserService.update(req, true);
+			if (!t.isEmpty()) {
+				res.setError(t);
+			}
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}
@@ -138,7 +167,7 @@ public class PortalUserController {
 	 * @return
 	 */
 	@PostMapping("/update-token")
-	public ResponseEntity<?> updateToken(@RequestBody BaseReq req) {
+	public ResponseEntity<?> update(@RequestBody BaseReq req) {
 		BaseRsp res = new BaseRsp();
 
 		try {
@@ -146,8 +175,10 @@ public class PortalUserController {
 			String email = req.getKeyword();
 
 			// Handle
-			portalUserService.verifyMail(email);
-
+			String t = portalUserService.update(email);
+			if (!t.isEmpty()) {
+				res.setError(t);
+			}
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}
@@ -199,18 +230,26 @@ public class PortalUserController {
 			String password = req.getPassword();
 
 			// Handle
-			PortalUserDto m = portalUserService.getBy(email);
+			PortalUserDto m = portalUserService.read(email);
 			if (m.getId() == 0) {
 				res.setError("Email doesn't exist!");
 			} else {
 				UsernamePasswordAuthenticationToken x;
 				x = new UsernamePasswordAuthenticationToken(email, password);
 
-				Authentication y = customAuthenticationProvider.authenticate(x);
+				Authentication y = authenticationManager.authenticate(x);
 				SecurityContextHolder.getContext().setAuthentication(y);
 
+				password = m.getPassword();
+				String passwordHash = m.getPasswordHash();
+
+				String t = Utils.hash(password, Const.Authentication.TOKEN_KEY1);
+				if (!t.equals(passwordHash)) {
+					res.setError("Unauthorized/Invalid email or password!");
+				}
+
 				List<SimpleGrantedAuthority> z = portalUserService.getRoleBy(m.getId());
-				String t = jwtTokenUtil.doGenerateToken(m, z);
+				t = jwtTokenUtil.doGenerateToken(m, z);
 				res.setResult(t);
 			}
 		} catch (AuthenticationException e) {

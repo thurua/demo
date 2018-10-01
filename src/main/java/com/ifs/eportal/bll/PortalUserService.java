@@ -15,12 +15,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ifs.eportal.common.Const;
 import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.dal.PortalUserDao;
 import com.ifs.eportal.dto.PortalUserDto;
 import com.ifs.eportal.model.PortalUser;
-import com.ifs.eportal.req.ChangePasswordReq;
 import com.ifs.eportal.req.PagingReq;
+import com.ifs.eportal.req.PasswordReq;
 import com.ifs.eportal.req.ProfileReq;
 
 /**
@@ -31,17 +32,7 @@ import com.ifs.eportal.req.ProfileReq;
 @Service(value = "portalUserService")
 @Transactional
 public class PortalUserService implements UserDetailsService {
-	// region -- Fields --
-
-	@Autowired
-	private PortalUserDao portalUserDao;
-
-	@Autowired
-	private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-	// end
-
-	// region -- Methods --
+	// region -- Overrides --
 
 	/**
 	 * Load user by email
@@ -60,55 +51,47 @@ public class PortalUserService implements UserDetailsService {
 		return new User(email, hash, auths);
 	}
 
-	/**
-	 * Get role by
-	 * 
-	 * @param id
-	 * @return
-	 */
-	public List<SimpleGrantedAuthority> getRoleBy(int id) {
-		List<String> roles = portalUserDao.getRoleBy(id);
-		List<SimpleGrantedAuthority> res = getAuthority(roles);
-		return res;
-	}
+	// end
+
+	// region -- Fields --
+
+	@Autowired
+	private PortalUserDao portalUserDao;
+
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+	// end
+
+	// region -- Methods --
 
 	/**
-	 * Get by
+	 * Read by
 	 * 
 	 * @param id
 	 * @return
 	 */
-	public PortalUserDto getBy(int id) {
+	public PortalUserDto read(int id) {
 		return portalUserDao.getBy(id);
 	}
 
 	/**
-	 * Get by
+	 * Read by
 	 * 
 	 * @param email
 	 * @return
 	 */
-	public PortalUserDto getBy(String email) {
+	public PortalUserDto read(String email) {
 		return portalUserDao.getBy(email);
 	}
 
 	/**
-	 * Search by
+	 * Update profile
 	 * 
 	 * @param req
 	 * @return
 	 */
-	public List<PortalUserDto> search(PagingReq req) {
-		return portalUserDao.search(req);
-	}
-
-	/**
-	 * Save profile
-	 * 
-	 * @param req
-	 * @return
-	 */
-	public String save(ProfileReq req) {
+	public String update(ProfileReq req) {
 		String res = "";
 
 		// Get data
@@ -135,46 +118,65 @@ public class PortalUserService implements UserDetailsService {
 	}
 
 	/**
-	 * Save password
+	 * Update password
 	 * 
 	 * @param req
 	 * @param id
 	 * @return
 	 */
-	public String save(ChangePasswordReq req) {
+	public String update(PasswordReq req, boolean isReset) {
 		String res = "";
 
 		// Get data
 		Integer id = req.getId();
+		String email = req.getEmail();
 		String oldPassword = req.getOldPassword();
 		String newPassword = req.getNewPassword();
-		newPassword = bCryptPasswordEncoder.encode(newPassword);
+
+		// Convert email to id
+		if (isReset) {
+			PortalUserDto o = portalUserDao.getBy(email);
+			id = o.getId();
+		}
 
 		// Handle
 		PortalUser m = portalUserDao.read(id);
 		if (m == null) {
 			res = "Id does not exist";
 		} else {
-			if (oldPassword.equals(m.getPassword())) {
-				m.setPassword(newPassword);
-				m.setPasswordHash(newPassword);
-			} else {
-				res = "Password is not correct";
+			boolean ok = true;
+			String t = bCryptPasswordEncoder.encode(newPassword);
+
+			if (!isReset) {
+				ok = bCryptPasswordEncoder.matches(oldPassword, m.getPassword());
 			}
 
-			portalUserDao.update(m);
+			if (ok) {
+				m.setPassword(t);
+				t = Utils.hash(t, Const.Authentication.TOKEN_KEY1);
+				m.setPasswordHash(t);
+
+				if (isReset) {
+					m.setPassReminderExpire(null);
+					m.setPassReminderToken(null);
+				}
+
+				portalUserDao.update(m);
+			} else {
+				res = "Old password is incorrect";
+			}
 		}
 
 		return res;
 	}
 
 	/**
-	 * Verify mail
+	 * Update token
 	 * 
 	 * @param email
 	 * @return
 	 */
-	public String verifyMail(String email) {
+	public String update(String email) {
 		String res = "";
 
 		try {
@@ -185,7 +187,7 @@ public class PortalUserService implements UserDetailsService {
 			String token = bCryptPasswordEncoder.encode(email);
 
 			// Get password reminder token expire time
-			Date expire = Utils.getTime(Calendar.MINUTE, 5);
+			Date expire = Utils.getTime(Calendar.HOUR, 24);
 			if (expire == null) {
 				res = "102";
 			}
@@ -203,6 +205,28 @@ public class PortalUserService implements UserDetailsService {
 			System.out.println(e.getStackTrace());
 		}
 
+		return res;
+	}
+
+	/**
+	 * Search by
+	 * 
+	 * @param req
+	 * @return
+	 */
+	public List<PortalUserDto> search(PagingReq req) {
+		return portalUserDao.search(req);
+	}
+
+	/**
+	 * Get role by
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public List<SimpleGrantedAuthority> getRoleBy(int id) {
+		List<String> roles = portalUserDao.getRoleBy(id);
+		List<SimpleGrantedAuthority> res = getAuthority(roles);
 		return res;
 	}
 

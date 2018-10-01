@@ -124,9 +124,18 @@
                             <span class="text-danger">*</span>
                         </div>
                         <div class="col-md-6">
-                            <input type="password" name="oldPassword" #oldPassword="ngModel" [(ngModel)]="entity.oldPassword" value="{{entity.oldPassword}}" class="form-control" required>
+                            <input type="password" name="oldPassword" #oldPassword="ngModel" [(ngModel)]="entity.oldPassword" value="{{entity.oldPassword}}" (change)="inputPasswordChange('old')" maxlength="8" pattern="((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8})" class="form-control"
+                                required>
                             <span [hidden]="oldPassword.valid || (oldPassword.pristine && !changePasswordFrm.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error">
-                                <i class="fa fa-exclamation-triangle"></i> Required!
+                                    <span *ngIf="newPassword.errors?.required">
+                                            Required!
+                                        </span>
+                            <span *ngIf="newPassword.errors?.pattern">
+                                    {{msgErrSpecialChar}}
+                                        </span>
+                            </span>
+                            <span *ngIf="isOneSpecialCharOld " class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error ">
+                                    Password must be include one special character!
                             </span>
                         </div>
                         <div class="col-md-1"></div>
@@ -138,14 +147,18 @@
                             <span class="text-danger">*</span>
                         </div>
                         <div class="col-md-6">
-                            <input type="text" name="newPassword" #newPassword="ngModel" [(ngModel)]="entity.newPassword" value="{{entity.newPassword}}" maxlength="8" pattern="((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8})" class="form-control" required>
+                            <input type="text" name="newPassword" #newPassword="ngModel" [(ngModel)]="entity.newPassword" value="{{entity.newPassword}}" (change)="inputPasswordChange('new')" maxlength="8" pattern="((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8})" class="form-control"
+                                required>
                             <span [hidden]="newPassword.valid || (newPassword.pristine && !changePasswordFrm.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error">
                                 <span *ngIf="newPassword.errors?.required">
                                     Required!
                                 </span>
                             <span *ngIf="newPassword.errors?.pattern">
-                                    Password must be 8 characters and include numbers, uppercase and lowercase. Letters and one special character
+                                    {{msgErrSpecialChar}}
                                 </span>
+                            </span>
+                            <span *ngIf="isOneSpecialCharNew " class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error ">
+                                    Password must be include one special character!
                             </span>
                         </div>
                         <div class="col-md-1"></div>
@@ -157,9 +170,12 @@
                             <span class="text-danger">*</span>
                         </div>
                         <div class="col-md-6">
-                            <input type="password" name="confirmPassword" #confirmPassword="ngModel" [(ngModel)]="entity.confirmPassword" value="{{entity.confirmPassword}}" class="form-control" required>
+                            <input type="password" name="confirmPassword" #confirmPassword="ngModel" [(ngModel)]="entity.confirmPassword" value="{{entity.confirmPassword}}" maxlength="8" class="form-control" required>
                             <span [hidden]="confirmPassword.valid || (confirmPassword.pristine && !changePasswordFrm.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error">
                                 <i class="fa fa-exclamation-triangle"></i> Required!
+                            </span>
+                            <span *ngIf="isMatch " class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error ">
+                                    New Password and Confirm Password are not match!
                             </span>
                         </div>
                         <div class="col-md-1"></div>

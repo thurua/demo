@@ -22,12 +22,11 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ifs.eportal.bll.AccountService;
 import com.ifs.eportal.bll.ClientAccountService;
-import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.dto.ClientAccountDto;
-import com.ifs.eportal.dto.PayloadDto;
 import com.ifs.eportal.dto.TokenDto;
 import com.ifs.eportal.model.Account;
 import com.ifs.eportal.req.BaseReq;
+import com.ifs.eportal.req.PagingReq;
 import com.ifs.eportal.rsp.MultipleRsp;
 import com.ifs.eportal.rsp.SingleRsp;
 
@@ -75,25 +74,21 @@ public class CommonController {
 	// region -- Methods --
 
 	@PostMapping("/search-client-account")
-	public ResponseEntity<?> searchClientAccount(@RequestHeader HttpHeaders header, @RequestBody BaseReq req) {
+	public ResponseEntity<?> searchClientAccount(@RequestBody PagingReq req) {
 		MultipleRsp res = new MultipleRsp();
 
 		try {
-			PayloadDto pl = Utils.getTokenInfor(header);
-			int id = pl.getId();
-			String clientId = "0015D00000LJObGQAX";
-
-			// Get data
-			// String keyword = req.getKeyword();
-			// Boolean isOptional = req.getIsOptional();
-
 			// Handle
-			List<ClientAccountDto> tmp = clientAccountService.search(clientId);
+			List<ClientAccountDto> tmp;
+			tmp = clientAccountService.search(req);
 
 			// Set data
 			Map<String, Object> data = new LinkedHashMap<>();
-			data.put("count", tmp.size());
+			data.put("page", req.getPage());
+			data.put("size", req.getSize());
+			data.put("total", req.getTotal());
 			data.put("data", tmp);
+
 			res.setResult(data);
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());

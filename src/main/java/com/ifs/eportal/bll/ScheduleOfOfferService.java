@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ifs.eportal.dal.ScheduleOfOfferDao;
-import com.ifs.eportal.dto.ExcelDto;
 import com.ifs.eportal.dto.ScheduleOfOfferDto;
 import com.ifs.eportal.model.ScheduleOfOffer;
 import com.ifs.eportal.req.PagingReq;
@@ -25,14 +24,22 @@ public class ScheduleOfOfferService {
 	// region -- Methods --
 
 	/**
-	 * Get by
+	 * Create
+	 * 
+	 * @param m
+	 */
+	public void create(ScheduleOfOffer m) {
+		scheduleOfOfferDao.create(m);
+	}
+
+	/**
+	 * Read by
 	 * 
 	 * @param id
 	 * @return
 	 */
-	public ScheduleOfOfferDto getBy(int id) {
+	public ScheduleOfOfferDto read(int id) {
 		return scheduleOfOfferDao.getBy(id);
-
 	}
 
 	/**
@@ -43,24 +50,5 @@ public class ScheduleOfOfferService {
 	 */
 	public List<ScheduleOfOfferDto> search(PagingReq req) {
 		return scheduleOfOfferDao.search(req);
-	}
-
-	/**
-	 * Save
-	 * 
-	 * @param req
-	 * @return
-	 */
-	public String save(ExcelDto req) {
-		String res = "";
-
-		// Get data
-		String type = req.getClient();
-
-		// Handle
-
-		ScheduleOfOffer m = new ScheduleOfOffer();
-		scheduleOfOfferDao.create(m);
-		return res;
 	}
 }

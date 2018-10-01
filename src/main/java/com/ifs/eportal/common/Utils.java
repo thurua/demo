@@ -385,7 +385,7 @@ public class Utils {
 	 * @param key
 	 * @return
 	 */
-	private static String hash(String value, String key) {
+	public static String hash(String value, String key) {
 		String res = "";
 
 		try {

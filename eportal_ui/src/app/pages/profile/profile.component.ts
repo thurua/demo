@@ -13,7 +13,11 @@ import { HTTP } from '../../utilities/utility';
 export class ProfileComponent implements OnInit {
     public vm: any = {};
     public entity: any = {};
-    public msgInfo: String = "";
+    public msgInfo: string = "";
+    public isOneSpecialCharOld: boolean = false;
+    public isOneSpecialCharNew: boolean = false;
+    public isMatch: boolean = false;
+    public msgErrSpecialChar: string = "Password must be 8 characters and include numbers, uppercase and lowercase";
 
     @ViewChild('changePasswordModal') public changePasswordModal: ModalDirective;
     @ViewChild('infoModal') public infoModal: ModalDirective;
@@ -57,12 +61,29 @@ export class ProfileComponent implements OnInit {
     }
 
     public changPassword(valid: boolean) {
-        if (!valid) {
+        var passwordSpecialChar = this.entity.oldPassword.replace(/[a-zA-Z0-9]/g, "");
+        this.isOneSpecialCharNew = false;
+        this.isOneSpecialCharOld = false;
+        this.isMatch = false;
+
+        if (passwordSpecialChar.length != 1) {
+            this.isOneSpecialCharOld = true;
             return;
         }
 
         if (this.entity.newPassword != this.entity.confirmPassword) {
-            this.msgInfo = "New Password and Confirm Password are not same.";
+            this.isMatch = true;
+            return;
+        }
+
+        passwordSpecialChar = this.entity.newPassword.replace(/[a-zA-Z0-9]/g, "");
+        if (passwordSpecialChar.length != 1) {
+            this.isOneSpecialCharNew = true;
+            return;
+        }
+
+        if (!valid) {
+            return;
         }
 
         let x = {
@@ -71,6 +92,7 @@ export class ProfileComponent implements OnInit {
         };
 
         this.pro.updatePassword(x).subscribe((rsp: any) => {
+            console.log(rsp);
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 this.msgInfo = "Change password successfully!";
             }
@@ -83,5 +105,25 @@ export class ProfileComponent implements OnInit {
 
         this.changePasswordModal.hide();
         this.infoModal.show();
+    }
+
+    public inputPasswordChange(type: string) {
+        this.isOneSpecialCharOld = false;
+        this.isOneSpecialCharNew = false;
+        var specialChar = "";
+        if(type == 'old'){
+            specialChar=this.entity.oldPassword.replace(/[a-zA-Z0-9]/g, "");
+            if (specialChar.length != 1) {
+                this.isOneSpecialCharOld = true;
+                return;
+            }
+        }
+        else{
+            specialChar=this.entity.newPassword.replace(/[a-zA-Z0-9]/g, "");
+            if (specialChar.length != 1) {
+                this.isOneSpecialCharNew = true;
+                return;
+            }
+        }
     }
 }

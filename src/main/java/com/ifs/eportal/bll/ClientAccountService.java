@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ifs.eportal.dal.ClientAccountDao;
 import com.ifs.eportal.dto.ClientAccountDto;
 import com.ifs.eportal.model.ClientAccount;
+import com.ifs.eportal.req.PagingReq;
 
 @Service(value = "clientAccountService")
 @Transactional
@@ -28,9 +29,28 @@ public class ClientAccountService {
 	 * @param id
 	 * @return
 	 */
-	public ClientAccount getBy(int id) {
-		ClientAccount res = clientAccountDao.getBy(id);
-		return res;
+	public void create(ClientAccount m) {
+		clientAccountDao.create(m);
+	}
+
+	/**
+	 * Read by
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public ClientAccountDto read(int id) {
+		return clientAccountDao.getBy(id);
+	}
+
+	/**
+	 * Search by
+	 * 
+	 * @param req
+	 * @return
+	 */
+	public List<ClientAccountDto> search(PagingReq req) {
+		return clientAccountDao.search(req);
 	}
 
 	/**
@@ -38,11 +58,11 @@ public class ClientAccountService {
 	 * 
 	 * @return
 	 */
-	public List<ClientAccountDto> search(String clientId) {
-		List<Object[]> l = clientAccountDao.search(clientId);
-		List<ClientAccountDto> res = ClientAccountDto.convert(l);
-		return res;
-	}
+//	public List<ClientAccountDto> search(String clientId) {
+//		List<Object[]> l = clientAccountDao.search(clientId);
+//		List<ClientAccountDto> res = ClientAccountDto.convert(l);
+//		return res;
+//	}
 
 	// end
 }

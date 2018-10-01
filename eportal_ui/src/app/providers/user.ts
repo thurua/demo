@@ -39,6 +39,14 @@ export class UserProvider {
     }
 
     /**
+     * Reset password
+     * @param info
+     */
+    public resetPassword(info: any) {
+        return this.api.post('portal-user/reset-password', info);
+    }
+
+    /**
      * Update token
      * @param info
      */

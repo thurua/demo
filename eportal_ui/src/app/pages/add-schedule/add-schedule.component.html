@@ -22,7 +22,7 @@
                         <strong>Schedule Type<span class="text-danger">*</span></strong>
                     </div>
                     <div class="col-md-8">
-                        <input class="schedule" list="browsers" name="browser" placeholder="Please Select">
+                        <input class="form-control" list="browsers" name="browser" placeholder="Please Select">
                         <datalist id="browsers">
                           <option value="Invoice">
                           <option value="Cash Disbursement">
@@ -57,7 +57,7 @@
                         <strong>Schedule Acceptance Date</strong>
                     </div>
                     <div class="col-md-8">
-                        <input class="schedule-date" type="date" name="date">
+                        <input class="form-control" type="date" name="date">
                     </div>
                 </div>
                 <div class="form-group row">
@@ -78,7 +78,7 @@
         <div class="card-body col-md-6">
             <div class="form-group row">
                 <div class="col-md-6">
-                    <input type="file" name="ImportExcel" title="Select File" id="importData" accept=".xls,.xlsx" ng2FileSelect [uploader]="uploader" (change)="fileChanged($event)" />
+                    <input type="file" class="form-control" name="ImportExcel" title="Select File" id="importData" accept=".xls,.xlsx" ng2FileSelect [uploader]="uploader" (change)="fileChanged($event)" />
                 </div>
                 <div class="col-md-4">
                     <button class="btn btn-primary btn-block" type="button" (click)="uploadDocument()">Upload</button>

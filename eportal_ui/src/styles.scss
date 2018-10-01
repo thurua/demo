@@ -257,7 +257,7 @@ span.k-tooltip {
 }
 
 .k-tooltip {
-    background-color: #FFFC9D !important;
+    background-color: #e1e1e1 !important;
     border-radius: 4px;
     position: absolute;
     z-index: 12000;
@@ -270,9 +270,9 @@ span.k-tooltip {
 }
 
 .k-widget.k-tooltip-validation {
-    border-color: #FFCA00;
-    background-color: #ffb400;
-    color: #000;
+    border-color: #e1e1e1;
+    background-color: #e1e1e1;
+    color: red;
 }
 
 .k-tooltip-validation {
@@ -283,6 +283,10 @@ span.k-tooltip {
     outline: 0;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     line-height: normal;
+}
+
+.fa-exclamation-triangle {
+    color: red;
 }
 
 

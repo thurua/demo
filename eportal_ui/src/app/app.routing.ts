@@ -7,6 +7,7 @@ export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
     { path: 'pages', loadChildren: 'app/pages/pages.module#PagesModule' },
     { path: 'login', loadChildren: 'app/pages/login/login.module#LoginModule' },
+    { path: 'reset-password/:token', loadChildren: 'app/pages/reset-password/reset-password.module#ResetPasswordModule' },
     { path: 'register', loadChildren: 'app/pages/register/register.module#RegisterModule' },
     { path: '**', component: NotFoundComponent }
 ];
