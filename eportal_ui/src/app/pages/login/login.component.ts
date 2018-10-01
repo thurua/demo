@@ -1,9 +1,9 @@
-import { Component, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormGroup, FormControl, AbstractControl, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { CustomValidators } from 'ng2-validation';
-import { UserProvider, CommonProvider } from '../../providers/provider';
-import { HTTP } from '../../utilities/utility';
+import { UserProvider, } from '../../providers/provider';
+import { HTTP, RsaService } from '../../utilities/utility';
 import { ModalDirective } from 'ngx-bootstrap';
 
 @Component({
@@ -12,8 +12,9 @@ import { ModalDirective } from 'ngx-bootstrap';
     styleUrls: ['./login.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class LoginComponent {
-    public vm: any = { email: "" ,userName:"",password:""}
+
+export class LoginComponent implements OnInit {
+    public vm: any = { email: "", userName: "", password: "" }
     public router: Router;
     public form: FormGroup;
     public email: AbstractControl;
@@ -28,7 +29,7 @@ export class LoginComponent {
     @ViewChild('forgotPassModal') public forgotPassModal: ModalDirective;
     @ViewChild('ForgotPassModel2') public ForgotPassModel2: ModalDirective;
 
-    constructor(router: Router, fb: FormBuilder, private pro: UserProvider) {
+    constructor(router: Router, fb: FormBuilder, private pro: UserProvider, private rsa: RsaService) {
         this.router = router;
         this.form = fb.group({
             'email': ['', Validators.compose([Validators.required, CustomValidators.email])],
@@ -37,6 +38,10 @@ export class LoginComponent {
 
         this.email = this.form.controls['email'];
         this.password = this.form.controls['password'];
+    }
+
+    ngOnInit() {
+        this.getConfig();
     }
 
     public showForgotPasss() {
@@ -91,5 +96,17 @@ export class LoginComponent {
             this.forgotPassModal.hide();
             //this.show = false;
         });
+    }
+
+    private getConfig() {
+        this.pro.getConfig().subscribe((rsp: any) => {
+            if (rsp.status === HTTP.STATUS_SUCCESS) {
+                this.rsa.enabled = rsp.result.RSA_MODE;
+                this.rsa.publicKey = rsp.result.RSA_PUBLIC_KEY;
+            }
+            else {
+                this.rsa.enabled = false;
+            }
+        }, (err) => { console.log(err); });
     }
 }

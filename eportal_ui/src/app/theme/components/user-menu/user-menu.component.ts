@@ -8,7 +8,11 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 })
 
 export class UserMenuComponent implements OnInit {
+    public name = '';
     constructor() { }
 
-    ngOnInit() { }
+    ngOnInit() {
+        let user = JSON.parse(localStorage.getItem("CURRENT_TOKEN"));
+        this.name = user.salutation + ' ' + user.firstName + ' ' + user.lastName;
+    }
 }

@@ -10,7 +10,7 @@
                         <strong>Client</strong>
                     </div>
                     <div class="col-md-8">
-                        <label class="col-form-label">Olives Private Ltd</label>
+                        <label class="col-form-label">{{clientName}}</label>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -18,7 +18,12 @@
                         <strong>Status</strong>
                     </div>
                     <div class="col-md-8">
-                        <label class="col-form-label">Pending</label>
+                        <select name="status" class="form-control">
+                            <option value="">-- Please Select --</option>
+                            <option value="Pending Authorization">Pending Authorization</option>
+                            <option value="Authorized">Authorized</option>
+                            <option value="Submitted">Submitted</option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -33,7 +38,7 @@
             <div class="col-md-6">
                 <div class="form-group row">
                     <div class="col-md-4">
-                        <strong>CLient Account</strong>
+                        <strong>Client Account</strong>
                     </div>
                     <div class="col-md-8">
                         <label class="col-form-label">DR352T</label>

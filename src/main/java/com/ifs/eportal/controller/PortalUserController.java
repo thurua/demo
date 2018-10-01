@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ifs.eportal.bll.PortalUserService;
 import com.ifs.eportal.common.Const;
+import com.ifs.eportal.common.RsaService;
 import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.config.JwtTokenUtil;
 import com.ifs.eportal.dto.PayloadDto;
@@ -228,6 +230,7 @@ public class PortalUserController {
 			// Get data
 			String email = req.getEmail();
 			String password = req.getPassword();
+			password = RsaService.encrypt(password);
 
 			// Handle
 			PortalUserDto m = portalUserService.read(email);
@@ -256,6 +259,41 @@ public class PortalUserController {
 			res.setError("Unauthorized/Invalid email or password!");
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
+		}
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
+	/**
+	 * Get configuration
+	 * 
+	 * @return
+	 */
+	@GetMapping("/get-config")
+	public ResponseEntity<?> getConfig() {
+		MultipleRsp res = new MultipleRsp();
+
+		try {
+			// Get environment variable
+			String t = System.getenv(Const.Mode.RSA);
+			String pbKey = System.getenv(Const.Authentication.RSA_PUBLIC);
+			String prKey = System.getenv(Const.Authentication.RSA_PRIVATE);
+
+			boolean mode = t != null && "Y".equals(t);
+			if (pbKey == null || pbKey.isEmpty()) {
+				mode = false;
+			}
+
+			// Set data
+			Map<String, Object> data = new LinkedHashMap<>();
+			data.put(Const.Mode.RSA, mode);
+			data.put(Const.Authentication.RSA_PUBLIC, pbKey);
+			data.put(Const.Authentication.RSA_PRIVATE, prKey);
+
+			res.setResult(data);
+		} catch (Exception ex) {
+			res.setError("Cannot get configuration!");
+			ex.printStackTrace();
 		}
 
 		return new ResponseEntity<>(res, HttpStatus.OK);

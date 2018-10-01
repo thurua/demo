@@ -67,7 +67,7 @@ export class UserProvider {
      * @param info
      */
     public signIn(info: any) {
-        //info.password = this.rsa.encrypt(info.password); // encrypt password
+        info.password = this.rsa.encrypt(info.password); // encrypt password
         return this.api.post('portal-user/sign-in', info);
     }
 
@@ -80,6 +80,13 @@ export class UserProvider {
 
         localStorage.removeItem('CURRENT_TOKEN');
         this.rou.navigate(['/']);
+    }
+
+    /**
+     * Get configuration
+     */
+    public getConfig() {
+        return this.api.get('portal-user/get-config');
     }
 
     /**

@@ -26,9 +26,7 @@ export class ProfileComponent implements OnInit {
 
     ngOnInit() {
         this.view();
-        this.entity.oldPassword = "";
-        this.entity.newPassword = "";
-        this.entity.confirmPassword = "";
+        this.resetPasswordPopup();
     }
 
     public save(valid: boolean) {
@@ -97,7 +95,9 @@ export class ProfileComponent implements OnInit {
                 this.msgInfo = "Change password successfully!";
             }
             else {
-                this.msgInfo = "Change password fail!";
+                if (rsp.message == 'Old password is incorrect') {
+                    this.msgInfo = "Old password is incorrect";
+                }
             }
         }, (err) => {
             console.log(err);
@@ -105,25 +105,39 @@ export class ProfileComponent implements OnInit {
 
         this.changePasswordModal.hide();
         this.infoModal.show();
+        this.resetPasswordPopup();
     }
 
     public inputPasswordChange(type: string) {
         this.isOneSpecialCharOld = false;
         this.isOneSpecialCharNew = false;
         var specialChar = "";
-        if(type == 'old'){
-            specialChar=this.entity.oldPassword.replace(/[a-zA-Z0-9]/g, "");
+        if (type == 'old') {
+            specialChar = this.entity.oldPassword.replace(/[a-zA-Z0-9]/g, "");
             if (specialChar.length != 1) {
                 this.isOneSpecialCharOld = true;
                 return;
             }
         }
-        else{
-            specialChar=this.entity.newPassword.replace(/[a-zA-Z0-9]/g, "");
+        else {
+            specialChar = this.entity.newPassword.replace(/[a-zA-Z0-9]/g, "");
             if (specialChar.length != 1) {
                 this.isOneSpecialCharNew = true;
                 return;
             }
         }
+    }
+
+    public resetPasswordPopup() {
+        this.entity.oldPassword = "";
+        this.entity.newPassword = "";
+        this.entity.confirmPassword = "";
+    }
+
+    public closeChangePasswordPopup() {
+        this.resetPasswordPopup();
+        this.changePasswordModal.hide();
+        this.isOneSpecialCharOld = false;
+        this.isOneSpecialCharNew = false;
     }
 }
