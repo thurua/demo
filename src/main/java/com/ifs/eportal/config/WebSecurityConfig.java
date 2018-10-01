@@ -70,7 +70,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http.authorizeRequests()
 				.antMatchers("/", "/portal-user/sign-in", "/portal-user/reset-password", "/portal-user/update-token",
-						"/portal-user/get-config", "/file/upload", "/file/call")
+						"/portal-user/get-config", "/file/read")
 				.permitAll().anyRequest().authenticated().and().exceptionHandling()
 				.authenticationEntryPoint(unauthorizedHandler).and().sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);

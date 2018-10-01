@@ -125,7 +125,6 @@ public class FileController {
 
 			ObjectMapper mapper = new ObjectMapper();
 			res = mapper.writeValueAsString(note);
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
