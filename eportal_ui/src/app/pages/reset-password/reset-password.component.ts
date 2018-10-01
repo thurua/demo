@@ -12,7 +12,7 @@ import { HTTP } from '../../utilities/utility';
     styleUrls: ['./reset-password.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class ResetPasswordComponent {
+export class ResetPasswordComponent implements OnInit {
     public vm: any = { email: "" }
     public form: FormGroup;
     public email: AbstractControl;
@@ -43,6 +43,11 @@ export class ResetPasswordComponent {
         this.password = this.form.controls['password'];
     }
 
+    ngOnInit() {
+        this.vm.Password = null;
+        this.vm.confirmPassword = null;
+    }
+
     public onSubmit(values: Object): void {
         if (this.form.valid) {
             this.router.navigate(['pages/dashboard']);
@@ -54,18 +59,8 @@ export class ResetPasswordComponent {
     }
 
     public toggleShow(para?: string) {
-        if (para == 'P') {
-            this.show = !this.show;
-            this.type = this.show ? "text" : "password";
-        }
-        else if (para == 'PCF') {
-            this.showConfirm = !this.showConfirm;
-            this.typeConfirm = this.showConfirm ? "text" : "password";
-        }
-        else {
-            this.showPassLogin = !this.showPassLogin;
-            this.typePassLogin = this.showPassLogin ? "text" : "password";
-        }
+        this.show = !this.show;
+        this.type = this.show ? "text" : "password";
     }
 
     public changePassword(valid: boolean) {

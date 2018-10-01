@@ -8,36 +8,48 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * 
- * @author HoanNguyen 2018-Sep-28
+ * @author HoanNguyen 2018-Oct-01
  *
  */
-public class ClientAccountFilter {
+public class ReasonFilter {
 	// region -- Fields --
 
 	@JsonProperty(value = "name")
 	private String name;
 
+	@JsonProperty(value = "sfid")
+	private String sfid;
+
 	// end
 
 	// region -- Get set --
-
-	public String getName() {
-		return name;
-	}
-
-	public void setStatus(String name) {
-		this.name = name;
-	}
 
 	// end
 
 	// region -- Methods --
 
+	public String getSfid() {
+		return sfid;
+	}
+
+	public void setSfid(String sfid) {
+		this.sfid = sfid;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	/**
 	 * Initialize
 	 */
-	public ClientAccountFilter() {
+	public ReasonFilter() {
 		name = "";
+		sfid = "";
 	}
 
 	/**
@@ -46,15 +58,15 @@ public class ClientAccountFilter {
 	 * @param o
 	 * @return
 	 */
-	public static ClientAccountFilter convert(Object o) {
-		ClientAccountFilter res = new ClientAccountFilter();
+	public static ReasonFilter convert(Object o) {
+		ReasonFilter res = new ReasonFilter();
 
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			String s = mapper.writeValueAsString(o);
 
 			try {
-				res = mapper.readValue(s, ClientAccountFilter.class);
+				res = mapper.readValue(s, ReasonFilter.class);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

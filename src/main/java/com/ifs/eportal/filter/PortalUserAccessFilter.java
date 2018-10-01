@@ -6,12 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-/**
- * 
- * @author HoanNguyen 2018-Sep-28
- *
- */
-public class ClientAccountFilter {
+public class PortalUserAccessFilter {
 	// region -- Fields --
 
 	@JsonProperty(value = "name")
@@ -25,18 +20,17 @@ public class ClientAccountFilter {
 		return name;
 	}
 
-	public void setStatus(String name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 
 	// end
-
 	// region -- Methods --
 
 	/**
 	 * Initialize
 	 */
-	public ClientAccountFilter() {
+	public PortalUserAccessFilter() {
 		name = "";
 	}
 
@@ -46,15 +40,15 @@ public class ClientAccountFilter {
 	 * @param o
 	 * @return
 	 */
-	public static ClientAccountFilter convert(Object o) {
-		ClientAccountFilter res = new ClientAccountFilter();
+	public static PortalUserAccessFilter convert(Object o) {
+		PortalUserAccessFilter res = new PortalUserAccessFilter();
 
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			String s = mapper.writeValueAsString(o);
 
 			try {
-				res = mapper.readValue(s, ClientAccountFilter.class);
+				res = mapper.readValue(s, PortalUserAccessFilter.class);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

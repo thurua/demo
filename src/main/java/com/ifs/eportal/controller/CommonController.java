@@ -22,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ifs.eportal.bll.AccountService;
 import com.ifs.eportal.bll.ClientAccountService;
+import com.ifs.eportal.common.RsaService;
 import com.ifs.eportal.dto.ClientAccountDto;
 import com.ifs.eportal.dto.TokenDto;
 import com.ifs.eportal.model.Account;
@@ -107,6 +108,9 @@ public class CommonController {
 			String client_secret = System.getenv("SF_CLIENT_SECRET");
 			String username = System.getenv("SF_USER_NAME");
 			String password = System.getenv("SF_PASSWORD");
+
+			// Decrypt
+			password = RsaService.decrypt(password);
 
 			RestTemplate rest = new RestTemplate();
 			HttpHeaders headers = new HttpHeaders();

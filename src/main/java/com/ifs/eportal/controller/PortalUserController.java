@@ -279,7 +279,7 @@ public class PortalUserController {
 			// Get environment variable
 			String t = System.getenv(Const.Mode.RSA);
 			String pbKey = System.getenv(Const.Authentication.RSA_PUBLIC);
-			String prKey = System.getenv(Const.Authentication.RSA_PRIVATE);
+			// String prKey = System.getenv(Const.Authentication.RSA_PRIVATE);
 
 			boolean mode = t != null && "Y".equals(t);
 			if (pbKey == null || pbKey.isEmpty()) {
@@ -290,7 +290,7 @@ public class PortalUserController {
 			Map<String, Object> data = new LinkedHashMap<>();
 			data.put(Const.Mode.RSA, mode);
 			data.put(Const.Authentication.RSA_PUBLIC, pbKey);
-			data.put(Const.Authentication.RSA_PRIVATE, prKey);
+			// data.put(Const.Authentication.RSA_PRIVATE, prKey);
 
 			res.setResult(data);
 		} catch (Exception ex) {

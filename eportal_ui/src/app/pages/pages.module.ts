@@ -4,6 +4,7 @@ import { FileUploadModule } from 'ng2-file-upload';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
+import { Ng2SmartTableModule } from 'ng2-smart-table';
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     suppressScrollX: true
 };
@@ -33,7 +34,8 @@ import { AddScheduleComponent } from './add-schedule/add-schedule.component';
         routing,
         ModalModule.forRoot(),
         FormsModule,
-        FileUploadModule
+        FileUploadModule,
+        Ng2SmartTableModule
     ],
     declarations: [
         PagesComponent,

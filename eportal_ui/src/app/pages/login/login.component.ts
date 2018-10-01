@@ -26,6 +26,9 @@ export class LoginComponent implements OnInit {
     public messageForgot = '';
     public msgExistingAccount = '';
     public loader = false;
+    public isShow = true;
+    public pwdPattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$$";
+
     @ViewChild('forgotPassModal') public forgotPassModal: ModalDirective;
     @ViewChild('ForgotPassModel2') public ForgotPassModel2: ModalDirective;
 
@@ -46,6 +49,8 @@ export class LoginComponent implements OnInit {
 
     public showForgotPasss() {
         this.forgotPassModal.show();
+        this.vm.email = "";
+        this.isShow = false;
     }
 
     public onSubmit(values: Object): void {
@@ -79,16 +84,13 @@ export class LoginComponent implements OnInit {
         }, err => console.log(err));
     }
 
-    public sendEmailVerificationLink(valid: boolean) {
-        if (!valid) {
-            return;
-        }
-
+    public sendEmailVerificationLink() {
         //this.loader = true;
         let obj = { keyword: this.vm.email };
         this.pro.updateToken(obj).subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 alert("Please check mail box to change your password!");
+                this.isShow = true;
             } else {
                 let msg = rsp.message;
             }

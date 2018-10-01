@@ -7,6 +7,8 @@ import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -239,5 +241,25 @@ public class RsaService {
 		}
 
 		return res;
+	}
+
+	/**
+	 * Generate key pair
+	 * 
+	 * @throws NoSuchAlgorithmException
+	 */
+	public static void generate() throws NoSuchAlgorithmException {
+		KeyPairGenerator key = KeyPairGenerator.getInstance("RSA");
+		key.initialize(1024);
+
+		KeyPair pair = key.generateKeyPair();
+		PrivateKey privateKey = pair.getPrivate();
+		PublicKey publicKey = pair.getPublic();
+
+		String priKey = java.util.Base64.getEncoder().encodeToString(privateKey.getEncoded());
+		String pubKey = java.util.Base64.getEncoder().encodeToString(publicKey.getEncoded());
+
+		System.out.println("Private Key: " + priKey);
+		System.out.println("Public Key: " + pubKey);
 	}
 }

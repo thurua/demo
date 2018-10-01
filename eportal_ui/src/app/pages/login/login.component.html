@@ -25,7 +25,7 @@
     <div class="bg-img d-flex justify-content-center align-items-center w-100 h-100 login-container">
         <div class="col-md-4"></div>
         <div class="col-md-4">
-            <div class="card border-0 box-shadow rounded-0">
+            <div class="card border-0 box-shadow rounded-0" *ngIf="isShow">
                 <div class="card-body text-center pb-1">
                     <section class="format-sec">
                         <form class="sign-in" name="form">
@@ -54,7 +54,7 @@
                                     </label>
                                 </div>
                                 <div class="col-md-5">
-                                    <button type="button" (click)="signIn()" class="signin btn btn-primary">Sign In</button>
+                                    <button type="button" (click)="signIn()" class="signin btn">Sign In</button>
                                 </div>
                                 <div class="col-md-1"></div>
                             </div>
@@ -87,40 +87,35 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Forgot Password</h4>
-                <button type="button" class="close" (click)="forgotPassModal.hide()" aria-label="Close">
+                <button type="button" class="close" (click)="forgotPassModal.hide();isShow=true" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form class="form-horizontal form-label-left input_mask" name="forgotForm" #forgotForm="ngForm" (ngSubmit)="sendEmailVerificationLink(forgotForm.valid)">
-                    <div class="modal-body">
-                        <div class=" col-md-12 col-sm-12 col-xs-12 ">
-                            <div class="form-group">
-                                <div class="row">
-                                    <label>Please enter your email address below</label>
-                                </div>
+                <form name="form" (ngSubmit)="f.form.valid && sendEmailVerificationLink()" #f="ngForm" novalidate>
+                    <div class="form-group">
+                        <label for="email">Email
+                            <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" name="email" [(ngModel)]="vm.email" #email="ngModel" [ngClass]="{ 'is-invalid': f.submitted && email.invalid }" required email pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" />
+                        <span [hidden]="email.valid || (email.pristine && !f.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="email" data-valmsg-for="email" id="email_validationMessage" role="alert">
+                            <span *ngIf="email.errors?.required">
+                                <i class="fa fa-exclamation-triangle"></i> Required!
+                            </span>
+                        <span *ngIf="email.errors?.pattern">
+                                <i class="fa fa-exclamation-triangle"></i> Invalid email format!
+                            </span>
+                        </span>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button type="button" class="btn btn-block" (click)="forgotPassModal.hide();isShow=true;">Cancel</button>
                             </div>
-                            <div class="form-group">
-                                <div class="row input">
-                                    <label for="femail">Email <span class="text-danger">*</span></label>
-                                </div>
-                                <div class="row">
-                                    <input id="femail" name="femail" type="text" class="form-control" #femail="ngModel" [(ngModel)]="vm.email" required pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" maxlength="64" />
-                                    <span [hidden]="femail.valid || (femail.pristine && !forgotForm.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error">
-                                            <span *ngIf="femail.errors?.required">
-                                                <i class="fa fa-exclamation-triangle"></i>Please enter email address.
-                                            </span>
-                                    <span *ngIf="femail.errors?.pattern">
-                                                <i class="fa fa-exclamation-triangle"></i>Please enter valid email address.
-                                            </span>
-                                    </span>
-                                </div>
+                            <div class="col-md-6">
+                                <button type="submit" class="btn btn-success btn-block">Next</button>
                             </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" (click)="forgotPassModal.hide();">Cancel</button>
-                        <button type="submit" class="btn btn-success">Next</button>
                     </div>
                 </form>
             </div>
@@ -142,7 +137,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form class="form-horizontal form-label-left input_mask" novalidate #forgotForm="ngForm">
+                <form class="form-horizontal form-label-left input_mask" novalidate #frm="ngForm">
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="form-group">
                             <div class="row">

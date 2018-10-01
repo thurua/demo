@@ -13,7 +13,8 @@ import {
     ApiProvider,
     UserProvider,
     FileProvider,
-    CommonProvider
+    CommonProvider,
+    ScheduleProvider
 } from './providers/provider';
 
 // Import utilities
@@ -36,7 +37,8 @@ import { RsaService } from './utilities/utility';
         UserProvider,
         FileProvider,
         CommonProvider,
-        RsaService
+        RsaService,
+        ScheduleProvider
     ],
     bootstrap: [AppComponent]
 })

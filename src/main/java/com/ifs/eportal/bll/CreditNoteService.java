@@ -51,4 +51,6 @@ public class CreditNoteService {
 	public List<CreditNoteDto> search(PagingReq req) {
 		return creditNoteDao.search(req);
 	}
+
+	// end
 }
