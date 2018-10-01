@@ -98,21 +98,13 @@ public class CreditNote {
 
 	@Column(columnDefinition = "text", name = "_hc_err")
 	private String hcErr;
-	
+
 	@Column(columnDefinition = "float8", name = "external_id__c")
 	private String externalId;
 
 	// end
 
 	// region -- Get set --
-
-	public String getExternalId() {
-		return externalId;
-	}
-
-	public void setExternalId(String externalId) {
-		this.externalId = externalId;
-	}
 
 	public Integer getId() {
 		return id;
@@ -312,6 +304,14 @@ public class CreditNote {
 
 	public void setHcErr(String hcErr) {
 		this.hcErr = hcErr;
+	}
+
+	public String getExternalId() {
+		return externalId;
+	}
+
+	public void setExternalId(String externalId) {
+		this.externalId = externalId;
 	}
 
 	// end

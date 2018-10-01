@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ifs.eportal.common.Const;
+import com.ifs.eportal.common.RsaService;
 import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.dal.PortalUserDao;
 import com.ifs.eportal.dto.PortalUserDto;
@@ -133,9 +134,13 @@ public class PortalUserService implements UserDetailsService {
 		String oldPassword = req.getOldPassword();
 		String newPassword = req.getNewPassword();
 
-		// Convert email to id
+		// Decrypt
+		oldPassword = RsaService.decrypt(oldPassword);
+		newPassword = RsaService.decrypt(newPassword);
+
+		// Convert token to id
 		if (isReset) {
-			PortalUserDto o = portalUserDao.getBy(email);
+			PortalUserDto o = portalUserDao.getBy((Object) email);
 			id = o.getId();
 		}
 
@@ -184,7 +189,8 @@ public class PortalUserService implements UserDetailsService {
 			Integer id = o.getId();
 
 			// Generate password reminder token
-			String token = bCryptPasswordEncoder.encode(email);
+			String t = bCryptPasswordEncoder.encode(email);
+			String token = Utils.hash(t, Const.Authentication.TOKEN_KEY2);
 
 			// Get password reminder token expire time
 			Date expire = Utils.getTime(Calendar.HOUR, 24);

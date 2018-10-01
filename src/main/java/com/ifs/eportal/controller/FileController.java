@@ -30,11 +30,13 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ifs.eportal.bll.CreditNoteService;
 import com.ifs.eportal.bll.InvoiceService;
 import com.ifs.eportal.bll.ScheduleOfOfferService;
 import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.dto.ExcelDto;
 import com.ifs.eportal.dto.LineItemDto;
+import com.ifs.eportal.model.CreditNote;
 import com.ifs.eportal.model.Invoice;
 import com.ifs.eportal.model.ScheduleOfOffer;
 import com.ifs.eportal.rsp.SingleRsp;
@@ -48,6 +50,9 @@ public class FileController {
 
 	@Autowired
 	private InvoiceService invoiceService;
+
+	@Autowired
+	private CreditNoteService creditNoteService;
 	// end
 
 	// region -- Methods --
@@ -826,6 +831,50 @@ public class FileController {
 				iv.setDocumentType(so.getDocumentType());
 				iv.setCurrencyIsoCode(so.getCurrencyIsoCode());
 				invoiceService.create(iv);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return res;
+
+	}
+
+	/**
+	 * process Invoice by nlduong
+	 * 
+	 * @param o,req
+	 * @return
+	 */
+	private boolean processCreditNote(ExcelDto o, String req) {
+
+		boolean res = true;
+		try {
+			JSONObject jso = new JSONObject(req);
+			String a = jso.getString("clientName");
+
+			a = jso.getString("amendScheduleNo");
+
+			ScheduleOfOffer so = new ScheduleOfOffer();
+			so.setScheduleNo(o.getScheduleNo());
+			so.setFactorCode(o.getFactorCode());
+			so.setListType(o.getListType());
+			so.setCurrencyIsoCode(o.getDocumentCurrency());
+			so.setClientName(jso.getString("clientName"));
+			// so.setClientAccount(jso.getString("clientAccount"));
+			so.setScheduleStatus("Draft");
+
+			scheduleOfOfferService.create(so);
+			ArrayList<LineItemDto> arr = o.getLineItems();
+
+			for (LineItemDto ob : arr) {
+				CreditNote cd = new CreditNote();
+				cd.setClientRemarks(ob.getRemarks());
+				cd.setCreditAmount((float) 0);
+				cd.setStatus("Accepted");
+				cd.setScheduleOfOffer(so.getId().toString());
+				cd.setCurrencyIsoCode(so.getCurrencyIsoCode());
+				creditNoteService.create(cd);
 			}
 
 		} catch (Exception e) {

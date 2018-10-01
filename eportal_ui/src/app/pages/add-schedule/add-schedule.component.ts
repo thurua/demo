@@ -60,7 +60,7 @@ export class AddScheduleComponent implements OnInit {
         };
         let s = JSON.stringify(o);
 
-        this.pro.call(this.file, s).subscribe((rsp: any) => {
+        this.pro.upload(this.file, s).subscribe((rsp: any) => {
             if (rsp.body != undefined) {
                 let o = JSON.parse(rsp.body);
 

@@ -230,7 +230,9 @@ public class PortalUserController {
 			// Get data
 			String email = req.getEmail();
 			String password = req.getPassword();
-			password = RsaService.encrypt(password);
+
+			// Decrypt
+			password = RsaService.decrypt(password);
 
 			// Handle
 			PortalUserDto m = portalUserService.read(email);
