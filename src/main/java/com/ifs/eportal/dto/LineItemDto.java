@@ -16,24 +16,24 @@ public class LineItemDto {
 	@JsonProperty(value = "index")
 	private int index;
 
-	@JsonProperty(value = "customerName")
-	private String customerName;
+	@JsonProperty(value = "name")
+	private String name;
 
-	@JsonProperty(value = "customerBranch")
-	private String customerBranch;
+	@JsonProperty(value = "branch")
+	private String branch;
 
-	@JsonProperty(value = "invoiceNo")
-	private String invoiceNo;
+	@JsonProperty(value = "no")
+	private String no;
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-	@JsonProperty(value = "invoiceDate")
-	private Date invoiceDate;
+	@JsonProperty(value = "itemDate")
+	private Date itemDate;
 
-	@JsonProperty(value = "invoiceAmount")
-	private String invoiceAmount;
+	@JsonProperty(value = "amount")
+	private String amount;
 
-	@JsonProperty(value = "creditPeriod")
-	private String creditPeriod;
+	@JsonProperty(value = "period")
+	private String period;
 
 	@JsonProperty(value = "po")
 	private String po;
@@ -44,21 +44,8 @@ public class LineItemDto {
 	@JsonProperty(value = "remarks")
 	private String remarks;
 
-	@JsonProperty(value = "creditNoteNo")
-	private String creditNoteNo;
-
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-	@JsonProperty(value = "creditNoteDate")
-	private Date creditNoteDate;
-
-	@JsonProperty(value = "amount")
-	private String amount;
-
 	@JsonProperty(value = "invoiceApplied")
 	private String invoiceApplied;
-
-	@JsonProperty(value = "supplierName")
-	private String supplierName;
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
 	@JsonProperty(value = "paymentDate")
@@ -76,52 +63,52 @@ public class LineItemDto {
 		this.index = index;
 	}
 
-	public String getCustomerName() {
-		return customerName;
+	public String getName() {
+		return name;
 	}
 
-	public void setCustomerName(String customerName) {
-		this.customerName = customerName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public String getCustomerBranch() {
-		return customerBranch;
+	public String getBranch() {
+		return branch;
 	}
 
-	public void setCustomerBranch(String customerBranch) {
-		this.customerBranch = customerBranch;
+	public void setBranch(String branch) {
+		this.branch = branch;
 	}
 
-	public String getInvoiceNo() {
-		return invoiceNo;
+	public String getNo() {
+		return no;
 	}
 
-	public void setInvoiceNo(String invoiceNo) {
-		this.invoiceNo = invoiceNo;
+	public void setNo(String no) {
+		this.no = no;
 	}
 
-	public Date getInvoiceDate() {
-		return invoiceDate;
+	public Date getItemDate() {
+		return itemDate;
 	}
 
-	public void setInvoiceDate(Date invoiceDate) {
-		this.invoiceDate = invoiceDate;
+	public void setItemDate(Date itemDate) {
+		this.itemDate = itemDate;
 	}
 
-	public String getInvoiceAmount() {
-		return invoiceAmount;
+	public String getAmount() {
+		return amount;
 	}
 
-	public void setInvoiceAmount(String invoiceAmount) {
-		this.invoiceAmount = invoiceAmount;
+	public void setAmount(String amount) {
+		this.amount = amount;
 	}
 
-	public String getCreditPeriod() {
-		return creditPeriod;
+	public String getPeriod() {
+		return period;
 	}
 
-	public void setCreditPeriod(String creditPeriod) {
-		this.creditPeriod = creditPeriod;
+	public void setPeriod(String period) {
+		this.period = period;
 	}
 
 	public String getPo() {
@@ -148,44 +135,12 @@ public class LineItemDto {
 		this.remarks = remarks;
 	}
 
-	public String getCreditNoteNo() {
-		return creditNoteNo;
-	}
-
-	public void setCreditNoteNo(String creditNoteNo) {
-		this.creditNoteNo = creditNoteNo;
-	}
-
-	public Date getCreditNoteDate() {
-		return creditNoteDate;
-	}
-
-	public void setCreditNoteDate(Date creditNoteDate) {
-		this.creditNoteDate = creditNoteDate;
-	}
-
-	public String getAmount() {
-		return amount;
-	}
-
-	public void setAmount(String amount) {
-		this.amount = amount;
-	}
-
 	public String getInvoiceApplied() {
 		return invoiceApplied;
 	}
 
 	public void setInvoiceApplied(String invoiceApplied) {
 		this.invoiceApplied = invoiceApplied;
-	}
-
-	public String getSupplierName() {
-		return supplierName;
-	}
-
-	public void setSupplierName(String supplierName) {
-		this.supplierName = supplierName;
 	}
 
 	public Date getPaymentDate() {

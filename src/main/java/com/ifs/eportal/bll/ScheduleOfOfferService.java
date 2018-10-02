@@ -43,6 +43,17 @@ public class ScheduleOfOfferService {
 	}
 
 	/**
+	 * Read by
+	 * 
+	 * @param scheduleNo
+	 * @param clientName
+	 * @return
+	 */
+	public List<ScheduleOfOfferDto> read(String scheduleNo, String clientName) {
+		return scheduleOfOfferDao.getBy(scheduleNo, clientName);
+	}
+
+	/**
 	 * Search by
 	 * 
 	 * @param req

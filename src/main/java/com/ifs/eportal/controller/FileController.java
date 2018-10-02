@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -36,15 +38,25 @@ import com.ifs.eportal.bll.ScheduleOfOfferService;
 import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.dto.ExcelDto;
 import com.ifs.eportal.dto.LineItemDto;
+import com.ifs.eportal.dto.ScheduleOfOfferDto;
 import com.ifs.eportal.model.CreditNote;
 import com.ifs.eportal.model.Invoice;
 import com.ifs.eportal.model.ScheduleOfOffer;
+import com.ifs.eportal.req.UploadReq;
 import com.ifs.eportal.rsp.SingleRsp;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Oct-02
+ *
+ */
 @RestController
 @RequestMapping("/file")
 public class FileController {
 	// region -- Fields --
+
+	private boolean _allowUploadFile;
+
 	@Autowired
 	private ScheduleOfOfferService scheduleOfOfferService;
 
@@ -53,40 +65,43 @@ public class FileController {
 
 	@Autowired
 	private CreditNoteService creditNoteService;
+
 	// end
 
 	// region -- Methods --
 
+	/**
+	 * Initialize
+	 */
+	public FileController() {
+		_allowUploadFile = false;
+	}
+
+	/**
+	 * Upload for Angular
+	 * 
+	 * @param file
+	 * @param req
+	 * @return ToanNguyen 2018-Oct-02
+	 */
 	@PostMapping("/upload")
 	public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file, @RequestParam("req") String req) {
 		SingleRsp res = new SingleRsp();
 
 		try {
 			// Get data
-			ExcelDto note = new ExcelDto();
 			String name = file.getOriginalFilename();
+			ObjectMapper mapper = new ObjectMapper();
+			UploadReq o = mapper.readValue(req, UploadReq.class);
 
 			// Handle
-			if (name.contains("Factoring-INV")) {
-				note = getFactoringIv(file);
-			} else if (name.contains("Loan-INV")) {
-				note = getLoanIv(file);
-			} else {
-				note = getFactoringCn(file);
-			}
+			res = validateSchedule(file, o);
 
-			processInvoice(note, req);
-
-			JSONObject o = new JSONObject(req);
-			String a = o.getString("clientName");
-			if (a != note.getClient()) {
-				res.setError("Client Name not found.");
+			// Upload file to S3
+			if (_allowUploadFile) {
+				InputStream in = file.getInputStream();
+				Utils.upload(in, name, "test");
 			}
-			a = o.getString("amendScheduleNo");
-			if (a != note.getScheduleNo()) {
-				res.setError("Duplicate Schedule Number found in Client Account.");
-			}
-
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}
@@ -94,52 +109,60 @@ public class FileController {
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 
+	/**
+	 * Upload for Apex
+	 * 
+	 * @param file
+	 * @param auth
+	 * @return ToanNguyen 2018-Oct-02
+	 */
 	@PostMapping("/read")
 	public String read(@RequestParam("file") MultipartFile file,
 			@RequestHeader(value = "Auth", defaultValue = "") String auth) {
 		String res = "";
 
 		try {
-			String t = Utils.getAuth();
-			System.out.println("Auth: " + t);
-
 			if (!Utils.checkAuth(auth)) {
 				return "error=invalid-auth";
 			}
 
-			ExcelDto note = new ExcelDto();
+			// Get data
 			String name = file.getOriginalFilename();
-			System.out.println("File name: " + name);
+			UploadReq o = new UploadReq();
 
-			if (name.contains("Factoring-INV")) {
-				note = getFactoringIv(file);
-			} else if (name.contains("Loan-INV")) {
-				note = getLoanIv(file);
-			} else {
-				note = getFactoringCn(file);
-			}
+			// Handle
+			SingleRsp t = validateSchedule(file, o);
 
 			// Upload file to S3
-			// InputStream in = file.getInputStream();
-			// Utils.upload(in, name, "test");
+			if (_allowUploadFile) {
+				InputStream in = file.getInputStream();
+				Utils.upload(in, name, "test");
+			}
 
 			ObjectMapper mapper = new ObjectMapper();
-			res = mapper.writeValueAsString(note);
+			res = mapper.writeValueAsString(t.getResult());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		System.out.println("JSON: " + res);
 		return res;
 	}
 
+	/**
+	 * Call to API upload (not used)
+	 * 
+	 * @param file
+	 * @param req
+	 * @return
+	 * @author ToanNguyen 2018-Oct-02
+	 */
 	@PostMapping("/call")
 	public ResponseEntity<?> call(@RequestParam("file") MultipartFile file, @RequestParam("req") String req) {
 		SingleRsp res = new SingleRsp();
 
 		try {
+			// Select API URL
 			String url = System.getenv("UPLOAD_URL") + "/";
-
 			String name = file.getOriginalFilename();
 			if (name.contains("Factoring-INV")) {
 				url += "upload-factoring-inv";
@@ -168,14 +191,174 @@ public class FileController {
 			ObjectMapper mapper = new ObjectMapper();
 			ExcelDto o = mapper.readValue(s, ExcelDto.class);
 
-			processInvoice(o, req);
-
 			res.setResult(o);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
+	/**
+	 * Validate step 1
+	 * 
+	 * @param o
+	 * @param req
+	 */
+	private SingleRsp validateSchedule(MultipartFile file, UploadReq req) {
+		SingleRsp res = new SingleRsp();
+		String err = "File format is incorrect.";
+
+		// Get data
+		ExcelDto o = new ExcelDto();
+		String name = file.getOriginalFilename();
+
+		// Handle
+		if (name.contains("Factoring-INV")) {
+			o = getFactoringIv(file);
+		} else if (name.contains("Loan-INV")) {
+			o = getLoanIv(file);
+		} else {
+			o = getFactoringCn(file);
+		}
+
+		String type = o.getType();
+		boolean isLoan = "CASH DISBURSEMENT".equals(type);
+		boolean isCN = "CREDIT NOTE".equals(type);
+		boolean isIV = "INVOICE".equals(type);
+		boolean isFactoring = isCN || isIV;
+		boolean isInvoice = isLoan || isIV;
+
+		// Get params
+		String clientId = req.getClientId();
+		String scheduleNo = req.getScheduleNo().trim();
+		Date acceptanceDate = req.getAcceptanceDate();
+		Boolean amendSchedule = req.getAmendSchedule();
+		String clientAccountId = req.getClientAccountId();
+		String scheduleType = req.getScheduleType();
+
+		// Get schedule no from excel
+		if (!amendSchedule) {
+			scheduleNo = o.getScheduleNo();
+		} else {
+			/* ToanNguyen 2018-Aug-23 IFS-1013 */
+			if (scheduleNo != o.getScheduleNo()) {
+				err = "Schedule No. entered is not the same as in Excel.";
+				// res = Utils.addError(res, err);
+			}
+		}
+
+		// Check schedule no
+		List<ScheduleOfOfferDto> lso = scheduleOfOfferService.read(scheduleNo, clientId);
+
+		Double sequence = 0d;
+		if (lso.size() > 0) {
+			if (amendSchedule) {
+				/* ToanNguyen 2018-Aug-23 IFS-976 */
+				if (lso.get(0).getSequence() != null) {
+					sequence = lso.get(0).getSequence();
+				}
+				sequence = sequence + 1;
+			}
+		}
+
+		/*
+		 * if (isCN) { processCreditNote(o, req); } else { processInvoice(o, req); }
+		 */
+
+		res.setError(err);
+
+		return res;
+	}
+
+	/**
+	 * Process invoice
+	 * 
+	 * @param o
+	 * @param req
+	 * @return
+	 * @author DuongNguyen 2018-Oct-01
+	 */
+	private boolean processInvoice(ExcelDto o, UploadReq req) {
+		boolean res = true;
+		try {
+			JSONObject jso = new JSONObject(req);
+			String a = jso.getString("clientName");
+			a = jso.getString("amendScheduleNo");
+
+			ScheduleOfOffer so = new ScheduleOfOffer();
+			so.setScheduleNo(o.getScheduleNo());
+			so.setFactorCode(o.getFactorCode());
+			so.setListType(o.getListType());
+			so.setCurrencyIsoCode(o.getDocumentCurrency());
+			so.setClientName(jso.getString("clientName"));
+			// so.setClientAccount(jso.getString("clientAccount"));
+			so.setScheduleStatus("Draft");
+
+			scheduleOfOfferService.create(so);
+			ArrayList<LineItemDto> arr = o.getLineItems();
+
+			for (LineItemDto ob : arr) {
+				Invoice iv = new Invoice();
+				iv.setClientRemarks(ob.getRemarks());
+				iv.setInvoiceAmount(0);
+				iv.setStatus("Pending");
+				// iv.setClientAccount(jso.getString("clientAccount"));
+				iv.setClientName(jso.getString("clientName"));
+				iv.setScheduleOfOffer(so.getId().toString());
+				iv.setDocumentType(so.getDocumentType());
+				iv.setCurrencyIsoCode(so.getCurrencyIsoCode());
+				invoiceService.create(iv);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return res;
+	}
+
+	/**
+	 * Process credit note
+	 * 
+	 * @param o
+	 * @param req
+	 * @return
+	 * @author DuongNguyen 2018-Oct-01
+	 */
+	private boolean processCreditNote(ExcelDto o, UploadReq req) {
+		boolean res = true;
+		try {
+			JSONObject jso = new JSONObject(req);
+			String a = jso.getString("clientName");
+			a = jso.getString("amendScheduleNo");
+
+			ScheduleOfOffer so = new ScheduleOfOffer();
+			so.setScheduleNo(o.getScheduleNo());
+			so.setFactorCode(o.getFactorCode());
+			so.setListType(o.getListType());
+			so.setCurrencyIsoCode(o.getDocumentCurrency());
+			so.setClientName(jso.getString("clientName"));
+			// so.setClientAccount(jso.getString("clientAccount"));
+			so.setScheduleStatus("Draft");
+
+			scheduleOfOfferService.create(so);
+			ArrayList<LineItemDto> arr = o.getLineItems();
+
+			for (LineItemDto ob : arr) {
+				CreditNote cd = new CreditNote();
+				cd.setClientRemarks(ob.getRemarks());
+				cd.setCreditAmount((float) 0);
+				cd.setStatus("Accepted");
+				cd.setScheduleOfOffer(so.getId().toString());
+				cd.setCurrencyIsoCode(so.getCurrencyIsoCode());
+				creditNoteService.create(cd);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return res;
 	}
 
 	private ExcelDto getFactoringCn(MultipartFile file) {
@@ -338,10 +521,10 @@ public class FileController {
 				LineItemDto item = new LineItemDto();
 
 				item.setIndex(index);
-				item.setCustomerName(customerName);
-				item.setCustomerBranch(customerBranch);
-				item.setCreditNoteNo(creditNoteNo);
-				item.setCreditNoteDate(creditNoteDate);
+				item.setName(customerName);
+				item.setBranch(customerBranch);
+				item.setNo(creditNoteNo);
+				item.setItemDate(creditNoteDate);
 				item.setAmount(amount);
 				item.setInvoiceApplied(invoiceApplied);
 				item.setRemarks(remarks);
@@ -546,12 +729,12 @@ public class FileController {
 				LineItemDto item = new LineItemDto();
 
 				item.setIndex(index);
-				item.setCustomerName(customerName);
-				item.setCustomerBranch(customerBranch);
-				item.setInvoiceNo(invoiceNo);
-				item.setInvoiceDate(invoiceDate);
-				item.setInvoiceAmount(invoiceAmount);
-				item.setCreditPeriod(creditPeriod);
+				item.setName(customerName);
+				item.setBranch(customerBranch);
+				item.setNo(invoiceNo);
+				item.setItemDate(invoiceDate);
+				item.setAmount(invoiceAmount);
+				item.setPeriod(creditPeriod);
 				item.setPo(po);
 				item.setContract(contract);
 				item.setRemarks(remarks);
@@ -582,7 +765,7 @@ public class FileController {
 		return note;
 	}
 
-	private ExcelDto getLoanIv(@RequestParam("file") MultipartFile file) {
+	private ExcelDto getLoanIv(MultipartFile file) {
 		ExcelDto note = new ExcelDto();
 
 		try {
@@ -756,11 +939,11 @@ public class FileController {
 				LineItemDto item = new LineItemDto();
 
 				item.setIndex(index);
-				item.setSupplierName(supplierName);
-				item.setInvoiceNo(invoiceNo);
-				item.setInvoiceDate(invoiceDate);
-				item.setInvoiceAmount(invoiceAmount);
-				item.setCreditPeriod(creditPeriod);
+				item.setName(supplierName);
+				item.setNo(invoiceNo);
+				item.setItemDate(invoiceDate);
+				item.setAmount(invoiceAmount);
+				item.setPeriod(creditPeriod);
 				item.setPo(po);
 				item.setContract(contract);
 				item.setPaymentDate(paymentDate);
@@ -792,95 +975,5 @@ public class FileController {
 		return note;
 	}
 
-	/**
-	 * process Invoice by nlduong
-	 * 
-	 * @param o,req
-	 * @return
-	 */
-	private boolean processInvoice(ExcelDto o, String req) {
-
-		boolean res = true;
-		try {
-			JSONObject jso = new JSONObject(req);
-			String a = jso.getString("clientName");
-
-			a = jso.getString("amendScheduleNo");
-
-			ScheduleOfOffer so = new ScheduleOfOffer();
-			so.setScheduleNo(o.getScheduleNo());
-			so.setFactorCode(o.getFactorCode());
-			so.setListType(o.getListType());
-			so.setCurrencyIsoCode(o.getDocumentCurrency());
-			so.setClientName(jso.getString("clientName"));
-			// so.setClientAccount(jso.getString("clientAccount"));
-			so.setScheduleStatus("Draft");
-
-			scheduleOfOfferService.create(so);
-			ArrayList<LineItemDto> arr = o.getLineItems();
-
-			for (LineItemDto ob : arr) {
-				Invoice iv = new Invoice();
-				iv.setClientRemarks(ob.getRemarks());
-				iv.setInvoiceAmount(0);
-				iv.setStatus("Pending");
-				// iv.setClientAccount(jso.getString("clientAccount"));
-				iv.setClientName(jso.getString("clientName"));
-				iv.setScheduleOfOffer(so.getId().toString());
-				iv.setDocumentType(so.getDocumentType());
-				iv.setCurrencyIsoCode(so.getCurrencyIsoCode());
-				invoiceService.create(iv);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return res;
-
-	}
-
-	/**
-	 * process Invoice by nlduong
-	 * 
-	 * @param o,req
-	 * @return
-	 */
-	private boolean processCreditNote(ExcelDto o, String req) {
-
-		boolean res = true;
-		try {
-			JSONObject jso = new JSONObject(req);
-			String a = jso.getString("clientName");
-
-			a = jso.getString("amendScheduleNo");
-
-			ScheduleOfOffer so = new ScheduleOfOffer();
-			so.setScheduleNo(o.getScheduleNo());
-			so.setFactorCode(o.getFactorCode());
-			so.setListType(o.getListType());
-			so.setCurrencyIsoCode(o.getDocumentCurrency());
-			so.setClientName(jso.getString("clientName"));
-			// so.setClientAccount(jso.getString("clientAccount"));
-			so.setScheduleStatus("Draft");
-
-			scheduleOfOfferService.create(so);
-			ArrayList<LineItemDto> arr = o.getLineItems();
-
-			for (LineItemDto ob : arr) {
-				CreditNote cd = new CreditNote();
-				cd.setClientRemarks(ob.getRemarks());
-				cd.setCreditAmount((float) 0);
-				cd.setStatus("Accepted");
-				cd.setScheduleOfOffer(so.getId().toString());
-				cd.setCurrencyIsoCode(so.getCurrencyIsoCode());
-				creditNoteService.create(cd);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return res;
-
-	}
 	// end
 }

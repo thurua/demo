@@ -14,19 +14,30 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class ClientAccountFilter {
 	// region -- Fields --
 
-	@JsonProperty(value = "name")
-	private String name;
+	@JsonProperty(value = "clientAccount")
+	private String clientAccount;
+
+	@JsonProperty(value = "client")
+	private String client;
 
 	// end
 
 	// region -- Get set --
 
-	public String getName() {
-		return name;
+	public String getClientAccount() {
+		return clientAccount;
 	}
 
-	public void setStatus(String name) {
-		this.name = name;
+	public void setClientAccount(String clientAccount) {
+		this.clientAccount = clientAccount;
+	}
+
+	public String getClient() {
+		return client;
+	}
+
+	public void setClient(String client) {
+		this.client = client;
 	}
 
 	// end
@@ -37,7 +48,7 @@ public class ClientAccountFilter {
 	 * Initialize
 	 */
 	public ClientAccountFilter() {
-		name = "";
+		client = "";
 	}
 
 	/**

@@ -73,8 +73,7 @@ public class ReasonDao implements Repository<Reason, Integer> {
 	 * Initialize
 	 */
 	public ReasonDao() {
-		_sql = "SELECT \r\n" + "	a.id,  \r\n" + "	a.sfid, \r\n" + "	 a.name \r\n"
-				+ "FROM salesforce.reason__c a ";
+		_sql = "SELECT \r\n" + "	a.id, \r\n" + "	a.sfid, \r\n" + "	a.name\r\n" + "FROM salesforce.recordtype a ";
 	}
 
 	/**

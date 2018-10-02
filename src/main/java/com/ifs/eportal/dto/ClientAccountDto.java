@@ -13,19 +13,30 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ClientAccountDto extends BaseDto {
 	// region -- Fields --
 
-	@JsonProperty(value = "name")
-	private String name;
+	@JsonProperty(value = "sfid")
+	private String sfid;
+
+	@JsonProperty(value = "clientAccount")
+	private String clientAccount;
 
 	// end
 
 	// region -- Get set --
 
-	public String getName() {
-		return name;
+	public String getSfid() {
+		return sfid;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setSfid(String sfid) {
+		this.sfid = sfid;
+	}
+
+	public String getClientAccount() {
+		return clientAccount;
+	}
+
+	public void setClientAccount(String clientAccount) {
+		this.clientAccount = clientAccount;
 	}
 
 	// end
@@ -38,7 +49,8 @@ public class ClientAccountDto extends BaseDto {
 	public ClientAccountDto() {
 		super();
 
-		name = "";
+		clientAccount = "";
+		sfid = "";
 	}
 
 	/**
@@ -51,7 +63,8 @@ public class ClientAccountDto extends BaseDto {
 		ClientAccountDto res = new ClientAccountDto();
 
 		res.setId((Integer) o[0]);
-		res.setName((String) o[1]);
+		res.setSfid((String) o[1]);
+		res.setClientAccount((String) o[2]);
 
 		return res;
 	}

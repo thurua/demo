@@ -10,12 +10,16 @@ import { HTTP } from '../../utilities/utility';
 })
 export class ScheduleComponent implements OnInit {
     public isCollapsed: boolean = true;
-    public status: string = "";
+    public statusOfSchedule: string = "";
     public clientId: string = "";
     public clientName: string = "";
+    public lstCA: any[] = [];
+    public clientAccountId = "";
     public total: number = 0;
     public totalPage = [];
     public lastPage: number = 0;
+    public pageSize = 5;
+    public curentPage = 1;
     public data = [];
     public settings = {
         selectMode: 'single',  //single|multi
@@ -57,15 +61,11 @@ export class ScheduleComponent implements OnInit {
                 type: 'number',
                 filter: false
             },
-            createdDate: {
+            createdBy: {
                 title: 'Create By',
                 type: 'number',
                 filter: false
             }
-        },
-        pager: {
-            display: true,
-            perPage: 10
         }
     };
 
@@ -77,18 +77,25 @@ export class ScheduleComponent implements OnInit {
         this.clientId = user.clientId;
         this.clientName = user.clientName;
 
-        this.search();
+        this.search(1);
+        this.curentPage = 1;
+        this.searchCA();
     }
 
-    public search() {
+    public searchClick(page: any) {
+        this.search(page);
+        this.curentPage = page;
+    }
+
+    public search(page: any) {
         let x = {
             filter: {
                 client: this.clientId,
-                clientAccount: "",
-                scheduleStatus: ""
+                clientAccount: this.clientAccountId,
+                scheduleStatus: this.statusOfSchedule
             },
-            page: 1,
-            size: 5,
+            page: page,
+            size: this.pageSize,
             sort: [
                 {
                     direction: "DESC",
@@ -97,27 +104,64 @@ export class ScheduleComponent implements OnInit {
             ]
         }
         this.pro.search(x).subscribe((rsp: any) => {
-            console.log(rsp);
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 this.data = rsp.result.data;
                 this.total = rsp.result.total;
-                if (this.total % 10 == 0) {
-                    for (let i = 1; i <= this.total / 5; i++) {
+                this.totalPage = [];
+                if (this.total % this.pageSize == 0) {
+                    for (let i = 1; i <= this.total / this.pageSize && i < 4; i++) {
                         this.totalPage.push(i);
                     }
-                    this.lastPage = parseInt((this.total / 5).toString());
+                    this.lastPage = parseInt((this.total / this.pageSize).toString());
                 }
                 else {
-                    for (let i = 1; i <= (this.total / 5) + 1; i++) {
+                    for (let i = 1; i <= (this.total / this.pageSize) + 1 && i < 4; i++) {
                         this.totalPage.push(i);
                     }
-                    this.lastPage = parseInt((this.total / 5 + 1).toString());
+                    this.lastPage = parseInt((this.total / this.pageSize + 1).toString());
                 }
-            }
-            else {
             }
         }, (err) => {
             console.log(err);
         });
+    }
+
+    public searchCA() {
+        let x = {
+            filter: {
+                client: this.clientId
+            },
+            page: 1,
+            size: 20
+        }
+
+        this.pro.searchCA(x).subscribe((rsp: any) => {
+            if (rsp.status === HTTP.STATUS_SUCCESS) {
+                let item = {
+                    id: null,
+                    clientAccount: "-- Please select --"
+                }
+                rsp.result.data.unshift(item);
+
+                this.lstCA = rsp.result.data;
+            }
+        }, (err) => {
+            console.log(err);
+        });
+    }
+
+    public nextClick() {
+        this.search(this.curentPage + 1);
+        this.curentPage++;
+    }
+
+    public firstPageClick() {
+        this.search(1);
+        this.curentPage = 1;
+    }
+
+    public lastPageClick() {
+        this.search(this.lastPage);
+        this.curentPage = this.lastPage;
     }
 }

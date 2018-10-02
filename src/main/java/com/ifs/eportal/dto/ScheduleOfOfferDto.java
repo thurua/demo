@@ -26,11 +26,14 @@ public class ScheduleOfOfferDto extends BaseDto {
 	@JsonProperty(value = "scheduleStatus")
 	private String scheduleStatus;
 
-	@JsonProperty(value = "createdDate")
-	private Date createdDate;
+	@JsonProperty(value = "createdBy")
+	private String createdBy;
 
 	@JsonProperty(value = "documentType")
 	private String documentType;
+
+	@JsonProperty(value = "sequence")
+	private Double sequence;
 
 	// end
 
@@ -68,12 +71,12 @@ public class ScheduleOfOfferDto extends BaseDto {
 		this.scheduleStatus = scheduleStatus;
 	}
 
-	public Date getCreatedDate() {
-		return createdDate;
+	public String getCreatedBy() {
+		return createdBy;
 	}
 
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
 	}
 
 	public String getDocumentType() {
@@ -82,6 +85,14 @@ public class ScheduleOfOfferDto extends BaseDto {
 
 	public void setDocumentType(String documentType) {
 		this.documentType = documentType;
+	}
+
+	public Double getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(Double sequence) {
+		this.sequence = sequence;
 	}
 
 	// end
@@ -98,8 +109,9 @@ public class ScheduleOfOfferDto extends BaseDto {
 		clientAccount = "";
 		scheduleDate = null;
 		scheduleStatus = "";
-		createdDate = null;
+		createdBy = null;
 		documentType = "";
+		sequence = null;
 	}
 
 	/**
@@ -116,8 +128,9 @@ public class ScheduleOfOfferDto extends BaseDto {
 		res.setClientAccount((String) o[2]);
 		res.setScheduleDate((Date) o[3]);
 		res.setScheduleStatus((String) o[4]);
-		res.setCreatedDate((Date) o[5]);
+		res.setCreatedBy((String) o[5]);
 		res.setDocumentType((String) o[6]);
+		res.setSequence((Double) o[7]);
 
 		return res;
 	}

@@ -37,3 +37,8 @@
     margin: 1rem 0 1rem 1rem;
     line-height: 2.5rem
 }
+
+.page-item.active .page-link {
+    background-color: #4BAE4F;
+    border-color: #4BAE4F;
+}

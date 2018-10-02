@@ -13,4 +13,20 @@ export class ScheduleProvider {
     public search(info: any) {
         return this.api.post('schedule-of-offer/search', info);
     }
+
+    /**
+     * Create
+     * @param info
+     */
+    public create(info: any) {
+        return this.api.post('schedule-of-offer/create', info);
+    }
+
+    /**
+     * Search Client Account
+     * @param info
+     */
+    public searchCA(info: any) {
+        return this.api.post('common/search-client-account', info);
+    }
 }

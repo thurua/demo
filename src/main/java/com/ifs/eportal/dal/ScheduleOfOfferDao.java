@@ -73,9 +73,11 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 	 * Initialize
 	 */
 	public ScheduleOfOfferDao() {
-		_sql = "SELECT \r\n" + "	a.id, a.schedule_no__c, a.client_account__c, a.schedule_date__c, \r\n"
-				+ "	a.schedule_status__c, a.createddate, a.document_type__c \r\n"
-				+ "FROM salesforce.schedule_of_offer__c a ";
+		_sql = "SELECT \r\n" + "	a.id, a.schedule_no__c, c.name, a.schedule_date__c, \r\n"
+				+ "	a.schedule_status__c, b.first_name__c, a.document_type__c, a.sequence__c 	\r\n"
+				+ "FROM salesforce.schedule_of_offer__c a\r\n"
+				+ "LEFT JOIN  salesforce.portal_user__c b on a.createdby_portaluserid__c =CAST( b.id as CHAR)\r\n"
+				+ "LEFT JOIN  salesforce.client_account__c c on a.client_account__c = c.client__c";
 	}
 
 	/**
@@ -94,6 +96,28 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 
 		// Convert
 		ScheduleOfOfferDto res = ScheduleOfOfferDto.convert(i);
+		return res;
+	}
+
+	/**
+	 * Get by
+	 * 
+	 * @param scheduleNo
+	 * @param clientName
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<ScheduleOfOfferDto> getBy(String scheduleNo, String clientName) {
+		String sql = _sql + " WHERE a.schedule_no__c = :scheduleNo AND a.client_name__c = :clientName";
+
+		// Execute
+		Query q = _em.createNativeQuery(sql);
+		q.setParameter("scheduleNo", scheduleNo);
+		q.setParameter("clientName", clientName);
+		List<Object[]> l = q.getResultList();
+
+		// Convert
+		List<ScheduleOfOfferDto> res = ScheduleOfOfferDto.convert(l);
 		return res;
 	}
 
@@ -150,7 +174,9 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 		q = createQuery(sql, filter, limit);
 		List<Object[]> l = q.getResultList();
 
-		return ScheduleOfOfferDto.convert(l);
+		// Convert
+		List<ScheduleOfOfferDto> res = ScheduleOfOfferDto.convert(l);
+		return res;
 	}
 
 	/**

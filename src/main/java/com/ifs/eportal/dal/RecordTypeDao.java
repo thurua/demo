@@ -9,26 +9,26 @@ import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ifs.eportal.dto.ClientAccountDto;
+import com.ifs.eportal.dto.RecordTypeDto;
 import com.ifs.eportal.dto.SortDto;
-import com.ifs.eportal.filter.ClientAccountFilter;
-import com.ifs.eportal.model.ClientAccount;
+import com.ifs.eportal.filter.RecordTypeFilter;
+import com.ifs.eportal.model.RecordType;
 import com.ifs.eportal.req.PagingReq;
 
 /**
  * 
- * @author HoanNguyen 2018-Sep-28
+ * @author HoanNguyen 2018-Oct-2
  *
  */
-@Service(value = "clientAccountDao")
-public class ClientAccountDao implements Repository<ClientAccount, Integer> {
+@Service(value = "recordTypeDao")
+public class RecordTypeDao implements Repository<RecordType, Integer> {
 	// region -- Implements --
 
 	/**
 	 * Create
 	 */
 	@Override
-	public void create(ClientAccount entity) {
+	public void create(RecordType entity) {
 		_em.persist(entity);
 	}
 
@@ -36,15 +36,15 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 	 * Read
 	 */
 	@Override
-	public ClientAccount read(Integer id) {
-		return _em.find(ClientAccount.class, id);
+	public RecordType read(Integer id) {
+		return _em.find(RecordType.class, id);
 	}
 
 	/**
 	 * Update
 	 */
 	@Override
-	public ClientAccount update(ClientAccount entity) {
+	public RecordType update(RecordType entity) {
 		return _em.merge(entity);
 	}
 
@@ -52,7 +52,7 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 	 * Delete
 	 */
 	@Override
-	public void delete(ClientAccount entity) {
+	public void delete(RecordType entity) {
 		_em.remove(entity);
 	}
 
@@ -72,8 +72,8 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 	/**
 	 * Initialize
 	 */
-	public ClientAccountDao() {
-		_sql = "SELECT a.id, a.sfid, a.client_account__c  " + "FROM salesforce.client_account__c a ";
+	public RecordTypeDao() {
+		_sql = "SELECT \r\n" + "	a.id, \r\n" + "	a.sfid, \r\n" + "	a.name\r\n" + "FROM salesforce.recordtype a ";
 	}
 
 	/**
@@ -82,7 +82,7 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 	 * @param id
 	 * @return
 	 */
-	public ClientAccountDto getBy(Integer id) {
+	public RecordTypeDto getBy(Integer id) {
 		String sql = _sql + " WHERE a.id = :id";
 
 		// Execute
@@ -91,7 +91,7 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 		Object[] i = (Object[]) q.getSingleResult();
 
 		// Convert
-		ClientAccountDto res = ClientAccountDto.convert(i);
+		RecordTypeDto res = RecordTypeDto.convert(i);
 		return res;
 	}
 
@@ -102,7 +102,7 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public List<ClientAccountDto> search(PagingReq req) {
+	public List<RecordTypeDto> search(PagingReq req) {
 		// Get data
 		Object filter = req.getFilter();
 		int page = req.getPage();
@@ -123,11 +123,11 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 				orderBy += " a.id " + direction;
 			}
 
-			if ("client".equals(field)) {
+			if ("name".equals(field)) {
 				if (!orderBy.isEmpty()) {
 					orderBy += ",";
 				}
-				orderBy += " a.client__c " + direction;
+				orderBy += " a.name " + direction;
 			}
 		}
 
@@ -136,7 +136,7 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 		}
 
 		// Execute to count all
-		String sql = "SELECT \r\n" + "	count(*)\r\n" + "FROM salesforce.client_account__c a";
+		String sql = "SELECT \r\n" + "	count(*)\r\n" + "FROM salesforce.recordtype a";
 		String limit = "";
 		Query q = createQuery(sql, filter, limit);
 		BigInteger total = (BigInteger) q.getSingleResult();
@@ -148,7 +148,7 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 		q = createQuery(sql, filter, limit);
 		List<Object[]> l = q.getResultList();
 
-		return ClientAccountDto.convert(l);
+		return RecordTypeDto.convert(l);
 	}
 
 	/**
@@ -159,13 +159,13 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 	 * @return
 	 */
 	private Query createQuery(String sql, Object o, String limit) {
-		ClientAccountFilter filter = ClientAccountFilter.convert(o);
-		String client = filter.getClient();
+		RecordTypeFilter filter = RecordTypeFilter.convert(o);
+		String name = filter.getName();
 
 		// Where
 		String where = "";
-		if (!client.isEmpty()) {
-			where += " AND a.client__c = :client ";
+		if (!name.isEmpty()) {
+			where += " AND a.name = :name";
 		}
 
 		// Replace first
@@ -177,9 +177,9 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 
 		// Set parameter
 		if (!where.isEmpty()) {
-			int i = where.indexOf(":client");
+			int i = where.indexOf(":name");
 			if (i > 0) {
-				q.setParameter("client", client);
+				q.setParameter("name", name);
 			}
 		}
 

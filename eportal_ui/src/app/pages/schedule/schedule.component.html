@@ -18,7 +18,7 @@
                         <strong>Status</strong>
                     </div>
                     <div class="col-md-8">
-                        <select name="status" class="form-control">
+                        <select name="status" #status="ngModel" [(ngModel)]="statusOfSchedule" class="form-control">
                             <option value="">-- Please Select --</option>
                             <option value="Pending Authorization">Pending Authorization</option>
                             <option value="Authorized">Authorized</option>
@@ -30,8 +30,8 @@
                     <div class="col-md-4">
                     </div>
                     <div class="col-md-8">
-                        <button class="btn btn-primary" type="button" (click)="search()">Search</button> &nbsp;
-                        <button class="btn btn-primary" type="button">Reset</button>
+                        <button class="btn btn-success" type="button" (click)="searchClick(1)">Search</button> &nbsp;
+                        <button class="btn btn-gray" type="button">Reset</button>
                     </div>
                 </div>
             </div>
@@ -41,7 +41,9 @@
                         <strong>Client Account</strong>
                     </div>
                     <div class="col-md-8">
-                        <label class="col-form-label">DR352T</label>
+                        <select name="clientAccount" #clientAccount="ngModel" [(ngModel)]="clientAccountId" class="form-control">
+                            <option *ngFor="let i of lstCA" value="{{i.id}}">{{i.clientAccount}}</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -50,7 +52,7 @@
 </div>
 <div class="card header-margin">
     <div class="card-body">
-        <button class="btn btn-primary" type="button" routerLink="/pages/add-schedule">New</button>
+        <button class="btn btn-success" type="button" routerLink="/pages/add-schedule">New</button>
         <div widget class="card border-0 box-shadow header-margin">
             <div class="card-body pt-0 widget-body">
                 <div class="table-responsive">
@@ -62,13 +64,13 @@
     <div _ngcontent-c32="" _nghost-c34="" class="ng-star-inserted" style="padding: 1.25rem;">
         <nav _ngcontent-c34="" class="ng2-smart-pagination-nav ng-star-inserted">
             <ul _ngcontent-c34="" class="ng2-smart-pagination pagination" *ngFor="let i of totalPage">
-                <li *ngIf="i==1" _ngcontent-c34="" class="ng2-smart-page-item page-item disabled"><a _ngcontent-c34="" aria-label="First" class="ng2-smart-page-link page-link" href="#"><span _ngcontent-c34="" aria-hidden="true">«</span><span _ngcontent-c34="" class="sr-only">First</span></a></li>
+                <li *ngIf="i==1" _ngcontent-c34="" [ngClass]="{'active': curentPage!=1 && curentPage!=2 && curentPage!=3}" class="ng2-smart-page-item page-item disabled"><a _ngcontent-c34="" aria-label="First" class="ng2-smart-page-link page-link" (click)="firstPageClick()"><span _ngcontent-c34="" aria-hidden="true">«</span><span _ngcontent-c34="" class="sr-only">First</span></a></li>
                 <li *ngIf="i==1" _ngcontent-c34="" class="ng2-smart-page-item page-item disabled"><a _ngcontent-c34="" aria-label="Prev" class="ng2-smart-page-link page-link page-link-prev" href="#"><span _ngcontent-c34="" aria-hidden="true">&lt;</span><span _ngcontent-c34="" class="sr-only">Prev</span></a></li>
-                <li _ngcontent-c34="" class="ng2-smart-page-item page-item active ng-star-inserted">
+                <li _ngcontent-c34="" [ngClass]="{'active': i==curentPage}" class="ng2-smart-page-item page-item ng-star-inserted" (click)="searchClick(i)">
                     <span _ngcontent-c34="" class="ng2-smart-page-link page-link ng-star-inserted">{{i}}<span _ngcontent-c34="" class="sr-only">(current)</span></span>
                 </li>
-                <li *ngIf="i==lastPage" _ngcontent-c34="" class="ng2-smart-page-item page-item"><a _ngcontent-c34="" aria-label="Next" class="ng2-smart-page-link page-link page-link-next" href="#"><span _ngcontent-c34="" aria-hidden="true">&gt;</span><span _ngcontent-c34="" class="sr-only">Next</span></a></li>
-                <li *ngIf="i==lastPage" _ngcontent-c34="" class="ng2-smart-page-item page-item"><a _ngcontent-c34="" aria-label="Last" class="ng2-smart-page-link page-link" href="#"><span _ngcontent-c34="" aria-hidden="true">»</span><span _ngcontent-c34="" class="sr-only">Last</span></a></li>
+                <li *ngIf="i==3" _ngcontent-c34="" class="ng2-smart-page-item page-item"><a _ngcontent-c34="" aria-label="Next" class="ng2-smart-page-link page-link page-link-next" (click)="nextClick()"><span _ngcontent-c34="" aria-hidden="true">&gt;</span><span _ngcontent-c34="" class="sr-only">Next</span></a></li>
+                <li *ngIf="i==3" _ngcontent-c34="" class="ng2-smart-page-item page-item"><a _ngcontent-c34="" aria-label="Last" class="ng2-smart-page-link page-link" (click)="lastPageClick()"><span _ngcontent-c34="" aria-hidden="true">»</span><span _ngcontent-c34="" class="sr-only">Last</span></a></li>
             </ul>
         </nav>
     </div>
