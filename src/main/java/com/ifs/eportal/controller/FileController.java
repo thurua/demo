@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -244,7 +245,7 @@ public class FileController {
 			/* ToanNguyen 2018-Aug-23 IFS-1013 */
 			if (scheduleNo != o.getScheduleNo()) {
 				err = "Schedule No. entered is not the same as in Excel.";
-				// res = Utils.addError(res, err);
+				res = Utils.addError(res, err);
 			}
 		}
 
@@ -262,14 +263,33 @@ public class FileController {
 			}
 		}
 
-		/*
-		 * if (isCN) { processCreditNote(o, req); } else { processInvoice(o, req); }
-		 */
+		try {
+			String client = o.getClient().trim();
+			String clientAccount = o.getClientAccount().trim();
+
+			/* NguyenMinh 2018-Sep-24 IFS-1203 */
+			if (o.getType() != scheduleType) {
+				err = "Selected Type of Schedule is not same as in Excel.";
+				res = Utils.addError(res, err);
+			}
+
+			/* ToanNguyen 2018-Aug-23 IFS-974 */
+			int compare = acceptanceDate.compareTo(Utils.getTime(Calendar.HOUR, 24));
+			if (compare > 0) {
+				err = "Schedule Acceptance Date cannot be future date and must be within current month.";
+				res = Utils.addError(res, err);
+			}
+		} catch (Exception ex) {
+
+		}
 
 		res.setError(err);
 
 		return res;
 	}
+	/*
+	 * if (isCN) { processCreditNote(o, req); } else { processInvoice(o, req); }
+	 */
 
 	/**
 	 * Process invoice

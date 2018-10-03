@@ -35,6 +35,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ifs.eportal.dto.PayloadDto;
+import com.ifs.eportal.rsp.SingleRsp;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
@@ -458,6 +459,15 @@ public class Utils {
 	private static void getEnv() {
 		_uploadHash = System.getenv("UPLOAD_HASH");
 		_uploadKey = System.getenv("UPLOAD_KEY");
+	}
+
+	/**
+	 * add error
+	 */
+	public static SingleRsp addError(SingleRsp res, String err) {
+		String s = res.getMessage() + "\n" + err;
+		res.setMessage(s);
+		return res;
 	}
 
 	// end

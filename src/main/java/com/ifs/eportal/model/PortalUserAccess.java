@@ -45,6 +45,9 @@ public class PortalUserAccess {
 	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "last_access_on__c")
 	private Date lastAccessOn;
 
+	@Column(columnDefinition = "float", name = "external_id__c")
+	private float externalId;
+
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "createddate")
 	private Date createdDate;
@@ -67,9 +70,6 @@ public class PortalUserAccess {
 
 	@Column(columnDefinition = "text", name = "_hc_err")
 	private String hcErr;
-
-	@Column(columnDefinition = "float", name = "external_id__c")
-	private float externalId;
 
 	// end
 
@@ -131,6 +131,14 @@ public class PortalUserAccess {
 		this.lastAccessOn = lastAccessOn;
 	}
 
+	public float getExternalId() {
+		return externalId;
+	}
+
+	public void setExternalId(float externalId) {
+		this.externalId = externalId;
+	}
+
 	public Date getCreatedDate() {
 		return createdDate;
 	}
@@ -185,14 +193,6 @@ public class PortalUserAccess {
 
 	public void setHcErr(String hcErr) {
 		this.hcErr = hcErr;
-	}
-
-	public float getExternalId() {
-		return externalId;
-	}
-
-	public void setExternalId(float externalId) {
-		this.externalId = externalId;
 	}
 
 	// end

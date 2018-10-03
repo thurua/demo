@@ -97,20 +97,20 @@ public class PortalUserService implements UserDetailsService {
 
 		// Get data
 		Integer id = req.getId();
-		String firstName = req.getFirstName();
-		String lastName = req.getLastName();
-		String salutation = req.getSalutation();
-		String mobile = req.getMobile();
+		// String firstName = req.getFirstName();
+		// String lastName = req.getLastName();
+		// String salutation = req.getSalutation();
+		// String mobile = req.getMobile();
 
 		// Handle
 		PortalUser m = portalUserDao.read(id);
 		if (m == null) {
 			res = "Id does not exist";
 		} else {
-			m.setFirstName(firstName);
-			m.setLastName(lastName);
-			m.setSalutation(salutation);
-			m.setMobile(mobile);
+			// m.setFirstName(firstName);
+			// m.setLastName(lastName);
+			// m.setSalutation(salutation);
+			// m.setMobile(mobile);
 
 			portalUserDao.update(m);
 		}

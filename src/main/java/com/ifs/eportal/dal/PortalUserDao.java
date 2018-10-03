@@ -73,12 +73,12 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 	 * Initialize
 	 */
 	public PortalUserDao() {
-		_sql = "SELECT \r\n"
-				+ "	a.id, a.email__c, a.first_name__c, a.last_name__c, a.salutation__c, a.mobile__c, \r\n"
+		_sql = "SELECT \r\n" + "	a.id, a.user_id__c, d.firstname, d.lastname, d.salutation, d.mobilephone, \r\n"
 				+ "	a.password__c, a.password_hash__c, a.pass_reminder_token__c, a.pass_reminder_expire__c, \r\n"
 				+ "	a.client__c, b.name role_name, c.name company_name, c.name client_name \r\n"
 				+ "FROM salesforce.portal_user__c a \r\n" + "JOIN salesforce.portal_role__c b \r\n"
-				+ "	ON a.role__c = b.sfid \r\n" + "JOIN salesforce.account c \r\n" + "	ON a.client__c = c.sfid ";
+				+ "	ON a.role__c = b.sfid \r\n" + "JOIN salesforce.account c \r\n" + "	ON a.client__c = c.sfid \r\n"
+				+ "JOIN salesforce.contact d \r\n" + "	ON a.contact__c = d.sfid ";
 	}
 
 	/**
@@ -107,7 +107,7 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 	 * @return
 	 */
 	public PortalUserDto getBy(String email) {
-		String sql = _sql + " WHERE a.email__c = :email";
+		String sql = _sql + " WHERE a.user_id__c = :email";
 
 		// Execute
 		Query q = _em.createNativeQuery(sql);
@@ -169,28 +169,28 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 				if (!orderBy.isEmpty()) {
 					orderBy += ",";
 				}
-				orderBy += " a.email__c " + direction;
+				orderBy += " a.user_id__c " + direction;
 			}
 
 			if ("firstName".equals(field)) {
 				if (!orderBy.isEmpty()) {
 					orderBy += ",";
 				}
-				orderBy += " a.first_name__c " + direction;
+				orderBy += " d.firstname " + direction;
 			}
 
 			if ("lastName".equals(field)) {
 				if (!orderBy.isEmpty()) {
 					orderBy += ",";
 				}
-				orderBy += " a.last_name__c " + direction;
+				orderBy += " d.lastname " + direction;
 			}
 
 			if ("mobile".equals(field)) {
 				if (!orderBy.isEmpty()) {
 					orderBy += ",";
 				}
-				orderBy += " a.mobile__c " + direction;
+				orderBy += " d.mobilephone " + direction;
 			}
 		}
 
@@ -201,7 +201,8 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 		// Execute to count all
 		String sql = "SELECT \r\n" + "	count(*)\r\n" + "FROM salesforce.portal_user__c a \r\n"
 				+ "JOIN salesforce.portal_role__c b \r\n" + "	ON a.role__c = b.sfid \r\n"
-				+ "JOIN salesforce.account c \r\n" + "	ON a.client__c = c.sfid ";
+				+ "JOIN salesforce.account c \r\n" + "	ON a.client__c = c.sfid \r\n" + "JOIN salesforce.contact d \r\n"
+				+ "	ON a.contact__c = d.sfid ";
 		String limit = "";
 		Query q = createQuery(sql, filter, limit);
 		BigInteger total = (BigInteger) q.getSingleResult();
@@ -250,16 +251,16 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 		// Where
 		String where = "";
 		if (!email.isEmpty()) {
-			where += " AND a.email__c LIKE :email";
+			where += " AND a.user_id__c LIKE :email";
 		}
 		if (!firstName.isEmpty()) {
-			where += " AND a.first_name__c LIKE :firstName";
+			where += " AND d.firstname LIKE :firstName";
 		}
 		if (!lastName.isEmpty()) {
-			where += " AND a.last_name__c LIKE :lastName";
+			where += " AND d.lastname LIKE :lastName";
 		}
 		if (!mobile.isEmpty()) {
-			where += " AND a.mobile__c LIKE :mobile";
+			where += " AND d.mobilephone LIKE :mobile";
 		}
 
 		// Replace first

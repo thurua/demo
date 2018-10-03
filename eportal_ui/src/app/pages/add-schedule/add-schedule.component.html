@@ -81,7 +81,7 @@
                     <!-- <input type="file" class="form-control" name="ImportExcel" title="Select File" id="importData" accept=".xls,.xlsx" ng2FileSelect [uploader]="uploader" (change)="fileChanged($event)" /> -->
                     <div class="input-group file-upload">
                         <input type="file" name="ImportExcel" title="Select File" id="importData" accept=".xls,.xlsx" ng2FileSelect [uploader]="uploader" (change)="fileChanged($event)" class="file-upload-btn" />
-                        <input type="text" class="form-control" placeholder="Choose a file..." value="{{file}}">
+                        <input type="text" class="form-control" placeholder="Choose a file..." value="{{(file !=null)? file.name :'' }}">
                         <i class="fa fa-times delete-file" (click)="removeFile()" *ngIf="file"></i>
                         <span class="input-group-append upload">
                             <button class="btn btn-primary" type="button"><i class="fa fa-upload"> </i></button>

@@ -68,6 +68,9 @@ public class CreditNote {
 	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "cn_application_date__c")
 	private Date cnApplicationDate;
 
+	@Column(columnDefinition = "float8", name = "external_id__c")
+	private String externalId;
+
 	@Column(columnDefinition = "float8", name = "cn_applied_amount__c")
 	private Float cnAppliedAmount;
 
@@ -98,9 +101,6 @@ public class CreditNote {
 
 	@Column(columnDefinition = "text", name = "_hc_err")
 	private String hcErr;
-
-	@Column(columnDefinition = "float8", name = "external_id__c")
-	private String externalId;
 
 	// end
 
@@ -194,11 +194,11 @@ public class CreditNote {
 		this.creditNoteDate = creditNoteDate;
 	}
 
-	public boolean getIsDeleted() {
+	public boolean isDeleted() {
 		return isDeleted;
 	}
 
-	public void setIsDeleted(boolean isDeleted) {
+	public void setDeleted(boolean isDeleted) {
 		this.isDeleted = isDeleted;
 	}
 
@@ -224,6 +224,14 @@ public class CreditNote {
 
 	public void setCnApplicationDate(Date cnApplicationDate) {
 		this.cnApplicationDate = cnApplicationDate;
+	}
+
+	public String getExternalId() {
+		return externalId;
+	}
+
+	public void setExternalId(String externalId) {
+		this.externalId = externalId;
 	}
 
 	public Float getCnAppliedAmount() {
@@ -304,14 +312,6 @@ public class CreditNote {
 
 	public void setHcErr(String hcErr) {
 		this.hcErr = hcErr;
-	}
-
-	public String getExternalId() {
-		return externalId;
-	}
-
-	public void setExternalId(String externalId) {
-		this.externalId = externalId;
 	}
 
 	// end

@@ -12,6 +12,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Oct-03
+ *
+ */
 @Entity
 @Table(name = "portal_user__c", schema = "salesforce")
 public class PortalUser {
@@ -23,35 +28,31 @@ public class PortalUser {
 	@Column(columnDefinition = "SERIAL")
 	private Integer id;
 
-	@Column(columnDefinition = "varchar(255)", name = "mobile__c")
-	private String mobile;
-
 	@Column(columnDefinition = "varchar(3)", name = "currencyisocode")
 	private String currencyIsoCode;
 
 	@Column(columnDefinition = "varchar(18)", name = "contact__c")
 	private String contact;
 
-	@Column(columnDefinition = "varchar(255)", name = "email__c")
-	private String email;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "pass_reminder_expire__c")
+	private Date passReminderExpire;
 
 	@Column(columnDefinition = "varchar(255)", name = "password__c")
 	private String password;
 
-	@Column(columnDefinition = "varchar(255)", name = "first_name__c")
-	private String firstName;
+	@Column(columnDefinition = "varchar(255)", name = "pass_reminder_token__c")
+	private String passReminderToken;
 
 	@Column(columnDefinition = "varchar(80)", name = "name")
 	private String name;
 
-	@Column(columnDefinition = "varchar(255)", name = "salutation__c")
-	private String salutation;
-
 	@Column(columnDefinition = "varchar(18)", name = "role__c")
 	private String role;
 
-	@Column(columnDefinition = "varchar(255)", name = "last_name__c")
-	private String lastName;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "lastmodifieddate")
+	private Date lastModifiedDate;
 
 	@Column(columnDefinition = "bool", name = "isdeleted")
 	private boolean isDeleted;
@@ -60,12 +61,34 @@ public class PortalUser {
 	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "systemmodstamp")
 	private Date systemModStamp;
 
+	@Column(columnDefinition = "varchar(18)", name = "lastmodifiedbyid")
+	private String lastModifiedById;
+
+	@Column(columnDefinition = "varchar(255)", name = "password_hash__c")
+	private String passwordHash;
+
+	@Column(columnDefinition = "varchar(255)", name = "status__c")
+	private String status;
+
+	@Column(columnDefinition = "varchar(80)", name = "user_id__c")
+	private String userId;
+
+	@Column(columnDefinition = "float", name = "external_id__c")
+	private Float externalId;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "activated_on__c")
+	private Date activatedOn;
+
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "createddate")
 	private Date createdDate;
 
 	@Column(columnDefinition = "varchar(18)", name = "client__c")
 	private String client;
+
+	@Column(columnDefinition = "varchar(18)", name = "createdbyid")
+	private String createdById;
 
 	@Column(columnDefinition = "bool", name = "active__c")
 	private boolean active;
@@ -79,19 +102,6 @@ public class PortalUser {
 	@Column(columnDefinition = "text", name = "_hc_err")
 	private String hcErr;
 
-	@Column(columnDefinition = "float", name = "external_id__c")
-	private Float externalId;
-
-	@Column(columnDefinition = "varchar(255)", name = "password_hash__c")
-	private String passwordHash;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "pass_reminder_expire__c")
-	private Date passReminderExpire;
-
-	@Column(columnDefinition = "varchar(255)", name = "pass_reminder_token__c")
-	private String passReminderToken;
-
 	// end
 
 	// region -- Get set --
@@ -102,14 +112,6 @@ public class PortalUser {
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public String getMobile() {
-		return mobile;
-	}
-
-	public void setMobile(String mobile) {
-		this.mobile = mobile;
 	}
 
 	public String getCurrencyIsoCode() {
@@ -128,12 +130,12 @@ public class PortalUser {
 		this.contact = contact;
 	}
 
-	public String getEmail() {
-		return email;
+	public Date getPassReminderExpire() {
+		return passReminderExpire;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setPassReminderExpire(Date passReminderExpire) {
+		this.passReminderExpire = passReminderExpire;
 	}
 
 	public String getPassword() {
@@ -144,12 +146,12 @@ public class PortalUser {
 		this.password = password;
 	}
 
-	public String getFirstName() {
-		return firstName;
+	public String getPassReminderToken() {
+		return passReminderToken;
 	}
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+	public void setPassReminderToken(String passReminderToken) {
+		this.passReminderToken = passReminderToken;
 	}
 
 	public String getName() {
@@ -160,14 +162,6 @@ public class PortalUser {
 		this.name = name;
 	}
 
-	public String getSalutation() {
-		return salutation;
-	}
-
-	public void setSalutation(String salutation) {
-		this.salutation = salutation;
-	}
-
 	public String getRole() {
 		return role;
 	}
@@ -176,12 +170,12 @@ public class PortalUser {
 		this.role = role;
 	}
 
-	public String getLastName() {
-		return lastName;
+	public Date getLastModifiedDate() {
+		return lastModifiedDate;
 	}
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public void setLastModifiedDate(Date lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
 	}
 
 	public boolean isDeleted() {
@@ -200,6 +194,54 @@ public class PortalUser {
 		this.systemModStamp = systemModStamp;
 	}
 
+	public String getLastModifiedById() {
+		return lastModifiedById;
+	}
+
+	public void setLastModifiedById(String lastModifiedById) {
+		this.lastModifiedById = lastModifiedById;
+	}
+
+	public String getPasswordHash() {
+		return passwordHash;
+	}
+
+	public void setPasswordHash(String passwordHash) {
+		this.passwordHash = passwordHash;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public Float getExternalId() {
+		return externalId;
+	}
+
+	public void setExternalId(Float externalId) {
+		this.externalId = externalId;
+	}
+
+	public Date getActivatedOn() {
+		return activatedOn;
+	}
+
+	public void setActivatedOn(Date activatedOn) {
+		this.activatedOn = activatedOn;
+	}
+
 	public Date getCreatedDate() {
 		return createdDate;
 	}
@@ -214,6 +256,14 @@ public class PortalUser {
 
 	public void setClient(String client) {
 		this.client = client;
+	}
+
+	public String getCreatedById() {
+		return createdById;
+	}
+
+	public void setCreatedById(String createdById) {
+		this.createdById = createdById;
 	}
 
 	public boolean isActive() {
@@ -246,38 +296,6 @@ public class PortalUser {
 
 	public void setHcErr(String hcErr) {
 		this.hcErr = hcErr;
-	}
-
-	public Float getExternalId() {
-		return externalId;
-	}
-
-	public void setExternalId(Float externalId) {
-		this.externalId = externalId;
-	}
-
-	public String getPasswordHash() {
-		return passwordHash;
-	}
-
-	public void setPasswordHash(String passwordHash) {
-		this.passwordHash = passwordHash;
-	}
-
-	public Date getPassReminderExpire() {
-		return passReminderExpire;
-	}
-
-	public void setPassReminderExpire(Date passReminderExpire) {
-		this.passReminderExpire = passReminderExpire;
-	}
-
-	public String getPassReminderToken() {
-		return passReminderToken;
-	}
-
-	public void setPassReminderToken(String passReminderToken) {
-		this.passReminderToken = passReminderToken;
 	}
 
 	// end

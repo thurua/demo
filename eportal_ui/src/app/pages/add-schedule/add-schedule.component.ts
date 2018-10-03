@@ -68,8 +68,7 @@ export class AddScheduleComponent implements OnInit {
             console.log(err);
         });
     }
-    public changeAccount()
-    {
+    public changeAccount() {
         this.getClientAccount();
     }
 
@@ -89,7 +88,6 @@ export class AddScheduleComponent implements OnInit {
             "scheduleType": this.vm.scheduleType
         };
         let s = JSON.stringify(o);
-
         this.pro.upload(this.file, s).subscribe((rsp: any) => {
             if (rsp.body != undefined) {
                 let o = JSON.parse(rsp.body);

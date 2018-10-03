@@ -26,12 +26,18 @@ public class ScheduleOfOffer {
 	@Column(columnDefinition = "varchar(3)", name = "currencyisocode")
 	private String currencyIsoCode;
 
+	@Column(columnDefinition = "float(8)", name = "sequence__c")
+	private Float sequence;
+
 	@Column(columnDefinition = "varchar(18)", name = "client_name__c")
 	private String clientName;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "process_date__c")
 	private Date processDate;
+
+	@Column(columnDefinition = "varchar(255)", name = "document_type__c")
+	private String documentType;
 
 	@Column(columnDefinition = "varchar(255)", name = "factor_code__c")
 	private String factorCode;
@@ -41,6 +47,16 @@ public class ScheduleOfOffer {
 
 	@Column(columnDefinition = "float(8)", name = "exchange_rate__c")
 	private Float exchangeRate;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "key_in_by_date__c")
+	private Date keyInByDate;
+
+	@Column(columnDefinition = "varchar(255)", name = "list_type__c")
+	private String listType;
+
+	@Column(columnDefinition = "varchar(18)", name = "lastmodifiedby_portaluserid__c")
+	private String lastModifiedByPortalUserId;
 
 	@Column(columnDefinition = "varchar(255)", name = "schedule_status__c")
 	private String scheduleStatus;
@@ -66,8 +82,17 @@ public class ScheduleOfOffer {
 	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "systemmodstamp")
 	private Date systemModStamp;
 
+	@Column(columnDefinition = "varchar(18)", name = "createdby_portaluserid__c")
+	private String createdByPortalUserId;
+
 	@Column(columnDefinition = "float(8)", name = "average_invoice_size_last_12_months__c")
 	private Float averageInvoiceSizeLast12Months;
+
+	@Column(columnDefinition = "float(8)", name = "external_id__c")
+	private Float externalId;
+
+	@Column(columnDefinition = "bool", name = "allow_submit__c")
+	private boolean allowSubmit;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "createddate")
@@ -80,6 +105,9 @@ public class ScheduleOfOffer {
 	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "original_acceptance_date__c")
 	private Date originalAcceptanceDate;
 
+	@Column(columnDefinition = "varchar(255)", name = "portal_status__c")
+	private String portal_status__c;
+
 	@Column(columnDefinition = "varchar(18)", name = "sfid")
 	private String sfId;
 
@@ -88,34 +116,6 @@ public class ScheduleOfOffer {
 
 	@Column(columnDefinition = "text", name = "_hc_err")
 	private String hcErr;
-
-	@Column(columnDefinition = "float(8)", name = "sequence__c")
-	private Float sequence;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "key_in_by_date__c")
-	private Date keyInByDate;
-
-	@Column(columnDefinition = "varchar(255)", name = "list_type__c")
-	private String listType;
-
-	@Column(columnDefinition = "float(8)", name = "external_id__c")
-	private Float externalId;
-
-	@Column(columnDefinition = "bool", name = "allow_submit__c")
-	private boolean allowSubmit;
-
-	@Column(columnDefinition = "varchar(255)", name = "document_type__c")
-	private String documentType;
-
-	@Column(columnDefinition = "varchar(18)", name = "lastmodifiedby_portaluserid__c")
-	private String lastModifiedByPortalUserId;
-
-	@Column(columnDefinition = "varchar(18)", name = "createdby_portaluserid__c")
-	private String createdByPortalUserId;
-
-	@Column(columnDefinition = "varchar(255)", name = "portal_status__c")
-	private String portal_status__c;
 
 	// end
 
@@ -137,6 +137,14 @@ public class ScheduleOfOffer {
 		this.currencyIsoCode = currencyIsoCode;
 	}
 
+	public Float getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(Float sequence) {
+		this.sequence = sequence;
+	}
+
 	public String getClientName() {
 		return clientName;
 	}
@@ -151,6 +159,14 @@ public class ScheduleOfOffer {
 
 	public void setProcessDate(Date processDate) {
 		this.processDate = processDate;
+	}
+
+	public String getDocumentType() {
+		return documentType;
+	}
+
+	public void setDocumentType(String documentType) {
+		this.documentType = documentType;
 	}
 
 	public String getFactorCode() {
@@ -175,6 +191,30 @@ public class ScheduleOfOffer {
 
 	public void setExchangeRate(Float exchangeRate) {
 		this.exchangeRate = exchangeRate;
+	}
+
+	public Date getKeyInByDate() {
+		return keyInByDate;
+	}
+
+	public void setKeyInByDate(Date keyInByDate) {
+		this.keyInByDate = keyInByDate;
+	}
+
+	public String getListType() {
+		return listType;
+	}
+
+	public void setListType(String listType) {
+		this.listType = listType;
+	}
+
+	public String getLastModifiedByPortalUserId() {
+		return lastModifiedByPortalUserId;
+	}
+
+	public void setLastModifiedByPortalUserId(String lastModifiedByPortalUserId) {
+		this.lastModifiedByPortalUserId = lastModifiedByPortalUserId;
 	}
 
 	public String getScheduleStatus() {
@@ -233,12 +273,36 @@ public class ScheduleOfOffer {
 		this.systemModStamp = systemModStamp;
 	}
 
+	public String getCreatedByPortalUserId() {
+		return createdByPortalUserId;
+	}
+
+	public void setCreatedByPortalUserId(String createdByPortalUserId) {
+		this.createdByPortalUserId = createdByPortalUserId;
+	}
+
 	public Float getAverageInvoiceSizeLast12Months() {
 		return averageInvoiceSizeLast12Months;
 	}
 
 	public void setAverageInvoiceSizeLast12Months(Float averageInvoiceSizeLast12Months) {
 		this.averageInvoiceSizeLast12Months = averageInvoiceSizeLast12Months;
+	}
+
+	public Float getExternalId() {
+		return externalId;
+	}
+
+	public void setExternalId(Float externalId) {
+		this.externalId = externalId;
+	}
+
+	public boolean isAllowSubmit() {
+		return allowSubmit;
+	}
+
+	public void setAllowSubmit(boolean allowSubmit) {
+		this.allowSubmit = allowSubmit;
 	}
 
 	public Date getCreatedDate() {
@@ -265,6 +329,14 @@ public class ScheduleOfOffer {
 		this.originalAcceptanceDate = originalAcceptanceDate;
 	}
 
+	public String getPortal_status__c() {
+		return portal_status__c;
+	}
+
+	public void setPortal_status__c(String portal_status__c) {
+		this.portal_status__c = portal_status__c;
+	}
+
 	public String getSfId() {
 		return sfId;
 	}
@@ -287,78 +359,6 @@ public class ScheduleOfOffer {
 
 	public void setHcErr(String hcErr) {
 		this.hcErr = hcErr;
-	}
-
-	public Float getSequence() {
-		return sequence;
-	}
-
-	public void setSequence(Float sequence) {
-		this.sequence = sequence;
-	}
-
-	public Date getKeyInByDate() {
-		return keyInByDate;
-	}
-
-	public void setKeyInByDate(Date keyInByDate) {
-		this.keyInByDate = keyInByDate;
-	}
-
-	public String getListType() {
-		return listType;
-	}
-
-	public void setListType(String listType) {
-		this.listType = listType;
-	}
-
-	public Float getExternalId() {
-		return externalId;
-	}
-
-	public void setExternalId(Float externalId) {
-		this.externalId = externalId;
-	}
-
-	public boolean isAllowSubmit() {
-		return allowSubmit;
-	}
-
-	public void setAllowSubmit(boolean allowSubmit) {
-		this.allowSubmit = allowSubmit;
-	}
-
-	public String getDocumentType() {
-		return documentType;
-	}
-
-	public void setDocumentType(String documentType) {
-		this.documentType = documentType;
-	}
-
-	public String getLastModifiedByPortalUserId() {
-		return lastModifiedByPortalUserId;
-	}
-
-	public void setLastModifiedByPortalUserId(String lastModifiedByPortalUserId) {
-		this.lastModifiedByPortalUserId = lastModifiedByPortalUserId;
-	}
-
-	public String getCreatedByPortalUserId() {
-		return createdByPortalUserId;
-	}
-
-	public void setCreatedByPortalUserId(String createdByPortalUserId) {
-		this.createdByPortalUserId = createdByPortalUserId;
-	}
-
-	public String getPortal_status__c() {
-		return portal_status__c;
-	}
-
-	public void setPortal_status__c(String portal_status__c) {
-		this.portal_status__c = portal_status__c;
 	}
 
 	// end

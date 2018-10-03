@@ -37,15 +37,6 @@ public class PortalRole {
 	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "systemmodstamp")
 	private Date systemModStamp;
 
-	@Column(columnDefinition = "varchar(18)", name = "sfid")
-	private String sfid;
-
-	@Column(columnDefinition = "varchar(32)", name = "_hc_lastop")
-	private String hcLastop;
-
-	@Column(columnDefinition = "text", name = "_hc_err")
-	private String hcErr;
-
 	@Column(columnDefinition = "varchar(4099)", name = "access_rights__c")
 	private String accessRights;
 
@@ -54,6 +45,15 @@ public class PortalRole {
 
 	@Column(columnDefinition = "text", name = "role_description__c")
 	private String roleDescription;
+
+	@Column(columnDefinition = "varchar(18)", name = "sfid")
+	private String sfid;
+
+	@Column(columnDefinition = "varchar(32)", name = "_hc_lastop")
+	private String hcLastop;
+
+	@Column(columnDefinition = "text", name = "_hc_err")
+	private String hcErr;
 
 	// end
 
@@ -75,11 +75,11 @@ public class PortalRole {
 		this.createdDate = createdDate;
 	}
 
-	public boolean getIsDeleted() {
+	public boolean isDeleted() {
 		return isDeleted;
 	}
 
-	public void setIsDeleted(boolean isDeleted) {
+	public void setDeleted(boolean isDeleted) {
 		this.isDeleted = isDeleted;
 	}
 
@@ -97,6 +97,30 @@ public class PortalRole {
 
 	public void setSystemModStamp(Date systemModStamp) {
 		this.systemModStamp = systemModStamp;
+	}
+
+	public String getAccessRights() {
+		return accessRights;
+	}
+
+	public void setAccessRights(String accessRights) {
+		this.accessRights = accessRights;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	public String getRoleDescription() {
+		return roleDescription;
+	}
+
+	public void setRoleDescription(String roleDescription) {
+		this.roleDescription = roleDescription;
 	}
 
 	public String getSfid() {
@@ -121,30 +145,6 @@ public class PortalRole {
 
 	public void setHcErr(String hcErr) {
 		this.hcErr = hcErr;
-	}
-
-	public String getAccessRights() {
-		return accessRights;
-	}
-
-	public void setAccessRights(String accessRights) {
-		this.accessRights = accessRights;
-	}
-
-	public boolean getActive() {
-		return active;
-	}
-
-	public void setActive(boolean active) {
-		this.active = active;
-	}
-
-	public String getRoleDescription() {
-		return roleDescription;
-	}
-
-	public void setRoleDescription(String roleDescription) {
-		this.roleDescription = roleDescription;
 	}
 
 	// end

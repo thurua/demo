@@ -37,6 +37,12 @@ public class RecordType {
 	@Column(columnDefinition = "varchar(255)", name = "description")
 	private String description;
 
+	@Column(columnDefinition = "varchar(80)", name = "developername")
+	private String developerName;
+
+	@Column(columnDefinition = "varchar(40)", name = "sobjecttype")
+	private String sobjectType;
+
 	@Column(columnDefinition = "varchar(18)", name = "sfid")
 	private String sfid;
 
@@ -45,12 +51,6 @@ public class RecordType {
 
 	@Column(columnDefinition = "text", name = "_hc_err")
 	private String hcErr;
-
-	@Column(columnDefinition = "varchar(80)", name = "developername")
-	private String developerName;
-
-	@Column(columnDefinition = "varchar(40)", name = "sobjecttype")
-	private String sobjectType;
 
 	// end
 
@@ -96,6 +96,22 @@ public class RecordType {
 		this.description = description;
 	}
 
+	public String getDeveloperName() {
+		return developerName;
+	}
+
+	public void setDeveloperName(String developerName) {
+		this.developerName = developerName;
+	}
+
+	public String getSobjectType() {
+		return sobjectType;
+	}
+
+	public void setSobjectType(String sobjectType) {
+		this.sobjectType = sobjectType;
+	}
+
 	public String getSfid() {
 		return sfid;
 	}
@@ -118,22 +134,6 @@ public class RecordType {
 
 	public void setHcErr(String hcErr) {
 		this.hcErr = hcErr;
-	}
-
-	public String getDeveloperName() {
-		return developerName;
-	}
-
-	public void setDeveloperName(String developerName) {
-		this.developerName = developerName;
-	}
-
-	public String getSobjectType() {
-		return sobjectType;
-	}
-
-	public void setSobjectType(String sobjectType) {
-		this.sobjectType = sobjectType;
 	}
 
 	// end

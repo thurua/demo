@@ -9,17 +9,17 @@ import { HTTP } from '../../utilities/utility';
     encapsulation: ViewEncapsulation.None
 })
 export class ScheduleComponent implements OnInit {
-    public isCollapsed: boolean = true;
-    public statusOfSchedule: string = "";
+    public portalStatus: string = "";
     public clientId: string = "";
     public clientName: string = "";
     public lstCA: any[] = [];
+    public lstStatus: any[] = [];
     public clientAccountId = "";
     public total: number = 0;
-    public totalPage = [];
-    public lastPage: number = 0;
     public pageSize = 5;
     public curentPage = 1;
+    public pager: any = {};
+    public pagedItems: any[];
     public data = [];
     public settings = {
         selectMode: 'single',  //single|multi
@@ -76,10 +76,25 @@ export class ScheduleComponent implements OnInit {
         let user = JSON.parse(localStorage.getItem("CURRENT_TOKEN"));
         this.clientId = user.clientId;
         this.clientName = user.clientName;
-
-        this.search(1);
-        this.curentPage = 1;
         this.searchCA();
+
+        let tmpStatus = {
+            data: [{
+                code: "",
+                value: "-- Please Select --"
+            }, {
+                code: "PEND",
+                value: "Pending Authorization"
+            }, {
+                code: "AUTH",
+                value: "Authorized"
+            }, {
+                code: "SUBM",
+                value: "Submitted"
+            }]
+        }
+
+        this.lstStatus = tmpStatus.data;
     }
 
     public searchClick(page: any) {
@@ -87,12 +102,18 @@ export class ScheduleComponent implements OnInit {
         this.curentPage = page;
     }
 
+    public resetClick() {
+        this.portalStatus = "";
+        this.clientAccountId = "";
+        this.data=[];
+    }
+
     public search(page: any) {
         let x = {
             filter: {
                 client: this.clientId,
                 clientAccount: this.clientAccountId,
-                scheduleStatus: this.statusOfSchedule
+                scheduleStatus: this.portalStatus
             },
             page: page,
             size: this.pageSize,
@@ -107,19 +128,8 @@ export class ScheduleComponent implements OnInit {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 this.data = rsp.result.data;
                 this.total = rsp.result.total;
-                this.totalPage = [];
-                if (this.total % this.pageSize == 0) {
-                    for (let i = 1; i <= this.total / this.pageSize && i < 4; i++) {
-                        this.totalPage.push(i);
-                    }
-                    this.lastPage = parseInt((this.total / this.pageSize).toString());
-                }
-                else {
-                    for (let i = 1; i <= (this.total / this.pageSize) + 1 && i < 4; i++) {
-                        this.totalPage.push(i);
-                    }
-                    this.lastPage = parseInt((this.total / this.pageSize + 1).toString());
-                }
+                this.setPage(page);
+                console.log(rsp);
             }
         }, (err) => {
             console.log(err);
@@ -138,11 +148,10 @@ export class ScheduleComponent implements OnInit {
         this.pro.searchCA(x).subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 let item = {
-                    id: null,
+                    sfid: "",
                     clientAccount: "-- Please select --"
                 }
                 rsp.result.data.unshift(item);
-
                 this.lstCA = rsp.result.data;
             }
         }, (err) => {
@@ -150,18 +159,57 @@ export class ScheduleComponent implements OnInit {
         });
     }
 
-    public nextClick() {
-        this.search(this.curentPage + 1);
-        this.curentPage++;
+    public setPage(page: number) {
+        this.pager = this.getPager(this.total, page, this.pageSize);
+        this.pagedItems = this.data.slice(this.pager.startIndex, this.pager.endIndex + 1);
     }
 
-    public firstPageClick() {
-        this.search(1);
-        this.curentPage = 1;
-    }
+    private getPager(totalItems: number, currentPage: number = 1, pageSize: number = 1) {
+        let totalPages = Math.ceil(totalItems / pageSize);
 
-    public lastPageClick() {
-        this.search(this.lastPage);
-        this.curentPage = this.lastPage;
+        if (currentPage < 1) {
+            currentPage = 1;
+        } else if (currentPage > totalPages) {
+            currentPage = totalPages;
+        }
+
+        let startPage: number, endPage: number;
+        if (totalPages <= 10) {
+            // less than 10 total pages so show all
+            startPage = 1;
+            endPage = totalPages;
+        } else {
+            // more than 10 total pages so calculate start and end pages
+            if (currentPage <= 6) {
+                startPage = 1;
+                endPage = 10;
+            } else if (currentPage + 4 >= totalPages) {
+                startPage = totalPages - 9;
+                endPage = totalPages;
+            } else {
+                startPage = currentPage - 5;
+                endPage = currentPage + 4;
+            }
+        }
+
+        // calculate start and end item indexes
+        let startIndex = (currentPage - 1) * pageSize;
+        let endIndex = Math.min(startIndex + pageSize - 1, totalItems - 1);
+
+        // create an array of pages to ng-repeat in the pager control
+        let pages = Array.from(Array((endPage + 1) - startPage).keys()).map(i => startPage + i);
+
+        // return object with all pager properties required by the view
+        return {
+            totalItems: totalItems,
+            currentPage: currentPage,
+            pageSize: pageSize,
+            totalPages: totalPages,
+            startPage: startPage,
+            endPage: endPage,
+            startIndex: startIndex,
+            endIndex: endIndex,
+            pages: pages
+        };
     }
 }

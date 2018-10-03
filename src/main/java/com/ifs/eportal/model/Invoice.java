@@ -57,6 +57,9 @@ public class Invoice {
 	@Column(columnDefinition = "varchar(18)", name = "schedule_of_offer__c")
 	private String scheduleOfOffer;
 
+	@Column(columnDefinition = "varchar(18)", name = "lastmodifiedby_portaluserid__c")
+	private String lastModifiedByPortalUserId;
+
 	@Column(columnDefinition = "varchar(18)", name = "client_account__c")
 	private String clientAccount;
 
@@ -72,6 +75,9 @@ public class Invoice {
 
 	@Column(columnDefinition = "varchar(255)", name = "contract__c")
 	private String contract;
+
+	@Column(columnDefinition = "varchar(18)", name = "createdby_portaluserid__c")
+	private String createdByPortalUserId;
 
 	@Column(columnDefinition = "varchar(255)", name = "status__c")
 	private String status;
@@ -204,6 +210,14 @@ public class Invoice {
 		this.scheduleOfOffer = scheduleOfOffer;
 	}
 
+	public String getLastModifiedByPortalUserId() {
+		return lastModifiedByPortalUserId;
+	}
+
+	public void setLastModifiedByPortalUserId(String lastModifiedByPortalUserId) {
+		this.lastModifiedByPortalUserId = lastModifiedByPortalUserId;
+	}
+
 	public String getClientAccount() {
 		return clientAccount;
 	}
@@ -220,11 +234,11 @@ public class Invoice {
 		this.name = name;
 	}
 
-	public boolean getIsDeleted() {
+	public boolean isDeleted() {
 		return isDeleted;
 	}
 
-	public void setIsDeleted(boolean isDeleted) {
+	public void setDeleted(boolean isDeleted) {
 		this.isDeleted = isDeleted;
 	}
 
@@ -242,6 +256,14 @@ public class Invoice {
 
 	public void setContract(String contract) {
 		this.contract = contract;
+	}
+
+	public String getCreatedByPortalUserId() {
+		return createdByPortalUserId;
+	}
+
+	public void setCreatedByPortalUserId(String createdByPortalUserId) {
+		this.createdByPortalUserId = createdByPortalUserId;
 	}
 
 	public String getStatus() {

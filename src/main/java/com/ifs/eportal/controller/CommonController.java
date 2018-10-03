@@ -22,10 +22,12 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ifs.eportal.bll.AccountService;
 import com.ifs.eportal.bll.ClientAccountService;
+import com.ifs.eportal.bll.CodeService;
 import com.ifs.eportal.common.RsaService;
+import com.ifs.eportal.dto.AccountDto;
 import com.ifs.eportal.dto.ClientAccountDto;
 import com.ifs.eportal.dto.TokenDto;
-import com.ifs.eportal.model.Account;
+import com.ifs.eportal.model.Code;
 import com.ifs.eportal.req.BaseReq;
 import com.ifs.eportal.req.PagingReq;
 import com.ifs.eportal.rsp.MultipleRsp;
@@ -39,12 +41,15 @@ public class CommonController {
 	private AccountService accountService;
 
 	@Autowired
+	private CodeService codeService;
+
+	@Autowired
 	private ClientAccountService clientAccountService;
 
 	// region -- Methods --
 
 	@PostMapping("/search-account")
-	public ResponseEntity<?> searchAccount(@RequestHeader HttpHeaders header, @RequestBody BaseReq req) {
+	public ResponseEntity<?> searchAccount(@RequestHeader HttpHeaders header, @RequestBody PagingReq req) {
 		MultipleRsp res = new MultipleRsp();
 
 		try {
@@ -56,7 +61,7 @@ public class CommonController {
 			// Boolean isOptional = req.getIsOptional();
 
 			// Handle
-			List<Account> tmp = accountService.search();
+			List<AccountDto> tmp = accountService.search(req);
 
 			// Set data
 			Map<String, Object> data = new LinkedHashMap<>();
@@ -143,5 +148,25 @@ public class CommonController {
 
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
+
+	@PostMapping("/search-code")
+	public ResponseEntity<?> searchCode(@RequestHeader HttpHeaders header, @RequestBody BaseReq req) {
+		MultipleRsp res = new MultipleRsp();
+
+		try {
+			List<Code> tmp = codeService.getBy(req.getKeyword());
+
+			// Set data
+			Map<String, Object> data = new LinkedHashMap<>();
+			data.put("count", tmp.size());
+			data.put("data", tmp);
+			res.setResult(data);
+		} catch (Exception ex) {
+			res.setError(ex.getMessage());
+		}
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
 	// end
 }

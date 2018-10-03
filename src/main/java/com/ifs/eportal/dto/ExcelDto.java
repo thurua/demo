@@ -1,10 +1,12 @@
 package com.ifs.eportal.dto;
 
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * 
@@ -171,6 +173,25 @@ public class ExcelDto {
 	 */
 	public void addLineItem(LineItemDto item) {
 		this.lineItems.add(item);
+	}
+
+	/**
+	 * Read JSON data
+	 * 
+	 * @param file
+	 * @return
+	 */
+	public static ExcelDto read(String file) {
+		ExcelDto res = new ExcelDto();
+
+		try {
+			FileReader s = new FileReader(file);
+			ObjectMapper mapper = new ObjectMapper();
+			res = mapper.readValue(s, ExcelDto.class);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return res;
 	}
 
 	// end

@@ -45,6 +45,9 @@ public class Reason {
 	@Column(columnDefinition = "varchar(255)", name = "remarks__c")
 	private String remarks;
 
+	@Column(columnDefinition = "text", name = "external_id__c")
+	private String externalId;
+
 	@Column(columnDefinition = "date", name = "date__c")
 	private Date date;
 
@@ -67,20 +70,9 @@ public class Reason {
 	@Column(columnDefinition = "text", name = "_hc_err")
 	private String hcErr;
 
-	@Column(columnDefinition = "text", name = "external_id__c")
-	private String externalId;
-
 	// end
 
 	// region -- Get set --
-
-	public String getExternalId() {
-		return externalId;
-	}
-
-	public void setExternalId(String externalId) {
-		this.externalId = externalId;
-	}
 
 	public Integer getId() {
 		return id;
@@ -144,6 +136,14 @@ public class Reason {
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
+	}
+
+	public String getExternalId() {
+		return externalId;
+	}
+
+	public void setExternalId(String externalId) {
+		this.externalId = externalId;
 	}
 
 	public Date getDate() {
