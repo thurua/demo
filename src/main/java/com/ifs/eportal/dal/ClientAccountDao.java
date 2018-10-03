@@ -73,7 +73,10 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 	 * Initialize
 	 */
 	public ClientAccountDao() {
-		_sql = "SELECT a.id, a.sfid, a.client_account__c  " + "FROM salesforce.client_account__c a ";
+		_sql = "SELECT \r\n" + "	a.id, 'a.activated_on__c' , a.account_type__c, a.client_account__c, \r\n"
+				+ "	'a.factoring_type__c', 'b.name', 'c.name',  a.name, \r\n"
+				+ "	a.program_name__c, 'a. verification__c', 'a.verification_exceeding_invoice_amount__c',  \r\n"
+				+ "	a.status__c \r\n" + "FROM salesforce.client_account__c a \r\n";
 	}
 
 	/**
@@ -92,6 +95,28 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 
 		// Convert
 		ClientAccountDto res = ClientAccountDto.convert(i);
+		return res;
+	}
+
+	/**
+	 * Get by
+	 * 
+	 * @param clientAccount
+	 * @param client
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<ClientAccountDto> getBy(String clientAccount, String client) {
+		String sql = _sql + " WHERE a.client_account__c = :clientAccount AND a.client__c = :client";
+
+		// Execute
+		Query q = _em.createNativeQuery(sql);
+		q.setParameter("clientAccount", clientAccount);
+		q.setParameter("client", client);
+		List<Object[]> l = q.getResultList();
+
+		// Convert
+		List<ClientAccountDto> res = ClientAccountDto.convert(l);
 		return res;
 	}
 

@@ -33,10 +33,15 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ifs.eportal.bll.AccountService;
+import com.ifs.eportal.bll.ClientAccountService;
 import com.ifs.eportal.bll.CreditNoteService;
 import com.ifs.eportal.bll.InvoiceService;
 import com.ifs.eportal.bll.ScheduleOfOfferService;
+import com.ifs.eportal.common.Const;
 import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.dto.AccountDto;
+import com.ifs.eportal.dto.ClientAccountDto;
 import com.ifs.eportal.dto.ExcelDto;
 import com.ifs.eportal.dto.LineItemDto;
 import com.ifs.eportal.dto.ScheduleOfOfferDto;
@@ -62,10 +67,16 @@ public class FileController {
 	private ScheduleOfOfferService scheduleOfOfferService;
 
 	@Autowired
+	private AccountService accountService;
+
+	@Autowired
 	private InvoiceService invoiceService;
 
 	@Autowired
 	private CreditNoteService creditNoteService;
+
+	@Autowired
+	private ClientAccountService clientAccountService;
 
 	// end
 
@@ -266,19 +277,136 @@ public class FileController {
 		try {
 			String client = o.getClient().trim();
 			String clientAccount = o.getClientAccount().trim();
-
 			/* NguyenMinh 2018-Sep-24 IFS-1203 */
-			if (o.getType() != scheduleType) {
+			if (scheduleType != o.getType()) {
 				err = "Selected Type of Schedule is not same as in Excel.";
 				res = Utils.addError(res, err);
 			}
 
 			/* ToanNguyen 2018-Aug-23 IFS-974 */
-			int compare = acceptanceDate.compareTo(Utils.getTime(Calendar.HOUR, 24));
-			if (compare > 0) {
+			Date now = Utils.getTime(Calendar.HOUR, 24);
+			String sNow = Utils.dateFormat(now, Const.DateTime.YMD);
+			String sAcceptanceDate = Utils.dateFormat(acceptanceDate, Const.DateTime.YMD);
+			if (sNow.equals(sAcceptanceDate)) {
 				err = "Schedule Acceptance Date cannot be future date and must be within current month.";
 				res = Utils.addError(res, err);
 			}
+
+			// Find Client Name (ac)
+			List<AccountDto> lac = accountService.read(name, clientId);
+			AccountDto ac = new AccountDto();
+			if (lac.size() == 1) {
+				if (clientId == lac.get(0).getSfid()) {
+					ac = lac.get(0);
+				} else {
+					err = "Client Name not same as in excel file.";
+					res = Utils.addError(res, err);
+					return res;
+				}
+			} else {
+				/* ToanNguyen 2018-Aug-23 IFS-975 */
+				err = "Client Name not found.";
+				res = Utils.addError(res, err);
+				return res;
+			}
+
+			// Find Client Account (ca)
+			List<ClientAccountDto> lca = clientAccountService.read(clientAccount, client);
+			ClientAccountDto ca = new ClientAccountDto();
+
+			if (lca.size() == 1) {
+				ca = lca.get(0);
+
+				/* NguyenMinh 2018-Sep-24 IFS-1203 */
+				if (ca.getSfid() != clientAccountId) {
+					err = "Selected Client Account is not same as in Excel.";
+					res = Utils.addError(res, err);
+				}
+
+				/* ToanNguyen 2018-Sep-10 IFS-1164 */
+//                if(isLoan  && ca.RecordType.Name != 'Loan') {
+//                    err = 'Client Account is not of Loan Type.';
+//                    res = Utils.addError(res, err);
+//                    return res;
+//                }
+//                if(isFactoring && ca.RecordType.Name != 'Factoring') {
+//                    err = 'Client Account is not of Factoring Type.';
+//                    res = Utils.addError(res, err);
+//                    return res;
+//                }
+
+				if (ca.getStatus() != "Activeted") {
+					/* ToanNguyen 2018-Aug-23 IFS-974 */
+					// chua co du lieu
+//                    if(acceptanceDate < ca.Activated_On__c) {
+//                        err = 'Schedule Acceptance Date cannot be before client account activation date.';
+//                        res = Utils.addError(res, err);
+//                    }
+//                    
+					/* TriNguyen 2018-Sep-04 IFS-1048 */
+//                    if(!isCN) {
+//                        Date t = ca.Activated_On__c.addMonths(6).addDays(-1);
+//                        if(acceptanceDate < t) {
+//                            // Client - New.
+//                            err = 'IVE';
+//                            errors = ZError.addError(errors, err, allNo);
+//                            res.invoiceValid = false;
+//                        }
+//                    }
+
+					/* TriNguyen 2018-Sep-04 IFS-1050 */
+//                    if(ca.Verification__c != null && ca.Verification__c == 100) {
+//                        // Client - 100% Verification Required.
+//                        err = 'IVJ';
+//                        errors = ZError.addError(errors, err, allNo);
+//                        res.invoiceValid = false;
+//                    }
+//                    
+					/* ToanNguyen 2018-Aug-30 IFS-977,1027 */
+//                    if(!amendSchedule) {
+//                        lso = [SELECT Id, Sequence__c FROM Schedule_Of_Offer__c
+//                               WHERE Schedule_No__c = :scheduleNo
+//                               AND Client_Name__c = :ac.Id
+//                               AND Client_Account__c = :ca.Id];
+//                        if(lso.size() > 0) {
+//                            err = 'Schedule Number exists under Client Account.';
+//                            res = Utils.addError(res, err);
+//                        }
+//                    }
+				} else if (ca.getStatus() == "Closed") {
+					/* ToanNguyen 2018-Aug-30 IFS-1024 */
+					err = "Client Account is already closed.";
+					res = Utils.addError(res, err);
+				} else if (ca.getStatus() == "Suspended") {
+					/* NhatNguyen 2018-Sep-03 IFS-1049 */
+					// Client - Suspended.
+					err = "IVF";
+					// errors = ZError.addError(errors, err, allNo);
+					// res.invoiceValid = false;
+				} else {
+					/* ToanNguyen 2018-Aug-30 IFS-1024 */
+					err = "Client Account is not activated.";
+					res = Utils.addError(res, err);
+				}
+			} else {
+				/* ToanNguyen 2018-Aug-30 IFS-1024 */
+				err = "Client Account not found.";
+				res = Utils.addError(res, err);
+				return res;
+			}
+
+			// chua co du lieu
+
+//			//vost9 - Tien Nguyen - validation currency - task IFS-1191
+//            List<CurrencyType> lstCurrencyTemp = [SELECT Id, IsoCode, IsActive FROM CurrencyType
+//                                                  WHERE IsoCode = :o.documentCurrency AND IsActive = true];
+//            if(lstCurrencyTemp.size() == 0)
+//            {
+//                err = 'Currency is not supported.';
+//                res = Utils.addError(res, err);
+//                return res;
+//            }
+
 		} catch (Exception ex) {
 
 		}

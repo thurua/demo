@@ -50,6 +50,17 @@
                                 <div class="col-md-1"></div>
                                 <div class="col-md-5">
                                     <label>
+                                        <span style="cursor: pointer; color:red">{{message}}</span> 
+                                    </label>
+                                </div>
+                                <div class="col-md-5">
+                                </div>
+                                <div class="col-md-1"></div>
+                            </div>
+                            <div class="fomat-pw row">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-5">
+                                    <label>
                                         <a style="cursor: pointer; color: #3E50B4" (click)="showForgotPasss()">Forgot Password?</a>
                                     </label>
                                 </div>
@@ -125,36 +136,31 @@
     <!-- /.modal-dialog -->
 </div>
 
-<div bsModal #ForgotPassModel2="bs-modal" [config]="{backdrop: 'static'}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div bsModal #notify="bs-modal" [config]="{backdrop: 'static'}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <!-- loading spinner -->
     <!-- <div *ngIf="model_loader" class="loading">Loading&#8230;</div> -->
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Forgot Password</h4>
-                <button type="button" class="close" (click)="ForgotPassModel2.hide()" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <h4 class="modal-title" style="margin: auto">Reset Password</h4>
             </div>
             <div class="modal-body">
                 <form class="form-horizontal form-label-left input_mask" novalidate #frm="ngForm">
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="form-group">
                             <div class="row">
-                                <strong> A password reset email has been sent to your registered email.</strong>
+                                <strong style="margin: auto"> A password reset email has been sent to user's contact email.</strong>
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="row">
                             <div class="col-md-3">
-
                             </div>
                             <div class="col-md-6">
-                                <button type="button" class="btn btn-primary btn-block" (click)="ForgotPassModel2.hide();">OK</button>
+                                <button type="button" class="btn btn-success btn-block" (click)="notify.hide();isShow=true">OK</button>
                             </div>
                             <div class="col-md-3">
-
                             </div>
                         </div>
                     </div>

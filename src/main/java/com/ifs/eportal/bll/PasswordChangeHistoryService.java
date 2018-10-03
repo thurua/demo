@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ifs.eportal.dal.PasswordChangeHistoryDao;
+import com.ifs.eportal.model.PasswordChangeHistory;
 
 @Service(value = "passwordChangeHistoryService")
 @Transactional
@@ -18,5 +19,13 @@ public class PasswordChangeHistoryService {
 
 	// region -- Methods --
 
-	// end
+	/**
+	 * Create
+	 * 
+	 * @param m
+	 */
+	public void create(PasswordChangeHistory m) {
+		passwordChangeHistoryDao.create(m);
+	}
+
 }

@@ -17,7 +17,7 @@ export class ProfileComponent implements OnInit {
     public isOneSpecialCharOld: boolean = false;
     public isOneSpecialCharNew: boolean = false;
     public isMatch: boolean = false;
-    public msgErrSpecialChar: string = "Password must be 8 characters and include numbers, uppercase and lowercase";
+    public msgErrSpecialChar: string = "Password must be 8 characters and include numbers, uppercase and lowercase. Letters and one special character";
 
     @ViewChild('changePasswordModal') public changePasswordModal: ModalDirective;
     @ViewChild('infoModal') public infoModal: ModalDirective;

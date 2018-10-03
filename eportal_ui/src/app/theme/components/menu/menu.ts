@@ -5,7 +5,7 @@ export const verticalMenuItems = [
      new Menu(10, 'Schedules', 'pages/schedule', null, 'history', null, false, 0),
      new Menu(20, 'Invoices', '/pages/blank', null, 'shield', null, false, 0),
      new Menu(30, 'Credit Notes', 'pages/blank', null, 'tag', null, false, 0),
-     new Menu(40, 'Cash Disbursements', '/pages/blank', null, 'money', null, false, 0),
+    //  new Menu(40, 'Cash Disbursements', '/pages/blank', null, 'money', null, false, 0),
      new Menu(50, 'Client Accounts', '/pages/blank', null, 'cogs', null, true, 0),
      new Menu(50, 'Summary', '/pages/blank', null, 'briefcase', null, false, 50),
      new Menu(60, 'Details', '/pages/blank', null, 'newspaper-o', null, false, 50),

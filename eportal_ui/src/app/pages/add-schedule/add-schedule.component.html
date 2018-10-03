@@ -1,9 +1,9 @@
-<div class="card header-margin">
-    <div class="card-header">
-        <strong>Details</strong>
-    </div>
-    <div class="card-body">
-        <form name="form" #f="ngForm" (ngSubmit)="f.form.valid && create()" class="full-width">
+<form name="form" #f="ngForm" (ngSubmit)="f.form.valid && uploadDocument()" class="full-width">
+    <div class="card header-margin">
+        <div class="card-header">
+            <strong>Details</strong>
+        </div>
+        <div class="card-body">
             <div class="body row">
                 <div class="col-md 6 left">
                     <div class="form-group row">
@@ -11,11 +11,12 @@
                             <strong>Client Name</strong>
                         </div>
                         <div class="col-md-8">
-                            <form action="" name="client">
-                                <select class="form-control" name="account" #account="ngModel" [(ngModel)]="vm.account" (change)="changeAccount()">
-                                    <option *ngFor="let i of listClient" value="{{i.sfid}}">{{i.name}}</option>
-                                </select>
-                            </form>
+                            <select id="account" name="account" #account="ngModel" [(ngModel)]="vm.account" (change)="changeAccount()" class="form-control" required>
+                                <option *ngFor="let i of listClient" value="{{i.sfid}}">{{i.name}}</option>
+                            </select>
+                            <!-- <span [hidden]="account.valid || (account.pristine && !f.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="account" data-valmsg-for="account" id="account_validationMessage" role="alert">
+                                    <i class="fa fa-exclamation-triangle"></i>Please select a Client Name.
+                            </span> -->
                         </div>
                     </div>
                     <div class="form-group row">
@@ -23,12 +24,16 @@
                             <strong>Schedule Type<span class="text-danger">*</span></strong>
                         </div>
                         <div class="col-md-8">
-                            <select class="form-control" name="scheduleType" #scheduleType="ngModel" [(ngModel)]="vm.scheduleType">
+                            <select class="form-control" name="scheduleType" #scheduleType="ngModel" [(ngModel)]="vm.scheduleType" (change)="hideShow($event.target.value)" required>
                                 <option value="">-- Please Select --</option>
                                 <option value="Invoice">Invoice</option>
                                 <option value="Cash Disbursement">Cash Disbursement</option>
                                 <option value="Credit note">Credit note</option>
                             </select>
+                            <span [hidden]="scheduleType.valid || (scheduleType.pristine && !f.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="scheduleType" data-valmsg-for="scheduleType" id="scheduleType_validationMessage"
+                                role="alert">
+                                    <i class="fa fa-exclamation-triangle"></i>Please select a Client Account.
+                            </span>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -36,7 +41,11 @@
                             <strong>Amend Schedule &nbsp;<sup>&#9432;</sup></strong>
                         </div>
                         <div class="col-md-8">
-                            <input type="checkbox" name="amendSchedule" #amendSchedule="ngModel" [(ngModel)]="vm.amendSchedule">
+                            <input type="checkbox" name="amendSchedule" #amendSchedule="ngModel" [(ngModel)]="vm.amendSchedule" required>
+                            <span [hidden]="vm.amendSchedule || (amendSchedule.pristine && !f.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="amendSchedule" data-valmsg-for="amendSchedule" id="amendSchedule_validationMessage"
+                                role="alert">
+                                <i class="fa fa-exclamation-triangle"></i>Required
+                        </span>
                         </div>
                     </div>
                 </div>
@@ -46,17 +55,13 @@
                             <strong>Client Account<span class="text-danger">*</span></strong>
                         </div>
                         <div class="col-md-8">
-                            <select class="form-control" name="clientAccount" #clientAccount="ngModel" [(ngModel)]="vm.clientAccount">
-                            <option *ngFor="let i of listClientAccount" value="{{i.id}}">{{i.clientAccount}}</option>
-                        </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-md-4 sch-a-date">
-                            <strong>Schedule Acceptance Date</strong>
-                        </div>
-                        <div class="col-md-8">
-                            <input class="form-control" type="date" name="date" #scheduleNo="ngModel" [(ngModel)]="vm.date">
+                            <select class="form-control" name="clientAccount" #clientAccount="ngModel" [(ngModel)]="vm.clientAccount" required>
+                                    <option *ngFor="let i of listClientAccount" value="{{i.id}}">{{i.clientAccount}}</option>
+                                </select>
+                            <span [hidden]="clientAccount.valid || (clientAccount.pristine && !f.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="clientAccount" data-valmsg-for="clientAccount" id="clientAccount_validationMessage"
+                                role="alert">
+                                        <i class="fa fa-exclamation-triangle"></i>Please select a plan.
+                                </span>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -64,61 +69,84 @@
                             <strong>Amend Schedule No.</strong>
                         </div>
                         <div class="col-md-8">
-                            <input class="form-control none-border" name="scheduleNo" #scheduleNo="ngModel" [(ngModel)]="vm.scheduleNo" />
+                            <input class="form-control none-border" name="scheduleNo" #scheduleNo="ngModel" [(ngModel)]="vm.scheduleNo" required/>
+                            <!-- <span [hidden]="scheduleNo.valid || (scheduleNo.pristine && !f.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="scheduleNo" data-valmsg-for="scheduleNo" id="scheduleNo_validationMessage" role="alert">
+                                    <i class="fa fa-exclamation-triangle"></i>Please enter premise Amend Schedule No.
+                                </span> -->
                         </div>
                     </div>
                 </div>
             </div>
-        </form>
-    </div>
-    <div class=" footer">
-        <div class="card-header">
-            <strong>File Upload</strong>
         </div>
-        <div class="card-body col-md-6">
-            <div class="form-group row">
-                <div class="col-md-6">
-                    <!-- <input type="file" class="form-control" name="ImportExcel" title="Select File" id="importData" accept=".xls,.xlsx" ng2FileSelect [uploader]="uploader" (change)="fileChanged($event)" /> -->
-                    <div class="input-group file-upload">
-                        <input type="file" name="ImportExcel" title="Select File" id="importData" accept=".xls,.xlsx" ng2FileSelect [uploader]="uploader" (change)="fileChanged($event)" class="file-upload-btn" />
-                        <input type="text" class="form-control" placeholder="Choose a file..." value="{{(file !=null)? file.name :'' }}">
-                        <i class="fa fa-times delete-file" (click)="removeFile()" *ngIf="file"></i>
-                        <span class="input-group-append upload">
-                            <button class="btn btn-primary" type="button"><i class="fa fa-upload"> </i></button>
-                        </span>
+        <div class=" footer">
+            <div class="card-header">
+                <strong>File Upload</strong>
+            </div>
+            <div class="row">
+                <div class="card-body col-md-6">
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <div class="input-group file-upload">
+                                <input type="file" name="ImportExcel" title="Select File" id="importData" accept=".xls,.xlsx" ng2FileSelect [uploader]="uploader" (change)="fileChanged($event)" class="file-upload-btn" />
+                                <input type="text" class="form-control" placeholder="Choose a file..." value="{{(file !=null)? file.name :'' }}">
+                                <i class="fa fa-times delete-file" (click)="removeFile()" *ngIf="file"></i>
+                                <span class="input-group-append upload">
+                                <button class="btn btn-success" type="button"><i class="fa fa-upload"> </i></button>
+                            </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="card-body col-md-6"><button class="btn btn-success download" type="button" routerLink="../schedule">Dowload Template</button></div>
+            </div>
+            {{message}}
+            <div class="card-body col-md-6">
+                <div class="row">
+                    <div class="col-md-6"></div>
+                    <div class="col-md-4">
+                        <button class="btn btn-success btn-block" type="submit">Proceed</button>
+                    </div>
+                    <div class="col-md-2 cancel">
+                        <button class="btn btn-gray btn-block" type="button" routerLink="../schedule">Cancel</button>
+                    </div>
                 </div>
-                <div class="col-md-2 cancel">
-                    <button class="btn btn-primary btn-block" type="button" routerLink="../schedule">Cancel</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div bsModal #infoModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>{{title}}</h4>
+                <button type="button" class="close" (click)="infoModal.hide()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+            </div>
+            <div class="modal-body size-text-content-modal text-center">
+                <div class="form-group row">
+                    <div class="col-md-12">
+                        <i class="fa fa-check-square-o icon-check-square"></i>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-12 text-bold">
+                        <span>{{msg}}</span>
+                    </div>
                 </div>
             </div>
             <div class="form-group row">
-                <div class="col-md-6"></div>
-                <div class="col-md-4">
-                    <button class="btn btn-primary btn-block" type="button" (click)="uploadDocument()">Proceed</button>
+                <div class="col-md-1">
                 </div>
-                <div class="col-md-2"></div>
+                <div class="col-md-10">
+                    <button type="button" class="btn btn-success btn-block text-bold" (click)="infoModal.hide()">OK</button>
+                </div>
+                <div class="col-md-1">
+                </div>
             </div>
         </div>
+        <!-- /.modal-content -->
     </div>
-</div>
-
-<!-- The Modal -->
-<div class="modal" id="informationModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">{{ title }}</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                {{ msg }}
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
+    <!-- /.modal-dialog -->
 </div>

@@ -54,13 +54,13 @@ public class AccountService {
 	}
 
 	/**
-	 * Read by
+	 * Get by
 	 * 
-	 * @param id
+	 * @param sfid
 	 * @return
 	 */
-	public AccountDto read(int id) {
-		return accountDao.getBy(id);
+	public AccountDto getBy(String sfid) {
+		return accountDao.getBy(sfid);
 	}
 
 	/**
@@ -70,8 +70,8 @@ public class AccountService {
 	 * @param clientName
 	 * @return
 	 */
-	public List<AccountDto> read(String name, String clientName) {
-		return accountDao.getBy(name, clientName);
+	public List<AccountDto> read(String name, String sfid) {
+		return accountDao.getBy(name, sfid);
 	}
 
 	/**

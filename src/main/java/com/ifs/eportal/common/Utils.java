@@ -1,6 +1,8 @@
 package com.ifs.eportal.common;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -65,17 +67,37 @@ public class Utils {
 	/**
 	 * Date format
 	 * 
-	 * @param date
+	 * @param d String date and time
 	 * @return
 	 */
-	public static Date dateFormat(String date) {
+	public static Date dateFormat(String d) {
 		Date res = null;
 		SimpleDateFormat f = new SimpleDateFormat(Const.DateTime.FULL);
 
 		try {
-			res = f.parse(date);
+			res = f.parse(d);
 
 		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		return res;
+	}
+
+	/**
+	 * Date format
+	 * 
+	 * @param d      Date and time
+	 * @param format Format date e.g: dd/MM/yyyy
+	 * @return
+	 */
+	public static String dateFormat(Date d, String format) {
+		String res = "";
+
+		try {
+			SimpleDateFormat sm = new SimpleDateFormat(format);
+			res = sm.format(d);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -410,6 +432,49 @@ public class Utils {
 	}
 
 	/**
+	 * Add error
+	 * 
+	 * @param rsp
+	 * @param err
+	 * @return
+	 */
+	public static SingleRsp addError(SingleRsp rsp, String err) {
+		String s = rsp.getMessage() + "\n" + err;
+		rsp.setMessage(s);
+		return rsp;
+	}
+
+	/**
+	 * Read file
+	 * 
+	 * @param file Full path file name
+	 * @return
+	 */
+	public static String readFile(String file) {
+		String res = "";
+
+		try {
+			FileReader fr = new FileReader(file);
+			BufferedReader br = new BufferedReader(fr);
+			StringBuilder sb = new StringBuilder();
+			String ls = System.getProperty("line.separator");
+
+			String line = null;
+			while ((line = br.readLine()) != null) {
+				sb.append(line);
+				sb.append(ls);
+			}
+
+			res = sb.toString();
+			br.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return res;
+	}
+
+	/**
 	 * Generate SHA-256
 	 * 
 	 * @param s String data
@@ -459,15 +524,6 @@ public class Utils {
 	private static void getEnv() {
 		_uploadHash = System.getenv("UPLOAD_HASH");
 		_uploadKey = System.getenv("UPLOAD_KEY");
-	}
-
-	/**
-	 * add error
-	 */
-	public static SingleRsp addError(SingleRsp res, String err) {
-		String s = res.getMessage() + "\n" + err;
-		res.setMessage(s);
-		return res;
 	}
 
 	// end

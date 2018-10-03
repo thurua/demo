@@ -39,8 +39,12 @@ public class ClientAccountService {
 	 * @param id
 	 * @return
 	 */
-	public ClientAccountDto read(int id) {
+	public ClientAccountDto read(Integer id) {
 		return clientAccountDao.getBy(id);
+	}
+
+	public List<ClientAccountDto> read(String clientAccount, String client) {
+		return clientAccountDao.getBy(clientAccount, client);
 	}
 
 	/**

@@ -58,7 +58,7 @@ public class AccountDto extends BaseDto {
 
 		res.setId((Integer) o[0]);
 		res.setSfid((String) o[1]);
-
+		res.setName((String) o[2]);
 		return res;
 	}
 

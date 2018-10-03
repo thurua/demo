@@ -19,6 +19,12 @@ public class ClientAccountDto extends BaseDto {
 	@JsonProperty(value = "clientAccount")
 	private String clientAccount;
 
+	@JsonProperty(value = "client")
+	private String client;
+
+	@JsonProperty(value = "status")
+	private String status;
+
 	// end
 
 	// region -- Get set --
@@ -39,6 +45,22 @@ public class ClientAccountDto extends BaseDto {
 		this.clientAccount = clientAccount;
 	}
 
+	public String getClient() {
+		return client;
+	}
+
+	public void setClient(String client) {
+		this.client = client;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -49,8 +71,10 @@ public class ClientAccountDto extends BaseDto {
 	public ClientAccountDto() {
 		super();
 
-		clientAccount = "";
 		sfid = "";
+		clientAccount = "";
+		client = "";
+
 	}
 
 	/**
@@ -65,6 +89,7 @@ public class ClientAccountDto extends BaseDto {
 		res.setId((Integer) o[0]);
 		res.setSfid((String) o[1]);
 		res.setClientAccount((String) o[2]);
+		res.setClient((String) o[3]);
 
 		return res;
 	}

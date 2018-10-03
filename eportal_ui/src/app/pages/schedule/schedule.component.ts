@@ -113,7 +113,7 @@ export class ScheduleComponent implements OnInit {
             filter: {
                 client: this.clientId,
                 clientAccount: this.clientAccountId,
-                scheduleStatus: this.portalStatus
+                portalStatus: this.portalStatus
             },
             page: page,
             size: this.pageSize,

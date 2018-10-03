@@ -69,7 +69,7 @@ public class AccountDao implements Repository<Account, Integer> {
 
 	// region -- Methods --
 	public AccountDao() {
-		_sql = "SELECT \r\n" + "a.id, a.sfid, a.name" + "FROM salesforce.account a\r\n";
+		_sql = "SELECT \r\n" + "a.id, a.sfid, a.name" + " FROM salesforce.account a\r\n";
 	}
 
 	/**
@@ -78,12 +78,25 @@ public class AccountDao implements Repository<Account, Integer> {
 	 * @param id
 	 * @return
 	 */
-	public AccountDto getBy(Integer id) {
-		String sql = _sql + " WHERE a.id = :id";
+	public AccountDto getBy(String sfid) {
+		String sql = _sql + " WHERE a.sfid = :sfid";
 
 		// Execute
 		Query q = _em.createNativeQuery(sql);
-		q.setParameter("id", id);
+		q.setParameter("sfid", sfid);
+		Object[] i = (Object[]) q.getSingleResult();
+
+		// Convert
+		AccountDto res = AccountDto.convert(i);
+		return res;
+	}
+
+	public AccountDto getByClient(String client) {
+		String sql = _sql + " WHERE a.name = :client";
+
+		// Execute
+		Query q = _em.createNativeQuery(sql);
+		q.setParameter("name", client);
 		Object[] i = (Object[]) q.getSingleResult();
 
 		// Convert
@@ -99,13 +112,13 @@ public class AccountDao implements Repository<Account, Integer> {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public List<AccountDto> getBy(String name, String clientName) {
-		String sql = _sql + " WHERE a.name = :name AND a.client_name__c = :clientName";
+	public List<AccountDto> getBy(String name, String sfid) {
+		String sql = _sql + " WHERE a.name = :name AND a.sfid = :sfid";
 
 		// Execute
 		Query q = _em.createNativeQuery(sql);
 		q.setParameter("name", name);
-		q.setParameter("clientName", clientName);
+		q.setParameter("sfid", sfid);
 		List<Object[]> l = q.getResultList();
 
 		// Convert
@@ -154,7 +167,7 @@ public class AccountDao implements Repository<Account, Integer> {
 		}
 
 		// Execute to count all
-		String sql = "SELECT \r\n" + "	count(*) \r\n" + "FROM salesforce.account a ";
+		String sql = "SELECT \r\n" + "	count(*) \r\n" + " FROM salesforce.account a ";
 		String limit = "";
 		Query q = createQuery(sql, filter, limit);
 		BigInteger total = (BigInteger) q.getSingleResult();

@@ -23,13 +23,16 @@ export class ResetPasswordComponent implements OnInit {
     public isFormatEmail = false;
     public messageForgot = '';
     public msgExistingAccount = '';
-    public pwdPattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$$";
+    public pwdPattern = "((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8})";
     public type = "password";
     public typeConfirm = "password";
     public show = false;
     public showConfirm = false;
     public typePassLogin = "password";
     public showPassLogin = false;
+    public isOneSpecialChar = false;
+    public token = '';
+    public title = '';
 
     @ViewChild('ChangePassword') public ChangePassword: ModalDirective;
 
@@ -41,6 +44,19 @@ export class ResetPasswordComponent implements OnInit {
 
         this.email = this.form.controls['email'];
         this.password = this.form.controls['password'];
+
+        this.act.params.subscribe((params: Params) => {
+            this.token = params["token"];
+            let mode = this.token.substring(0, 1);
+            console.log(mode);
+            
+            if (mode == 'S' || mode == 'R') {
+                this.title = 'Password Setup';
+            } else if (mode == 'A') {
+                this.title = 'Reset Password';
+            }
+        });
+
     }
 
     ngOnInit() {
@@ -68,10 +84,7 @@ export class ResetPasswordComponent implements OnInit {
             return;
         }
 
-        this.act.params.subscribe((params: Params) => {
-            let token = params["token"];
-            this.vm.email = token
-        });
+        this.vm.email = this.token;
 
         let obj = { email: this.vm.email, newPassword: this.vm.password };
         this.pro.resetPassword(obj).subscribe((rsp: any) => {
@@ -83,5 +96,15 @@ export class ResetPasswordComponent implements OnInit {
             }
             //this.loader = false;
         });
+    }
+
+    public inputPasswordChange() {
+        this.isOneSpecialChar = false;
+
+        var specialChar = this.vm.password.replace(/[a-zA-Z0-9]/g, "");
+        if (specialChar.length != 1) {
+            this.isOneSpecialChar = true;
+            return;
+        }
     }
 }

@@ -8,9 +8,8 @@ export class CommonProvider {
     /**
      * Search account
      */
-    public searchAccount() {
-        let x = {};
-        return this.api.post('common/search-account', x);
+    public searchAccount(info: any) {
+        return this.api.post('common/search-account', info);
     }
 
     /**

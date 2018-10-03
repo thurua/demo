@@ -73,8 +73,7 @@ public class PortalRoleDao implements Repository<PortalRole, Integer> {
 	 * Initialize
 	 */
 	public PortalRoleDao() {
-		_sql = "SELECT \r\n" + "	a.id, \r\n" + "	a.name, \r\n" + "	a.sfid\r\n"
-				+ "FROM salesforce.portal_role__c a ";
+		_sql = "SELECT \r\n" + "	a.id, a.sfid, a.name \r\n" + "FROM salesforce.portal_role__c a ";
 	}
 
 	/**

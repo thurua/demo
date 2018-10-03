@@ -57,13 +57,13 @@ export class FileComponent implements OnInit {
     }
 
     private getClient() {
-        this.proCommon.searchAccount().subscribe((rsp: any) => {
-            if (rsp.status === HTTP.STATUS_SUCCESS) {
-                this.listClient = rsp.result.data;
-            }
-            else {
-                console.log(rsp.message);
-            }
-        }, err => console.log(err));
+        // this.proCommon.searchAccount().subscribe((rsp: any) => {
+        //     if (rsp.status === HTTP.STATUS_SUCCESS) {
+        //         this.listClient = rsp.result.data;
+        //     }
+        //     else {
+        //         console.log(rsp.message);
+        //     }
+        // }, err => console.log(err));
     }
 }

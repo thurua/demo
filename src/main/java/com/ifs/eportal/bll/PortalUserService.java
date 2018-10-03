@@ -18,8 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ifs.eportal.common.Const;
 import com.ifs.eportal.common.RsaService;
 import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.dal.PasswordChangeHistoryDao;
 import com.ifs.eportal.dal.PortalUserDao;
 import com.ifs.eportal.dto.PortalUserDto;
+import com.ifs.eportal.model.PasswordChangeHistory;
 import com.ifs.eportal.model.PortalUser;
 import com.ifs.eportal.req.PagingReq;
 import com.ifs.eportal.req.PasswordReq;
@@ -58,6 +60,9 @@ public class PortalUserService implements UserDetailsService {
 
 	@Autowired
 	private PortalUserDao portalUserDao;
+
+	@Autowired
+	private PasswordChangeHistoryDao passwordChangeHistoryDao;
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -150,6 +155,7 @@ public class PortalUserService implements UserDetailsService {
 			res = "Id does not exist";
 		} else {
 			boolean ok = true;
+			String mode = "";
 			String t = bCryptPasswordEncoder.encode(newPassword);
 
 			if (!isReset) {
@@ -167,9 +173,20 @@ public class PortalUserService implements UserDetailsService {
 				}
 
 				portalUserDao.update(m);
+				mode = "A";
 			} else {
 				res = "Old password is incorrect";
+				mode = "U";
 			}
+
+			Date today = new Date();
+			PasswordChangeHistory pwch = new PasswordChangeHistory();
+			pwch.setUserSfid(m.getSfid());
+			pwch.setUserName(m.getUserId());
+			pwch.setChangeBy(mode);
+			pwch.setChangedOn(today);
+
+			passwordChangeHistoryDao.update(pwch);
 		}
 
 		return res;

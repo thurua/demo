@@ -28,9 +28,10 @@ export class LoginComponent implements OnInit {
     public loader = false;
     public isShow = true;
     public pwdPattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$$";
+    public message="";
 
     @ViewChild('forgotPassModal') public forgotPassModal: ModalDirective;
-    @ViewChild('ForgotPassModel2') public ForgotPassModel2: ModalDirective;
+    @ViewChild('notify') public notify: ModalDirective;
 
     constructor(router: Router, fb: FormBuilder, private pro: UserProvider, private rsa: RsaService) {
         this.router = router;
@@ -70,16 +71,16 @@ export class LoginComponent implements OnInit {
             email: this.vm.userName,
             password: this.vm.password
         };
+        
         this.pro.signIn(obj).subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
-                //this.message = "";
+                this.message = "";
                 this.pro.saveAuth(rsp.result); // save JWT
                 this.router.navigate(['pages/dashboard']);
 
             } else {
-                //this.message = rsp.message;
+                this.message = rsp.message;
             }
-
             this.loader = false;
         }, err => console.log(err));
     }
@@ -89,14 +90,11 @@ export class LoginComponent implements OnInit {
         let obj = { keyword: this.vm.email };
         this.pro.updateToken(obj).subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
-                alert("Please check mail box to change your password!");
-                this.isShow = true;
+                this.notify.show();
+                this.forgotPassModal.hide();
             } else {
                 let msg = rsp.message;
             }
-            //this.loader = false;
-            this.forgotPassModal.hide();
-            //this.show = false;
         });
     }
 

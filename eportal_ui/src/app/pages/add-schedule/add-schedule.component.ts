@@ -18,12 +18,13 @@ export class AddScheduleComponent implements OnInit {
     public uploader: FileUploader = new FileUploader({ url: URL, itemAlias: 'photo' });
     public file: any;
     public loader: boolean = false;
-    public vm: any = { id: "", scheduleType: "Invoice", scheduleNo: "", account: "", amendSchedule: false, date: null, clientAccount: "" };
+    public vm: any = { id: "", scheduleType: "", scheduleNo: "", account: "", amendSchedule: false, clientAccount: "" };
     public msg = "";
+    public message = "";
     public title = "";
     public success = false;
 
-    @ViewChild("informationModal") public informationModal: ModalDirective;
+    @ViewChild("infoModal") public infoModal: ModalDirective;
 
     constructor(
         private proCommon: CommonProvider,
@@ -33,9 +34,23 @@ export class AddScheduleComponent implements OnInit {
     ngOnInit() {
         this.getClient();
         this.getClientAccount();
+        this.hideShow("");
     }
     private getClient() {
-        this.proCommon.searchAccount().subscribe((rsp: any) => {
+        let x = {
+            filter: {
+                client: ""
+            },
+            page: 1,
+            size: 5000,
+            sort: [
+                {
+                    direction: "DESC"
+                }
+            ]
+        }
+        this.proCommon.searchAccount(x).subscribe((rsp: any) => {
+            console.log(rsp);
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 this.listClient = rsp.result.data;
             }
@@ -76,13 +91,28 @@ export class AddScheduleComponent implements OnInit {
         this.file = e.target.files[0];
     }
 
+    public hideShow(a: any) {
+        console.log(a);
+
+        if (a == "Invoice") {
+            this.message = "Pursuant to the Factoring Agreement which we have made with you, we send you herewith the INVOICES and we hereby assign to you each of the debts to which those invoices relate. It is hereby guaranteed that in relation to the said invoices the warranties and undertakings contained in Clause (29) of the factoring Agreement have been complied with and in particular the goods and/or services have been delivered and/or performed prior to the date hereof.";
+        }
+        else if (a == "Cash Disbursement") {
+            this.message = "Pursuant to the Factoring Agreement which we have made with you, we send you herewith the INVOICES and we hereby assign to you each of the debts to which those invoices relate. It is hereby guaranteed that in relation to the said invoices the warranties and undertakings contained in Clause (29) of the factoring Agreement have been complied with and in particular the goods and/or services have been delivered and/or performed prior to the date hereof.";
+        }
+        else if (a == "Credit note") {
+            this.message = "In accordance with the Factoring Agreement we have made with you, we send you herewith a COPY OF THE ORIGINAL CREDIT NOTES relating to the customers listed above.";
+        }
+    }
+
     public uploadDocument() {
         var acceptanceDate = new Date(this.vm.date);
+
         let o =
         {
             "clientId": this.vm.account,
             "scheduleNo": this.vm.scheduleNo,
-            "acceptanceDate": acceptanceDate.toISOString(),
+            "acceptanceDate": "2018-10-01T14:48:00.000Z",
             "amendSchedule": this.vm.amendSchedule,
             "clientAccountId": this.vm.clientAccount,
             "scheduleType": this.vm.scheduleType
@@ -93,31 +123,15 @@ export class AddScheduleComponent implements OnInit {
                 let o = JSON.parse(rsp.body);
 
                 if (o.status === HTTP.STATUS_SUCCESS) {
-                    alert("File is uploaded!");
+                    this.title = "Information";
+                    this.msg = "New Schedule of Offer is created, successfully!";
                 }
                 else {
-                    console.log(o.message);
+                    this.title = "Validation Errors";
+                    this.msg = "Follingwing validation errors are found in the uploaded excel. Please rectify and reupload the file.";
                 }
+                this.infoModal.show();
             }
-        }, err => console.log(err));
-    }
-
-    public create() {
-        this.loader = true;
-
-        this.proSchedule.create(this.vm).subscribe((rsp: any) => {
-            if (rsp.status === HTTP.STATUS_SUCCESS) {
-                this.title = "Confirmation";
-                this.msg = "A schedule of offer has been created successfully, but thể are isues on Invoice/Credit Note/Cash Disbursement details.";
-                this.success = true;
-            } else {
-                this.title = "Validation Erors";
-                this.msg = "Follingwing validation errors are found in the uploaded excel. Please rectify and reupload the file.";
-                this.success = false;
-            }
-            this.informationModal.show();
-
-            this.loader = false;
         }, err => console.log(err));
     }
 }

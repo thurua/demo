@@ -73,11 +73,12 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 	 * Initialize
 	 */
 	public ScheduleOfOfferDao() {
-		_sql = "SELECT \r\n" + "	a.id, a.schedule_no__c, c.client_account__c, a.schedule_date__c, \r\n"
-				+ "	a.portal_status__c, b.first_name__c, a.document_type__c, a.sequence__c 	\r\n"
-				+ "FROM salesforce.schedule_of_offer__c a\r\n"
-				+ "LEFT JOIN  salesforce.portal_user__c b on a.createdby_portaluserid__c =CAST( b.id as VARCHAR)\r\n"
-				+ "LEFT JOIN  salesforce.client_account__c c on a.client_account__c = c.sfid";
+		_sql = "SELECT \r\n" + "	a.id, a.schedule_no__c, c.name, a.schedule_date__c, \r\n"
+				+ "	a.portal_status__c, d.firstname, a.document_type__c, a.sequence__c\r\n"
+				+ "FROM salesforce.schedule_of_offer__c a \r\n" + "LEFT JOIN salesforce.portal_user__c b \r\n"
+				+ "	ON a.createdby_portaluserid__c = CAST(b.id as VARCHAR) \r\n"
+				+ "LEFT JOIN salesforce.client_account__c c \r\n" + "	ON a.client_account__c = c.sfid \r\n"
+				+ "LEFT JOIN salesforce.contact d \r\n" + "	ON b.contact__c = d.sfid ";
 	}
 
 	/**
@@ -190,7 +191,7 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 		ScheduleOfOfferFilter filter = ScheduleOfOfferFilter.convert(o);
 		String clientName = filter.getClient();
 		String clientAccount = filter.getClientAccount();
-		String scheduleStatus = filter.getScheduleStatus();
+		String portalStatus = filter.getPortalStatus();
 
 		// Where
 		String where = "";
@@ -200,8 +201,8 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 		if (!clientAccount.isEmpty()) {
 			where += " AND a.client_account__c = :clientAccount";
 		}
-		if (!scheduleStatus.isEmpty()) {
-			where += " AND a.schedule_status__c = :scheduleStatus";
+		if (!portalStatus.isEmpty()) {
+			where += " AND a.portal_status__c = :portalStatus";
 		}
 
 		// Replace first
@@ -221,9 +222,9 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 			if (i > 0) {
 				q.setParameter("clientAccount", clientAccount);
 			}
-			i = where.indexOf(":scheduleStatus");
+			i = where.indexOf(":portalStatus");
 			if (i > 0) {
-				q.setParameter("scheduleStatus", scheduleStatus);
+				q.setParameter("portalStatus", portalStatus);
 			}
 		}
 

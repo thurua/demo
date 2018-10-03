@@ -20,8 +20,8 @@ public class ScheduleOfOfferFilter {
 	@JsonProperty(value = "clientAccount")
 	private String clientAccount;
 
-	@JsonProperty(value = "scheduleStatus")
-	private String scheduleStatus;
+	@JsonProperty(value = "portalStatus")
+	private String portalStatus;
 
 	// end
 
@@ -43,12 +43,12 @@ public class ScheduleOfOfferFilter {
 		this.clientAccount = clientAccount;
 	}
 
-	public String getScheduleStatus() {
-		return scheduleStatus;
+	public String getPortalStatus() {
+		return portalStatus;
 	}
 
-	public void setScheduleStatus(String scheduleStatus) {
-		this.scheduleStatus = scheduleStatus;
+	public void setPortalStatus(String portalStatus) {
+		this.portalStatus = portalStatus;
 	}
 
 	// end
@@ -61,7 +61,7 @@ public class ScheduleOfOfferFilter {
 	public ScheduleOfOfferFilter() {
 		client = "";
 		clientAccount = "";
-		scheduleStatus = "";
+		portalStatus = "";
 	}
 
 	/**
