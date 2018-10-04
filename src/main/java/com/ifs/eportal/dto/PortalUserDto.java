@@ -206,7 +206,7 @@ public class PortalUserDto extends BaseDto {
 		res.setPassReminderToken((String) o[8]);
 		res.setPassReminderExpire((Date) o[9]);
 		res.setClientId((String) o[10]);
-		//res.setClientName((String) o[11]);
+		// res.setClientName((String) o[11]);
 		res.setRoleName((String) o[11]);
 		res.setCompanyName((String) o[12]);
 

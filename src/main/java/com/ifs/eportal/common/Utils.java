@@ -1,15 +1,16 @@
 package com.ifs.eportal.common;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
@@ -445,30 +446,80 @@ public class Utils {
 	}
 
 	/**
-	 * Read file
+	 * Get all fields
 	 * 
-	 * @param file Full path file name
+	 * @param fields
+	 * @param type
 	 * @return
 	 */
-	public static String readFile(String file) {
+	public static List<Field> getAllFields(List<Field> fields, Class<?> type) {
+		fields.addAll(Arrays.asList(type.getDeclaredFields()));
+
+		if (type.getSuperclass() != null) {
+			getAllFields(fields, type.getSuperclass());
+		}
+
+		return fields;
+	}
+
+	/**
+	 * Get all data in object to string
+	 * 
+	 * @param o Object data
+	 * @return
+	 */
+	public static String toString(Object o) {
+		return toString(o, false);
+	}
+
+	/**
+	 * Get all data in object to string
+	 * 
+	 * @param o     Object data
+	 * @param print Allow to print out screen
+	 * @return
+	 */
+	public static String toString(Object o, boolean print) {
 		String res = "";
 
-		try {
-			FileReader fr = new FileReader(file);
-			BufferedReader br = new BufferedReader(fr);
-			StringBuilder sb = new StringBuilder();
-			String ls = System.getProperty("line.separator");
+		StringBuilder sb = new StringBuilder();
+		String line = System.getProperty("line.separator");
 
-			String line = null;
-			while ((line = br.readLine()) != null) {
-				sb.append(line);
-				sb.append(ls);
+		sb.append(o.getClass().getName());
+		sb.append(" {");
+		sb.append(line);
+
+		List<Field> fields = new ArrayList<Field>();
+		fields = Utils.getAllFields(fields, o.getClass());
+
+		// Print field names paired with their values
+		for (Field field : fields) {
+			sb.append("  ");
+
+			try {
+				String t1 = field.getName();
+				sb.append(t1);
+				sb.append(": ");
+
+				// Make get method name
+				t1 = "get" + t1.substring(0, 1).toUpperCase() + t1.substring(1);
+				Method method = o.getClass().getMethod(t1);
+				Object t2 = method.invoke(o);
+				t1 = t2 != null ? t2.toString() : "";
+
+				sb.append(t1);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 
-			res = sb.toString();
-			br.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+			sb.append(line);
+		}
+
+		sb.append("}");
+		res = sb.toString();
+
+		if (print) {
+			System.out.println(res);
 		}
 
 		return res;

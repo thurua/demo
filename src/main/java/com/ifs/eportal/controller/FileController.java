@@ -152,7 +152,7 @@ public class FileController {
 			}
 
 			ObjectMapper mapper = new ObjectMapper();
-			res = mapper.writeValueAsString(t.getResult());
+			res = mapper.writeValueAsString(t);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -233,6 +233,7 @@ public class FileController {
 		} else {
 			o = getFactoringCn(file);
 		}
+		res.setResult(o);
 
 		String type = o.getType();
 		boolean isLoan = "CASH DISBURSEMENT".equals(type);

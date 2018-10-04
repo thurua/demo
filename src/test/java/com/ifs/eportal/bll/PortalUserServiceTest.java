@@ -8,8 +8,16 @@ import org.junit.Test;
  *
  */
 public class PortalUserServiceTest {
+	// region -- Fields --
+
+	// end
+
+	// region -- Methods --
+
 	@Test
-	public void contextLoads() {
+	public void test01() {
 
 	}
+
+	// end
 }
