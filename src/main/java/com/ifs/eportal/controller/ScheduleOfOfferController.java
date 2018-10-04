@@ -93,7 +93,7 @@ public class ScheduleOfOfferController {
 
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
-	
+
 	/**
 	 * Search by
 	 * 
@@ -105,7 +105,7 @@ public class ScheduleOfOfferController {
 		SingleRsp res = new SingleRsp();
 
 		try {
-			// Handle		
+			// Handle
 			ScheduleOfOfferDetailsDto data = scheduleOfOfferService.getById(Id);
 
 			res.setResult(data);

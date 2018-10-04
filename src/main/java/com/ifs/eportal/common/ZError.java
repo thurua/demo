@@ -91,7 +91,7 @@ public class ZError {
 		// Define error code with error message
 		HashMap<String, String> m = new HashMap<String, String>();
 
-        /* TriNguyen 2018-Aug-31 IFS-1036*/
+		/* TriNguyen 2018-Aug-31 IFS-1036 */
 		m.put("CC6", "Customer - No Approved CL.");
 
 		/* TriNguyen 2018-Aug-31 IFS-1038 */
@@ -172,13 +172,13 @@ public class ZError {
 
 		return m;
 	}
-	
+
 	/**
 	 * 
 	 * @return
 	 */
 	private static HashMap<String, String> scheduleOfferError() {
-        // Define error code with error message
+		// Define error code with error message
 		HashMap<String, String> m = new HashMap<String, String>();
 
 		/* ToanNguyen 2018-Aug-31 IFS-1025 */
@@ -200,9 +200,9 @@ public class ZError {
 		/* ToanNguyen 2018-Sep-03 IFS-1030 */
 		m.put("IV4", "Invalid Invoice Date.");
 		m.put("IV5", "Invoice Date cannot be after Schedule Acceptance Date.");
-        
-        return m;
-    }
-	
+
+		return m;
+	}
+
 	// end
 }

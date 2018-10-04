@@ -6,6 +6,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Oct-04 (verified)
+ *
+ */
 public class AccountFilter {
 
 	// region -- Fields --

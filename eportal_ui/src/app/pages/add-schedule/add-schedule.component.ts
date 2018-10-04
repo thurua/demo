@@ -40,17 +40,20 @@ export class AddScheduleComponent implements OnInit {
     }
     private getClient() {
         let x = {
-            filter: {
-                client: ""
+            "filter": {
+                "name": ""
             },
-            page: 1,
-            size: 5000,
-            sort: [
+            "page": 1,
+            "size": 10,
+            "paging": false,
+            "sort": [
                 {
-                    direction: "DESC"
+                    "field": "name",
+                    "direction": ""
                 }
             ]
-        }
+        };
+
         this.proCommon.searchAccount(x).subscribe((rsp: any) => {
             console.log(rsp);
             if (rsp.status === HTTP.STATUS_SUCCESS) {
@@ -64,22 +67,31 @@ export class AddScheduleComponent implements OnInit {
 
     private getClientAccount() {
         let x = {
-            filter: {
-                client: this.vm.account
+            "filter": {
+                "client": this.vm.account
             },
-            page: 1,
-            size: 20
-        }
+            "page": 1,
+            "size": 10,
+            "paging": false,
+            "sort": [
+                {
+                    "field": "clientAccount",
+                    "direction": ""
+                }
+            ]
+        };
 
         this.proSchedule.searchCA(x).subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 let item = {
                     id: null,
                     clientAccount: "-- Please select --"
-                }
-                rsp.result.data.unshift(item);
+                };
 
-                this.listClientAccount = rsp.result.data;
+                if (rsp.result != null) {
+                    rsp.result.data.unshift(item);
+                    this.listClientAccount = rsp.result.data;
+                }
             }
         }, (err) => {
             console.log(err);

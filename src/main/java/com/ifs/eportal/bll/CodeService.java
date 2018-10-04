@@ -9,6 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ifs.eportal.dal.CodeDao;
 import com.ifs.eportal.model.Code;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Oct-04 (verified)
+ *
+ */
 @Service(value = "codeService")
 @Transactional
 public class CodeService {
@@ -22,13 +27,13 @@ public class CodeService {
 	// region -- Methods --
 
 	/**
-	 * Get by
+	 * Read by
 	 * 
-	 * @param id
+	 * @param codeType
 	 * @return
 	 */
-	public List<Code> getBy(String codeType) {
-		List<Code> res = codeDao.getBy(codeType);
+	public List<Code> read(String codeType) {
+		List<Code> res = codeDao.read(codeType);
 		return res;
 	}
 

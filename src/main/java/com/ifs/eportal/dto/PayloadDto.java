@@ -167,5 +167,14 @@ public class PayloadDto {
 		return res;
 	}
 
+	/**
+	 * Get full name
+	 * 
+	 * @return
+	 */
+	public String getName() {
+		return firstName + " " + lastName;
+	}
+
 	// end
 }

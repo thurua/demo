@@ -90,10 +90,13 @@ export class ApiProvider {
     }
 
     public upload(endpoint: string, data: FormData): Observable<HttpEvent<{}>> {
+        let h = new HttpHeaders().set('Authorization', this.getToken())
+
         let req = new HttpRequest('POST',
             this.apiUrl + endpoint,
             data,
             {
+                headers: h,
                 reportProgress: true,
                 responseType: 'text'
             });

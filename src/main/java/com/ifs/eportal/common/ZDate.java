@@ -17,6 +17,7 @@ public class ZDate {
 
 	/**
 	 * Get start of day
+	 * 
 	 * @param date
 	 * @return
 	 */
@@ -31,6 +32,7 @@ public class ZDate {
 
 	/**
 	 * Get end of day
+	 * 
 	 * @param date
 	 * @return
 	 */

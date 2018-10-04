@@ -3,6 +3,8 @@ package com.ifs.eportal.controller;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -14,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -24,6 +25,7 @@ import com.ifs.eportal.bll.AccountService;
 import com.ifs.eportal.bll.ClientAccountService;
 import com.ifs.eportal.bll.CodeService;
 import com.ifs.eportal.common.RsaService;
+import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.dto.AccountDto;
 import com.ifs.eportal.dto.ClientAccountDto;
 import com.ifs.eportal.dto.TokenDto;
@@ -33,76 +35,133 @@ import com.ifs.eportal.req.PagingReq;
 import com.ifs.eportal.rsp.MultipleRsp;
 import com.ifs.eportal.rsp.SingleRsp;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Oct-04 (verified)
+ *
+ */
 @RestController
 @RequestMapping("/common")
 public class CommonController {
+	// region -- Fields --
 
 	@Autowired
 	private AccountService accountService;
 
 	@Autowired
-	private CodeService codeService;
-
-	@Autowired
 	private ClientAccountService clientAccountService;
 
-	// region -- Methods --
+	@Autowired
+	private CodeService codeService;
 
-	@PostMapping("/search-account")
-	public ResponseEntity<?> searchAccount(@RequestHeader HttpHeaders header, @RequestBody PagingReq req) {
-		MultipleRsp res = new MultipleRsp();
-
-		try {
-			// PayloadDto pl = Utils.getTokenInfor(header);
-			// int id = pl.getId();
-
-			// Get data
-			// String keyword = req.getKeyword();
-			// Boolean isOptional = req.getIsOptional();
-
-			// Handle
-			List<AccountDto> tmp = accountService.search(req);
-
-			// Set data
-			Map<String, Object> data = new LinkedHashMap<>();
-			data.put("count", tmp.size());
-			data.put("data", tmp);
-			res.setResult(data);
-		} catch (Exception ex) {
-			res.setError(ex.getMessage());
-		}
-
-		return new ResponseEntity<>(res, HttpStatus.OK);
-	}
+	private static final Logger _log = Logger.getLogger(CommonController.class.getName());
 
 	// end
 
 	// region -- Methods --
 
+	/**
+	 * Search account
+	 * 
+	 * @param req
+	 * @return
+	 */
+	@PostMapping("/search-account")
+	public ResponseEntity<?> searchAccount(@RequestBody PagingReq req) {
+		MultipleRsp res = new MultipleRsp();
+
+		try {
+			// Handle
+			List<AccountDto> l = accountService.read(req);
+
+			// Set data
+			Map<String, Object> data = new LinkedHashMap<>();
+			data.put("count", l.size());
+			data.put("data", l);
+			res.setResult(data);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
+	/**
+	 * Search client account
+	 * 
+	 * @param req
+	 * @return
+	 */
 	@PostMapping("/search-client-account")
 	public ResponseEntity<?> searchClientAccount(@RequestBody PagingReq req) {
 		MultipleRsp res = new MultipleRsp();
 
 		try {
 			// Handle
-			List<ClientAccountDto> tmp;
-			tmp = clientAccountService.search(req);
+			List<ClientAccountDto> l = clientAccountService.read(req);
 
 			// Set data
 			Map<String, Object> data = new LinkedHashMap<>();
-			data.put("page", req.getPage());
-			data.put("size", req.getSize());
-			data.put("total", req.getTotal());
-			data.put("data", tmp);
-
+			data.put("count", l.size());
+			data.put("data", l);
 			res.setResult(data);
 		} catch (Exception ex) {
-			res.setError(ex.getMessage());
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
 		}
 
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 
+	/**
+	 * Search code
+	 * 
+	 * @param header
+	 * @param req
+	 * @return
+	 */
+	@PostMapping("/search-code")
+	public ResponseEntity<?> searchCode(@RequestBody BaseReq req) {
+		MultipleRsp res = new MultipleRsp();
+
+		try {
+			// Get data
+			String keyword = req.getKeyword();
+
+			// Handle
+			List<Code> l = codeService.read(keyword);
+
+			// Set data
+			Map<String, Object> data = new LinkedHashMap<>();
+			data.put("count", l.size());
+			data.put("data", l);
+			res.setResult(data);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
+	/**
+	 * Call SF
+	 * 
+	 * @return
+	 */
 	@PostMapping("/call")
 	public ResponseEntity<?> call() {
 		SingleRsp res = new SingleRsp();
@@ -128,8 +187,10 @@ public class CommonController {
 			mapReq.add("username", username);
 			mapReq.add("password", password);
 
-			HttpEntity<LinkedMultiValueMap<String, Object>> reqEntity = new HttpEntity<>(mapReq, headers);
-			ResponseEntity<String> rsp = rest.exchange(url, HttpMethod.POST, reqEntity, String.class);
+			HttpEntity<LinkedMultiValueMap<String, Object>> req;
+			req = new HttpEntity<>(mapReq, headers);
+			ResponseEntity<String> rsp;
+			rsp = rest.exchange(url, HttpMethod.POST, req, String.class);
 			String s = rsp.getBody();
 			ObjectMapper mapper = new ObjectMapper();
 			TokenDto t = mapper.readValue(s, TokenDto.class);
@@ -138,31 +199,12 @@ public class CommonController {
 			url = System.getenv("SF_URL_UI_API") + "/object-info/Account";
 			headers = new HttpHeaders();
 			headers.set("Authorization", "Bearer " + token);
-			reqEntity = new HttpEntity<>(mapReq, headers);
-			rsp = rest.exchange(url, HttpMethod.GET, reqEntity, String.class);
+			req = new HttpEntity<>(mapReq, headers);
+			rsp = rest.exchange(url, HttpMethod.GET, req, String.class);
 			s = rsp.getBody();
 			res.setResult(s);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-
-		return new ResponseEntity<>(res, HttpStatus.OK);
-	}
-
-	@PostMapping("/search-code")
-	public ResponseEntity<?> searchCode(@RequestHeader HttpHeaders header, @RequestBody BaseReq req) {
-		MultipleRsp res = new MultipleRsp();
-
-		try {
-			List<Code> tmp = codeService.getBy(req.getKeyword());
-
-			// Set data
-			Map<String, Object> data = new LinkedHashMap<>();
-			data.put("count", tmp.size());
-			data.put("data", tmp);
-			res.setResult(data);
-		} catch (Exception ex) {
-			res.setError(ex.getMessage());
 		}
 
 		return new ResponseEntity<>(res, HttpStatus.OK);

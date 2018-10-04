@@ -18,7 +18,6 @@ import com.ifs.eportal.req.PortalUserSignInReq;
  * @author ToanNguyen 2018-Oct-03
  *
  */
-
 public class PortalUserControllerTest {
 	// region -- Fields --
 

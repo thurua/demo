@@ -10,6 +10,11 @@ import com.ifs.eportal.dal.AccountDao;
 import com.ifs.eportal.dto.AccountDto;
 import com.ifs.eportal.req.PagingReq;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Oct-04 (verified)
+ *
+ */
 @Service(value = "accountService")
 @Transactional
 public class AccountService {
@@ -24,22 +29,23 @@ public class AccountService {
 
 	/**
 	 * Read by
+	 * 
 	 * @param sfid
 	 * @return
 	 */
 	public AccountDto read(String sfid) {
-		return accountDao.getBy(sfid);
+		return accountDao.read(sfid);
 	}
 
 	/**
-	 * Search by
+	 * Read by
 	 * 
 	 * @param req
 	 * @return
 	 */
-	public List<AccountDto> search(PagingReq req) {
-		return accountDao.search(req);
+	public List<AccountDto> read(PagingReq req) {
+		return accountDao.read(req);
 	}
-	
+
 	// end
 }

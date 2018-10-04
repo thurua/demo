@@ -1,6 +1,7 @@
 package com.ifs.eportal.dal;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,7 +21,7 @@ import com.ifs.eportal.req.PagingReq;
 
 /**
  * 
- * @author MinhDang 2018-Oct-3
+ * @author ToanNguyen 2018-Oct-04 (verified)
  *
  */
 @Service(value = "accountDao")
@@ -78,18 +79,17 @@ public class AccountDao implements Repository<Account, Integer> {
 	}
 
 	/**
-	 * Get by
+	 * Read by
 	 * 
-	 * @param id
+	 * @param sfid
 	 * @return
 	 */
-	public AccountDto getBy(String sfid) {
+	public AccountDto read(String sfid) {
 		AccountDto res = new AccountDto();
-
-		String sql = _sql + " WHERE a.sfid = :sfid";
 
 		try {
 			// Execute
+			String sql = _sql + " WHERE a.sfid = :sfid";
 			Query q = _em.createNativeQuery(sql);
 			q.setParameter("sfid", sfid);
 			Object[] i = (Object[]) q.getSingleResult();
@@ -104,65 +104,80 @@ public class AccountDao implements Repository<Account, Integer> {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
-		
+
 		return res;
 	}
 
 	/**
-	 * Search by
+	 * Read by
 	 * 
 	 * @param req
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public List<AccountDto> search(PagingReq req) {
-		// Get data
-		Object filter = req.getFilter();
-		int page = req.getPage();
-		int size = req.getSize();
-		List<SortDto> sort = req.getSort();
-		int offset = (page - 1) * size;
+	public List<AccountDto> read(PagingReq req) {
+		List<AccountDto> res = new ArrayList<AccountDto>();
 
-		// Order by
-		String orderBy = "";
-		for (SortDto o : sort) {
-			String field = o.getField();
-			String direction = o.getDirection();
+		try {
+			// Get data
+			Object filter = req.getFilter();
+			int page = req.getPage();
+			int size = req.getSize();
+			List<SortDto> sort = req.getSort();
+			int offset = (page - 1) * size;
 
-			if ("id".equals(field)) {
-				if (!orderBy.isEmpty()) {
-					orderBy += ",";
+			// Order by
+			String orderBy = "";
+			for (SortDto o : sort) {
+				String field = o.getField();
+				String direction = o.getDirection();
+
+				if ("id".equals(field)) {
+					if (!orderBy.isEmpty()) {
+						orderBy += ",";
+					}
+					orderBy += " a.id " + direction;
 				}
-				orderBy += " a.id " + direction;
+
+				if ("name".equals(field)) {
+					if (!orderBy.isEmpty()) {
+						orderBy += ",";
+					}
+					orderBy += " a.name " + direction;
+				}
 			}
 
-			if ("name".equals(field)) {
-				if (!orderBy.isEmpty()) {
-					orderBy += ",";
-				}
-				orderBy += " a.name " + direction;
+			if (!orderBy.isEmpty()) {
+				orderBy = " ORDER BY " + orderBy;
+			}
+
+			// Execute to count all
+			String sql = "SELECT \r\n" + "	count(*)\r\n" + "FROM salesforce.account a ";
+			String limit = "";
+			Query q = createQuery(sql, filter, limit);
+			BigInteger total = (BigInteger) q.getSingleResult();
+			req.setTotal(total.longValue());
+
+			// Execute to search
+			sql = _sql;
+			limit = orderBy;
+			if (req.isPaging()) {
+				limit += " OFFSET " + offset + " LIMIT " + size;
+			}
+			q = createQuery(sql, filter, limit);
+			List<Object[]> l = q.getResultList();
+
+			// Convert
+			res = AccountDto.convert(l);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
 
-		if (!orderBy.isEmpty()) {
-			orderBy = " ORDER BY " + orderBy;
-		}
-
-		// Execute to count all
-		String sql = "SELECT \r\n" + "	count(*)\r\n" + "FROM salesforce.account a ";
-		String limit = "";
-		Query q = createQuery(sql, filter, limit);
-		BigInteger total = (BigInteger) q.getSingleResult();
-		req.setTotal(total.longValue());
-
-		// Execute to search
-		sql = _sql;
-		limit = orderBy + " OFFSET " + offset + " LIMIT " + size;
-		q = createQuery(sql, filter, limit);
-		List<Object[]> l = q.getResultList();
-
-		// Convert
-		List<AccountDto> res = AccountDto.convert(l);
 		return res;
 	}
 

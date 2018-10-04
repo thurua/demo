@@ -4,7 +4,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,6 +49,7 @@ import com.ifs.eportal.model.ScheduleOfOffer;
 import com.ifs.eportal.model.ScheduleOfOfferAttachment;
 import com.ifs.eportal.req.AttachmentReq;
 import com.ifs.eportal.req.UploadReq;
+import com.ifs.eportal.rsp.MultipleRsp;
 import com.ifs.eportal.rsp.SingleRsp;
 
 /**
@@ -103,15 +106,17 @@ public class FileController {
 	@PostMapping("/upload-multi")
 	public ResponseEntity<?> upload(@RequestHeader HttpHeaders header, @RequestParam("files") MultipartFile[] files,
 			@RequestParam("req") String req) {
-		SingleRsp res = new SingleRsp();
+		MultipleRsp res = new MultipleRsp();
 
 		try {
 			// Get data
 			PayloadDto pl = Utils.getTokenInfor(header);
 			String sfid = pl.getSfid();
+			String fullName = pl.getName();
 
 			ObjectMapper mapper = new ObjectMapper();
 			AttachmentReq o = mapper.readValue(req, AttachmentReq.class);
+			List<ScheduleOfOfferAttachment> l = new ArrayList<ScheduleOfOfferAttachment>();
 
 			for (int i = 0; i < files.length; i++) {
 				String originalName = files[i].getOriginalFilename() + "";
@@ -128,8 +133,10 @@ public class FileController {
 				url += "/" + path + name;
 
 				// Upload file to S3
-				InputStream in = files[i].getInputStream();
-				Utils.upload(in, name, path);
+				if (_allowUploadFile) {
+					InputStream in = files[i].getInputStream();
+					Utils.upload(in, name, path);
+				}
 
 				ScheduleOfOfferAttachment m = new ScheduleOfOfferAttachment();
 				m.setSequence((float) i);
@@ -141,6 +148,16 @@ public class FileController {
 				m.setFileSize(size);
 
 				scheduleOfOfferAttachmentService.create(m);
+
+				m.setUploadedBy(fullName);
+				l.add(m);
+
+				// Set data
+				Map<String, Object> data = new LinkedHashMap<>();
+				data.put("size", l.size());
+				data.put("data", l);
+
+				res.setResult(data);
 			}
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());

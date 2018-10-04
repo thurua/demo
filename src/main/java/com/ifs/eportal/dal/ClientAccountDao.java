@@ -1,6 +1,7 @@
 package com.ifs.eportal.dal;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -86,47 +87,17 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 	}
 
 	/**
-	 * Get by
-	 * 
-	 * @param id
-	 * @return
-	 */
-	public ClientAccountDto getBy(Integer id) {
-		ClientAccountDto res = new ClientAccountDto();
-		String sql = _sql + " WHERE a.id = :id";
-
-		try {
-			// Execute
-			Query q = _em.createNativeQuery(sql);
-			q.setParameter("id", id);
-			Object[] i = (Object[]) q.getSingleResult();
-
-			// Convert
-			res = ClientAccountDto.convert(i);
-		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
-				ex.printStackTrace();
-			}
-			if (Utils.writeLog) {
-				_log.log(Level.SEVERE, ex.getMessage(), ex);
-			}
-		}
-
-		return res;
-	}
-
-	/**
-	 * Get by
+	 * Read by
 	 * 
 	 * @param sfid
 	 * @return
 	 */
-	public ClientAccountDto getBy(String sfid) {
+	public ClientAccountDto read(String sfid) {
 		ClientAccountDto res = new ClientAccountDto();
-		String sql = _sql + " WHERE a.sfid = :sfid";
 
 		try {
 			// Execute
+			String sql = _sql + " WHERE a.sfid = :sfid";
 			Query q = _em.createNativeQuery(sql);
 			q.setParameter("sfid", sfid);
 			Object[] i = (Object[]) q.getSingleResult();
@@ -146,59 +117,78 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 	}
 
 	/**
-	 * Search by
+	 * Read by
 	 * 
 	 * @param req
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public List<ClientAccountDto> search(PagingReq req) {
-		// Get data
-		Object filter = req.getFilter();
-		int page = req.getPage();
-		int size = req.getSize();
-		List<SortDto> sort = req.getSort();
-		int offset = (page - 1) * size;
+	public List<ClientAccountDto> read(PagingReq req) {
+		List<ClientAccountDto> res = new ArrayList<ClientAccountDto>();
 
-		// Order by
-		String orderBy = "";
-		for (SortDto o : sort) {
-			String field = o.getField();
-			String direction = o.getDirection();
+		try {
+			// Get data
+			Object filter = req.getFilter();
+			int page = req.getPage();
+			int size = req.getSize();
+			List<SortDto> sort = req.getSort();
+			int offset = (page - 1) * size;
 
-			if ("id".equals(field)) {
-				if (!orderBy.isEmpty()) {
-					orderBy += ",";
+			// Order by
+			String orderBy = "";
+			for (SortDto o : sort) {
+				String field = o.getField();
+				String direction = o.getDirection();
+
+				if ("id".equals(field)) {
+					if (!orderBy.isEmpty()) {
+						orderBy += ",";
+					}
+					orderBy += " a.id " + direction;
 				}
-				orderBy += " a.id " + direction;
+
+				if ("clientAccount".equals(field)) {
+					if (!orderBy.isEmpty()) {
+						orderBy += ",";
+					}
+					orderBy += " a.client_account__c " + direction;
+				}
 			}
 
-			if ("client".equals(field)) {
-				if (!orderBy.isEmpty()) {
-					orderBy += ",";
-				}
-				orderBy += " a.client__c " + direction;
+			if (!orderBy.isEmpty()) {
+				orderBy = " ORDER BY " + orderBy;
+			}
+
+			// Execute to count all
+			String sql = "SELECT \r\n" + "	count(*)\r\n" + "FROM salesforce.client_account__c a \r\n"
+					+ "JOIN salesforce.recordtype b \r\n" + "	ON a.recordtypeid = b.sfid ";
+			String limit = "";
+			Query q = createQuery(sql, filter, limit);
+			BigInteger total = (BigInteger) q.getSingleResult();
+			req.setTotal(total.longValue());
+
+			// Execute to search
+			sql = _sql;
+			limit = orderBy;
+			if (req.isPaging()) {
+				limit += " OFFSET " + offset + " LIMIT " + size;
+			}
+			q = createQuery(sql, filter, limit);
+			List<Object[]> l = q.getResultList();
+
+			// Convert
+			res = ClientAccountDto.convert(l);
+
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
 
-		if (!orderBy.isEmpty()) {
-			orderBy = " ORDER BY " + orderBy;
-		}
-
-		// Execute to count all
-		String sql = "SELECT \r\n" + "	count(*)\r\n" + "FROM salesforce.client_account__c a";
-		String limit = "";
-		Query q = createQuery(sql, filter, limit);
-		BigInteger total = (BigInteger) q.getSingleResult();
-		req.setTotal(total.longValue());
-
-		// Execute to search
-		sql = _sql;
-		limit = orderBy + " OFFSET " + offset + " LIMIT " + size;
-		q = createQuery(sql, filter, limit);
-		List<Object[]> l = q.getResultList();
-
-		return ClientAccountDto.convert(l);
+		return res;
 	}
 
 	/**
@@ -214,9 +204,9 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 
 		// Where
 		String where = "";
-		if (!client.isEmpty()) {
-			where += " AND a.client__c = :client ";
-		}
+		// if (!client.isEmpty()) {
+		where += " AND a.client__c = :client ";
+		// }
 
 		// Replace first
 		if (!where.isEmpty()) {

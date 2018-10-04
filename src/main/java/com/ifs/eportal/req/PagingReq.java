@@ -29,6 +29,9 @@ public class PagingReq {
 	@JsonProperty(value = "total")
 	private long total;
 
+	@JsonProperty(value = "paging")
+	private boolean paging;
+
 	// end
 
 	// region -- Get set --
@@ -81,6 +84,14 @@ public class PagingReq {
 		this.total = total;
 	}
 
+	public boolean isPaging() {
+		return paging;
+	}
+
+	public void setPaging(boolean paging) {
+		this.paging = paging;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -91,6 +102,7 @@ public class PagingReq {
 		sort = new ArrayList<SortDto>();
 		filter = null;
 		total = 0;
+		paging = true;
 	}
 
 	// end
