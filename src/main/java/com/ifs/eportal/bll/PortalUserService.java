@@ -205,28 +205,24 @@ public class PortalUserService implements UserDetailsService {
 			PortalUserDto o = portalUserDao.getBy(email);
 			Integer id = o.getId();
 
-			if (id == 0) {
-				res = "Invalid email. Please contact System Administrator";
+			// Generate password reminder token
+			String t = bCryptPasswordEncoder.encode(email);
+			String token = Utils.hash(t, Const.Authentication.TOKEN_KEY2);
+
+			// Get password reminder token expire time
+			Date expire = Utils.getTime(Calendar.HOUR, 24);
+			if (expire == null) {
+				res = "102";
+			}
+
+			PortalUser m = portalUserDao.read(id);
+			if (m == null) {
+				res = "Id does not exist";
 			} else {
-				// Generate password reminder token
-				String t = bCryptPasswordEncoder.encode(email);
-				String token = Utils.hash(t, Const.Authentication.TOKEN_KEY2);
+				m.setPassReminderExpire(expire);
+				m.setPassReminderToken(token);
 
-				// Get password reminder token expire time
-				Date expire = Utils.getTime(Calendar.HOUR, 24);
-				if (expire == null) {
-					res = "Error !!!";
-				}
-
-				PortalUser m = portalUserDao.read(id);
-				if (m == null) {
-					res = "User Id does not exist";
-				} else {
-					m.setPassReminderExpire(expire);
-					m.setPassReminderToken(token);
-
-					portalUserDao.update(m);
-				}
+				portalUserDao.update(m);
 			}
 		} catch (Exception e) {
 			System.out.println(e.getStackTrace());

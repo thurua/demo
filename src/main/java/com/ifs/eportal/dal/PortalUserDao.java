@@ -9,7 +9,6 @@ import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.dto.PortalUserDto;
 import com.ifs.eportal.dto.SortDto;
 import com.ifs.eportal.filter.PortalUserFilter;
@@ -89,27 +88,15 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 	 * @return
 	 */
 	public PortalUserDto getBy(Object token) {
-		PortalUserDto res = new PortalUserDto();
-
 		String sql = _sql + " WHERE a.pass_reminder_expire__c >= now() AND a.pass_reminder_token__c = :token";
-		
-		try {
-			// Execute
-			Query q = _em.createNativeQuery(sql);
-			q.setParameter("token", token);
-			Object[] i = (Object[]) q.getSingleResult();
 
-			// Convert
-			res = PortalUserDto.convert(i);
-		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
-				ex.printStackTrace();
-			}
-			if (Utils.writeLog) {
-				System.out.println(ex.getMessage());
-			}
-		}
+		// Execute
+		Query q = _em.createNativeQuery(sql);
+		q.setParameter("token", token);
+		Object[] i = (Object[]) q.getSingleResult();
 
+		// Convert
+		PortalUserDto res = PortalUserDto.convert(i);
 		return res;
 	}
 
@@ -120,27 +107,15 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 	 * @return
 	 */
 	public PortalUserDto getBy(String email) {
-		PortalUserDto res = new PortalUserDto();
-		
-		String sql = _sql + " WHERE a.user_id__c = :email AND a.status__c = 'ACTD'";
+		String sql = _sql + " WHERE a.user_id__c = :email";
 
-		try {
-			// Execute
-			Query q = _em.createNativeQuery(sql);
-			q.setParameter("email", email);
-			Object[] i = (Object[]) q.getSingleResult();
+		// Execute
+		Query q = _em.createNativeQuery(sql);
+		q.setParameter("email", email);
+		Object[] i = (Object[]) q.getSingleResult();
 
-			// Convert
-			res = PortalUserDto.convert(i);
-		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
-				ex.printStackTrace();
-			}
-			if (Utils.writeLog) {
-				System.out.println(ex.getMessage());
-			}
-		}
-		
+		// Convert
+		PortalUserDto res = PortalUserDto.convert(i);
 		return res;
 	}
 

@@ -73,11 +73,10 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 	 * Initialize
 	 */
 	public ClientAccountDao() {
-		_sql = "SELECT \r\n" + "	a.id, now() activated_on__c , a.account_type__c, a.client_account__c, \r\n"
-				+ "	'a.factoring_type__c', b.name record_type_name, 'c.name',  a.name, a.program_name__c, \r\n"
-				+ "	'a. verification__c', 'a.verification_exceeding_invoice_amount__c',  a.status__c \r\n"
-				+ "FROM salesforce.client_account__c a \r\n" + "JOIN salesforce.recordtype b \r\n"
-				+ "	ON '012p00000006IAaAAM' = b.sfid ";
+		_sql = "SELECT \r\n" + "	a.id, 'a.activated_on__c' , a.account_type__c, a.client_account__c, \r\n"
+				+ "	'a.factoring_type__c', 'b.name', 'c.name',  a.name, \r\n"
+				+ "	a.program_name__c, 'a. verification__c', 'a.verification_exceeding_invoice_amount__c',  \r\n"
+				+ "	a.status__c \r\n" + "FROM salesforce.client_account__c a \r\n";
 	}
 
 	/**

@@ -9,8 +9,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
-import com.ifs.eportal.common.Utils;
-
 @SpringBootApplication
 @Configuration
 @ComponentScan(basePackages = "com.ifs.eportal")
@@ -26,12 +24,6 @@ public class IfsApplication extends SpringBootServletInitializer {
 	}
 
 	public static void main(String[] args) {
-		String t = System.getenv("PRINT_STACK_TRACE");
-		Utils.printStackTrace = t != null && "Y".equals(t);
-
-		t = System.getenv("WRITE_LOG");
-		Utils.writeLog = t != null && "Y".equals(t);
-
 		SpringApplication.run(IfsApplication.class, args);
 	}
 }

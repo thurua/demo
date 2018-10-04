@@ -14,6 +14,8 @@ export class ProfileComponent implements OnInit {
     public vm: any = {};
     public entity: any = {};
     public msgInfo: string = "";
+    public isOneSpecialCharOld: boolean = false;
+    public isOneSpecialCharNew: boolean = false;
     public isMatch: boolean = false;
     public msgErrSpecialChar: string = "Password must be 8 characters and include numbers, uppercase and lowercase. Letters and one special character";
 
@@ -50,7 +52,6 @@ export class ProfileComponent implements OnInit {
         this.pro.read().subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 this.vm = rsp.result;
-                console.log(this.vm);
             }
         }, (err) => {
             console.log(err);
@@ -58,6 +59,27 @@ export class ProfileComponent implements OnInit {
     }
 
     public changPassword(valid: boolean) {
+        var passwordSpecialChar = this.entity.oldPassword.replace(/[a-zA-Z0-9]/g, "");
+        this.isOneSpecialCharNew = false;
+        this.isOneSpecialCharOld = false;
+        this.isMatch = false;
+
+        if (passwordSpecialChar.length != 1) {
+            this.isOneSpecialCharOld = true;
+            return;
+        }
+
+        if (this.entity.newPassword != this.entity.confirmPassword) {
+            this.isMatch = true;
+            return;
+        }
+
+        passwordSpecialChar = this.entity.newPassword.replace(/[a-zA-Z0-9]/g, "");
+        if (passwordSpecialChar.length != 1) {
+            this.isOneSpecialCharNew = true;
+            return;
+        }
+
         if (!valid) {
             return;
         }
@@ -86,6 +108,26 @@ export class ProfileComponent implements OnInit {
         this.resetPasswordPopup();
     }
 
+    public inputPasswordChange(type: string) {
+        this.isOneSpecialCharOld = false;
+        this.isOneSpecialCharNew = false;
+        var specialChar = "";
+        if (type == 'old') {
+            specialChar = this.entity.oldPassword.replace(/[a-zA-Z0-9]/g, "");
+            if (specialChar.length != 1) {
+                this.isOneSpecialCharOld = true;
+                return;
+            }
+        }
+        else {
+            specialChar = this.entity.newPassword.replace(/[a-zA-Z0-9]/g, "");
+            if (specialChar.length != 1) {
+                this.isOneSpecialCharNew = true;
+                return;
+            }
+        }
+    }
+
     public resetPasswordPopup() {
         this.entity.oldPassword = "";
         this.entity.newPassword = "";
@@ -95,5 +137,7 @@ export class ProfileComponent implements OnInit {
     public closeChangePasswordPopup() {
         this.resetPasswordPopup();
         this.changePasswordModal.hide();
+        this.isOneSpecialCharOld = false;
+        this.isOneSpecialCharNew = false;
     }
 }

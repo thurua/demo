@@ -13,7 +13,6 @@ export class UserMenuComponent implements OnInit {
 
     ngOnInit() {
         let user = JSON.parse(localStorage.getItem("CURRENT_TOKEN"));
-        let firstName = user.firstName == null ? '' : user.firstName + ' ';
-        this.name = user.salutation + ' ' + firstName + user.lastName;
+        this.name = user.salutation + ' ' + user.firstName + ' ' + user.lastName;
     }
 }

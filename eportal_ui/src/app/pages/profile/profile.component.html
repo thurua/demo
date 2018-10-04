@@ -8,60 +8,26 @@
                 <div class="col-md-6">
                     <div class="form-group row">
                         <div class="col-md-4">
-                            <strong>User ID</strong>
+                            <strong>First Name </strong>
+                            <span class="text-danger">*</span>
                         </div>
                         <div class="col-md-8">
-                            <span>{{vm.email}}</span>
+                            <input type="text" name="firstName" #firstName="ngModel" [(ngModel)]="vm.firstName" value="{{vm.firstName}}" class="form-control" required>
+                            <span [hidden]="firstName.valid || (firstName.pristine && !frm.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error">
+                                <i class="fa fa-exclamation-triangle"></i> Required!
+                            </span>
                         </div>
                     </div>
                     <div class="form-group row">
                         <div class="col-md-4">
-                            <strong>Given Name </strong>
+                            <strong>Salutation </strong>
+                            <span class="text-danger">*</span>
                         </div>
                         <div class="col-md-8">
-                            <span>{{vm.firstName}}</span>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-md-4">
-                            <strong>Mobile No.</strong>
-                        </div>
-                        <div class="col-md-8">
-                            <span>{{vm.mobile}}</span>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-md-4">
-                            <strong>Company</strong>
-                        </div>
-                        <div class="col-md-8">
-                            <span>{{vm.companyName}}</span>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-md-4">
-                        </div>
-                        <div class="col-md-8">
-                            <button class="btn btn-gray" type="button" routerLink="/pages/dashboard">Cancel</button> &nbsp;
-                            <button class="btn btn-success" type="button" (click)="changePasswordModal.show()">Change Password</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group row">
-                        <div class="col-md-4">
-                            <strong>Salutation</strong>
-                        </div>
-                        <div class="col-md-8">
-                            <span>{{vm.salutation}}</span>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-md-4">
-                            <strong>Surname</strong>
-                        </div>
-                        <div class="col-md-8">
-                            <span>{{vm.lastName}}</span>
+                            <input type="text" name="salutation" #salutation="ngModel" [(ngModel)]="vm.salutation" value="{{vm.salutation}}" class="form-control" required>
+                            <span [hidden]="salutation.valid || (salutation.pristine && !frm.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error">
+                                <i class="fa fa-exclamation-triangle"></i> Required!
+                            </span>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -69,7 +35,69 @@
                             <strong>Role</strong>
                         </div>
                         <div class="col-md-8">
-                            <span>{{vm.roleName}}</span>
+                            <label class="col-form-label">{{vm.roleName}}</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <strong>Last Name </strong>
+                            <span class="text-danger">*</span>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" name="lastName" #lastName="ngModel" [(ngModel)]="vm.lastName" value="{{vm.lastName}}" class="form-control" required>
+                            <span [hidden]="lastName.valid || (lastName.pristine && !frm.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error">
+                                <i class="fa fa-exclamation-triangle"></i> Required!
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <strong>Company</strong>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="col-form-label">CWS</label>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <a href="javascript:void(0)" (click)="changePasswordModal.show()">Change Password</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <strong>Contact Information</strong>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <strong>Mobile No.</strong>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" name="mobile" #mobile="ngModel" [(ngModel)]="vm.mobile" value="{{vm.mobile}}" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row" style="text-align: center;">
+                        <div class="col-md-12">
+                            <button class="btn btn-gray" type="button" routerLink="/pages/dashboard">Cancel</button> &nbsp;
+                            <button class="btn btn-success" type="submit">Save</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <strong>Email</strong>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="col-form-label">{{vm.email}}</label>
                         </div>
                     </div>
                 </div>
@@ -96,12 +124,13 @@
                             <span class="text-danger">*</span>
                         </div>
                         <div class="col-md-6">
-                            <input type="password" name="oldPassword" #oldPassword="ngModel" [(ngModel)]="entity.oldPassword" value="{{entity.oldPassword}}" maxlength="8" pattern="((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8})" class="form-control" required>
-                            <span [hidden]="oldPassword.valid || (oldPassword.pristine && !changePasswordFrm.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error">
+                            <input type="password" name="oldPassword" #oldPassword="ngModel" [(ngModel)]="entity.oldPassword" value="{{entity.oldPassword}}" (keyup)="inputPasswordChange('old')" maxlength="8" pattern="((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8})" class="form-control"
+                                required>
+                            <span [hidden]="(oldPassword.valid && !isOneSpecialCharOld) || (oldPassword.pristine && !changePasswordFrm.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error">
                                     <span class="fa fa-exclamation-triangle" *ngIf="oldPassword.errors?.required">
                                             Required!
                                         </span>
-                            <span *ngIf="oldPassword.errors?.pattern">
+                            <span *ngIf="oldPassword.errors?.pattern || isOneSpecialCharOld">
                                     {{msgErrSpecialChar}}
                                         </span>
                             </span>
@@ -115,14 +144,15 @@
                             <span class="text-danger">*</span>
                         </div>
                         <div class="col-md-6">
-                            <input type="password" name="newPassword" #newPassword="ngModel" [(ngModel)]="entity.newPassword" minlength="8" required pattern="((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8})" maxlength="8" class="form-control" placeholder="">
-                            <span [hidden]="newPassword.valid || (newPassword.pristine && !changePasswordFrm.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error">
-                                <span *ngIf="newPassword.errors?.required" class="fa fa-exclamation-triangle">
-                                    <i ></i> Required!
-                                </span>
-                            <span *ngIf="newPassword.errors?.pattern">
-                                    >{{msgErrSpecialChar}}
-                                </span>
+                            <input type="password" name="newPassword" #newPassword="ngModel" [(ngModel)]="entity.newPassword" minlength="8" required pattern="((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8})" maxlength="8" (keyup)="inputPasswordChange('new')" class="form-control" placeholder="">
+                            <span [hidden]="(newPassword.valid && !isOneSpecialCharNew ) || (newPassword.pristine && !changePasswordFrm.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error">
+                                    <span *ngIf="newPassword.errors?.required">
+                                        <i class="fa fa-exclamation-triangle"></i> Required!
+                                    </span>
+                            <span *ngIf="newPassword.errors?.pattern || isOneSpecialCharNew">
+                                        <i class="fa fa-exclamation-triangle"></i> Password must be 8 characters and include numbers, uppercase and lowercase.
+                                        Letters and one special character
+                                    </span>
                             </span>
                         </div>
                         <div class="col-md-1"></div>
@@ -134,7 +164,7 @@
                             <span class="text-danger">*</span>
                         </div>
                         <div class="col-md-6">
-                            <input type="password" name="confirmPassword" #confirmPassword="ngModel" [(ngModel)]="entity.confirmPassword" minlength="8" required maxlength="8" class="form-control" validateEqual="newPassword" placeholder="">
+                            <input type="password" name="confirmPassword" #confirmPassword="ngModel" [(ngModel)]="entity.confirmPassword" minlength="8" required maxlength="8" class="form-control" validateEqual="password" placeholder="">
                             <span [hidden]="confirmPassword.valid || (confirmPassword.pristine && !changePasswordFrm.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error">
                                     <span *ngIf="confirmPassword.errors?.required">
                                         <i class="fa fa-exclamation-triangle"></i> Required!
@@ -164,31 +194,27 @@
 <div bsModal #infoModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h4>Information</h4>
+            <div class="modal-header bg-header-modal">
+                <h4 class="modal-title">Information</h4>
                 <button type="button" class="close" (click)="infoModal.hide()" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body size-text-content-modal text-center">
-                <div class="form-group row">
-                    <div class="col-md-12">
-                        <i class="fa fa-check-square-o icon-check-square"></i>
+            <div class="modal-body size-text-content-modal">
+                <form class="form-horizontal form-label-left input_mask" novalidate #changePasswordFrm="ngForm" *ngIf="entity">
+                    <div class="form-group row">
+                        <div class="col-md-12">
+                            <span>{{msgInfo}}</span>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-md-12 text-bold">
-                        <span>{{msgInfo}}</span>
-                    </div>
-                </div>
+                </form>
             </div>
-            <div class="form-group row">
-                <div class="col-md-1">
-                </div>
-                <div class="col-md-10">
-                    <button type="button" class="btn btn-success btn-block text-bold" (click)="infoModal.hide()">OK</button>
-                </div>
-                <div class="col-md-1">
+            <div class="modal-footer">
+                <div class="form-group row">
+                    <div class="col-md-5"></div>
+                    <div class="col-md-7">
+                        <button type="button" class="btn btn-success pull-right" (click)="infoModal.hide()">OK</button>
+                    </div>
                 </div>
             </div>
         </div>

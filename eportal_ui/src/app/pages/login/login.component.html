@@ -49,7 +49,7 @@
                             <div class="fomat-pw row">
                                 <div class="col-md-1"></div>
                                 <div class="col-md-5">
-                                    <label *ngIf="showMsg">
+                                    <label>
                                         <span style="cursor: pointer; color:red">{{message}}</span> 
                                     </label>
                                 </div>
@@ -97,33 +97,26 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" style="margin: auto">Forgot Password</h4>
+                <h4 class="modal-title">Forgot Password</h4>
+                <button type="button" class="close" (click)="forgotPassModal.hide();isShow=true" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
                 <form name="form" (ngSubmit)="f.form.valid && sendEmailVerificationLink()" #f="ngForm" novalidate>
-                    <p style="margin-bottom: 10px"><b>Please enter your User ID below:</b></p>
                     <div class="form-group">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <label for="email">User ID
-                                    <span class="text-danger">*</span>
-                                </label>
-                            </div>
-                            <div class="col-md-9">
-                                <input type="text" class="form-control" name="email" [(ngModel)]="vm.email" #email="ngModel" [ngClass]="{ 'is-invalid': f.submitted && email.invalid }" required email pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" />
-                                <span [hidden]="email.valid || (email.pristine && !f.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="email" data-valmsg-for="email" id="email_validationMessage" role="alert">
-                                    <span *ngIf="email.errors?.required">
-                                        <i class="fa fa-exclamation-triangle"></i> Required!
-                                    </span>
-                                <span *ngIf="email.errors?.pattern">
-                                        <i class="fa fa-exclamation-triangle"></i> Invalid email format!
-                                    </span>
-                                </span>
-                                <span *ngIf="showMsg" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error">
-                                    <i class="fa fa-exclamation-triangle"></i> {{message}}
-                                </span>
-                            </div>
-                        </div>
+                        <label for="email">Email
+                            <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" name="email" [(ngModel)]="vm.email" #email="ngModel" [ngClass]="{ 'is-invalid': f.submitted && email.invalid }" required email pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" />
+                        <span [hidden]="email.valid || (email.pristine && !f.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="email" data-valmsg-for="email" id="email_validationMessage" role="alert">
+                            <span *ngIf="email.errors?.required">
+                                <i class="fa fa-exclamation-triangle"></i> Required!
+                            </span>
+                        <span *ngIf="email.errors?.pattern">
+                                <i class="fa fa-exclamation-triangle"></i> Invalid email format!
+                            </span>
+                        </span>
                     </div>
                     <div class="form-group">
                         <div class="row">
