@@ -23,6 +23,8 @@ export class AddScheduleComponent implements OnInit {
     public message = "";
     public title = "";
     public success = false;
+    public fileName = "";
+    public validate: boolean = true;
 
     @ViewChild("infoModal") public infoModal: ModalDirective;
 
@@ -92,17 +94,26 @@ export class AddScheduleComponent implements OnInit {
     }
 
     public hideShow(a: any) {
-        console.log(a);
+        this.validate = true;
 
         if (a == "Invoice") {
             this.message = "Pursuant to the Factoring Agreement which we have made with you, we send you herewith the INVOICES and we hereby assign to you each of the debts to which those invoices relate. It is hereby guaranteed that in relation to the said invoices the warranties and undertakings contained in Clause (29) of the factoring Agreement have been complied with and in particular the goods and/or services have been delivered and/or performed prior to the date hereof.";
+            this.fileName = "Factoring-INV.xlsx";
+            this.validate = false;
         }
         else if (a == "Cash Disbursement") {
             this.message = "Pursuant to the Factoring Agreement which we have made with you, we send you herewith the INVOICES and we hereby assign to you each of the debts to which those invoices relate. It is hereby guaranteed that in relation to the said invoices the warranties and undertakings contained in Clause (29) of the factoring Agreement have been complied with and in particular the goods and/or services have been delivered and/or performed prior to the date hereof.";
+            this.fileName = "Loan-INV.xlsx";
+            this.validate = false;
         }
         else if (a == "Credit note") {
             this.message = "In accordance with the Factoring Agreement we have made with you, we send you herewith a COPY OF THE ORIGINAL CREDIT NOTES relating to the customers listed above.";
+            this.fileName = "Factoring-CN.xlsx";
+            this.validate = false;
         }
+        else if (a == "Required") {
+            this.validate = false;
+        };
     }
 
     public uploadDocument() {

@@ -2,6 +2,8 @@ package com.ifs.eportal.dal;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -9,6 +11,7 @@ import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.dto.AccountDto;
 import com.ifs.eportal.dto.SortDto;
 import com.ifs.eportal.filter.AccountFilter;
@@ -65,11 +68,13 @@ public class AccountDao implements Repository<Account, Integer> {
 
 	private String _sql;
 
+	private static final Logger _log = Logger.getLogger(AccountDao.class.getName());
+
 	// end
 
 	// region -- Methods --
 	public AccountDao() {
-		_sql = "SELECT \r\n" + "a.id, a.sfid, a.name" + " FROM salesforce.account a\r\n";
+		_sql = "SELECT \r\n" + "	a.id, a.sfid, a.name \r\n" + "FROM salesforce.account a ";
 	}
 
 	/**
@@ -79,50 +84,27 @@ public class AccountDao implements Repository<Account, Integer> {
 	 * @return
 	 */
 	public AccountDto getBy(String sfid) {
+		AccountDto res = new AccountDto();
+
 		String sql = _sql + " WHERE a.sfid = :sfid";
 
-		// Execute
-		Query q = _em.createNativeQuery(sql);
-		q.setParameter("sfid", sfid);
-		Object[] i = (Object[]) q.getSingleResult();
+		try {
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("sfid", sfid);
+			Object[] i = (Object[]) q.getSingleResult();
 
-		// Convert
-		AccountDto res = AccountDto.convert(i);
-		return res;
-	}
-
-	public AccountDto getByClient(String client) {
-		String sql = _sql + " WHERE a.name = :client";
-
-		// Execute
-		Query q = _em.createNativeQuery(sql);
-		q.setParameter("name", client);
-		Object[] i = (Object[]) q.getSingleResult();
-
-		// Convert
-		AccountDto res = AccountDto.convert(i);
-		return res;
-	}
-
-	/**
-	 * Get by
-	 * 
-	 * @param scheduleNo
-	 * @param clientName
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public List<AccountDto> getBy(String name, String sfid) {
-		String sql = _sql + " WHERE a.name = :name AND a.sfid = :sfid";
-
-		// Execute
-		Query q = _em.createNativeQuery(sql);
-		q.setParameter("name", name);
-		q.setParameter("sfid", sfid);
-		List<Object[]> l = q.getResultList();
-
-		// Convert
-		List<AccountDto> res = AccountDto.convert(l);
+			// Convert
+			res = AccountDto.convert(i);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+		
 		return res;
 	}
 
@@ -167,7 +149,7 @@ public class AccountDao implements Repository<Account, Integer> {
 		}
 
 		// Execute to count all
-		String sql = "SELECT \r\n" + "	count(*) \r\n" + " FROM salesforce.account a ";
+		String sql = "SELECT \r\n" + "	count(*)\r\n" + "FROM salesforce.account a ";
 		String limit = "";
 		Query q = createQuery(sql, filter, limit);
 		BigInteger total = (BigInteger) q.getSingleResult();
@@ -209,7 +191,7 @@ public class AccountDao implements Repository<Account, Integer> {
 
 		// Set parameter
 		if (!where.isEmpty()) {
-			int i = where.indexOf(":clientName");
+			int i = where.indexOf(":name");
 			i = where.indexOf(":name");
 			if (i > 0) {
 				q.setParameter("name", name);

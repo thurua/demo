@@ -18,7 +18,7 @@ import {
 } from './providers/provider';
 
 // Import utilities
-import { RsaService } from './utilities/utility';
+import { RsaService, Utils } from './utilities/utility';
 
 @NgModule({
     declarations: [
@@ -38,7 +38,8 @@ import { RsaService } from './utilities/utility';
         FileProvider,
         CommonProvider,
         RsaService,
-        ScheduleProvider
+        ScheduleProvider,
+        Utils
     ],
     bootstrap: [AppComponent]
 })

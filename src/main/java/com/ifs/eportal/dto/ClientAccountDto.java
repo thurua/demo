@@ -17,35 +17,36 @@ public class ClientAccountDto extends BaseDto {
 	@JsonProperty(value = "sfid")
 	private String sfid;
 
-	@JsonProperty(value = "clientAccount")
-	private String clientAccount;
-
-	@JsonProperty(value = "client")
-	private String client;
-
-	@JsonProperty(value = "status")
-	private String status;
-
 	@JsonProperty(value = "activatedOn")
 	private Date activatedOn;
 
-	@JsonProperty(value = "fciCountry")
-	private String fciCountry;
+	@JsonProperty(value = "accountType")
+	private String accountType;
+
+	@JsonProperty(value = "clientAccount")
+	private String clientAccount;
 
 	@JsonProperty(value = "factoringType")
 	private String factoringType;
-
-	@JsonProperty(value = "accountType")
-	private String accountType;
 
 	@JsonProperty(value = "programName")
 	private String programName;
 
 	@JsonProperty(value = "verification")
-	private String verification;
+	private Float verification;
+
+	@JsonProperty(value = "fciCountry")
+	private String fciCountry;
 
 	@JsonProperty(value = "verificationExceedingInvoiceAmount")
-	private String verificationExceedingInvoiceAmount;
+	private Float verificationExceedingInvoiceAmount;
+
+	@JsonProperty(value = "status")
+	private String status;
+
+	@JsonProperty(value = "recordTypeName")
+	private String recordTypeName;
+
 	// end
 
 	// region -- Get set --
@@ -58,52 +59,12 @@ public class ClientAccountDto extends BaseDto {
 		this.sfid = sfid;
 	}
 
-	public String getClientAccount() {
-		return clientAccount;
-	}
-
-	public void setClientAccount(String clientAccount) {
-		this.clientAccount = clientAccount;
-	}
-
-	public String getClient() {
-		return client;
-	}
-
-	public void setClient(String client) {
-		this.client = client;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
 	public Date getActivatedOn() {
 		return activatedOn;
 	}
 
 	public void setActivatedOn(Date activatedOn) {
 		this.activatedOn = activatedOn;
-	}
-
-	public String getFciCountry() {
-		return fciCountry;
-	}
-
-	public void setFciCountry(String fciCountry) {
-		this.fciCountry = fciCountry;
-	}
-
-	public String getFactoringType() {
-		return factoringType;
-	}
-
-	public void setFactoringType(String factoringType) {
-		this.factoringType = factoringType;
 	}
 
 	public String getAccountType() {
@@ -114,6 +75,22 @@ public class ClientAccountDto extends BaseDto {
 		this.accountType = accountType;
 	}
 
+	public String getClientAccount() {
+		return clientAccount;
+	}
+
+	public void setClientAccount(String clientAccount) {
+		this.clientAccount = clientAccount;
+	}
+
+	public String getFactoringType() {
+		return factoringType;
+	}
+
+	public void setFactoringType(String factoringType) {
+		this.factoringType = factoringType;
+	}
+
 	public String getProgramName() {
 		return programName;
 	}
@@ -122,21 +99,46 @@ public class ClientAccountDto extends BaseDto {
 		this.programName = programName;
 	}
 
-	public String getVerification() {
+	public Float getVerification() {
 		return verification;
 	}
 
-	public void setVerification(String verification) {
+	public void setVerification(Float verification) {
 		this.verification = verification;
 	}
 
-	public String getVerificationExceedingInvoiceAmount() {
+	public String getFciCountry() {
+		return fciCountry;
+	}
+
+	public void setFciCountry(String fciCountry) {
+		this.fciCountry = fciCountry;
+	}
+
+	public Float getVerificationExceedingInvoiceAmount() {
 		return verificationExceedingInvoiceAmount;
 	}
 
-	public void setVerificationExceedingInvoiceAmount(String verificationExceedingInvoiceAmount) {
+	public void setVerificationExceedingInvoiceAmount(Float verificationExceedingInvoiceAmount) {
 		this.verificationExceedingInvoiceAmount = verificationExceedingInvoiceAmount;
 	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getRecordTypeName() {
+		return recordTypeName;
+	}
+
+	public void setRecordTypeName(String recordTypeName) {
+		this.recordTypeName = recordTypeName;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -148,9 +150,16 @@ public class ClientAccountDto extends BaseDto {
 		super();
 
 		sfid = "";
+		activatedOn = null;
+		accountType = "";
 		clientAccount = "";
-		client = "";
-
+		factoringType = "";
+		programName = "";
+		verification = null;
+		fciCountry = "";
+		verificationExceedingInvoiceAmount = null;
+		status = "";
+		recordTypeName = "";
 	}
 
 	/**
@@ -163,9 +172,17 @@ public class ClientAccountDto extends BaseDto {
 		ClientAccountDto res = new ClientAccountDto();
 
 		res.setId((Integer) o[0]);
-		res.setSfid((String) o[10]);
-		res.setClientAccount((String) o[1]);
-		res.setClient((String) o[11]);
+		res.setSfid((String) o[1]);
+		res.setActivatedOn((Date) o[2]);
+		res.setAccountType((String) o[3]);
+		res.setClientAccount((String) o[4]);
+		res.setFactoringType((String) o[5]);
+		res.setProgramName((String) o[6]);
+		res.setVerification((Float) o[7]);
+		res.setFciCountry((String) o[8]);
+		res.setVerificationExceedingInvoiceAmount((Float) o[9]);
+		res.setStatus((String) o[10]);
+		res.setRecordTypeName((String) o[11]);
 
 		return res;
 	}

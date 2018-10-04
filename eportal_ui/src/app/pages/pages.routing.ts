@@ -8,6 +8,8 @@ import { ProfileComponent } from './profile/profile.component';
 import { ScheduleComponent } from './schedule/schedule.component';
 import { AddScheduleComponent } from './add-schedule/add-schedule.component';
 import { ScheduleDetailsComponent } from './schedule-details/schedule-details.component';
+import { CreditNotesComponent } from './credit-notes/credit-notes.component';
+import { InvoicesComponent } from './invoices/invoices.component';
 
 export const routes: Routes = [
     {
@@ -22,8 +24,9 @@ export const routes: Routes = [
             { path: 'schedule', component: ScheduleComponent, data: { breadcrumb: 'Schedules' } },
             { path: 'search', component: SearchComponent, data: { breadcrumb: 'Search' } },
             { path: 'add-schedule', component: AddScheduleComponent, data: { breadcrumb: 'Schedules' } },
-            { path: 'schedule-details', component: ScheduleDetailsComponent, data: { breadcrumb: 'Schedules Details' } }
-            
+            { path: 'schedule-details/:_id', component: ScheduleDetailsComponent, data: { breadcrumb: 'Schedules Details' } },
+            { path: 'credit-notes', component: CreditNotesComponent, data: { breadcrumb: 'Credit Notes' } },
+            { path: 'invoices', component: InvoicesComponent, data: { breadcrumb: 'Invoices' } }
         ]
     }
 ];

@@ -1,21 +1,14 @@
 package com.ifs.eportal.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -65,6 +58,8 @@ import com.ifs.eportal.rsp.SingleRsp;
 @RequestMapping("/file")
 public class FileController {
 	// region -- Fields --
+
+	private static final Logger _log = Logger.getLogger(FileController.class.getName());
 
 	private boolean _allowUploadFile;
 
@@ -220,8 +215,13 @@ public class FileController {
 
 			ObjectMapper mapper = new ObjectMapper();
 			res = mapper.writeValueAsString(t);
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
 		}
 
 		return res;
@@ -271,19 +271,26 @@ public class FileController {
 			ExcelDto o = mapper.readValue(s, ExcelDto.class);
 
 			res.setResult(o);
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
 		}
 
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 
 	/**
-	 * Validate step 1
+	 * Validate schedule
 	 * 
-	 * @param o
+	 * @param file
 	 * @param req
+	 * @return
 	 */
+//	@PostMapping("/validate")
 	private SingleRsp validateSchedule(MultipartFile file, UploadReq req) {
 		SingleRsp res = new SingleRsp();
 		String err = "File format is incorrect.";
@@ -294,11 +301,11 @@ public class FileController {
 
 		// Handle
 		if (name.contains("Factoring-INV")) {
-			o = getFactoringIv(file);
+			o = ExcelDto.getFactoringIv(file);
 		} else if (name.contains("Loan-INV")) {
-			o = getLoanIv(file);
+			o = ExcelDto.getLoanIv(file);
 		} else {
-			o = getFactoringCn(file);
+			o = ExcelDto.getFactoringCn(file);
 		}
 		res.setResult(o);
 
@@ -346,7 +353,7 @@ public class FileController {
 			String client = o.getClient().trim();
 			String clientAccount = o.getClientAccount().trim();
 			/* NguyenMinh 2018-Sep-24 IFS-1203 */
-			if (scheduleType != o.getType()) {
+			if (!scheduleType.equalsIgnoreCase(o.getType())) {
 				err = "Selected Type of Schedule is not same as in Excel.";
 				res = Utils.addError(res, err);
 			}
@@ -357,16 +364,13 @@ public class FileController {
 			String sAcceptanceDate = Utils.dateFormat(acceptanceDate, Const.DateTime.YMD);
 			if (sNow.equals(sAcceptanceDate)) {
 				err = "Schedule Acceptance Date cannot be future date and must be within current month.";
-				res = Utils.addError(res, err);
+				// res = Utils.addError(res, err);
 			}
 
 			// Find Client Name (ac)
-			List<AccountDto> lac = accountService.read(name, clientId);
-			AccountDto ac = new AccountDto();
-			if (lac.size() == 1) {
-				if (clientId == lac.get(0).getSfid()) {
-					ac = lac.get(0);
-				} else {
+			AccountDto ac = accountService.read(clientId);
+			if (ac.getId() > 0) {
+				if (!ac.getName().equalsIgnoreCase(client)) {
 					err = "Client Name not same as in excel file.";
 					res = Utils.addError(res, err);
 					return res;
@@ -379,47 +383,43 @@ public class FileController {
 			}
 
 			// Find Client Account (ca)
-			List<ClientAccountDto> lca = clientAccountService.read(clientAccount, client);
-			ClientAccountDto ca = new ClientAccountDto();
-
-			if (lca.size() == 1) {
-				ca = lca.get(0);
-
+			ClientAccountDto ca = clientAccountService.read(clientAccountId);
+			if (ca.getId() > 0) {
 				/* NguyenMinh 2018-Sep-24 IFS-1203 */
-				if (ca.getSfid() != clientAccountId) {
+				if (!ca.getClientAccount().equals(o.getClientAccount())) {
 					err = "Selected Client Account is not same as in Excel.";
 					res = Utils.addError(res, err);
 				}
 
 				/* ToanNguyen 2018-Sep-10 IFS-1164 */
-//                if(isLoan  && ca.RecordType.Name != "Loan") {
-//                    err = "Client Account is not of Loan Type.";
-//                    res = Utils.addError(res, err);
-//                    return res;
-//                }
-//                if(isFactoring && ca.RecordType.Name != "Factoring") {
-//                    err = "Client Account is not of Factoring Type.";
-//                    res = Utils.addError(res, err);
-//                    return res;
-//                }
+				String recordTypeName = ca.getRecordTypeName();
+				if (isLoan && !"Loan".equals(recordTypeName)) {
+					err = "Client Account is not of Loan Type.";
+					res = Utils.addError(res, err);
+					return res;
+				}
+				if (isLoan && !"Factoring".equals(recordTypeName)) {
+					err = "Client Account is not of Factoring Type.";
+					res = Utils.addError(res, err);
+					return res;
+				}
 
 				if (ca.getStatus() != "Activeted") {
 					/* ToanNguyen 2018-Aug-23 IFS-974 */
-					// chua co du lieu
-//                    if(acceptanceDate < ca.Activated_On__c) {
-//                        err = 'Schedule Acceptance Date cannot be before client account activation date.';
+
+//                    if(acceptanceDate < ca.getActivatedOn()) {
+//                        err = "Schedule Acceptance Date cannot be before client account activation date.";
 //                        res = Utils.addError(res, err);
 //                    }
-//                    
-					
+
 					/* ToanNguyen 2018-Aug-30 IFS-977,1027 */
-                    if(!amendSchedule) {
+					if (!amendSchedule) {
 //                        List<ScheduleOfOfferDto> lso1 = scheduleOfOfferService.read(scheduleNo, clientId);
 //                        if(lso1.size() > 0) {
 //                            err = "Schedule Number exists under Client Account.";
 //                            res = Utils.addError(res, err);
 //                        }
-                    }
+					}
 				} else if (ca.getStatus() == "Closed") {
 					/* ToanNguyen 2018-Aug-30 IFS-1024 */
 					err = "Client Account is already closed.";
@@ -454,17 +454,64 @@ public class FileController {
 //                return res;
 //            }
 
+			err = res.getMessage();
+			if (!err.isEmpty()) {
+				res.setError(err);
+			} else {
+				if (isCN) {
+					res = validateCreditNote(o, req);
+				} else {
+					res = validateInvoice(o, req);
+				}
+			}
+
+			err = res.getMessage();
+			if (!err.isEmpty()) {
+				if (res.getMessage().isEmpty()) {
+					if (isCN) {
+						processCreditNote(o, req);
+					} else {
+						processInvoice(o, req);
+					}
+				}
+			}
 		} catch (Exception ex) {
-
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
 		}
-
-		res.setError(err);
 
 		return res;
 	}
-	/*
-	 * if (isCN) { processCreditNote(o, req); } else { processInvoice(o, req); }
+
+	/**
+	 * Validate invoice
+	 * 
+	 * @param o
+	 * @param req
+	 * @return
 	 */
+	private SingleRsp validateInvoice(ExcelDto o, UploadReq req) {
+		SingleRsp res = new SingleRsp();
+
+		return res;
+	}
+
+	/**
+	 * Validate credit note
+	 * 
+	 * @param o
+	 * @param req
+	 * @return
+	 */
+	private SingleRsp validateCreditNote(ExcelDto o, UploadReq req) {
+		SingleRsp res = new SingleRsp();
+
+		return res;
+	}
 
 	/**
 	 * Process invoice
@@ -554,620 +601,6 @@ public class FileController {
 		}
 
 		return res;
-	}
-
-	private ExcelDto getFactoringCn(MultipartFile file) {
-		ExcelDto note = new ExcelDto();
-
-		try {
-			String FILE_NAME = "Factoring-CN-0.2.xlsx";
-			Workbook workbook;
-
-			if (file == null) {
-				FileInputStream excelFile = new FileInputStream(new File(FILE_NAME));
-				workbook = new XSSFWorkbook(excelFile);
-			} else {
-				workbook = new XSSFWorkbook(file.getInputStream());
-			}
-
-			Sheet datatypeSheet = workbook.getSheetAt(0);
-
-			String type = "";
-			String client = "";
-			String clientAccount = "";
-			String factorCode = "";
-			String scheduleNo = "";
-			Date date = null;
-			String currency = "";
-			String totalAmount = "";
-			String listType = "";
-			Date processDate = null;
-			Date keyInByDate = null;
-
-			try {
-				type = datatypeSheet.getRow(0).getCell(6).getStringCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				client = datatypeSheet.getRow(3).getCell(1).getStringCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				clientAccount = datatypeSheet.getRow(4).getCell(1).getStringCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				factorCode = datatypeSheet.getRow(5).getCell(1).getStringCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				scheduleNo = datatypeSheet.getRow(6).getCell(1).getStringCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				date = datatypeSheet.getRow(3).getCell(7).getDateCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				currency = datatypeSheet.getRow(4).getCell(7).getStringCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				totalAmount = datatypeSheet.getRow(5).getCell(7).getNumericCellValue() + "";
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				listType = datatypeSheet.getRow(8).getCell(0).getStringCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				processDate = datatypeSheet.getRow(51).getCell(1).getDateCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				keyInByDate = datatypeSheet.getRow(51).getCell(7).getDateCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			Iterator<Row> iterator = datatypeSheet.iterator();
-
-			int count = 0;
-			while (iterator.hasNext() && count < 10) {
-				count += 1;
-				iterator.next();
-			}
-
-			int index = 1;
-			while (iterator.hasNext() && count < 40) {
-				count += 1;
-				Row row = iterator.next();
-
-				String customerName = "";
-				String customerBranch = "";
-				String creditNoteNo = "";
-				Date creditNoteDate = null;
-				String amount = "";
-				String invoiceApplied = "";
-				String remarks = "";
-
-				try {
-					customerName = row.getCell(0).toString();
-				} catch (Exception ex) {
-
-				}
-
-				try {
-					customerBranch = row.getCell(2).toString();
-				} catch (Exception ex) {
-
-				}
-
-				try {
-					creditNoteNo = row.getCell(3).toString();
-				} catch (Exception ex) {
-
-				}
-
-				try {
-					creditNoteDate = row.getCell(4).getDateCellValue();
-				} catch (Exception ex) {
-
-				}
-
-				try {
-					amount = row.getCell(5).toString();
-				} catch (Exception ex) {
-
-				}
-
-				try {
-					invoiceApplied = row.getCell(6).toString();
-				} catch (Exception ex) {
-
-				}
-
-				try {
-					remarks = row.getCell(7).toString();
-				} catch (Exception ex) {
-
-				}
-
-				LineItemDto item = new LineItemDto();
-
-				item.setIndex(index);
-				item.setName(customerName);
-				item.setBranch(customerBranch);
-				item.setNo(creditNoteNo);
-				item.setItemDate(creditNoteDate);
-				item.setAmount(amount);
-				item.setInvoiceApplied(invoiceApplied);
-				item.setRemarks(remarks);
-
-				note.addLineItem(item);
-				index += 1;
-			}
-
-			note.setType(type);
-			note.setClient(client);
-			note.setClientAccount(clientAccount);
-			note.setFactorCode(factorCode);
-			note.setScheduleNo(scheduleNo);
-			note.setDocumentDate(date);
-			note.setDocumentCurrency(currency);
-			note.setTotalAmount(totalAmount);
-			note.setListType(listType);
-			note.setProcessDate(processDate);
-			note.setKeyInByDate(keyInByDate);
-
-			workbook.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return note;
-	}
-
-	private ExcelDto getFactoringIv(MultipartFile file) {
-		ExcelDto note = new ExcelDto();
-
-		try {
-			String FILE_NAME = "Factoring-INV-0.2.xlsx";
-			Workbook workbook;
-
-			if (file == null) {
-				FileInputStream excelFile = new FileInputStream(new File(FILE_NAME));
-				workbook = new XSSFWorkbook(excelFile);
-			} else {
-				workbook = new XSSFWorkbook(file.getInputStream());
-			}
-
-			Sheet datatypeSheet = workbook.getSheetAt(0);
-
-			String type = "";
-			String client = "";
-			String clientAccount = "";
-			String factorCode = "";
-			String scheduleNo = "";
-			Date date = null;
-			String currency = "";
-			String totalAmount = "";
-			String listType = "";
-			Date processDate = null;
-			Date keyInByDate = null;
-
-			try {
-				type = datatypeSheet.getRow(0).getCell(8).getStringCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				client = datatypeSheet.getRow(3).getCell(1).getStringCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				clientAccount = datatypeSheet.getRow(4).getCell(1).getStringCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				factorCode = datatypeSheet.getRow(5).getCell(1).getStringCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				scheduleNo = datatypeSheet.getRow(6).getCell(1).getStringCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				date = datatypeSheet.getRow(3).getCell(9).getDateCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				currency = datatypeSheet.getRow(4).getCell(9).getStringCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				totalAmount = datatypeSheet.getRow(5).getCell(9).toString();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				listType = datatypeSheet.getRow(8).getCell(0).getStringCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				processDate = datatypeSheet.getRow(51).getCell(1).getDateCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				keyInByDate = datatypeSheet.getRow(51).getCell(7).getDateCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			Iterator<Row> iterator = datatypeSheet.iterator();
-
-			int count = 0;
-			while (iterator.hasNext() && count < 10) {
-				count += 1;
-				iterator.next();
-			}
-
-			int index = 1;
-			while (iterator.hasNext() && count < 40) {
-				count += 1;
-				Row row = iterator.next();
-
-				String customerName = "";
-				String customerBranch = "";
-				String invoiceNo = "";
-				Date invoiceDate = null;
-				String invoiceAmount = "";
-				String creditPeriod = "";
-				String po = "";
-				String contract = "";
-				String remarks = "";
-
-				try {
-					customerName = row.getCell(0).toString();
-				} catch (Exception ex) {
-
-				}
-
-				try {
-					customerBranch = row.getCell(2).toString();
-				} catch (Exception ex) {
-
-				}
-
-				try {
-					invoiceNo = row.getCell(3).toString();
-				} catch (Exception ex) {
-
-				}
-
-				try {
-					invoiceDate = row.getCell(4).getDateCellValue();
-				} catch (Exception ex) {
-
-				}
-
-				try {
-					invoiceAmount = row.getCell(5).toString();
-				} catch (Exception ex) {
-
-				}
-
-				try {
-					creditPeriod = row.getCell(6).toString();
-				} catch (Exception ex) {
-
-				}
-
-				try {
-					po = row.getCell(7).toString();
-				} catch (Exception ex) {
-
-				}
-
-				try {
-					contract = row.getCell(8).toString();
-				} catch (Exception ex) {
-
-				}
-
-				try {
-					remarks = row.getCell(9).toString();
-				} catch (Exception ex) {
-
-				}
-
-				LineItemDto item = new LineItemDto();
-
-				item.setIndex(index);
-				item.setName(customerName);
-				item.setBranch(customerBranch);
-				item.setNo(invoiceNo);
-				item.setItemDate(invoiceDate);
-				item.setAmount(invoiceAmount);
-				item.setPeriod(creditPeriod);
-				item.setPo(po);
-				item.setContract(contract);
-				item.setRemarks(remarks);
-
-				note.addLineItem(item);
-				index += 1;
-			}
-
-			note.setType(type);
-			note.setClient(client);
-			note.setClientAccount(clientAccount);
-			note.setFactorCode(factorCode);
-			note.setScheduleNo(scheduleNo);
-			note.setDocumentDate(date);
-			note.setDocumentCurrency(currency);
-			note.setTotalAmount(totalAmount);
-			note.setListType(listType);
-			note.setProcessDate(processDate);
-			note.setKeyInByDate(keyInByDate);
-
-			workbook.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return note;
-	}
-
-	private ExcelDto getLoanIv(MultipartFile file) {
-		ExcelDto note = new ExcelDto();
-
-		try {
-			String FILE_NAME = "Loan-INV-0.3.xlsx";
-			Workbook workbook;
-
-			if (file == null) {
-				FileInputStream excelFile = new FileInputStream(new File(FILE_NAME));
-				workbook = new XSSFWorkbook(excelFile);
-			} else {
-				workbook = new XSSFWorkbook(file.getInputStream());
-			}
-
-			Sheet datatypeSheet = workbook.getSheetAt(0);
-
-			String type = "";
-			String client = "";
-			String clientAccount = "";
-			// String factorCode = "";
-			String scheduleNo = "";
-			Date date = null;
-			String currency = "";
-			String totalAmount = "";
-			String listType = "";
-			Date processDate = null;
-			Date keyInByDate = null;
-
-			try {
-				type = datatypeSheet.getRow(0).getCell(7).getStringCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				client = datatypeSheet.getRow(3).getCell(1).getStringCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				clientAccount = datatypeSheet.getRow(4).getCell(1).getStringCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				// factorCode = datatypeSheet.getRow(5).getCell(1).getStringCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				scheduleNo = datatypeSheet.getRow(5).getCell(1).getStringCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				date = datatypeSheet.getRow(3).getCell(9).getDateCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				currency = datatypeSheet.getRow(4).getCell(9).getStringCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				totalAmount = datatypeSheet.getRow(5).getCell(9).toString();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				listType = datatypeSheet.getRow(8).getCell(0).getStringCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				processDate = datatypeSheet.getRow(51).getCell(1).getDateCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			try {
-				keyInByDate = datatypeSheet.getRow(51).getCell(7).getDateCellValue();
-			} catch (Exception ex) {
-
-			}
-
-			Iterator<Row> iterator = datatypeSheet.iterator();
-
-			int count = 0;
-			while (iterator.hasNext() && count < 10) {
-				count += 1;
-				iterator.next();
-			}
-
-			int index = 1;
-			while (iterator.hasNext() && count < 40) {
-				count += 1;
-				Row row = iterator.next();
-
-				String supplierName = "";
-				String invoiceNo = "";
-				Date invoiceDate = null;
-				String invoiceAmount = "";
-				String creditPeriod = "";
-				String po = "";
-				String contract = "";
-				Date paymentDate = null;
-				String remarks = "";
-
-				try {
-					supplierName = row.getCell(0).toString();
-				} catch (Exception ex) {
-
-				}
-
-				try {
-					invoiceNo = row.getCell(2).toString();
-				} catch (Exception ex) {
-
-				}
-
-				try {
-					invoiceDate = row.getCell(3).getDateCellValue();
-				} catch (Exception ex) {
-
-				}
-
-				try {
-					invoiceAmount = row.getCell(4).toString();
-				} catch (Exception ex) {
-
-				}
-
-				try {
-					creditPeriod = row.getCell(5).toString();
-				} catch (Exception ex) {
-
-				}
-
-				try {
-					po = row.getCell(6).toString();
-				} catch (Exception ex) {
-
-				}
-
-				try {
-					contract = row.getCell(7).toString();
-				} catch (Exception ex) {
-
-				}
-
-				try {
-					paymentDate = row.getCell(8).getDateCellValue();
-				} catch (Exception ex) {
-
-				}
-
-				try {
-					remarks = row.getCell(9).toString();
-				} catch (Exception ex) {
-
-				}
-
-				LineItemDto item = new LineItemDto();
-
-				item.setIndex(index);
-				item.setName(supplierName);
-				item.setNo(invoiceNo);
-				item.setItemDate(invoiceDate);
-				item.setAmount(invoiceAmount);
-				item.setPeriod(creditPeriod);
-				item.setPo(po);
-				item.setContract(contract);
-				item.setPaymentDate(paymentDate);
-				item.setRemarks(remarks);
-
-				note.addLineItem(item);
-				index += 1;
-			}
-
-			note.setType(type);
-			note.setClient(client);
-			note.setClientAccount(clientAccount);
-			// note.setFactorCode(factorCode);
-			note.setScheduleNo(scheduleNo);
-			note.setDocumentDate(date);
-			note.setDocumentCurrency(currency);
-			note.setTotalAmount(totalAmount);
-			note.setListType(listType);
-			note.setProcessDate(processDate);
-			note.setKeyInByDate(keyInByDate);
-
-			workbook.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return note;
 	}
 
 	// end

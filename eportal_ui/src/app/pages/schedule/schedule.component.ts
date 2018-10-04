@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ScheduleProvider } from 'app/providers/schedule';
 import { HTTP } from '../../utilities/utility';
+import { Utils } from 'app/utilities/utils';
 
 @Component({
     selector: 'app-schedule',
@@ -20,6 +21,9 @@ export class ScheduleComponent implements OnInit {
     public curentPage = 1;
     public pager: any = {};
     public pagedItems: any[];
+    public fromDate = new Date();
+    public toDate: Date;
+    public minDate = new Date();
     public data = [];
     public settings = {
         selectMode: 'single',  //single|multi
@@ -38,8 +42,12 @@ export class ScheduleComponent implements OnInit {
         columns: {
             scheduleNo: {
                 title: 'Schedule Of Offer',
-                type: 'string',
-                filter: false
+                filter: false,
+                type: 'html',
+                valuePrepareFunction: (cell, row) => {
+
+                    return `<a href="/#/pages/schedule-details/${row.id}">${row.scheduleNo}</a>`
+                },
             },
             clientAccount: {
                 title: 'Client Account No.',
@@ -70,9 +78,19 @@ export class ScheduleComponent implements OnInit {
     };
 
 
-    constructor(private pro: ScheduleProvider) { }
+    constructor(
+        private pro: ScheduleProvider,
+        private utl: Utils) { }
 
     ngOnInit() {
+        this.fromDate = this.utl.addMonths(this.fromDate, -6);
+        this.minDate = this.utl.addMonths(this.minDate, -12);
+        // let tmp = this.fromDate.getMonth() - 12;
+        // this.fromDate = new Date(this.fromDate.setMonth(tmp));
+        // this.fromDate = this.utl.formatDate(this.aa, 'yyyy-MM-dd');
+        // console.log(this.aa);
+        // console.log(this.fromDate);
+
         let user = JSON.parse(localStorage.getItem("CURRENT_TOKEN"));
         this.clientId = user.clientId;
         this.clientName = user.clientName;

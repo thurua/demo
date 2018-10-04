@@ -29,6 +29,8 @@ import { FormsModule } from '@angular/forms';
 import { ScheduleComponent } from './schedule/schedule.component';
 import { AddScheduleComponent } from './add-schedule/add-schedule.component';
 import { ScheduleDetailsComponent } from './schedule-details/schedule-details.component';
+import { CreditNotesComponent } from './credit-notes/credit-notes.component';
+import { InvoicesComponent } from './invoices/invoices.component';
 
 @NgModule({
     imports: [
@@ -57,7 +59,9 @@ import { ScheduleDetailsComponent } from './schedule-details/schedule-details.co
         ProfileComponent,
         ScheduleComponent,
         AddScheduleComponent,
-        ScheduleDetailsComponent
+        ScheduleDetailsComponent,
+        CreditNotesComponent,
+        InvoicesComponent
     ],
     providers: [
         {

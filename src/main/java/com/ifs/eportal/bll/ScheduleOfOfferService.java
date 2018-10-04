@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ifs.eportal.dal.ScheduleOfOfferDao;
+import com.ifs.eportal.dto.ScheduleOfOfferDetailsDto;
 import com.ifs.eportal.dto.ScheduleOfOfferDto;
 import com.ifs.eportal.model.ScheduleOfOffer;
 import com.ifs.eportal.req.PagingReq;
@@ -62,4 +63,15 @@ public class ScheduleOfOfferService {
 	public List<ScheduleOfOfferDto> search(PagingReq req) {
 		return scheduleOfOfferDao.search(req);
 	}
+
+	/**
+	 * Get by
+	 * 
+	 * @param Id
+	 * @return
+	 */
+	public ScheduleOfOfferDetailsDto getById(String Id) {
+		return scheduleOfOfferDao.getById(Id);
+	}
+
 }

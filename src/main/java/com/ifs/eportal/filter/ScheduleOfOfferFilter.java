@@ -1,6 +1,7 @@
 package com.ifs.eportal.filter;
 
 import java.io.IOException;
+import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -22,6 +23,12 @@ public class ScheduleOfOfferFilter {
 
 	@JsonProperty(value = "portalStatus")
 	private String portalStatus;
+
+	@JsonProperty(value = "frCreatedDate")
+	private Date frCreatedDate;
+
+	@JsonProperty(value = "toCreatedDate")
+	private Date toCreatedDate;
 
 	// end
 
@@ -51,6 +58,22 @@ public class ScheduleOfOfferFilter {
 		this.portalStatus = portalStatus;
 	}
 
+	public Date getFrCreatedDate() {
+		return frCreatedDate;
+	}
+
+	public void setFrCreatedDate(Date frCreatedDate) {
+		this.frCreatedDate = frCreatedDate;
+	}
+
+	public Date getToCreatedDate() {
+		return toCreatedDate;
+	}
+
+	public void setToCreatedDate(Date toCreatedDate) {
+		this.toCreatedDate = toCreatedDate;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -62,6 +85,8 @@ public class ScheduleOfOfferFilter {
 		client = "";
 		clientAccount = "";
 		portalStatus = "";
+		frCreatedDate = null;
+		toCreatedDate = null;
 	}
 
 	/**

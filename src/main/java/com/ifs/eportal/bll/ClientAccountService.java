@@ -43,8 +43,13 @@ public class ClientAccountService {
 		return clientAccountDao.getBy(id);
 	}
 
-	public List<ClientAccountDto> read(String clientAccount, String client) {
-		return clientAccountDao.getBy(clientAccount, client);
+	/**
+	 * Read by
+	 * @param sfid
+	 * @return
+	 */
+	public ClientAccountDto read(String sfid) {
+		return clientAccountDao.getBy( sfid);
 	}
 
 	/**
@@ -56,17 +61,6 @@ public class ClientAccountService {
 	public List<ClientAccountDto> search(PagingReq req) {
 		return clientAccountDao.search(req);
 	}
-
-	/**
-	 * Search all
-	 * 
-	 * @return
-	 */
-//	public List<ClientAccountDto> search(String clientId) {
-//		List<Object[]> l = clientAccountDao.search(clientId);
-//		List<ClientAccountDto> res = ClientAccountDto.convert(l);
-//		return res;
-//	}
 
 	// end
 }

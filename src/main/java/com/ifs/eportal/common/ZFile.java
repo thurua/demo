@@ -2,6 +2,8 @@ package com.ifs.eportal.common;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 
@@ -10,6 +12,8 @@ import java.io.FileReader;
  */
 public class ZFile {
 	// region -- Fields --
+
+	private static final Logger _log = Logger.getLogger(ZFile.class.getName());
 
 	// end
 
@@ -39,8 +43,13 @@ public class ZFile {
 
 			res = sb.toString();
 			br.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
 		}
 
 		return res;

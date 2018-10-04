@@ -16,6 +16,8 @@ public class RecordTypeDto extends BaseDto {
 	@JsonProperty(value = "name")
 	private String name;
 
+	@JsonProperty(value = "sfid")
+	private String sfid;
 	// end
 
 	// region -- Get set --
@@ -26,6 +28,14 @@ public class RecordTypeDto extends BaseDto {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getSfid() {
+		return sfid;
+	}
+
+	public void setSfid(String sfid) {
+		this.sfid = sfid;
 	}
 
 	// end

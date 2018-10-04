@@ -210,7 +210,7 @@ public class PortalUserService implements UserDetailsService {
 			} else {
 				// Generate password reminder token
 				String t = bCryptPasswordEncoder.encode(email);
-				String token = Utils.hash(t, Const.Authentication.TOKEN_KEY2);
+				String token = 'U' + Utils.hash(t, Const.Authentication.TOKEN_KEY2);
 
 				// Get password reminder token expire time
 				Date expire = Utils.getTime(Calendar.HOUR, 24);

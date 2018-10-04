@@ -29,4 +29,11 @@ export class ScheduleProvider {
     public searchCA(info: any) {
         return this.api.post('common/search-client-account', info);
     }
+    /**
+     * Get by Idt
+     * @param info
+     */
+    public getById(info: any) {
+        return this.api.post('schedule-of-offer/GetById', info);
+    }
 }

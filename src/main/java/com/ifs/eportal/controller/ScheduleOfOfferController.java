@@ -13,11 +13,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ifs.eportal.bll.ScheduleOfOfferService;
+import com.ifs.eportal.dto.ScheduleOfOfferDetailsDto;
 import com.ifs.eportal.dto.ScheduleOfOfferDto;
 import com.ifs.eportal.model.ScheduleOfOffer;
 import com.ifs.eportal.req.PagingReq;
 import com.ifs.eportal.rsp.BaseRsp;
 import com.ifs.eportal.rsp.MultipleRsp;
+import com.ifs.eportal.rsp.SingleRsp;
 
 @RestController
 @RequestMapping("/schedule-of-offer")
@@ -83,6 +85,28 @@ public class ScheduleOfOfferController {
 			data.put("size", req.getSize());
 			data.put("total", req.getTotal());
 			data.put("data", tmp);
+
+			res.setResult(data);
+		} catch (Exception ex) {
+			res.setError(ex.getMessage());
+		}
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+	
+	/**
+	 * Search by
+	 * 
+	 * @param req
+	 * @return
+	 */
+	@PostMapping("/GetById")
+	public ResponseEntity<?> GetById(@RequestBody String Id) {
+		SingleRsp res = new SingleRsp();
+
+		try {
+			// Handle		
+			ScheduleOfOfferDetailsDto data = scheduleOfOfferService.getById(Id);
 
 			res.setResult(data);
 		} catch (Exception ex) {

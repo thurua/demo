@@ -15,6 +15,14 @@
                 </div>
                 <div class="form-group row">
                     <div class="col-md-4">
+                        <strong>Created Date From</strong>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="date" id="fromDate" name="{{fromDate}}" value="{{ fromDate | date:'yyyy-MM-dd' }}" min="{{ minDate | date:'yyyy-MM-dd' }}" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-4">
                         <strong>Status</strong>
                     </div>
                     <div class="col-md-8">
@@ -41,6 +49,14 @@
                         <select name="clientAccount" #clientAccount="ngModel" [(ngModel)]="clientAccountId" class="form-control">
                             <option *ngFor="let i of lstCA" value="{{i.sfid}}">{{i.clientAccount}}</option>
                         </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-4">
+                        <strong>To</strong>
+                    </div>
+                    <div class="col-md-8">
+                        <input type="date" id="toDate" name="{{toDate}}" value="{{ toDate | date:'yyyy-MM-dd' }}" min="{{ minDate | date:'yyyy-MM-dd' }}">
                     </div>
                 </div>
             </div>

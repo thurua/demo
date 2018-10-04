@@ -2,6 +2,8 @@ package com.ifs.eportal.dal;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -9,6 +11,7 @@ import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.dto.ClientAccountDto;
 import com.ifs.eportal.dto.SortDto;
 import com.ifs.eportal.filter.ClientAccountFilter;
@@ -65,6 +68,8 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 
 	private String _sql;
 
+	private static final Logger _log = Logger.getLogger(ClientAccountDao.class.getName());
+
 	// end
 
 	// region -- Methods --
@@ -73,10 +78,11 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 	 * Initialize
 	 */
 	public ClientAccountDao() {
-		_sql = "SELECT a.id, a.client_account__c, a.activated_on__c , a.account_type__c,\r\n"
-				+ "a.status__c , a.factoring_type__c, a.name,\r\n"
-				+ "a.program_name__c, a. verification__c, a.verification_exceeding_invoice_amount__c, a.sfid, a.client__c\r\n"
-				+ "FROM salesforce.client_account__c a";
+		_sql = "SELECT \r\n" + "	a.id, a.sfid, a.activated_on__c , a.account_type__c, a.client_account__c, \r\n"
+				+ "	a.factoring_type__c, a.program_name__c, a.verification__c, a.fci_country__c, \r\n"
+				+ "	a.verification_exceeding_invoice_amount__c, a.status__c, b.name record_type_name \r\n"
+				+ "FROM salesforce.client_account__c a \r\n" + "JOIN salesforce.recordtype b \r\n"
+				+ "	ON a.recordtypeid = b.sfid ";
 	}
 
 	/**
@@ -86,39 +92,56 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 	 * @return
 	 */
 	public ClientAccountDto getBy(Integer id) {
+		ClientAccountDto res = new ClientAccountDto();
 		String sql = _sql + " WHERE a.id = :id";
 
-		// Execute
-		Query q = _em.createNativeQuery(sql);
-		q.setParameter("id", id);
-		Object[] i = (Object[]) q.getSingleResult();
+		try {
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("id", id);
+			Object[] i = (Object[]) q.getSingleResult();
 
-		// Convert
-		ClientAccountDto res = ClientAccountDto.convert(i);
+			// Convert
+			res = ClientAccountDto.convert(i);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
 		return res;
 	}
 
 	/**
 	 * Get by
 	 * 
-	 * @param clientAccount
-	 * @param client
+	 * @param sfid
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
-	public List<ClientAccountDto> getBy(String clientAccount, String client) {
-		String sql = _sql + "JOIN salesforce.account c \r\n" + "ON a.client__c = c.sfid"
-				+ "JOIN salesforce.recordtype r \r\n" + "ON r.sfid = c.recordtypeid"
-				+ " WHERE a.client_account__c = :clientAccount AND a.client__c = :client";
+	public ClientAccountDto getBy(String sfid) {
+		ClientAccountDto res = new ClientAccountDto();
+		String sql = _sql + " WHERE a.sfid = :sfid";
 
-		// Execute
-		Query q = _em.createNativeQuery(sql);
-		q.setParameter("clientAccount", clientAccount);
-		q.setParameter("client", client);
-		List<Object[]> l = q.getResultList();
+		try {
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("sfid", sfid);
+			Object[] i = (Object[]) q.getSingleResult();
 
-		// Convert
-		List<ClientAccountDto> res = ClientAccountDto.convert(l);
+			// Convert
+			res = ClientAccountDto.convert(i);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
 		return res;
 	}
 

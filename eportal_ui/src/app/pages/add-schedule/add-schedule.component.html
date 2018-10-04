@@ -14,9 +14,6 @@
                             <select id="account" name="account" #account="ngModel" [(ngModel)]="vm.account" (change)="changeAccount()" class="form-control" required>
                                 <option *ngFor="let i of listClient" value="{{i.sfid}}">{{i.name}}</option>
                             </select>
-                            <!-- <span [hidden]="account.valid || (account.pristine && !f.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="account" data-valmsg-for="account" id="account_validationMessage" role="alert">
-                                    <i class="fa fa-exclamation-triangle"></i>Please select a Client Name.
-                            </span> -->
                         </div>
                     </div>
                     <div class="form-group row">
@@ -30,7 +27,7 @@
                                 <option value="Cash Disbursement">Cash Disbursement</option>
                                 <option value="Credit note">Credit note</option>
                             </select>
-                            <span [hidden]="scheduleType.valid || (scheduleType.pristine && !f.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="scheduleType" data-valmsg-for="scheduleType" id="scheduleType_validationMessage"
+                            <span [hidden]="scheduleType.valid || (scheduleType.pristine && !f.submitted && validate)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="scheduleType" data-valmsg-for="scheduleType" id="scheduleType_validationMessage"
                                 role="alert">
                                     <i class="fa fa-exclamation-triangle"></i>Please select a Client Account.
                             </span>
@@ -70,9 +67,6 @@
                         </div>
                         <div class="col-md-8">
                             <input class="form-control none-border" name="scheduleNo" #scheduleNo="ngModel" [(ngModel)]="vm.scheduleNo" required/>
-                            <!-- <span [hidden]="scheduleNo.valid || (scheduleNo.pristine && !f.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="scheduleNo" data-valmsg-for="scheduleNo" id="scheduleNo_validationMessage" role="alert">
-                                    <i class="fa fa-exclamation-triangle"></i>Please enter premise Amend Schedule No.
-                                </span> -->
                         </div>
                     </div>
                 </div>
@@ -91,20 +85,23 @@
                                 <input type="text" class="form-control" placeholder="Choose a file..." value="{{(file !=null)? file.name :'' }}">
                                 <i class="fa fa-times delete-file" (click)="removeFile()" *ngIf="file"></i>
                                 <span class="input-group-append upload">
-                                <button class="btn btn-success" type="button"><i class="fa fa-upload"> </i></button>
+                                <button class="btn btn-primary" type="button"><i class="fa fa-upload"> </i></button>
                             </span>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="card-body col-md-6"><button class="btn btn-success download" type="button" routerLink="../schedule">Dowload Template</button></div>
+                <div class="card-body col-md-6">
+                    <a *ngIf="!validate" href="../../../assets/excel/{{fileName}}" class="btn btn-primary download" download>Dowload Template</a>
+                    <button *ngIf="validate" type="button" (click)="hideShow('Required')" class="btn btn-primary download">Dowload Template</button>
+                </div>
             </div>
             {{message}}
             <div class="card-body col-md-6">
                 <div class="row">
                     <div class="col-md-6"></div>
                     <div class="col-md-4">
-                        <button class="btn btn-success btn-block" type="submit">Proceed</button>
+                        <button class="btn btn-primary btn-block" type="submit">Proceed</button>
                     </div>
                     <div class="col-md-2 cancel">
                         <button class="btn btn-gray btn-block" type="button" routerLink="../schedule">Cancel</button>
