@@ -7,6 +7,7 @@ import { SearchComponent } from './search/search.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ScheduleComponent } from './schedule/schedule.component';
 import { AddScheduleComponent } from './add-schedule/add-schedule.component';
+import { ScheduleDetailsComponent } from './schedule-details/schedule-details.component';
 
 export const routes: Routes = [
     {
@@ -20,7 +21,9 @@ export const routes: Routes = [
             { path: 'profile', component: ProfileComponent, data: { breadcrumb: 'User Profile' } },
             { path: 'schedule', component: ScheduleComponent, data: { breadcrumb: 'Schedules' } },
             { path: 'search', component: SearchComponent, data: { breadcrumb: 'Search' } },
-            { path: 'add-schedule', component: AddScheduleComponent, data: { breadcrumb: 'Schedules' } }
+            { path: 'add-schedule', component: AddScheduleComponent, data: { breadcrumb: 'Schedules' } },
+            { path: 'schedule-details', component: ScheduleDetailsComponent, data: { breadcrumb: 'Schedules Details' } }
+            
         ]
     }
 ];

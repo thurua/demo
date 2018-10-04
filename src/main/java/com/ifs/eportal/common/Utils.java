@@ -47,6 +47,10 @@ import io.jsonwebtoken.Jwts;
 public class Utils {
 	// region -- Fields --
 
+	public static boolean printStackTrace = false;
+
+	public static boolean writeLog = false;
+
 	private static String _name = "";
 
 	private static String _key = "";
