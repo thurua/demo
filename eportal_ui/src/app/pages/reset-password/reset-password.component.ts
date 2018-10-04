@@ -97,14 +97,4 @@ export class ResetPasswordComponent implements OnInit {
             //this.loader = false;
         });
     }
-
-    public inputPasswordChange() {
-        this.isOneSpecialChar = false;
-
-        var specialChar = this.vm.password.replace(/[a-zA-Z0-9]/g, "");
-        if (specialChar.length != 1) {
-            this.isOneSpecialChar = true;
-            return;
-        }
-    }
 }

@@ -105,7 +105,7 @@ export class ScheduleComponent implements OnInit {
     public resetClick() {
         this.portalStatus = "";
         this.clientAccountId = "";
-        this.data=[];
+        this.data = [];
     }
 
     public search(page: any) {
@@ -146,13 +146,18 @@ export class ScheduleComponent implements OnInit {
         }
 
         this.pro.searchCA(x).subscribe((rsp: any) => {
+            let item = {
+                sfid: "",
+                clientAccount: "-- Please select --"
+            }
+
             if (rsp.status === HTTP.STATUS_SUCCESS) {
-                let item = {
-                    sfid: "",
-                    clientAccount: "-- Please select --"
-                }
+
                 rsp.result.data.unshift(item);
                 this.lstCA = rsp.result.data;
+            }
+            else {
+                this.lstCA.unshift(item);
             }
         }, (err) => {
             console.log(err);

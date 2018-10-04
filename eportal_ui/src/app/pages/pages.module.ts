@@ -5,6 +5,8 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
+import { TabsModule } from 'ngx-bootstrap/tabs';
+
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     suppressScrollX: true
 };
@@ -26,6 +28,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { FormsModule } from '@angular/forms';
 import { ScheduleComponent } from './schedule/schedule.component';
 import { AddScheduleComponent } from './add-schedule/add-schedule.component';
+import { ScheduleDetailsComponent } from './schedule-details/schedule-details.component';
 
 @NgModule({
     imports: [
@@ -35,7 +38,8 @@ import { AddScheduleComponent } from './add-schedule/add-schedule.component';
         ModalModule.forRoot(),
         FormsModule,
         FileUploadModule,
-        Ng2SmartTableModule
+        Ng2SmartTableModule,
+        TabsModule.forRoot()
     ],
     declarations: [
         PagesComponent,
@@ -52,7 +56,8 @@ import { AddScheduleComponent } from './add-schedule/add-schedule.component';
         SearchComponent,
         ProfileComponent,
         ScheduleComponent,
-        AddScheduleComponent
+        AddScheduleComponent,
+        ScheduleDetailsComponent
     ],
     providers: [
         {

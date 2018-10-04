@@ -41,7 +41,7 @@ public class JwtTokenUtil implements Serializable {
 	}
 
 	public String doGenerateToken(PortalUserDto m, List<SimpleGrantedAuthority> authorities) {
-		Claims claims = Jwts.claims().setSubject(m.getEmail());
+		Claims claims = Jwts.claims().setSubject(m.getUserId());
 		claims.put("scopes", authorities);
 		claims.put(Const.Authentication.PAYLOAD_NAME, PayloadDto.convert(m));
 

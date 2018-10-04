@@ -13,8 +13,11 @@ public class PayloadDto {
 	@JsonProperty(value = "id")
 	private Integer id;
 
-	@JsonProperty(value = "email")
-	private String email;
+	@JsonProperty(value = "sfid")
+	private String sfid;
+
+	@JsonProperty(value = "userId")
+	private String userId;
 
 	@JsonProperty(value = "firstName")
 	private String firstName;
@@ -31,14 +34,11 @@ public class PayloadDto {
 	@JsonProperty(value = "clientId")
 	private String clientId;
 
-	@JsonProperty(value = "clientName")
-	private String clientName;
-
 	@JsonProperty(value = "roleName")
 	private String roleName;
 
-	@JsonProperty(value = "companyName")
-	private String companyName;
+	@JsonProperty(value = "clientName")
+	private String clientName;
 
 	// end
 
@@ -52,12 +52,20 @@ public class PayloadDto {
 		this.id = id;
 	}
 
-	public String getEmail() {
-		return email;
+	public String getSfid() {
+		return sfid;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setSfid(String sfid) {
+		this.sfid = sfid;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 	public String getFirstName() {
@@ -100,14 +108,6 @@ public class PayloadDto {
 		this.clientId = clientId;
 	}
 
-	public String getClientName() {
-		return clientName;
-	}
-
-	public void setClientName(String clientName) {
-		this.clientName = clientName;
-	}
-
 	public String getRoleName() {
 		return roleName;
 	}
@@ -116,12 +116,12 @@ public class PayloadDto {
 		this.roleName = roleName;
 	}
 
-	public String getCompanyName() {
-		return companyName;
+	public String getClientName() {
+		return clientName;
 	}
 
-	public void setCompanyName(String companyName) {
-		this.companyName = companyName;
+	public void setClientName(String clientName) {
+		this.clientName = clientName;
 	}
 
 	// end
@@ -133,15 +133,15 @@ public class PayloadDto {
 	 */
 	public PayloadDto() {
 		id = 0;
-		email = "";
+		sfid = "";
+		userId = "";
 		firstName = "";
 		lastName = "";
 		salutation = "";
 		mobile = "";
 		clientId = "";
-		clientName = "";
 		roleName = "";
-		companyName = "";
+		clientName = "";
 	}
 
 	/**
@@ -154,15 +154,15 @@ public class PayloadDto {
 		PayloadDto res = new PayloadDto();
 
 		res.setId(o.getId());
-		res.setEmail(o.getEmail());
+		res.setSfid(o.getSfid());
+		res.setUserId(o.getUserId());
 		res.setFirstName(o.getFirstName());
 		res.setLastName(o.getLastName());
 		res.setSalutation(o.getSalutation());
 		res.setMobile(o.getMobile());
 		res.setClientId(o.getClientId());
-		res.setClientName(o.getClientName());
 		res.setRoleName(o.getRoleName());
-		res.setCompanyName(o.getCompanyName());
+		res.setClientName(o.getClientName());
 
 		return res;
 	}

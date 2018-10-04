@@ -23,28 +23,50 @@ public class ClientAccount {
 	@Column(columnDefinition = "SERIAL")
 	private Integer id;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "createddate")
-	private Date createdDate;
+	@Column(columnDefinition = "varchar(18)", name = "fci_country__c")
+	private String fciCountry;
 
-	@Column(columnDefinition = "bool", name = "isdeleted")
-	private boolean isDeleted;
+	@Column(columnDefinition = "float", name = "verification_exceeding_invoice_amount__c")
+	private String verificationExceedingInvoiceAmount;
+
+	@Column(columnDefinition = "float", name = "verification__c")
+	private String verification;
+
+	@Column(columnDefinition = "varchar(255)", name = "client_account__c")
+	private String clientAccount;
 
 	@Column(columnDefinition = "varchar(255)", name = "name")
 	private String name;
+
+	@Column(columnDefinition = "bool", name = "isdeleted")
+	private boolean isDeleted;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "systemmodstamp")
 	private Date systemModStamp;
 
-	@Column(columnDefinition = "varchar(255)", name = "client_account__c")
-	private String clientAccount;
+	@Column(columnDefinition = "varchar(255)", name = "status__c")
+	private String status;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "activated_on__c")
+	private Date activatedOn;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "createddate")
+	private Date createdDate;
+
+	@Column(columnDefinition = "varchar(255)", name = "account_type__c")
+	private String accountType;
 
 	@Column(columnDefinition = "varchar(18)", name = "client__c")
 	private String client;
 
-	@Column(columnDefinition = "varchar(255)", name = "status__c")
-	private String status;
+	@Column(columnDefinition = "varchar(255)", name = "factoring_type__c")
+	private String factoringType;
+
+	@Column(columnDefinition = "varchar(255)", name = "program_name__c")
+	private String programName;
 
 	@Column(columnDefinition = "varchar(18)", name = "sfid")
 	private String sfid;
@@ -54,6 +76,9 @@ public class ClientAccount {
 
 	@Column(columnDefinition = "text", name = "_hc_err")
 	private String hcErr;
+
+	@Column(columnDefinition = "varchar(18)", name = "recordtypeid")
+	private String recordTypeId;
 
 	// end
 
@@ -67,36 +92,28 @@ public class ClientAccount {
 		this.id = id;
 	}
 
-	public Date getCreatedDate() {
-		return createdDate;
+	public String getFciCountry() {
+		return fciCountry;
 	}
 
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
+	public void setFciCountry(String fciCountry) {
+		this.fciCountry = fciCountry;
 	}
 
-	public boolean isDeleted() {
-		return isDeleted;
+	public String getVerificationExceedingInvoiceAmount() {
+		return verificationExceedingInvoiceAmount;
 	}
 
-	public void setDeleted(boolean isDeleted) {
-		this.isDeleted = isDeleted;
+	public void setVerificationExceedingInvoiceAmount(String verificationExceedingInvoiceAmount) {
+		this.verificationExceedingInvoiceAmount = verificationExceedingInvoiceAmount;
 	}
 
-	public String getName() {
-		return name;
+	public String getVerification() {
+		return verification;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Date getSystemModStamp() {
-		return systemModStamp;
-	}
-
-	public void setSystemModStamp(Date systemModStamp) {
-		this.systemModStamp = systemModStamp;
+	public void setVerification(String verification) {
+		this.verification = verification;
 	}
 
 	public String getClientAccount() {
@@ -107,12 +124,28 @@ public class ClientAccount {
 		this.clientAccount = clientAccount;
 	}
 
-	public String getClient() {
-		return client;
+	public String getName() {
+		return name;
 	}
 
-	public void setClient(String client) {
-		this.client = client;
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+
+	public void setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+
+	public Date getSystemModStamp() {
+		return systemModStamp;
+	}
+
+	public void setSystemModStamp(Date systemModStamp) {
+		this.systemModStamp = systemModStamp;
 	}
 
 	public String getStatus() {
@@ -121,6 +154,54 @@ public class ClientAccount {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public Date getActivatedOn() {
+		return activatedOn;
+	}
+
+	public void setActivatedOn(Date activatedOn) {
+		this.activatedOn = activatedOn;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public String getAccountType() {
+		return accountType;
+	}
+
+	public void setAccountType(String accountType) {
+		this.accountType = accountType;
+	}
+
+	public String getClient() {
+		return client;
+	}
+
+	public void setClient(String client) {
+		this.client = client;
+	}
+
+	public String getFactoringType() {
+		return factoringType;
+	}
+
+	public void setFactoringType(String factoringType) {
+		this.factoringType = factoringType;
+	}
+
+	public String getProgramName() {
+		return programName;
+	}
+
+	public void setProgramName(String programName) {
+		this.programName = programName;
 	}
 
 	public String getSfid() {
@@ -145,6 +226,14 @@ public class ClientAccount {
 
 	public void setHcErr(String hcErr) {
 		this.hcErr = hcErr;
+	}
+
+	public String getRecordTypeId() {
+		return recordTypeId;
+	}
+
+	public void setRecordTypeId(String recordTypeId) {
+		this.recordTypeId = recordTypeId;
 	}
 
 	// end

@@ -102,6 +102,12 @@ public class PortalUser {
 	@Column(columnDefinition = "text", name = "_hc_err")
 	private String hcErr;
 
+	@Column(columnDefinition = "bool", name = "is_resend__c")
+	private boolean isResend;
+
+	@Column(columnDefinition = "bool", name = "is_notified__c")
+	private boolean isNotified;
+
 	// end
 
 	// region -- Get set --
@@ -296,6 +302,22 @@ public class PortalUser {
 
 	public void setHcErr(String hcErr) {
 		this.hcErr = hcErr;
+	}
+
+	public boolean isResend() {
+		return isResend;
+	}
+
+	public void setResend(boolean isResend) {
+		this.isResend = isResend;
+	}
+
+	public boolean isNotified() {
+		return isNotified;
+	}
+
+	public void setNotified(boolean isNotified) {
+		this.isNotified = isNotified;
 	}
 
 	// end

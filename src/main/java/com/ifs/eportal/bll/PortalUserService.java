@@ -44,7 +44,7 @@ public class PortalUserService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		PortalUserDto m = portalUserDao.getBy(email);
 
-		if (m.getEmail().isEmpty()) {
+		if (m.getUserId().isEmpty()) {
 			throw new UsernameNotFoundException("Invalid email or password.");
 		}
 
@@ -205,24 +205,29 @@ public class PortalUserService implements UserDetailsService {
 			PortalUserDto o = portalUserDao.getBy(email);
 			Integer id = o.getId();
 
-			// Generate password reminder token
-			String t = bCryptPasswordEncoder.encode(email);
-			String token = Utils.hash(t, Const.Authentication.TOKEN_KEY2);
-
-			// Get password reminder token expire time
-			Date expire = Utils.getTime(Calendar.HOUR, 24);
-			if (expire == null) {
-				res = "102";
-			}
-
-			PortalUser m = portalUserDao.read(id);
-			if (m == null) {
-				res = "Id does not exist";
+			if (id == 0) {
+				res = "Invalid email. Please contact System Administrator";
 			} else {
-				m.setPassReminderExpire(expire);
-				m.setPassReminderToken(token);
+				// Generate password reminder token
+				String t = bCryptPasswordEncoder.encode(email);
+				String token = Utils.hash(t, Const.Authentication.TOKEN_KEY2);
 
-				portalUserDao.update(m);
+				// Get password reminder token expire time
+				Date expire = Utils.getTime(Calendar.HOUR, 24);
+				if (expire == null) {
+					res = "Error !!!";
+				}
+
+				PortalUser m = portalUserDao.read(id);
+				if (m == null) {
+					res = "User Id does not exist";
+				} else {
+					m.setPassReminderExpire(expire);
+					m.setPassReminderToken(token);
+					m.setNotified(true);
+
+					portalUserDao.update(m);
+				}
 			}
 		} catch (Exception e) {
 			System.out.println(e.getStackTrace());

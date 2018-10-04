@@ -117,15 +117,19 @@ export class ApiProvider {
     public saveToken(token: string) {
         let jwt = new JwtHelperService();
         let t = jwt.decodeToken(token);
+
         let user: any = {
             token: token,
-            userId: t.user.id,
+            id: t.user.id,
+            sfid: t.user.sfid,
+            userId: t.user.userId,
             firstName: t.user.firstName,
             lastName: t.user.lastName,
-            email: t.user.userName,
+            mobile: t.user.mobile,
+            salutation: t.user.salutation,
             clientId: t.user.clientId,
-            clientName: t.user.clientName,
-            salutation:t.user.salutation
+            roleName: t.user.roleName,
+            clientName: t.user.clientName
         };
 
         localStorage.removeItem('CURRENT_TOKEN');

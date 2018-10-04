@@ -47,6 +47,10 @@ import io.jsonwebtoken.Jwts;
 public class Utils {
 	// region -- Fields --
 
+	public static boolean printStackTrace = false;
+
+	public static boolean writeLog = false;
+
 	private static String _name = "";
 
 	private static String _key = "";
@@ -144,9 +148,8 @@ public class Utils {
 	 * @param type Choose attribute to add (Calendar.MINUTE, Calendar.HOUR, ...)
 	 * @param n    Number want to add
 	 * @return
-	 * @throws Exception
 	 */
-	public static Date getTime(int type, int n) throws Exception {
+	public static Date getTime(int type, int n) {
 		Date res = null;
 
 		try {
@@ -154,8 +157,13 @@ public class Utils {
 			Calendar c = Calendar.getInstance(t);
 			c.add(type, n);
 			res = c.getTime();
-		} catch (Exception e) {
-			throw new Exception(e.getMessage());
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				System.out.println(ex.getMessage());
+			}
 		}
 
 		return res;

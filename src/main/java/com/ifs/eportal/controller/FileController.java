@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -37,6 +38,7 @@ import com.ifs.eportal.bll.AccountService;
 import com.ifs.eportal.bll.ClientAccountService;
 import com.ifs.eportal.bll.CreditNoteService;
 import com.ifs.eportal.bll.InvoiceService;
+import com.ifs.eportal.bll.ScheduleOfOfferAttachmentService;
 import com.ifs.eportal.bll.ScheduleOfOfferService;
 import com.ifs.eportal.common.Const;
 import com.ifs.eportal.common.Utils;
@@ -44,10 +46,13 @@ import com.ifs.eportal.dto.AccountDto;
 import com.ifs.eportal.dto.ClientAccountDto;
 import com.ifs.eportal.dto.ExcelDto;
 import com.ifs.eportal.dto.LineItemDto;
+import com.ifs.eportal.dto.PayloadDto;
 import com.ifs.eportal.dto.ScheduleOfOfferDto;
 import com.ifs.eportal.model.CreditNote;
 import com.ifs.eportal.model.Invoice;
 import com.ifs.eportal.model.ScheduleOfOffer;
+import com.ifs.eportal.model.ScheduleOfOfferAttachment;
+import com.ifs.eportal.req.AttachmentReq;
 import com.ifs.eportal.req.UploadReq;
 import com.ifs.eportal.rsp.SingleRsp;
 
@@ -78,6 +83,9 @@ public class FileController {
 	@Autowired
 	private ClientAccountService clientAccountService;
 
+	@Autowired
+	private ScheduleOfOfferAttachmentService scheduleOfOfferAttachmentService;
+
 	// end
 
 	// region -- Methods --
@@ -90,11 +98,69 @@ public class FileController {
 	}
 
 	/**
-	 * Upload for Angular
+	 * Upload for Angular (ScheduleOfOfferAttachment)
+	 * 
+	 * @param header
+	 * @param files
+	 * @return
+	 * @author ToanNguyen 2018-Oct-04
+	 */
+	@PostMapping("/upload-multi")
+	public ResponseEntity<?> upload(@RequestHeader HttpHeaders header, @RequestParam("files") MultipartFile[] files,
+			@RequestParam("req") String req) {
+		SingleRsp res = new SingleRsp();
+
+		try {
+			// Get data
+			PayloadDto pl = Utils.getTokenInfor(header);
+			String sfid = pl.getSfid();
+
+			ObjectMapper mapper = new ObjectMapper();
+			AttachmentReq o = mapper.readValue(req, AttachmentReq.class);
+
+			for (int i = 0; i < files.length; i++) {
+				String originalName = files[i].getOriginalFilename() + "";
+				String type = files[i].getContentType();
+				float size = (float) files[i].getSize();
+
+				// Get extension
+				int t = originalName.lastIndexOf(".") + 1;
+				String extension = originalName.substring(t);
+
+				String url = System.getenv("BUCKETEER_BUCKET_URL");
+				String path = o.getScheduleOfOfferId() + "/Attachment/";
+				String name = UUID.randomUUID().toString() + extension;
+				url += "/" + path + name;
+
+				// Upload file to S3
+				InputStream in = files[i].getInputStream();
+				Utils.upload(in, name, path);
+
+				ScheduleOfOfferAttachment m = new ScheduleOfOfferAttachment();
+				m.setSequence((float) i);
+				m.setName(originalName);
+				m.setExtension(extension);
+				m.setUploadedBy(sfid);
+				m.setContentType(type);
+				m.setFilePath(url);
+				m.setFileSize(size);
+
+				scheduleOfOfferAttachmentService.create(m);
+			}
+		} catch (Exception ex) {
+			res.setError(ex.getMessage());
+		}
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
+	/**
+	 * Upload for Angular (ScheduleOfOffer)
 	 * 
 	 * @param file
 	 * @param req
-	 * @return ToanNguyen 2018-Oct-02
+	 * @return
+	 * @author ToanNguyen 2018-Oct-04
 	 */
 	@PostMapping("/upload")
 	public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file, @RequestParam("req") String req) {
@@ -126,7 +192,8 @@ public class FileController {
 	 * 
 	 * @param file
 	 * @param auth
-	 * @return ToanNguyen 2018-Oct-02
+	 * @return
+	 * @author ToanNguyen 2018-Oct-04
 	 */
 	@PostMapping("/read")
 	public String read(@RequestParam("file") MultipartFile file,
@@ -325,13 +392,13 @@ public class FileController {
 				}
 
 				/* ToanNguyen 2018-Sep-10 IFS-1164 */
-//                if(isLoan  && ca.RecordType.Name != 'Loan') {
-//                    err = 'Client Account is not of Loan Type.';
+//                if(isLoan  && ca.RecordType.Name != "Loan") {
+//                    err = "Client Account is not of Loan Type.";
 //                    res = Utils.addError(res, err);
 //                    return res;
 //                }
-//                if(isFactoring && ca.RecordType.Name != 'Factoring') {
-//                    err = 'Client Account is not of Factoring Type.';
+//                if(isFactoring && ca.RecordType.Name != "Factoring") {
+//                    err = "Client Account is not of Factoring Type.";
 //                    res = Utils.addError(res, err);
 //                    return res;
 //                }
@@ -344,36 +411,15 @@ public class FileController {
 //                        res = Utils.addError(res, err);
 //                    }
 //                    
-					/* TriNguyen 2018-Sep-04 IFS-1048 */
-//                    if(!isCN) {
-//                        Date t = ca.Activated_On__c.addMonths(6).addDays(-1);
-//                        if(acceptanceDate < t) {
-//                            // Client - New.
-//                            err = 'IVE';
-//                            errors = ZError.addError(errors, err, allNo);
-//                            res.invoiceValid = false;
-//                        }
-//                    }
-
-					/* TriNguyen 2018-Sep-04 IFS-1050 */
-//                    if(ca.Verification__c != null && ca.Verification__c == 100) {
-//                        // Client - 100% Verification Required.
-//                        err = 'IVJ';
-//                        errors = ZError.addError(errors, err, allNo);
-//                        res.invoiceValid = false;
-//                    }
-//                    
+					
 					/* ToanNguyen 2018-Aug-30 IFS-977,1027 */
-//                    if(!amendSchedule) {
-//                        lso = [SELECT Id, Sequence__c FROM Schedule_Of_Offer__c
-//                               WHERE Schedule_No__c = :scheduleNo
-//                               AND Client_Name__c = :ac.Id
-//                               AND Client_Account__c = :ca.Id];
-//                        if(lso.size() > 0) {
-//                            err = 'Schedule Number exists under Client Account.';
+                    if(!amendSchedule) {
+//                        List<ScheduleOfOfferDto> lso1 = scheduleOfOfferService.read(scheduleNo, clientId);
+//                        if(lso1.size() > 0) {
+//                            err = "Schedule Number exists under Client Account.";
 //                            res = Utils.addError(res, err);
 //                        }
-//                    }
+                    }
 				} else if (ca.getStatus() == "Closed") {
 					/* ToanNguyen 2018-Aug-30 IFS-1024 */
 					err = "Client Account is already closed.";
@@ -563,25 +609,25 @@ public class FileController {
 			}
 
 			try {
-				scheduleNo = datatypeSheet.getRow(3).getCell(7).getStringCellValue();
+				scheduleNo = datatypeSheet.getRow(6).getCell(1).getStringCellValue();
 			} catch (Exception ex) {
 
 			}
 
 			try {
-				date = datatypeSheet.getRow(4).getCell(7).getDateCellValue();
+				date = datatypeSheet.getRow(3).getCell(7).getDateCellValue();
 			} catch (Exception ex) {
 
 			}
 
 			try {
-				currency = datatypeSheet.getRow(5).getCell(7).getStringCellValue();
+				currency = datatypeSheet.getRow(4).getCell(7).getStringCellValue();
 			} catch (Exception ex) {
 
 			}
 
 			try {
-				totalAmount = datatypeSheet.getRow(6).getCell(7).toString();
+				totalAmount = datatypeSheet.getRow(5).getCell(7).getNumericCellValue() + "";
 			} catch (Exception ex) {
 
 			}

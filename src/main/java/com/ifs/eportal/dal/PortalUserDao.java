@@ -9,6 +9,7 @@ import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.dto.PortalUserDto;
 import com.ifs.eportal.dto.SortDto;
 import com.ifs.eportal.filter.PortalUserFilter;
@@ -73,9 +74,9 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 	 * Initialize
 	 */
 	public PortalUserDao() {
-		_sql = "SELECT \r\n" + "	a.id, a.user_id__c, d.firstname, d.lastname, d.salutation, d.mobilephone, \r\n"
-				+ "	a.password__c, a.password_hash__c, a.pass_reminder_token__c, a.pass_reminder_expire__c, \r\n"
-				+ "	a.client__c, b.name role_name, c.name company_name, c.name client_name \r\n"
+		_sql = "SELECT \r\n" + "	a.id, a.sfid, a.user_id__c, d.firstname, d.lastname, d.salutation, \r\n"
+				+ "	d.mobilephone, a.password__c, a.password_hash__c, a.pass_reminder_token__c, \r\n"
+				+ "	a.pass_reminder_expire__c, a.client__c, b.name role_name, c.name client_name \r\n"
 				+ "FROM salesforce.portal_user__c a \r\n" + "JOIN salesforce.portal_role__c b \r\n"
 				+ "	ON a.role__c = b.sfid \r\n" + "JOIN salesforce.account c \r\n" + "	ON a.client__c = c.sfid \r\n"
 				+ "JOIN salesforce.contact d \r\n" + "	ON a.contact__c = d.sfid ";
@@ -88,15 +89,27 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 	 * @return
 	 */
 	public PortalUserDto getBy(Object token) {
+		PortalUserDto res = new PortalUserDto();
+
 		String sql = _sql + " WHERE a.pass_reminder_expire__c >= now() AND a.pass_reminder_token__c = :token";
 
-		// Execute
-		Query q = _em.createNativeQuery(sql);
-		q.setParameter("token", token);
-		Object[] i = (Object[]) q.getSingleResult();
+		try {
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("token", token);
+			Object[] i = (Object[]) q.getSingleResult();
 
-		// Convert
-		PortalUserDto res = PortalUserDto.convert(i);
+			// Convert
+			res = PortalUserDto.convert(i);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				System.out.println(ex.getMessage());
+			}
+		}
+
 		return res;
 	}
 
@@ -107,15 +120,27 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 	 * @return
 	 */
 	public PortalUserDto getBy(String email) {
-		String sql = _sql + " WHERE a.user_id__c = :email";
+		PortalUserDto res = new PortalUserDto();
 
-		// Execute
-		Query q = _em.createNativeQuery(sql);
-		q.setParameter("email", email);
-		Object[] i = (Object[]) q.getSingleResult();
+		String sql = _sql + " WHERE a.user_id__c = :email AND a.status__c = 'ACTD'";
 
-		// Convert
-		PortalUserDto res = PortalUserDto.convert(i);
+		try {
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("email", email);
+			Object[] i = (Object[]) q.getSingleResult();
+
+			// Convert
+			res = PortalUserDto.convert(i);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				System.out.println(ex.getMessage());
+			}
+		}
+
 		return res;
 	}
 
@@ -126,15 +151,26 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 	 * @return
 	 */
 	public PortalUserDto getBy(Integer id) {
+		PortalUserDto res = new PortalUserDto();
+
 		String sql = _sql + " WHERE a.id = :id";
 
-		// Execute
-		Query q = _em.createNativeQuery(sql);
-		q.setParameter("id", id);
-		Object[] i = (Object[]) q.getSingleResult();
+		try {
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("id", id);
+			Object[] i = (Object[]) q.getSingleResult();
 
-		// Convert
-		PortalUserDto res = PortalUserDto.convert(i);
+			// Convert
+			res = PortalUserDto.convert(i);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				System.out.println(ex.getMessage());
+			}
+		}
 		return res;
 	}
 

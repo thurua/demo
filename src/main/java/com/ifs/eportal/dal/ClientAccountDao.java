@@ -73,10 +73,10 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 	 * Initialize
 	 */
 	public ClientAccountDao() {
-		_sql = "SELECT \r\n" + "	a.id, 'a.activated_on__c' , a.account_type__c, a.client_account__c, \r\n"
-				+ "	'a.factoring_type__c', 'b.name', 'c.name',  a.name, \r\n"
-				+ "	a.program_name__c, 'a. verification__c', 'a.verification_exceeding_invoice_amount__c',  \r\n"
-				+ "	a.status__c \r\n" + "FROM salesforce.client_account__c a \r\n";
+		_sql = "SELECT a.id, a.client_account__c, a.activated_on__c , a.account_type__c,\r\n"
+				+ "a.status__c , a.factoring_type__c, a.name,\r\n"
+				+ "a.program_name__c, a. verification__c, a.verification_exceeding_invoice_amount__c, a.sfid, a.client__c\r\n"
+				+ "FROM salesforce.client_account__c a";
 	}
 
 	/**
@@ -107,7 +107,9 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<ClientAccountDto> getBy(String clientAccount, String client) {
-		String sql = _sql + " WHERE a.client_account__c = :clientAccount AND a.client__c = :client";
+		String sql = _sql + "JOIN salesforce.account c \r\n" + "ON a.client__c = c.sfid"
+				+ "JOIN salesforce.recordtype r \r\n" + "ON r.sfid = c.recordtypeid"
+				+ " WHERE a.client_account__c = :clientAccount AND a.client__c = :client";
 
 		// Execute
 		Query q = _em.createNativeQuery(sql);

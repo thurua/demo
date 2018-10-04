@@ -28,7 +28,8 @@ export class LoginComponent implements OnInit {
     public loader = false;
     public isShow = true;
     public pwdPattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$$";
-    public message="";
+    public message = "";
+    public showMsg = false;
 
     @ViewChild('forgotPassModal') public forgotPassModal: ModalDirective;
     @ViewChild('notify') public notify: ModalDirective;
@@ -66,12 +67,13 @@ export class LoginComponent implements OnInit {
 
     public signIn() {
         this.loader = true;
+        this.showMsg = false;
         document.getElementById('preloader').classList.add('show');
         let obj = {
             email: this.vm.userName,
             password: this.vm.password
         };
-        
+
         this.pro.signIn(obj).subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 this.message = "";
@@ -79,6 +81,7 @@ export class LoginComponent implements OnInit {
                 this.router.navigate(['pages/dashboard']);
 
             } else {
+                this.showMsg = true;
                 this.message = rsp.message;
             }
             this.loader = false;
@@ -86,14 +89,16 @@ export class LoginComponent implements OnInit {
     }
 
     public sendEmailVerificationLink() {
-        //this.loader = true;
+        this.showMsg = false;
+
         let obj = { keyword: this.vm.email };
         this.pro.updateToken(obj).subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 this.notify.show();
                 this.forgotPassModal.hide();
             } else {
-                let msg = rsp.message;
+                this.showMsg = true;
+                this.message = rsp.message;
             }
         });
     }

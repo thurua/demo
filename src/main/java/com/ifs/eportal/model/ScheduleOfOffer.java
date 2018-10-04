@@ -23,6 +23,9 @@ public class ScheduleOfOffer {
 	@Column(columnDefinition = "SERIAL")
 	private Integer id;
 
+	@Column(columnDefinition = "varchar(18)", name = "authorised_by__c")
+	private String authorisedBy;
+
 	@Column(columnDefinition = "varchar(3)", name = "currencyisocode")
 	private String currencyIsoCode;
 
@@ -63,6 +66,10 @@ public class ScheduleOfOffer {
 
 	@Column(columnDefinition = "varchar(18)", name = "client_account__c")
 	private String clientAccount;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "authorised_date__c")
+	private Date authorisedDate;
 
 	@Column(columnDefinition = "varchar(80)", name = "name")
 	private String name;
@@ -127,6 +134,14 @@ public class ScheduleOfOffer {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public String getAuthorisedBy() {
+		return authorisedBy;
+	}
+
+	public void setAuthorisedBy(String authorisedBy) {
+		this.authorisedBy = authorisedBy;
 	}
 
 	public String getCurrencyIsoCode() {
@@ -231,6 +246,14 @@ public class ScheduleOfOffer {
 
 	public void setClientAccount(String clientAccount) {
 		this.clientAccount = clientAccount;
+	}
+
+	public Date getAuthorisedDate() {
+		return authorisedDate;
+	}
+
+	public void setAuthorisedDate(Date authorisedDate) {
+		this.authorisedDate = authorisedDate;
 	}
 
 	public String getName() {
