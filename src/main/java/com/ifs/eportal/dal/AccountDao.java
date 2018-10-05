@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZFile;
 import com.ifs.eportal.dto.AccountDto;
 import com.ifs.eportal.dto.SortDto;
 import com.ifs.eportal.filter.AccountFilter;
@@ -21,7 +22,7 @@ import com.ifs.eportal.req.PagingReq;
 
 /**
  * 
- * @author ToanNguyen 2018-Oct-04 (verified)
+ * @author ToanNguyen 2018-Oct-05 (verified)
  *
  */
 @Service(value = "accountDao")
@@ -67,6 +68,8 @@ public class AccountDao implements Repository<Account, Integer> {
 	@Autowired
 	private EntityManager _em;
 
+	private String _path;
+
 	private String _sql;
 
 	private static final Logger _log = Logger.getLogger(AccountDao.class.getName());
@@ -76,7 +79,8 @@ public class AccountDao implements Repository<Account, Integer> {
 	// region -- Methods --
 
 	public AccountDao() {
-		_sql = "SELECT \r\n" + "	a.id, a.sfid, a.name \r\n" + "FROM salesforce.account a ";
+		_path = ZFile.getPath("/sql/" + AccountDao.class.getSimpleName());
+		_sql = ZFile.read(_path + "_sql.sql");
 	}
 
 	/**
@@ -89,8 +93,9 @@ public class AccountDao implements Repository<Account, Integer> {
 		AccountDto res = new AccountDto();
 
 		try {
-			// Execute
 			String sql = _sql + " WHERE a.sfid = :sfid";
+
+			// Execute
 			Query q = _em.createNativeQuery(sql);
 			q.setParameter("sfid", sfId);
 			Object[] i = (Object[]) q.getSingleResult();
@@ -153,7 +158,7 @@ public class AccountDao implements Repository<Account, Integer> {
 			}
 
 			// Execute to count all
-			String sql = "SELECT \r\n" + "	count(*)\r\n" + "FROM salesforce.account a ";
+			String sql = ZFile.read(_path + "count.sql");
 			String limit = "";
 			Query q = createQuery(sql, filter, limit);
 			BigInteger total = (BigInteger) q.getSingleResult();

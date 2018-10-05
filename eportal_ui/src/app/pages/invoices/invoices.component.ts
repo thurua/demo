@@ -10,15 +10,16 @@ import { ScheduleProvider } from '../../providers/schedule';
   encapsulation: ViewEncapsulation.None
 })
 export class InvoicesComponent implements OnInit {
-
   public portalStatus: string = "";
   public customer: string = "";
+  public scheduleNo = "";
+  public clientId: string = "";
+  public clientName: string = "";
+  public invoiceNo = "";
   public lstCustomer: any[] = [];
   public lstStatus: any[] = [];
   public lstCA: any[] = [];
   public data = [];
-  public clientId: string = "";
-  public clientName: string = "";
   public clientAccountId = [];
   public customerId = [];
   public total: number = 0;
@@ -156,7 +157,14 @@ export class InvoicesComponent implements OnInit {
     this.lstCustomer = tmpCustomer.dataCustomer;
   }
 
-
+  public resetClick() {
+    this.portalStatus = "";
+    this.scheduleNo = "";
+    this.customerId = [];
+    this.clientAccountId = [];
+    this.customerId = [];
+    this.invoiceNo = "";
+  }
 
   public searchCA() {
     let x = {

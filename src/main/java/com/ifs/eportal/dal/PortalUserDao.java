@@ -1,7 +1,10 @@
 package com.ifs.eportal.dal;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -10,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZFile;
 import com.ifs.eportal.dto.PortalUserDto;
 import com.ifs.eportal.dto.SortDto;
 import com.ifs.eportal.filter.PortalUserFilter;
@@ -18,7 +22,7 @@ import com.ifs.eportal.req.PagingReq;
 
 /**
  * 
- * @author ToanNguyen 2018-Sep-27
+ * @author ToanNguyen 2018-Oct-05 (verified)
  *
  */
 @Service(value = "portalUserDao")
@@ -64,7 +68,11 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 	@Autowired
 	private EntityManager _em;
 
+	private String _path;
+
 	private String _sql;
+
+	private static final Logger _log = Logger.getLogger(PortalUserDao.class.getName());
 
 	// end
 
@@ -74,12 +82,39 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 	 * Initialize
 	 */
 	public PortalUserDao() {
-		_sql = "SELECT \r\n" + "	a.id, a.sfid, a.user_id__c, d.firstname, d.lastname, d.salutation, \r\n"
-				+ "	d.mobilephone, a.password__c, a.password_hash__c, a.pass_reminder_token__c, \r\n"
-				+ "	a.pass_reminder_expire__c, a.client__c, b.name role_name, c.name client_name \r\n"
-				+ "FROM salesforce.portal_user__c a \r\n" + "JOIN salesforce.portal_role__c b \r\n"
-				+ "	ON a.role__c = b.sfid \r\n" + "JOIN salesforce.account c \r\n" + "	ON a.client__c = c.sfid \r\n"
-				+ "JOIN salesforce.contact d \r\n" + "	ON a.contact__c = d.sfid ";
+		_path = ZFile.getPath("/sql/" + PortalUserDao.class.getSimpleName());
+		_sql = ZFile.read(_path + "_sql.sql");
+	}
+
+	/**
+	 * Get by
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public PortalUserDto getBy(Integer id) {
+		PortalUserDto res = new PortalUserDto();
+
+		try {
+			String sql = _sql + " WHERE a.id = :id";
+
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("id", id);
+			Object[] i = (Object[]) q.getSingleResult();
+
+			// Convert
+			res = PortalUserDto.convert(i);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return res;
 	}
 
 	/**
@@ -91,9 +126,9 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 	public PortalUserDto getBy(Object token) {
 		PortalUserDto res = new PortalUserDto();
 
-		String sql = _sql + " WHERE a.pass_reminder_expire__c >= now() AND a.pass_reminder_token__c = :token";
-
 		try {
+			String sql = _sql + " WHERE a.pass_reminder_expire__c >= now() AND a.pass_reminder_token__c = :token";
+
 			// Execute
 			Query q = _em.createNativeQuery(sql);
 			q.setParameter("token", token);
@@ -106,7 +141,7 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 				ex.printStackTrace();
 			}
 			if (Utils.writeLog) {
-				System.out.println(ex.getMessage());
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
 
@@ -122,9 +157,9 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 	public PortalUserDto getBy(String email) {
 		PortalUserDto res = new PortalUserDto();
 
-		String sql = _sql + " WHERE a.user_id__c = :email AND a.status__c = 'ACTD'";
-
 		try {
+			String sql = _sql + " WHERE a.user_id__c = :email AND a.status__c = 'ACTD'";
+
 			// Execute
 			Query q = _em.createNativeQuery(sql);
 			q.setParameter("email", email);
@@ -137,40 +172,10 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 				ex.printStackTrace();
 			}
 			if (Utils.writeLog) {
-				System.out.println(ex.getMessage());
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
 
-		return res;
-	}
-
-	/**
-	 * Get by
-	 * 
-	 * @param id
-	 * @return
-	 */
-	public PortalUserDto getBy(Integer id) {
-		PortalUserDto res = new PortalUserDto();
-
-		String sql = _sql + " WHERE a.id = :id";
-
-		try {
-			// Execute
-			Query q = _em.createNativeQuery(sql);
-			q.setParameter("id", id);
-			Object[] i = (Object[]) q.getSingleResult();
-
-			// Convert
-			res = PortalUserDto.convert(i);
-		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
-				ex.printStackTrace();
-			}
-			if (Utils.writeLog) {
-				System.out.println(ex.getMessage());
-			}
-		}
 		return res;
 	}
 
@@ -182,75 +187,85 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<PortalUserDto> search(PagingReq req) {
-		Object filter = req.getFilter();
-		int page = req.getPage();
-		int size = req.getSize();
-		List<SortDto> sort = req.getSort();
-		int offset = (page - 1) * size;
+		List<PortalUserDto> res = new ArrayList<PortalUserDto>();
 
-		// Order by
-		String orderBy = "";
-		for (SortDto o : sort) {
-			String field = o.getField();
-			String direction = o.getDirection();
+		try {
+			Object filter = req.getFilter();
+			int page = req.getPage();
+			int size = req.getSize();
+			List<SortDto> sort = req.getSort();
+			int offset = (page - 1) * size;
 
-			if ("id".equals(field)) {
-				if (!orderBy.isEmpty()) {
-					orderBy += ",";
+			// Order by
+			String orderBy = "";
+			for (SortDto o : sort) {
+				String field = o.getField();
+				String direction = o.getDirection();
+
+				if ("id".equals(field)) {
+					if (!orderBy.isEmpty()) {
+						orderBy += ",";
+					}
+					orderBy += " a.id " + direction;
 				}
-				orderBy += " a.id " + direction;
+				if ("email".equals(field)) {
+					if (!orderBy.isEmpty()) {
+						orderBy += ",";
+					}
+					orderBy += " a.user_id__c " + direction;
+				}
+				if ("firstName".equals(field)) {
+					if (!orderBy.isEmpty()) {
+						orderBy += ",";
+					}
+					orderBy += " d.firstname " + direction;
+				}
+				if ("lastName".equals(field)) {
+					if (!orderBy.isEmpty()) {
+						orderBy += ",";
+					}
+					orderBy += " d.lastname " + direction;
+				}
+				if ("mobile".equals(field)) {
+					if (!orderBy.isEmpty()) {
+						orderBy += ",";
+					}
+					orderBy += " d.mobilephone " + direction;
+				}
 			}
 
-			if ("email".equals(field)) {
-				if (!orderBy.isEmpty()) {
-					orderBy += ",";
-				}
-				orderBy += " a.user_id__c " + direction;
+			if (!orderBy.isEmpty()) {
+				orderBy = " ORDER BY " + orderBy;
 			}
 
-			if ("firstName".equals(field)) {
-				if (!orderBy.isEmpty()) {
-					orderBy += ",";
-				}
-				orderBy += " d.firstname " + direction;
-			}
+			// Execute to count all
+			String sql = ZFile.read(_path + "count.sql");
+			String limit = "";
+			Query q = createQuery(sql, filter, limit);
+			BigInteger total = (BigInteger) q.getSingleResult();
+			req.setTotal(total.longValue());
 
-			if ("lastName".equals(field)) {
-				if (!orderBy.isEmpty()) {
-					orderBy += ",";
-				}
-				orderBy += " d.lastname " + direction;
+			// Execute to search
+			sql = _sql;
+			limit = orderBy;
+			if (req.isPaging()) {
+				limit += " OFFSET " + offset + " LIMIT " + size;
 			}
+			q = createQuery(sql, filter, limit);
+			List<Object[]> l = q.getResultList();
 
-			if ("mobile".equals(field)) {
-				if (!orderBy.isEmpty()) {
-					orderBy += ",";
-				}
-				orderBy += " d.mobilephone " + direction;
+			// Convert
+			res = PortalUserDto.convert(l);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
 
-		if (!orderBy.isEmpty()) {
-			orderBy = " ORDER BY " + orderBy;
-		}
-
-		// Execute to count all
-		String sql = "SELECT \r\n" + "	count(*)\r\n" + "FROM salesforce.portal_user__c a \r\n"
-				+ "JOIN salesforce.portal_role__c b \r\n" + "	ON a.role__c = b.sfid \r\n"
-				+ "JOIN salesforce.account c \r\n" + "	ON a.client__c = c.sfid \r\n" + "JOIN salesforce.contact d \r\n"
-				+ "	ON a.contact__c = d.sfid ";
-		String limit = "";
-		Query q = createQuery(sql, filter, limit);
-		BigInteger total = (BigInteger) q.getSingleResult();
-		req.setTotal(total.longValue());
-
-		// Execute to search
-		sql = _sql;
-		limit = orderBy + " OFFSET " + offset + " LIMIT " + size;
-		q = createQuery(sql, filter, limit);
-		List<Object[]> l = q.getResultList();
-
-		return PortalUserDto.convert(l);
+		return res;
 	}
 
 	/**
@@ -261,12 +276,24 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<String> getRoleBy(Integer id) {
-		String sql = "SELECT \r\n" + "	b.name \r\n" + "FROM salesforce.portal_user__c a \r\n"
-				+ "JOIN salesforce.portal_role__c b \r\n" + "	ON a.role__c = b.sfid \r\n" + "WHERE a.id = :id";
-		Query q = _em.createNativeQuery(sql);
-		q.setParameter("id", id);
+		List<String> res = new ArrayList<String>();
 
-		List<String> res = q.getResultList();
+		try {
+			String sql = ZFile.read(_path + "role.sql");
+
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("id", id);
+			res = q.getResultList();
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
 		return res;
 	}
 

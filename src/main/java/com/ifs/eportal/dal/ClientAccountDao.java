@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZFile;
 import com.ifs.eportal.dto.ClientAccountDto;
 import com.ifs.eportal.dto.SortDto;
 import com.ifs.eportal.filter.ClientAccountFilter;
@@ -67,6 +68,8 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 	@Autowired
 	private EntityManager _em;
 
+	private String _path;
+
 	private String _sql;
 
 	private static final Logger _log = Logger.getLogger(ClientAccountDao.class.getName());
@@ -79,11 +82,8 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 	 * Initialize
 	 */
 	public ClientAccountDao() {
-		_sql = "SELECT \r\n" + "	a.id, a.sfid, a.activated_on__c , a.account_type__c, a.client_account__c, \r\n"
-				+ "	a.factoring_type__c, a.program_name__c, a.verification__c, a.fci_country__c, \r\n"
-				+ "	a.verification_exceeding_invoice_amount__c, a.status__c, b.name record_type_name \r\n"
-				+ "FROM salesforce.client_account__c a \r\n" + "JOIN salesforce.recordtype b \r\n"
-				+ "	ON a.recordtypeid = b.sfid ";
+		_path = ZFile.getPath("/sql/" + ClientAccountDao.class.getSimpleName());
+		_sql = ZFile.read(_path + "_sql.sql");
 	}
 
 	/**
@@ -96,8 +96,9 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 		ClientAccountDto res = new ClientAccountDto();
 
 		try {
-			// Execute
 			String sql = _sql + " WHERE a.sfid = :sfid";
+
+			// Execute
 			Query q = _em.createNativeQuery(sql);
 			q.setParameter("sfid", sfId);
 			Object[] i = (Object[]) q.getSingleResult();
@@ -160,8 +161,7 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 			}
 
 			// Execute to count all
-			String sql = "SELECT \r\n" + "	count(*)\r\n" + "FROM salesforce.client_account__c a \r\n"
-					+ "JOIN salesforce.recordtype b \r\n" + "	ON a.recordtypeid = b.sfid ";
+			String sql = ZFile.read(_path + "count.sql");
 			String limit = "";
 			Query q = createQuery(sql, filter, limit);
 			BigInteger total = (BigInteger) q.getSingleResult();
@@ -178,7 +178,6 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 
 			// Convert
 			res = ClientAccountDto.convert(l);
-
 		} catch (Exception ex) {
 			if (Utils.printStackTrace) {
 				ex.printStackTrace();

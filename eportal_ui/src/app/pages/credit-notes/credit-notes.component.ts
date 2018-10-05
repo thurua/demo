@@ -24,6 +24,9 @@ export class CreditNotesComponent implements OnInit {
   public toDate = new Date();
   public minDate = new Date();
   public maxDate = new Date();
+  public scheduleNo = "";
+  public creditNoteNo = "";
+
   public settings = {
     selectMode: 'single',  //single|multi
     hideHeader: false,
@@ -45,7 +48,7 @@ export class CreditNotesComponent implements OnInit {
         type: 'html',
         valuePrepareFunction: (cell, row) => {
 
-          return `<a href="/#/pages/schedule-details/${row.id}">${row.scheduleNo}</a>`
+          return `<a href="/#/pages/credit-notes-details/${row.id}">${row.creditNoteNo}</a>`
         },
       },
       scheduleNo: {
@@ -76,6 +79,16 @@ export class CreditNotesComponent implements OnInit {
       status: {
         title: 'Status',
         type: 'string',
+        filter: false
+      },
+      createdBy: {
+        title: 'Created By',
+        type: 'string',
+        filter: false
+      },
+      createdDateTime: {
+        title: 'Created Date / Time',
+        type: 'date',
         filter: false
       }
     }
@@ -132,6 +145,14 @@ export class CreditNotesComponent implements OnInit {
     this.lstCustomer = tmpCustomer.dataCustomer;
   }
 
+  public resetClick() {
+    this.portalStatus = "";
+    this.clientAccountId = [];
+    this.customerId = [];
+    this.scheduleNo = "";
+    this.creditNoteNo = "";
+    this.data = [];
+  }
 
 
   public searchCA() {

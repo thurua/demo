@@ -28,7 +28,7 @@
                         <strong>Schedule No.</strong>
                     </div>
                     <div class="col-md-8">
-                        <input name="scheduleNo" class="form-control">
+                        <input name="scheduleNo" [(ngModel)]="scheduleNo" class="form-control">
                     </div>
                 </div>
                 <div class="form-group row">
@@ -78,7 +78,7 @@
                         <strong>Invoice No.</strong>
                     </div>
                     <div class="col-md-9">
-                        <input name="scheduleNo" class="form-control">
+                        <input name="scheduleNo" [(ngModel)]="invoiceNo" class="form-control">
                     </div>
                 </div>
                 <div class="form-group row">
@@ -110,7 +110,7 @@
             </div>
             <div class="col-md-8">
                 <button class="btn btn-primary" type="button" (click)="searchClick()">Search</button> &nbsp;
-                <button class="btn btn-gray" type="button">Reset</button>
+                <button class="btn btn-gray" type="button" (click)="resetClick()">Reset</button>
             </div>
         </div>
     </div>

@@ -34,6 +34,6 @@ export class ScheduleProvider {
      * @param info
      */
     public getById(info: any) {
-        return this.api.post('schedule-of-offer/GetById', info);
+        return this.api.post('schedule-of-offer/read', info);
     }
 }

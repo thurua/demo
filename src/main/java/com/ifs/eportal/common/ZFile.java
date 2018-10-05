@@ -62,7 +62,7 @@ public class ZFile {
 	 * @return
 	 */
 	public static String getPath(String s) {
-		return System.getProperty("user.dir") + "\\" + s + "\\";
+		return System.getProperty("user.dir") + "/" + s + "/";
 	}
 
 	// end

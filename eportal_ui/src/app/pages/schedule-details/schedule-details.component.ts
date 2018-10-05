@@ -18,10 +18,10 @@ export class ScheduleDetailsComponent implements OnInit {
         "clientAccount": "",
         "scheduleStatus": "",
         "scheduleDate": "",
-        "currency": "",
-        "totalNoInvoice": "",
-        "totalAmountInvoice": "",
-        "documentType": "",
+        "currencyIsoCode": "",
+        "total": "",
+        "totalAmount": "",
+        "recordType": "",
         "exchangeRate": "",
         "factorCode": ""
     };
