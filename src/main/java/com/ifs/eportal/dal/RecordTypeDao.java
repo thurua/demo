@@ -1,7 +1,7 @@
 package com.ifs.eportal.dal;
 
-import java.math.BigInteger;
-import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -9,15 +9,14 @@ import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZFile;
 import com.ifs.eportal.dto.RecordTypeDto;
-import com.ifs.eportal.dto.SortDto;
-import com.ifs.eportal.filter.RecordTypeFilter;
 import com.ifs.eportal.model.RecordType;
-import com.ifs.eportal.req.PagingReq;
 
 /**
  * 
- * @author HoanNguyen 2018-Oct-2
+ * @author ToanNguyen 2018-Oct-05 (verified)
  *
  */
 @Service(value = "recordTypeDao")
@@ -63,7 +62,11 @@ public class RecordTypeDao implements Repository<RecordType, Integer> {
 	@Autowired
 	private EntityManager _em;
 
+	private String _path;
+
 	private String _sql;
+
+	private static final Logger _log = Logger.getLogger(RecordTypeDao.class.getName());
 
 	// end
 
@@ -73,7 +76,8 @@ public class RecordTypeDao implements Repository<RecordType, Integer> {
 	 * Initialize
 	 */
 	public RecordTypeDao() {
-		_sql = "SELECT \r\n" + "	a.id, \r\n" + "	a.sfid, \r\n" + "	a.name\r\n" + "FROM salesforce.recordtype a ";
+		_path = ZFile.getPath("\\sql\\" + RecordTypeDao.class.getSimpleName());
+		_sql = ZFile.read(_path + "_sql.sql");
 	}
 
 	/**
@@ -83,107 +87,61 @@ public class RecordTypeDao implements Repository<RecordType, Integer> {
 	 * @return
 	 */
 	public RecordTypeDto getBy(Integer id) {
-		String sql = _sql + " WHERE a.id = :id";
+		RecordTypeDto res = new RecordTypeDto();
 
-		// Execute
-		Query q = _em.createNativeQuery(sql);
-		q.setParameter("id", id);
-		Object[] i = (Object[]) q.getSingleResult();
+		try {
+			String sql = _sql + " WHERE a.id = :id";
 
-		// Convert
-		RecordTypeDto res = RecordTypeDto.convert(i);
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("id", id);
+			Object[] i = (Object[]) q.getSingleResult();
+
+			// Convert
+			res = RecordTypeDto.convert(i);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
 		return res;
 	}
 
 	/**
-	 * Search by
+	 * Get by
 	 * 
-	 * @param req
+	 * @param sObjectType
+	 * @param name
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
-	public List<RecordTypeDto> search(PagingReq req) {
-		// Get data
-		Object filter = req.getFilter();
-		int page = req.getPage();
-		int size = req.getSize();
-		List<SortDto> sort = req.getSort();
-		int offset = (page - 1) * size;
+	public RecordTypeDto getBy(String sObjectType, String name) {
+		RecordTypeDto res = new RecordTypeDto();
 
-		// Order by
-		String orderBy = "";
-		for (SortDto o : sort) {
-			String field = o.getField();
-			String direction = o.getDirection();
+		try {
+			String sql = _sql + " WHERE a.sobjecttype = :sObjectType AND a.name = :name";
 
-			if ("id".equals(field)) {
-				if (!orderBy.isEmpty()) {
-					orderBy += ",";
-				}
-				orderBy += " a.id " + direction;
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("sObjectType", sObjectType);
+			q.setParameter("name", name);
+			Object[] i = (Object[]) q.getSingleResult();
+
+			// Convert
+			res = RecordTypeDto.convert(i);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
 			}
-
-			if ("name".equals(field)) {
-				if (!orderBy.isEmpty()) {
-					orderBy += ",";
-				}
-				orderBy += " a.name " + direction;
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
 
-		if (!orderBy.isEmpty()) {
-			orderBy = " ORDER BY " + orderBy;
-		}
-
-		// Execute to count all
-		String sql = "SELECT \r\n" + "	count(*)\r\n" + "FROM salesforce.recordtype a";
-		String limit = "";
-		Query q = createQuery(sql, filter, limit);
-		BigInteger total = (BigInteger) q.getSingleResult();
-		req.setTotal(total.longValue());
-
-		// Execute to search
-		sql = _sql;
-		limit = orderBy + " OFFSET " + offset + " LIMIT " + size;
-		q = createQuery(sql, filter, limit);
-		List<Object[]> l = q.getResultList();
-
-		return RecordTypeDto.convert(l);
-	}
-
-	/**
-	 * Create query to prevent SQL injection
-	 * 
-	 * @param sql
-	 * @param o
-	 * @return
-	 */
-	private Query createQuery(String sql, Object o, String limit) {
-		RecordTypeFilter filter = RecordTypeFilter.convert(o);
-		String name = filter.getName();
-
-		// Where
-		String where = "";
-		if (!name.isEmpty()) {
-			where += " AND a.name = :name";
-		}
-
-		// Replace first
-		if (!where.isEmpty()) {
-			where = where.replaceFirst("AND", "WHERE");
-		}
-
-		Query q = _em.createNativeQuery(sql + where + limit);
-
-		// Set parameter
-		if (!where.isEmpty()) {
-			int i = where.indexOf(":name");
-			if (i > 0) {
-				q.setParameter("name", name);
-			}
-		}
-
-		return q;
+		return res;
 	}
 
 	// end

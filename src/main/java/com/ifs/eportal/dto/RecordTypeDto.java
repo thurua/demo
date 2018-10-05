@@ -7,20 +7,29 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * 
- * @author HoanNguyen 2018-Oct-2
+ * @author ToanNguyen 2018-Oct-05 (verified)
  *
  */
 public class RecordTypeDto extends BaseDto {
 	// region -- Fields --
 
+	@JsonProperty(value = "sfId")
+	private String sfId;
+
 	@JsonProperty(value = "name")
 	private String name;
 
-	@JsonProperty(value = "sfid")
-	private String sfid;
 	// end
 
 	// region -- Get set --
+
+	public String getSfId() {
+		return sfId;
+	}
+
+	public void setSfId(String sfId) {
+		this.sfId = sfId;
+	}
 
 	public String getName() {
 		return name;
@@ -28,14 +37,6 @@ public class RecordTypeDto extends BaseDto {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public String getSfid() {
-		return sfid;
-	}
-
-	public void setSfid(String sfid) {
-		this.sfid = sfid;
 	}
 
 	// end
@@ -48,6 +49,7 @@ public class RecordTypeDto extends BaseDto {
 	public RecordTypeDto() {
 		super();
 
+		sfId = "";
 		name = "";
 	}
 
@@ -61,7 +63,8 @@ public class RecordTypeDto extends BaseDto {
 		RecordTypeDto res = new RecordTypeDto();
 
 		res.setId((Integer) o[0]);
-		res.setName((String) o[1]);
+		res.setSfId((String) o[1]);
+		res.setName((String) o[2]);
 
 		return res;
 	}

@@ -11,7 +11,6 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -34,6 +33,7 @@ import com.ifs.eportal.bll.ClientAccountService;
 import com.ifs.eportal.bll.CreditNoteService;
 import com.ifs.eportal.bll.CurrencyTypeService;
 import com.ifs.eportal.bll.InvoiceService;
+import com.ifs.eportal.bll.RecordTypeService;
 import com.ifs.eportal.bll.ScheduleOfOfferAttachmentService;
 import com.ifs.eportal.bll.ScheduleOfOfferService;
 import com.ifs.eportal.common.Utils;
@@ -43,6 +43,7 @@ import com.ifs.eportal.dto.CurrencyTypeDto;
 import com.ifs.eportal.dto.ExcelDto;
 import com.ifs.eportal.dto.LineItemDto;
 import com.ifs.eportal.dto.PayloadDto;
+import com.ifs.eportal.dto.RecordTypeDto;
 import com.ifs.eportal.dto.ScheduleOfOfferDto;
 import com.ifs.eportal.model.CreditNote;
 import com.ifs.eportal.model.Invoice;
@@ -87,6 +88,9 @@ public class FileController {
 
 	@Autowired
 	private CurrencyTypeService currencyTypeService;
+
+	@Autowired
+	private RecordTypeService recordTypeService;
 
 	// end
 
@@ -359,12 +363,12 @@ public class FileController {
 		// Check schedule no
 		List<ScheduleOfOfferDto> lso = scheduleOfOfferService.read(scheduleNo, clientId);
 
-		Double sequence = 0d;
+		Float sequence = 0f;
 		if (lso.size() > 0) {
 			if (amendSchedule) {
 				/* ToanNguyen 2018-Aug-23 IFS-976 */
 				if (lso.get(0).getSequence() != null) {
-					sequence = lso.get(0).getSequence();
+					sequence = lso.get(0).getSequence().floatValue();
 				}
 				sequence = sequence + 1;
 			}
@@ -470,11 +474,7 @@ public class FileController {
 			err = res.getMessage();
 			if (!err.isEmpty()) {
 				if (res.getMessage().isEmpty()) {
-					if (isCN) {
-						processCreditNote(o, req);
-					} else {
-						processInvoice(o, req);
-					}
+					createSchedule(o, sequence, acceptanceDate);
 				}
 			}
 		} catch (Exception ex) {
@@ -516,90 +516,131 @@ public class FileController {
 	}
 
 	/**
-	 * Process invoice
+	 * Create schedule
 	 * 
 	 * @param o
-	 * @param req
+	 * @param sequence
+	 * @param acceptanceDate
 	 * @return
-	 * @author DuongNguyen 2018-Oct-01
 	 */
-	private boolean processInvoice(ExcelDto o, UploadReq req) {
+	private boolean createSchedule(ExcelDto o, Float sequence, Date acceptanceDate) {
 		boolean res = true;
+
 		try {
-			JSONObject jso = new JSONObject(req);
-			String a = jso.getString("clientName");
-			a = jso.getString("amendScheduleNo");
+			String type = o.getType();
+			boolean isLoan = "CASH DISBURSEMENT".equals(type);
+			boolean isCN = "CREDIT NOTE".equals(type);
+			boolean isIV = "INVOICE".equals(type);
+			boolean isInvoice = isLoan || isIV;
 
-			ScheduleOfOffer so = new ScheduleOfOffer();
-			so.setScheduleNo(o.getScheduleNo());
-			so.setFactorCode(o.getFactorCode());
-			so.setListType(o.getListType());
-			so.setCurrencyIsoCode(o.getDocumentCurrency());
-			so.setClientName(jso.getString("clientName"));
-			// so.setClientAccount(jso.getString("clientAccount"));
-			so.setScheduleStatus("Draft");
+			ScheduleOfOffer m = new ScheduleOfOffer();
+			m.setDocumentType(type);
+			m.setScheduleNo(o.getScheduleNo());
+			m.setSequence(sequence);
+			m.setAcceptanceDate(acceptanceDate);
+			m.setOriginalAcceptanceDate(acceptanceDate);
+			m.setFactorCode(o.getFactorCode());
+			m.setCurrencyIsoCode(o.getDocumentCurrency());
+			m.setListType(o.getListType());
+			m.setClientAccount(o.getClientAccount());
+			m.setClientName(o.getClient());
+			m.setScheduleStatus("Draft");
 
-			scheduleOfOfferService.create(so);
-			ArrayList<LineItemDto> arr = o.getLineItems();
+			scheduleOfOfferService.create(m);
 
-			for (LineItemDto ob : arr) {
-				Invoice iv = new Invoice();
-				iv.setClientRemarks(ob.getRemarks());
-				iv.setInvoiceAmount(0);
-				iv.setStatus("Pending");
-				// iv.setClientAccount(jso.getString("clientAccount"));
-				iv.setClientName(jso.getString("clientName"));
-				iv.setScheduleOfOffer(so.getId().toString());
-				iv.setDocumentType(so.getDocumentType());
-				iv.setCurrencyIsoCode(so.getCurrencyIsoCode());
-				invoiceService.create(iv);
+			List<LineItemDto> l = o.getLineItems();
+
+			if (isCN) {
+				createCreditNote(l);
+			} else {
+				createInvoice(l, isInvoice);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
 		}
 
 		return res;
 	}
 
 	/**
-	 * Process credit note
+	 * Create invoice
 	 * 
-	 * @param o
-	 * @param req
+	 * @param l
 	 * @return
-	 * @author DuongNguyen 2018-Oct-01
 	 */
-	private boolean processCreditNote(ExcelDto o, UploadReq req) {
-		boolean res = true;
+	private boolean createInvoice(List<LineItemDto> l, boolean isInvoice) {
+		boolean res = false;
+
 		try {
-			JSONObject jso = new JSONObject(req);
-			String a = jso.getString("clientName");
-			a = jso.getString("amendScheduleNo");
+			String name = isInvoice ? "Factoring" : "Loan";
+			RecordTypeDto dto = recordTypeService.getBy("Invoice__c", name);
 
-			ScheduleOfOffer so = new ScheduleOfOffer();
-			so.setScheduleNo(o.getScheduleNo());
-			so.setFactorCode(o.getFactorCode());
-			so.setListType(o.getListType());
-			so.setCurrencyIsoCode(o.getDocumentCurrency());
-			so.setClientName(jso.getString("clientName"));
-			// so.setClientAccount(jso.getString("clientAccount"));
-			so.setScheduleStatus("Draft");
+			for (LineItemDto i : l) {
+				Invoice m = new Invoice();
+				m.setScheduleOfOffer(m.getSfid());
+				m.setDocumentType(m.getDocumentType());
+				m.setRecordTypeId(dto.getSfId());
+				m.setClientName("x");
+				m.setClientAccount("x");
+				m.setCurrencyIsoCode("x");
+				m.setClientRemarks("x");
+				m.setInvoiceAmount(0f);
+				m.setStatus("Pending");
 
-			scheduleOfOfferService.create(so);
-			ArrayList<LineItemDto> arr = o.getLineItems();
-
-			for (LineItemDto ob : arr) {
-				CreditNote cd = new CreditNote();
-				cd.setClientRemarks(ob.getRemarks());
-				cd.setCreditAmount((float) 0);
-				cd.setStatus("Accepted");
-				cd.setScheduleOfOffer(so.getId().toString());
-				cd.setCurrencyIsoCode(so.getCurrencyIsoCode());
-				creditNoteService.create(cd);
+				invoiceService.create(m);
 			}
 
-		} catch (Exception e) {
-			e.printStackTrace();
+			res = true;
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * Create credit note
+	 * 
+	 * @param l
+	 * @return
+	 */
+	private boolean createCreditNote(List<LineItemDto> l) {
+		boolean res = false;
+
+		try {
+			for (LineItemDto i : l) {
+				CreditNote m = new CreditNote();
+				m.setScheduleOfOffer(m.getSfid());
+				// m.setDocumentType("x");
+				// m.setRecordTypeId("x");
+				m.setClient("x");
+				m.setClientAccount("x");
+				m.setCurrencyIsoCode("x");
+				m.setClientRemarks("x");
+				m.setCreditAmount(0f);
+				m.setStatus("Accepted");
+
+				creditNoteService.create(m);
+			}
+
+			res = true;
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
 		}
 
 		return res;
