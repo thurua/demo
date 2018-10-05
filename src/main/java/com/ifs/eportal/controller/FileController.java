@@ -32,13 +32,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ifs.eportal.bll.AccountService;
 import com.ifs.eportal.bll.ClientAccountService;
 import com.ifs.eportal.bll.CreditNoteService;
+import com.ifs.eportal.bll.CurrencyTypeService;
 import com.ifs.eportal.bll.InvoiceService;
 import com.ifs.eportal.bll.ScheduleOfOfferAttachmentService;
 import com.ifs.eportal.bll.ScheduleOfOfferService;
-import com.ifs.eportal.common.Const;
 import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.dto.AccountDto;
 import com.ifs.eportal.dto.ClientAccountDto;
+import com.ifs.eportal.dto.CurrencyTypeDto;
 import com.ifs.eportal.dto.ExcelDto;
 import com.ifs.eportal.dto.LineItemDto;
 import com.ifs.eportal.dto.PayloadDto;
@@ -83,6 +84,9 @@ public class FileController {
 
 	@Autowired
 	private ScheduleOfOfferAttachmentService scheduleOfOfferAttachmentService;
+
+	@Autowired
+	private CurrencyTypeService currencyTypeService;
 
 	// end
 
@@ -336,7 +340,7 @@ public class FileController {
 		// Get params
 		String clientId = req.getClientId();
 		String scheduleNo = req.getScheduleNo().trim();
-		Date acceptanceDate = req.getAcceptanceDate();
+		Date acceptanceDate = Utils.getTime(Calendar.HOUR, 24);
 		Boolean amendSchedule = req.getAmendSchedule();
 		String clientAccountId = req.getClientAccountId();
 		String scheduleType = req.getScheduleType();
@@ -369,19 +373,11 @@ public class FileController {
 		try {
 			String client = o.getClient().trim();
 			String clientAccount = o.getClientAccount().trim();
+
 			/* NguyenMinh 2018-Sep-24 IFS-1203 */
 			if (!scheduleType.equalsIgnoreCase(o.getType())) {
 				err = "Selected Type of Schedule is not same as in Excel.";
 				res = Utils.addError(res, err);
-			}
-
-			/* ToanNguyen 2018-Aug-23 IFS-974 */
-			Date now = Utils.getTime(Calendar.HOUR, 24);
-			String sNow = Utils.dateFormat(now, Const.DateTime.YMD);
-			String sAcceptanceDate = Utils.dateFormat(acceptanceDate, Const.DateTime.YMD);
-			if (sNow.equals(sAcceptanceDate)) {
-				err = "Schedule Acceptance Date cannot be future date and must be within current month.";
-				// res = Utils.addError(res, err);
 			}
 
 			// Find Client Name (ac)
@@ -390,13 +386,11 @@ public class FileController {
 				if (!ac.getName().equalsIgnoreCase(client)) {
 					err = "Client Name not same as in excel file.";
 					res = Utils.addError(res, err);
-					return res;
 				}
 			} else {
 				/* ToanNguyen 2018-Aug-23 IFS-975 */
 				err = "Client Name not found.";
 				res = Utils.addError(res, err);
-				return res;
 			}
 
 			// Find Client Account (ca)
@@ -413,35 +407,32 @@ public class FileController {
 				if (isLoan && !"Loan".equals(recordTypeName)) {
 					err = "Client Account is not of Loan Type.";
 					res = Utils.addError(res, err);
-					return res;
 				}
 				if (isLoan && !"Factoring".equals(recordTypeName)) {
 					err = "Client Account is not of Factoring Type.";
 					res = Utils.addError(res, err);
-					return res;
 				}
 
-				if (ca.getStatus() != "Activeted") {
+				if (!"Activeted".equals(ca.getStatus())) {
 					/* ToanNguyen 2018-Aug-23 IFS-974 */
-
-//                    if(acceptanceDate < ca.getActivatedOn()) {
-//                        err = "Schedule Acceptance Date cannot be before client account activation date.";
-//                        res = Utils.addError(res, err);
-//                    }
+					if (acceptanceDate.before(ca.getActivatedOn())) {
+						err = "Schedule Acceptance Date cannot be before client account activation date.";
+						res = Utils.addError(res, err);
+					}
 
 					/* ToanNguyen 2018-Aug-30 IFS-977,1027 */
 					if (!amendSchedule) {
-//                        List<ScheduleOfOfferDto> lso1 = scheduleOfOfferService.read(scheduleNo, clientId);
-//                        if(lso1.size() > 0) {
-//                            err = "Schedule Number exists under Client Account.";
-//                            res = Utils.addError(res, err);
-//                        }
+						lso = scheduleOfOfferService.read(scheduleNo, clientId);
+						if (lso.size() > 0) {
+							err = "Schedule Number exists under Client Account.";
+							res = Utils.addError(res, err);
+						}
 					}
-				} else if (ca.getStatus() == "Closed") {
+				} else if ("Closed".equals(ca.getStatus())) {
 					/* ToanNguyen 2018-Aug-30 IFS-1024 */
 					err = "Client Account is already closed.";
 					res = Utils.addError(res, err);
-				} else if (ca.getStatus() == "Suspended") {
+				} else if ("Suspended".equals(ca.getStatus())) {
 					/* NhatNguyen 2018-Sep-03 IFS-1049 */
 					// Client - Suspended.
 					err = "IVF";
@@ -456,20 +447,14 @@ public class FileController {
 				/* ToanNguyen 2018-Aug-30 IFS-1024 */
 				err = "Client Account not found.";
 				res = Utils.addError(res, err);
-				return res;
 			}
 
-			// chua co du lieu
-
-//			//vost9 - Tien Nguyen - validation currency - task IFS-1191
-//            List<CurrencyType> lstCurrencyTemp = [SELECT Id, IsoCode, IsActive FROM CurrencyType
-//                                                  WHERE IsoCode = :o.documentCurrency AND IsActive = true];
-//            if(lstCurrencyTemp.size() == 0)
-//            {
-//                err = 'Currency is not supported.';
-//                res = Utils.addError(res, err);
-//                return res;
-//            }
+			/* TienNguyen 2018-Aug-30 IFS-1191 */
+			CurrencyTypeDto t = currencyTypeService.read(o.getDocumentCurrency());
+			if (t.getId() == 0) {
+				err = "Currency is not supported.";
+				res = Utils.addError(res, err);
+			}
 
 			err = res.getMessage();
 			if (!err.isEmpty()) {

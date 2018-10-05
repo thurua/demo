@@ -14,7 +14,7 @@ import javax.persistence.TemporalType;
 
 /**
  * 
- * @author ToanNguyen 2018-Oct-04
+ * @author ToanNguyen 2018-Oct-04 (verified)
  *
  */
 @Entity

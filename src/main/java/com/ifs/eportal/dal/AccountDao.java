@@ -74,6 +74,7 @@ public class AccountDao implements Repository<Account, Integer> {
 	// end
 
 	// region -- Methods --
+
 	public AccountDao() {
 		_sql = "SELECT \r\n" + "	a.id, a.sfid, a.name \r\n" + "FROM salesforce.account a ";
 	}
@@ -81,17 +82,17 @@ public class AccountDao implements Repository<Account, Integer> {
 	/**
 	 * Read by
 	 * 
-	 * @param sfid
+	 * @param sfId
 	 * @return
 	 */
-	public AccountDto read(String sfid) {
+	public AccountDto read(String sfId) {
 		AccountDto res = new AccountDto();
 
 		try {
 			// Execute
 			String sql = _sql + " WHERE a.sfid = :sfid";
 			Query q = _em.createNativeQuery(sql);
-			q.setParameter("sfid", sfid);
+			q.setParameter("sfid", sfId);
 			Object[] i = (Object[]) q.getSingleResult();
 
 			// Convert

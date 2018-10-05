@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * 
- * @author ToanNguyen 2018-Sep-28
+ * @author ToanNguyen 2018-Oct-04 (verified)
  *
  */
 public class ClientAccountDto extends BaseDto {

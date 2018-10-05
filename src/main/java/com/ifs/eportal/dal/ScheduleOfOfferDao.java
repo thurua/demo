@@ -1,8 +1,11 @@
 package com.ifs.eportal.dal;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -12,7 +15,8 @@ import org.springframework.stereotype.Service;
 
 import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.common.ZDate;
-import com.ifs.eportal.dto.ScheduleOfOfferDetailsDto;
+import com.ifs.eportal.common.ZFile;
+import com.ifs.eportal.dto.ScheduleOfOfferDetailDto;
 import com.ifs.eportal.dto.ScheduleOfOfferDto;
 import com.ifs.eportal.dto.SortDto;
 import com.ifs.eportal.filter.ScheduleOfOfferFilter;
@@ -21,10 +25,10 @@ import com.ifs.eportal.req.PagingReq;
 
 /**
  * 
- * @author ToanNguyen 2018-Sep-27
+ * @author ToanNguyen 2018-Oct-05 (verified)
  *
  */
-@Service(value = "scheduleOfOfferDao")
+@Service(value = "_scheduleOfOfferDao")
 public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> {
 	// region -- Implements --
 
@@ -67,7 +71,11 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 	@Autowired
 	private EntityManager _em;
 
+	private String _path;
+
 	private String _sql;
+
+	private static final Logger _log = Logger.getLogger(ScheduleOfOfferDao.class.getName());
 
 	// end
 
@@ -77,13 +85,8 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 	 * Initialize
 	 */
 	public ScheduleOfOfferDao() {
-		_sql = "SELECT \r\n" + "	a.id, a.schedule_no__c, c.client_account__c, a.schedule_date__c, \r\n"
-				+ "	a.portal_status__c, CASE WHEN a.portal_status__c = 'Accepted' THEN 'IFS OPS' ELSE d.name END created_by, \r\n"
-				+ "	a.document_type__c, a.sequence__c, a.createddate \r\n"
-				+ "FROM salesforce.schedule_of_offer__c a \r\n" + "LEFT JOIN salesforce.portal_user__c b \r\n"
-				+ "	ON a.createdby_portaluserid__c = CAST(b.id as VARCHAR) \r\n"
-				+ "LEFT JOIN salesforce.client_account__c c \r\n" + "	ON a.client_account__c = c.sfid \r\n"
-				+ "LEFT JOIN salesforce.contact d \r\n" + "	ON b.contact__c = d.sfid ";
+		_path = ZFile.getPath("\\sql\\" + ScheduleOfOfferDao.class.getSimpleName());
+		_sql = ZFile.read(_path + "_sql.sql");
 	}
 
 	/**
@@ -93,15 +96,59 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 	 * @return
 	 */
 	public ScheduleOfOfferDto getBy(Integer id) {
-		String sql = _sql + " WHERE a.id = :id";
+		ScheduleOfOfferDto res = new ScheduleOfOfferDto();
 
-		// Execute
-		Query q = _em.createNativeQuery(sql);
-		q.setParameter("id", id);
-		Object[] i = (Object[]) q.getSingleResult();
+		try {
+			String sql = _sql + " WHERE a.id = :id";
 
-		// Convert
-		ScheduleOfOfferDto res = ScheduleOfOfferDto.convert(i);
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("id", id);
+			Object[] i = (Object[]) q.getSingleResult();
+
+			// Convert
+			res = ScheduleOfOfferDto.convert(i);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * Get by
+	 * 
+	 * @param sfId
+	 * @return
+	 */
+	public ScheduleOfOfferDetailDto getBy(String sfId) {
+		ScheduleOfOfferDetailDto res = new ScheduleOfOfferDetailDto();
+
+		try {
+			String sql = _sql = ZFile.read(_path + "detail.sql");
+			sql += " WHERE a.sfid = :sfId";
+
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("sfId", sfId);
+			Object[] i = (Object[]) q.getSingleResult();
+
+			// Convert
+			res = ScheduleOfOfferDetailDto.convert(i);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
 		return res;
 	}
 
@@ -114,53 +161,28 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 	 */
 	@SuppressWarnings("unchecked")
 	public List<ScheduleOfOfferDto> getBy(String scheduleNo, String clientName) {
-		String sql = _sql + " WHERE a.schedule_no__c = :scheduleNo AND a.client_name__c = :clientName";
-
-		// Execute
-		Query q = _em.createNativeQuery(sql);
-		q.setParameter("scheduleNo", scheduleNo);
-		q.setParameter("clientName", clientName);
-		List<Object[]> l = q.getResultList();
-
-		// Convert
-		List<ScheduleOfOfferDto> res = ScheduleOfOfferDto.convert(l);
-		return res;
-	}
-
-	/**
-	 * Get by Id
-	 * 
-	 * @param Id
-	 * @return
-	 */
-	public ScheduleOfOfferDetailsDto getById(String Id) {
-		ScheduleOfOfferDetailsDto res = new ScheduleOfOfferDetailsDto();
-		String sql = "SELECT \r\n" + "	a.id, a.currencyisocode, a.schedule_no__c, a.schedule_date__c,\r\n"
-				+ "	a.exchange_rate__c, a.factor_code__c , b.name, d.total, d.totalAmount, c.name clientname\r\n"
-				+ "FROM salesforce.schedule_of_offer__c a \r\n"
-				+ "LEFT JOIN salesforce.recordtype b ON  a.recordtypeid = b.sfid\r\n"
-				+ "LEFT JOIN salesforce.account c on a.client_name__c = c.sfid,\r\n"
-				+ "		(SELECT schedule_of_offer__c as Id, count(*) as total, sum(invoice_amount__c) as totalAmount\r\n"
-				+ "		FROM salesforce.invoice__c\r\n" + "		GROUP BY schedule_of_offer__c) d\r\n"
-				+ "WHERE a.sfid = d.Id" + " AND a.sfid = :Id";
+		List<ScheduleOfOfferDto> res = new ArrayList<ScheduleOfOfferDto>();
 
 		try {
+			String sql = _sql + " WHERE a.schedule_no__c = :scheduleNo AND a.client_name__c = :clientName";
+
 			// Execute
 			Query q = _em.createNativeQuery(sql);
-			q.setParameter("Id", Id);
-			Object[] i = (Object[]) q.getSingleResult();
+			q.setParameter("scheduleNo", scheduleNo);
+			q.setParameter("clientName", clientName);
+			List<Object[]> l = q.getResultList();
 
 			// Convert
-			res = ScheduleOfOfferDetailsDto.convert(i);
-
+			res = ScheduleOfOfferDto.convert(l);
 		} catch (Exception ex) {
 			if (Utils.printStackTrace) {
 				ex.printStackTrace();
 			}
 			if (Utils.writeLog) {
-				System.out.println(ex.getMessage());
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
+
 		return res;
 	}
 
@@ -192,11 +214,11 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 				orderBy += " a.id " + direction;
 			}
 
-			if ("scheduleStatus".equals(field)) {
+			if ("portalStatus".equals(field)) {
 				if (!orderBy.isEmpty()) {
 					orderBy += ",";
 				}
-				orderBy += " a.schedule_status__c " + direction;
+				orderBy += " a.portal_status__c " + direction;
 			}
 		}
 
@@ -205,7 +227,7 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 		}
 
 		// Execute to count all
-		String sql = "SELECT \r\n" + "	count(*) \r\n" + "FROM salesforce.schedule_of_offer__c a ";
+		String sql = ZFile.read(_path + "\\count.sql");
 		String limit = "";
 		Query q = createQuery(sql, filter, limit);
 		BigInteger total = (BigInteger) q.getSingleResult();

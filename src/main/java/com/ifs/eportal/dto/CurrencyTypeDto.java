@@ -7,17 +7,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * 
- * @author ToanNguyen 2018-Oct-05 (verified)
+ * @author TanNguyen 2018-Oct-05 (verified)
  *
  */
-public class AccountDto extends BaseDto {
+public class CurrencyTypeDto extends BaseDto {
 	// region -- Fields --
 
 	@JsonProperty(value = "sfid")
 	private String sfid;
 
-	@JsonProperty(value = "name")
-	private String name;
+	@JsonProperty(value = "isocode")
+	private String isoCode;
 
 	// end
 
@@ -31,12 +31,12 @@ public class AccountDto extends BaseDto {
 		this.sfid = sfid;
 	}
 
-	public String getName() {
-		return name;
+	public String getIsoCode() {
+		return isoCode;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setIsoCode(String isoCode) {
+		this.isoCode = isoCode;
 	}
 
 	// end
@@ -46,11 +46,11 @@ public class AccountDto extends BaseDto {
 	/**
 	 * Initialize
 	 */
-	public AccountDto() {
+	public CurrencyTypeDto() {
 		super();
 
 		sfid = "";
-		name = "";
+		isoCode = "";
 	}
 
 	/**
@@ -59,12 +59,12 @@ public class AccountDto extends BaseDto {
 	 * @param o
 	 * @return
 	 */
-	public static AccountDto convert(Object[] o) {
-		AccountDto res = new AccountDto();
+	public static CurrencyTypeDto convert(Object[] o) {
+		CurrencyTypeDto res = new CurrencyTypeDto();
 
 		res.setId((Integer) o[0]);
 		res.setSfid((String) o[1]);
-		res.setName((String) o[2]);
+		res.setIsoCode((String) o[2]);
 
 		return res;
 	}
@@ -75,8 +75,8 @@ public class AccountDto extends BaseDto {
 	 * @param l
 	 * @return
 	 */
-	public static List<AccountDto> convert(List<Object[]> l) {
-		List<AccountDto> res = new ArrayList<AccountDto>();
+	public static List<CurrencyTypeDto> convert(List<Object[]> l) {
+		List<CurrencyTypeDto> res = new ArrayList<CurrencyTypeDto>();
 
 		for (Object[] o : l) {
 			res.add(convert(o));

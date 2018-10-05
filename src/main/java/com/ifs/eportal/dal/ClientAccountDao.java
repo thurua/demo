@@ -89,17 +89,17 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 	/**
 	 * Read by
 	 * 
-	 * @param sfid
+	 * @param sfId
 	 * @return
 	 */
-	public ClientAccountDto read(String sfid) {
+	public ClientAccountDto read(String sfId) {
 		ClientAccountDto res = new ClientAccountDto();
 
 		try {
 			// Execute
 			String sql = _sql + " WHERE a.sfid = :sfid";
 			Query q = _em.createNativeQuery(sql);
-			q.setParameter("sfid", sfid);
+			q.setParameter("sfid", sfId);
 			Object[] i = (Object[]) q.getSingleResult();
 
 			// Convert

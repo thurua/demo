@@ -8,11 +8,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * 
- * @author ToanNguyen 2018-Sep-28
+ * @author ToanNguyen 2018-Oct-05 (verified)
  *
  */
 public class ScheduleOfOfferDto extends BaseDto {
 	// region -- Fields --
+
+	@JsonProperty(value = "sfId")
+	private String sfId;
 
 	@JsonProperty(value = "scheduleNo")
 	private String scheduleNo;
@@ -23,8 +26,8 @@ public class ScheduleOfOfferDto extends BaseDto {
 	@JsonProperty(value = "scheduleDate")
 	private Date scheduleDate;
 
-	@JsonProperty(value = "scheduleStatus")
-	private String scheduleStatus;
+	@JsonProperty(value = "portalStatus")
+	private String portalStatus;
 
 	@JsonProperty(value = "createdBy")
 	private String createdBy;
@@ -35,9 +38,20 @@ public class ScheduleOfOfferDto extends BaseDto {
 	@JsonProperty(value = "sequence")
 	private Double sequence;
 
+	@JsonProperty(value = "createdDate")
+	private Date createdDate;
+
 	// end
 
 	// region -- Get set --
+
+	public String getSfId() {
+		return sfId;
+	}
+
+	public void setSfId(String sfId) {
+		this.sfId = sfId;
+	}
 
 	public String getScheduleNo() {
 		return scheduleNo;
@@ -63,12 +77,12 @@ public class ScheduleOfOfferDto extends BaseDto {
 		this.scheduleDate = scheduleDate;
 	}
 
-	public String getScheduleStatus() {
-		return scheduleStatus;
+	public String getPortalStatus() {
+		return portalStatus;
 	}
 
-	public void setScheduleStatus(String scheduleStatus) {
-		this.scheduleStatus = scheduleStatus;
+	public void setPortalStatus(String portalStatus) {
+		this.portalStatus = portalStatus;
 	}
 
 	public String getCreatedBy() {
@@ -95,6 +109,14 @@ public class ScheduleOfOfferDto extends BaseDto {
 		this.sequence = sequence;
 	}
 
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -105,13 +127,15 @@ public class ScheduleOfOfferDto extends BaseDto {
 	public ScheduleOfOfferDto() {
 		super();
 
+		sfId = "";
 		scheduleNo = "";
 		clientAccount = "";
 		scheduleDate = null;
-		scheduleStatus = "";
+		portalStatus = "";
 		createdBy = null;
 		documentType = "";
 		sequence = null;
+		createdDate = null;
 	}
 
 	/**
@@ -124,13 +148,15 @@ public class ScheduleOfOfferDto extends BaseDto {
 		ScheduleOfOfferDto res = new ScheduleOfOfferDto();
 
 		res.setId((Integer) o[0]);
-		res.setScheduleNo((String) o[1]);
-		res.setClientAccount((String) o[2]);
-		res.setScheduleDate((Date) o[3]);
-		res.setScheduleStatus((String) o[4]);
-		res.setCreatedBy((String) o[5]);
-		res.setDocumentType((String) o[6]);
-		res.setSequence((Double) o[7]);
+		res.setSfId((String) o[1]);
+		res.setScheduleNo((String) o[2]);
+		res.setClientAccount((String) o[3]);
+		res.setScheduleDate((Date) o[4]);
+		res.setPortalStatus((String) o[5]);
+		res.setCreatedBy((String) o[6]);
+		res.setDocumentType((String) o[7]);
+		res.setSequence((Double) o[8]);
+		res.setCreatedDate((Date) o[9]);
 
 		return res;
 	}
