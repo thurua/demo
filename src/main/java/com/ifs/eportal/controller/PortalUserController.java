@@ -119,7 +119,7 @@ public class PortalUserController {
 	 */
 	@PostMapping("/update-password")
 	public ResponseEntity<?> update(@RequestHeader HttpHeaders header, @RequestBody PasswordReq req) {
-		BaseRsp res = new BaseRsp();
+		SingleRsp res = new SingleRsp();
 
 		try {
 			PayloadDto pl = Utils.getTokenInfor(header);
@@ -127,10 +127,7 @@ public class PortalUserController {
 			req.setId(id);
 
 			// Handle
-			String t = portalUserService.update(req, false);
-			if (!t.isEmpty()) {
-				res.setError(t);
-			}
+			res = portalUserService.update(req, false);
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}
@@ -147,13 +144,17 @@ public class PortalUserController {
 	 */
 	@PostMapping("/reset-password")
 	public ResponseEntity<?> update(@RequestBody PasswordReq req) {
-		BaseRsp res = new BaseRsp();
+		SingleRsp res = new SingleRsp();
 
 		try {
 			// Handle
-			String t = portalUserService.update(req, true);
-			if (!t.isEmpty()) {
-				res.setError(t);
+			res = portalUserService.update(req, true);
+			if (Const.HTTP.STATUS_SUCCESS.equals(res.getStatus())) {
+				PortalUserDto m = (PortalUserDto) res.getResult();
+
+				List<SimpleGrantedAuthority> z = portalUserService.getRoleBy(m.getId());
+				String t = jwtTokenUtil.doGenerateToken(m, z);
+				res.setResult(t);
 			}
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
@@ -296,6 +297,29 @@ public class PortalUserController {
 		} catch (Exception ex) {
 			res.setError("Cannot get configuration!");
 			ex.printStackTrace();
+		}
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
+	/**
+	 * Check Expired
+	 * 
+	 * @param req
+	 * @return
+	 */
+	@PostMapping("/checkExpired")
+	public ResponseEntity<?> checkExpired(@RequestBody BaseReq req) {
+		SingleRsp res = new SingleRsp();
+
+		try {
+			// Handle
+			String token = req.getKeyword();
+			String s = portalUserService.checkExpired(token);
+
+			res.setStatus(s);
+		} catch (Exception ex) {
+			res.setError(ex.getMessage());
 		}
 
 		return new ResponseEntity<>(res, HttpStatus.OK);

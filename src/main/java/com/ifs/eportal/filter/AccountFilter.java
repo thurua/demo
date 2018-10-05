@@ -3,16 +3,15 @@ package com.ifs.eportal.filter;
 import java.io.IOException;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ifs.eportal.common.Utils;
 
 /**
  * 
- * @author ToanNguyen 2018-Oct-04 (verified)
+ * @author ToanNguyen 2018-Oct-05 (verified)
  *
  */
 public class AccountFilter {
-
 	// region -- Fields --
 
 	@JsonProperty(value = "name")
@@ -21,6 +20,7 @@ public class AccountFilter {
 	// end
 
 	// region -- Get set --
+
 	public String getName() {
 		return name;
 	}
@@ -28,7 +28,9 @@ public class AccountFilter {
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	// end
+
 	// region -- Methods --
 
 	/**
@@ -56,8 +58,10 @@ public class AccountFilter {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
 		}
 
 		return res;

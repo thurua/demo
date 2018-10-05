@@ -141,6 +141,32 @@
             <tab heading="Invoice Listing">
             </tab>
             <tab heading="Attachments">
+                <div class="row">
+                    <div class="card-body col-md-6">
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <div class="input-group file-upload">
+                                    <input type="file" name="Importfile" title="Select File" id="importData" ng2FileSelect [uploader]="uploader" multiple (change)="fileChanged($event)" class="file-upload-btn" />
+                                    <input type="text" class="form-control" placeholder="Choose a file..." value="{{(file !=null)? file.name :'' }}">
+                                    <i class="fa fa-times delete-file" (click)="removeFile()" *ngIf="file"></i>
+                                    <span class="input-group-append upload">
+                                                <button class="btn btn-primary" type="button"><i class="fa fa-upload"> </i></button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body col-md-6">
+                        <div class="row">
+                            <div class="col-md-6"></div>
+                            <div class="col-md-4">
+                                <button class="btn btn-primary btn-block" type="button" (click)="UpdateFile()">Upload</button>
+                            </div>
+                            <div class="col-md-2">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </tab>
         </tabset>
     </div>

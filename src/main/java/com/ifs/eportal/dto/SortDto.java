@@ -51,5 +51,27 @@ public class SortDto {
 		direction = "";
 	}
 
+	/**
+	 * Initialize
+	 * 
+	 * @param field
+	 */
+	public SortDto(String field) {
+		this();
+
+		this.field = field;
+	}
+
+	/**
+	 * Initialize
+	 * 
+	 * @param field
+	 * @param direction
+	 */
+	public SortDto(String field, String direction) {
+		this.field = field;
+		this.direction = direction;
+	}
+
 	// end
 }

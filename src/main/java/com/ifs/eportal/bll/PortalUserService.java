@@ -26,6 +26,7 @@ import com.ifs.eportal.model.PortalUser;
 import com.ifs.eportal.req.PagingReq;
 import com.ifs.eportal.req.PasswordReq;
 import com.ifs.eportal.req.ProfileReq;
+import com.ifs.eportal.rsp.SingleRsp;
 
 /**
  * 
@@ -130,8 +131,8 @@ public class PortalUserService implements UserDetailsService {
 	 * @param id
 	 * @return
 	 */
-	public String update(PasswordReq req, boolean isReset) {
-		String res = "";
+	public SingleRsp update(PasswordReq req, boolean isReset) {
+		SingleRsp res = new SingleRsp();
 
 		// Get data
 		Integer id = req.getId();
@@ -147,12 +148,13 @@ public class PortalUserService implements UserDetailsService {
 		if (isReset) {
 			PortalUserDto o = portalUserDao.getBy((Object) email);
 			id = o.getId();
+			res.setResult(o);
 		}
 
 		// Handle
 		PortalUser m = portalUserDao.read(id);
 		if (m == null) {
-			res = "Id does not exist";
+			res.setError("Id does not exist");
 		} else {
 			boolean ok = true;
 			String mode = "";
@@ -175,7 +177,7 @@ public class PortalUserService implements UserDetailsService {
 				portalUserDao.update(m);
 				mode = "A";
 			} else {
-				res = "Old password is incorrect";
+				res.setError("Old password is incorrect");
 				mode = "U";
 			}
 
@@ -255,6 +257,25 @@ public class PortalUserService implements UserDetailsService {
 	public List<SimpleGrantedAuthority> getRoleBy(int id) {
 		List<String> roles = portalUserDao.getRoleBy(id);
 		List<SimpleGrantedAuthority> res = getAuthority(roles);
+		return res;
+	}
+
+	/**
+	 * Check Expired
+	 * 
+	 * @param token
+	 * @return
+	 */
+	public String checkExpired(String token) {
+		String res = "";
+		PortalUserDto pu = portalUserDao.getBy((Object) token);
+
+		if (pu.getId() == 0) {
+			res = Const.HTTP.STATUS_ERROR;
+		} else {
+			res = Const.HTTP.STATUS_SUCCESS;
+		}
+
 		return res;
 	}
 

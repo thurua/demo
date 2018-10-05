@@ -1,20 +1,21 @@
 package com.ifs.eportal.dto;
 
+import java.io.IOException;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ifs.eportal.common.Utils;
 
 /**
  * 
  * @author ToanNguyen 2018-Sep-27
  *
  */
-public class PayloadDto {
+public class PayloadDto extends BaseDto {
 	// region -- Fields --
 
-	@JsonProperty(value = "id")
-	private Integer id;
-
-	@JsonProperty(value = "sfid")
-	private String sfid;
+	@JsonProperty(value = "sfId")
+	private String sfId;
 
 	@JsonProperty(value = "userId")
 	private String userId;
@@ -44,20 +45,12 @@ public class PayloadDto {
 
 	// region -- Get set --
 
-	public Integer getId() {
-		return id;
+	public String getSfId() {
+		return sfId;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public String getSfid() {
-		return sfid;
-	}
-
-	public void setSfid(String sfid) {
-		this.sfid = sfid;
+	public void setSfId(String sfId) {
+		this.sfId = sfId;
 	}
 
 	public String getUserId() {
@@ -132,8 +125,9 @@ public class PayloadDto {
 	 * Initialize
 	 */
 	public PayloadDto() {
-		id = 0;
-		sfid = "";
+		super();
+
+		sfId = "";
 		userId = "";
 		firstName = "";
 		lastName = "";
@@ -154,7 +148,7 @@ public class PayloadDto {
 		PayloadDto res = new PayloadDto();
 
 		res.setId(o.getId());
-		res.setSfid(o.getSfid());
+		res.setSfId(o.getSfId());
 		res.setUserId(o.getUserId());
 		res.setFirstName(o.getFirstName());
 		res.setLastName(o.getLastName());
@@ -163,6 +157,33 @@ public class PayloadDto {
 		res.setClientId(o.getClientId());
 		res.setRoleName(o.getRoleName());
 		res.setClientName(o.getClientName());
+
+		return res;
+	}
+
+	/**
+	 * Convert
+	 * 
+	 * @param o
+	 * @return
+	 */
+	public static PayloadDto convert(Object o) {
+		PayloadDto res = new PayloadDto();
+
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			String s = mapper.writeValueAsString(o);
+
+			try {
+				res = mapper.readValue(s, PayloadDto.class);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+		}
 
 		return res;
 	}

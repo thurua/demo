@@ -3,30 +3,26 @@ package com.ifs.eportal.filter;
 import java.io.IOException;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ifs.eportal.common.Utils;
 
 /**
  * 
- * @author HoanNguyen 2018-Oct-01
+ * @author ToanNguyen 2018-Oct-05 (verified)
  *
  */
 public class ReasonFilter {
 	// region -- Fields --
 
-	@JsonProperty(value = "name")
-	private String name;
-
 	@JsonProperty(value = "sfid")
 	private String sfid;
+
+	@JsonProperty(value = "name")
+	private String name;
 
 	// end
 
 	// region -- Get set --
-
-	// end
-
-	// region -- Methods --
 
 	public String getSfid() {
 		return sfid;
@@ -44,12 +40,16 @@ public class ReasonFilter {
 		this.name = name;
 	}
 
+	// end
+
+	// region -- Methods --
+
 	/**
 	 * Initialize
 	 */
 	public ReasonFilter() {
-		name = "";
 		sfid = "";
+		name = "";
 	}
 
 	/**
@@ -70,8 +70,10 @@ public class ReasonFilter {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
 		}
 
 		return res;

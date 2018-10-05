@@ -280,6 +280,7 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 
 		try {
 			String sql = ZFile.read(_path + "role.sql");
+			sql += " WHERE a.id = :id";
 
 			// Execute
 			Query q = _em.createNativeQuery(sql);

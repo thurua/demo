@@ -11,22 +11,22 @@ import com.ifs.eportal.common.Utils;
  * @author ToanNguyen 2018-Oct-05 (verified)
  *
  */
-public class PortalUserAccessFilter {
+public class AttachmentFilter {
 	// region -- Fields --
 
-	@JsonProperty(value = "name")
-	private String name;
+	@JsonProperty(value = "scheduleOfOffer")
+	private String scheduleOfOffer;
 
 	// end
 
 	// region -- Get set --
 
-	public String getName() {
-		return name;
+	public String getScheduleOfOffer() {
+		return scheduleOfOffer;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setScheduleOfOffer(String scheduleOfOffer) {
+		this.scheduleOfOffer = scheduleOfOffer;
 	}
 
 	// end
@@ -36,8 +36,17 @@ public class PortalUserAccessFilter {
 	/**
 	 * Initialize
 	 */
-	public PortalUserAccessFilter() {
-		name = "";
+	public AttachmentFilter() {
+		scheduleOfOffer = "";
+	}
+
+	/**
+	 * Initialize
+	 * 
+	 * @param scheduleOfOffer
+	 */
+	public AttachmentFilter(String scheduleOfOffer) {
+		this.scheduleOfOffer = scheduleOfOffer;
 	}
 
 	/**
@@ -46,15 +55,15 @@ public class PortalUserAccessFilter {
 	 * @param o
 	 * @return
 	 */
-	public static PortalUserAccessFilter convert(Object o) {
-		PortalUserAccessFilter res = new PortalUserAccessFilter();
+	public static AttachmentFilter convert(Object o) {
+		AttachmentFilter res = new AttachmentFilter();
 
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			String s = mapper.writeValueAsString(o);
 
 			try {
-				res = mapper.readValue(s, PortalUserAccessFilter.class);
+				res = mapper.readValue(s, AttachmentFilter.class);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

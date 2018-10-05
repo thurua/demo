@@ -2,6 +2,11 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ScheduleProvider } from '../../providers/schedule';
 import { ActivatedRoute, Params } from '@angular/router';
 import { HTTP } from '../../utilities/const';
+import { FileUploader } from 'ng2-file-upload';
+import { CommonProvider } from '../../providers/common';
+import { FileProvider } from '../../providers/file';
+
+const URL = 'http://localhost:8080/api/upload';
 
 @Component({
     selector: 'app-schedule-details',
@@ -9,13 +14,19 @@ import { HTTP } from '../../utilities/const';
     styleUrls: ['./schedule-details.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
+
+
 export class ScheduleDetailsComponent implements OnInit {
 
     public sfid: string = "";
     public entity: any = {};
+    public file: any;
+    public uploader: FileUploader = new FileUploader({ url: URL, itemAlias: 'photo' });
     constructor(
         private act: ActivatedRoute,
-        private pro: ScheduleProvider) { }
+        private pro: ScheduleProvider,
+        private proCommon: CommonProvider,
+        private filepro: FileProvider) { }
 
     ngOnInit() {
 
@@ -53,5 +64,25 @@ export class ScheduleDetailsComponent implements OnInit {
             console.log(err);
         });
     }
+    public fileChanged(e) {
+        console.log(e);
+        this.file = e.target.files;
+        console.log(e.target.files);
+    }
+    
+    public UpdateFile()
+    {
+        let o =
+        {
+            "scheduleOfOfferId": "001p000000UraJCAAZ"
+        };
+        let s = JSON.stringify(o);
+        this.filepro.uploadmulti(this.file, s).subscribe((rsp: any) => {
+            if (rsp.body != undefined) {
+                let o = JSON.parse(rsp.body);
+            }
+        }, err => console.log(err));
+    }
+
 
 }

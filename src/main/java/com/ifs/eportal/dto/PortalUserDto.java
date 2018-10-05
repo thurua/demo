@@ -14,8 +14,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class PortalUserDto extends BaseDto {
 	// region -- Fields --
 
-	@JsonProperty(value = "sfid")
-	private String sfid;
+	@JsonProperty(value = "sfId")
+	private String sfId;
 
 	@JsonProperty(value = "userId")
 	private String userId;
@@ -57,12 +57,12 @@ public class PortalUserDto extends BaseDto {
 
 	// region -- Get set --
 
-	public String getSfid() {
-		return sfid;
+	public String getSfId() {
+		return sfId;
 	}
 
-	public void setSfid(String sfid) {
-		this.sfid = sfid;
+	public void setSfId(String sfId) {
+		this.sfId = sfId;
 	}
 
 	public String getUserId() {
@@ -171,7 +171,7 @@ public class PortalUserDto extends BaseDto {
 	public PortalUserDto() {
 		super();
 
-		sfid = "";
+		sfId = "";
 		userId = "";
 		firstName = "";
 		lastName = "";
@@ -196,7 +196,7 @@ public class PortalUserDto extends BaseDto {
 		PortalUserDto res = new PortalUserDto();
 
 		res.setId((Integer) o[0]);
-		res.setSfid((String) o[1]);
+		res.setSfId((String) o[1]);
 		res.setUserId((String) o[2]);
 		res.setFirstName((String) o[3]);
 		res.setLastName((String) o[4]);

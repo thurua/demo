@@ -154,4 +154,12 @@ export class UserProvider {
             this.rou.navigate(['/error-page']);
         }
     }
+
+    /**
+     * Check Expired
+     * @param info
+     */
+    public checkExpired(info: any) {
+        return this.api.post('portal-user/checkExpired', info);
+    }
 }

@@ -33,8 +33,11 @@ export class ResetPasswordComponent implements OnInit {
     public isOneSpecialChar = false;
     public token = '';
     public title = '';
+    public message = '';
+    public isShow = false;
 
     @ViewChild('ChangePassword') public ChangePassword: ModalDirective;
+    @ViewChild('notify') public notify: ModalDirective;
 
     constructor(private router: Router, fb: FormBuilder, private pro: UserProvider, private act: ActivatedRoute) {
         this.form = fb.group({
@@ -48,20 +51,19 @@ export class ResetPasswordComponent implements OnInit {
         this.act.params.subscribe((params: Params) => {
             this.token = params["token"];
             let mode = this.token.substring(0, 1);
-            console.log(mode);
-            
+
             if (mode == 'S' || mode == 'R') {
                 this.title = 'Password Setup';
             } else if (mode == 'A') {
                 this.title = 'Reset Password';
             }
         });
-
     }
 
     ngOnInit() {
         this.vm.Password = null;
         this.vm.confirmPassword = null;
+        this.checkExpired('Load');
     }
 
     public onSubmit(values: Object): void {
@@ -79,22 +81,37 @@ export class ResetPasswordComponent implements OnInit {
         this.type = this.show ? "text" : "password";
     }
 
-    public changePassword(valid: boolean) {
-        if (!valid) {
-            return;
-        }
-
+    public changePassword() {
         this.vm.email = this.token;
 
         let obj = { email: this.vm.email, newPassword: this.vm.password };
         this.pro.resetPassword(obj).subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
-                alert("Reset Password successful");
-                this.router.navigate(['/']);
+                this.message = "";
+                this.pro.saveAuth(rsp.result); // save JWT
+                this.router.navigate(['pages/dashboard']);
             } else {
                 let msg = rsp.message;
             }
-            //this.loader = false;
+        });
+    }
+
+    public checkExpired(str: String) {
+        let obj = { keyword: this.token };
+
+        this.pro.checkExpired(obj).subscribe((rsp: any) => {
+            if (rsp.status === HTTP.STATUS_SUCCESS) {
+                if (str == "Submit") {
+                    this.changePassword();
+                }
+                else {
+                    this.isShow = true;
+                }
+            } else {
+                this.notify.show();
+                this.isShow = false;
+                this.message = "Password is expired. Please contact Salesforce Administrator";
+            }
         });
     }
 }

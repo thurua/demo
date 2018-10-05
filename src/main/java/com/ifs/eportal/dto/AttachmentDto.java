@@ -1,13 +1,14 @@
 package com.ifs.eportal.dto;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * 
- * @author ToanNguyen 2018-Oct-04
+ * @author ToanNguyen 2018-Oct-05 (verified)
  *
  */
 public class AttachmentDto extends BaseDto {
@@ -26,7 +27,7 @@ public class AttachmentDto extends BaseDto {
 	private String uploadedBy;
 
 	@JsonProperty(value = "uploadedOn")
-	private String uploadedOn;
+	private Date uploadedOn;
 
 	@JsonProperty(value = "rowNumber")
 	private Integer rowNumber;
@@ -67,11 +68,11 @@ public class AttachmentDto extends BaseDto {
 		this.uploadedBy = uploadedBy;
 	}
 
-	public String getUploadedOn() {
+	public Date getUploadedOn() {
 		return uploadedOn;
 	}
 
-	public void setUploadedOn(String uploadedOn) {
+	public void setUploadedOn(Date uploadedOn) {
 		this.uploadedOn = uploadedOn;
 	}
 
@@ -97,7 +98,7 @@ public class AttachmentDto extends BaseDto {
 		name = "";
 		fileSize = null;
 		uploadedBy = "";
-		uploadedOn = "";
+		uploadedOn = null;
 		rowNumber = 0;
 	}
 
@@ -115,7 +116,7 @@ public class AttachmentDto extends BaseDto {
 		res.setName((String) o[2]);
 		res.setFileSize((Double) o[3]);
 		res.setUploadedBy((String) o[4]);
-		res.setUploadedOn((String) o[5]);
+		res.setUploadedOn((Date) o[5]);
 		res.setRowNumber((Integer) o[6]);
 
 		return res;

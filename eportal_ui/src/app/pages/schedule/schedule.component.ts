@@ -6,7 +6,8 @@ import { Utils } from 'app/utilities/utils';
 @Component({
     selector: 'app-schedule',
     templateUrl: './schedule.component.html',
-    styleUrls: ['./schedule.component.scss'],
+    styleUrls: ['./schedule.component.scss',
+        '../../../scss/vendors/bs-datepicker/bs-datepicker.scss'],
     encapsulation: ViewEncapsulation.None
 })
 export class ScheduleComponent implements OnInit {
@@ -22,7 +23,7 @@ export class ScheduleComponent implements OnInit {
     public pager: any = {};
     public pagedItems: any[];
     public fromDate = new Date();
-    public toDate: Date;
+    public toDate = new Date();
     public minDate = new Date();
     public data = [];
     public settings = {
@@ -56,7 +57,8 @@ export class ScheduleComponent implements OnInit {
             },
             scheduleDate: {
                 title: 'Schedule Date',
-                type: 'string',
+                type: 'date',
+                valuePrepareFunction: (value) => { return this.utl.formatDate(value, 'dd-MM-yyyy') },
                 filter: false
             },
             documentType: {
@@ -64,14 +66,20 @@ export class ScheduleComponent implements OnInit {
                 type: 'string',
                 filter: false
             },
-            scheduleStatus: {
+            portalStatus: {
                 title: 'Status',
-                type: 'number',
+                type: 'string',
                 filter: false
             },
             createdBy: {
-                title: 'Create By',
-                type: 'number',
+                title: 'Created By',
+                type: 'string',
+                filter: false
+            },
+            createdDate: {
+                title: 'Created Date/Time',
+                type: 'date',
+                valuePrepareFunction: (value) => { return this.utl.formatDate(value, 'dd-MM-yyyy') },
                 filter: false
             }
         }
@@ -84,13 +92,8 @@ export class ScheduleComponent implements OnInit {
 
     ngOnInit() {
         this.fromDate = this.utl.addMonths(this.fromDate, -6);
+        this.toDate = this.utl.addMonths(this.toDate, -6);
         this.minDate = this.utl.addMonths(this.minDate, -12);
-        // let tmp = this.fromDate.getMonth() - 12;
-        // this.fromDate = new Date(this.fromDate.setMonth(tmp));
-        // this.fromDate = this.utl.formatDate(this.aa, 'yyyy-MM-dd');
-        // console.log(this.aa);
-        // console.log(this.fromDate);
-
         let user = JSON.parse(localStorage.getItem("CURRENT_TOKEN"));
         this.clientId = user.clientId;
         this.clientName = user.clientName;
@@ -127,11 +130,16 @@ export class ScheduleComponent implements OnInit {
     }
 
     public search(page: any) {
+        let fr = this.fromDate == null ? null : this.fromDate.toISOString();
+        let to = this.toDate == null ? null : this.toDate.toISOString();
+
         let x = {
             filter: {
                 client: this.clientId,
                 clientAccount: this.clientAccountId,
-                portalStatus: this.portalStatus
+                portalStatus: this.portalStatus,
+                frCreatedDate: fr,
+                toCreatedDate: to
             },
             page: page,
             size: this.pageSize,

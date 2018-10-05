@@ -1,2 +1,2 @@
 SELECT COUNT(*) 
-FROM schedule_of_offer_attachment__c a 
+FROM salesforce.schedule_of_offer_attachment__c a 

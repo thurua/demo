@@ -36,7 +36,7 @@ import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ifs.eportal.dto.LineItemDto;
 import com.ifs.eportal.dto.PayloadDto;
 import com.ifs.eportal.rsp.SingleRsp;
 
@@ -135,10 +135,9 @@ public class Utils {
 
 		JwtParser x = Jwts.parser().setSigningKey(Const.Authentication.SIGNING_KEY);
 		Claims y = x.parseClaimsJws(token).getBody();
-		Object z = y.get("user");
+		Object z = y.get(Const.Authentication.PAYLOAD_NAME);
 
-		ObjectMapper mapper = new ObjectMapper();
-		PayloadDto res = mapper.convertValue(z, PayloadDto.class);
+		PayloadDto res = PayloadDto.convert(z);
 		return res;
 	}
 
@@ -451,6 +450,25 @@ public class Utils {
 		String s = rsp.getMessage() + "\n" + err;
 		rsp.setMessage(s);
 		return rsp;
+	}
+
+	/**
+	 * get all number
+	 * 
+	 * @param l
+	 * @return
+	 */
+	public static String getAllNo(List<LineItemDto> l) {
+		String res = "";
+		for (int i = 0; i < l.size(); i++) {
+			if (l.get(i).getNo().equals("")) {
+				res += l.get(i).getNo().trim() + ",";
+			}
+		}
+		if (res.length() > 1) {
+			res = res.substring(0, res.length() - 2);
+		}
+		return res;
 	}
 
 	/**

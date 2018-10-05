@@ -16,7 +16,7 @@ import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.common.ZFile;
 import com.ifs.eportal.dto.AttachmentDto;
 import com.ifs.eportal.dto.SortDto;
-import com.ifs.eportal.filter.AccountFilter;
+import com.ifs.eportal.filter.AttachmentFilter;
 import com.ifs.eportal.model.ScheduleOfOfferAttachment;
 import com.ifs.eportal.req.PagingReq;
 
@@ -175,12 +175,17 @@ public class ScheduleOfOfferAttachmentDao implements Repository<ScheduleOfOfferA
 					}
 					orderBy += " a.id " + direction;
 				}
-
 				if ("name".equals(field)) {
 					if (!orderBy.isEmpty()) {
 						orderBy += ",";
 					}
 					orderBy += " a.name " + direction;
+				}
+				if ("uploadedOn".equals(field)) {
+					if (!orderBy.isEmpty()) {
+						orderBy += ",";
+					}
+					orderBy += " a.uploaded_on__c " + direction;
 				}
 			}
 
@@ -226,13 +231,13 @@ public class ScheduleOfOfferAttachmentDao implements Repository<ScheduleOfOfferA
 	 * @return
 	 */
 	private Query createQuery(String sql, Object o, String limit) {
-		AccountFilter filter = AccountFilter.convert(o);
-		String name = filter.getName();
+		AttachmentFilter filter = AttachmentFilter.convert(o);
+		String scheduleOfOffer = filter.getScheduleOfOffer();
 
 		// Where
 		String where = "";
-		if (!name.isEmpty()) {
-			where += " AND a.name = :name";
+		if (!scheduleOfOffer.isEmpty()) {
+			where += " AND a.schedule_of_offer__c = :scheduleOfOffer";
 		}
 		// Replace first
 		if (!where.isEmpty()) {
@@ -243,10 +248,10 @@ public class ScheduleOfOfferAttachmentDao implements Repository<ScheduleOfOfferA
 
 		// Set parameter
 		if (!where.isEmpty()) {
-			int i = where.indexOf(":name");
-			i = where.indexOf(":name");
+			int i = where.indexOf(":scheduleOfOffer");
+			i = where.indexOf(":scheduleOfOffer");
 			if (i > 0) {
-				q.setParameter("name", name);
+				q.setParameter("scheduleOfOffer", scheduleOfOffer);
 			}
 		}
 

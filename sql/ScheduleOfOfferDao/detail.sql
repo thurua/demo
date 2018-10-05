@@ -9,7 +9,7 @@ LEFT JOIN salesforce.account c
 LEFT JOIN salesforce.client_account__c d
 	ON a.client_account__c = d.sfid
 LEFT JOIN	(
-				SELECT schedule_of_offer__c sfid, CAST(COUNT(*) as FLOAT) total, sum(invoice_amount__c) total_amount 
+				SELECT schedule_of_offer__c sfid, CAST(COUNT(*) AS FLOAT) total, SUM(invoice_amount__c) total_amount 
 				FROM salesforce.invoice__c
 				GROUP BY schedule_of_offer__c
 			) e 

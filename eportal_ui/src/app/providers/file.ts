@@ -17,6 +17,17 @@ export class FileProvider {
     }
 
     /**
+     * Upload
+     * @param info
+     */
+    public uploadmulti(info: File, data: any) {
+        let f: FormData = new FormData();
+        f.append('file', info);
+        f.append('req', data);
+        return this.api.upload('schedule-of-offer-attachment/upload-multi', f);
+    }
+
+    /**
      * Call
      * @param info
      */

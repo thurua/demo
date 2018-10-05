@@ -96,6 +96,9 @@ public class PagingReq {
 
 	// region -- Methods --
 
+	/**
+	 * Initialize
+	 */
 	public PagingReq() {
 		page = 1;
 		size = 1;
@@ -103,6 +106,34 @@ public class PagingReq {
 		filter = null;
 		total = 0;
 		paging = true;
+	}
+
+	/**
+	 * Initialize
+	 * 
+	 * @param filter
+	 * @param paging
+	 */
+	public PagingReq(Object filter, List<SortDto> sort) {
+		this();
+
+		this.filter = filter;
+		this.sort = sort;
+	}
+
+	/**
+	 * Initialize
+	 * 
+	 * @param filter
+	 * @param sort
+	 * @param paging
+	 */
+	public PagingReq(Object filter, List<SortDto> sort, boolean paging) {
+		this();
+
+		this.filter = filter;
+		this.sort = sort;
+		this.paging = paging;
 	}
 
 	// end
