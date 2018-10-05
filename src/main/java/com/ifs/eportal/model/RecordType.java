@@ -12,11 +12,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-/**
- * 
- * @author ToanNguyen 2018-Oct-05 (verified)
- *
- */
 @Entity
 @Table(name = "recordtype", schema = "salesforce")
 public class RecordType {
@@ -150,4 +145,5 @@ public class RecordType {
 	}
 
 	// end
+
 }

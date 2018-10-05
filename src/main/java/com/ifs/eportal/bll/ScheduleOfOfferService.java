@@ -7,23 +7,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ifs.eportal.dal.ScheduleOfOfferDao;
-import com.ifs.eportal.dto.ScheduleOfOfferDetailDto;
+import com.ifs.eportal.dto.ScheduleOfOfferDetailsDto;
 import com.ifs.eportal.dto.ScheduleOfOfferDto;
 import com.ifs.eportal.model.ScheduleOfOffer;
 import com.ifs.eportal.req.PagingReq;
 
-/**
- * 
- * @author ToanNguyen 2018-Oct-05 (verified)
- *
- */
-@Service(value = "_scheduleOfOfferService")
+@Service(value = "scheduleOfOfferService")
 @Transactional
 public class ScheduleOfOfferService {
 	// region -- Fields --
 
 	@Autowired
-	private ScheduleOfOfferDao _scheduleOfOfferDao;
+	private ScheduleOfOfferDao scheduleOfOfferDao;
 
 	// end
 
@@ -35,7 +30,7 @@ public class ScheduleOfOfferService {
 	 * @param m
 	 */
 	public void create(ScheduleOfOffer m) {
-		_scheduleOfOfferDao.create(m);
+		scheduleOfOfferDao.create(m);
 	}
 
 	/**
@@ -45,19 +40,7 @@ public class ScheduleOfOfferService {
 	 * @return
 	 */
 	public ScheduleOfOfferDto read(int id) {
-		ScheduleOfOfferDto res = _scheduleOfOfferDao.getBy(id);
-		return res;
-	}
-
-	/**
-	 * Read by
-	 * 
-	 * @param sfId
-	 * @return
-	 */
-	public ScheduleOfOfferDetailDto read(String sfId) {
-		ScheduleOfOfferDetailDto res = _scheduleOfOfferDao.getBy(sfId);
-		return res;
+		return scheduleOfOfferDao.getBy(id);
 	}
 
 	/**
@@ -68,8 +51,7 @@ public class ScheduleOfOfferService {
 	 * @return
 	 */
 	public List<ScheduleOfOfferDto> read(String scheduleNo, String clientName) {
-		List<ScheduleOfOfferDto> res = _scheduleOfOfferDao.getBy(scheduleNo, clientName);
-		return res;
+		return scheduleOfOfferDao.getBy(scheduleNo, clientName);
 	}
 
 	/**
@@ -79,9 +61,17 @@ public class ScheduleOfOfferService {
 	 * @return
 	 */
 	public List<ScheduleOfOfferDto> search(PagingReq req) {
-		List<ScheduleOfOfferDto> res = _scheduleOfOfferDao.search(req);
-		return res;
+		return scheduleOfOfferDao.search(req);
 	}
 
-	// end
+	/**
+	 * Get by
+	 * 
+	 * @param Id
+	 * @return
+	 */
+	public ScheduleOfOfferDetailsDto getById(String Id) {
+		return scheduleOfOfferDao.getById(Id);
+	}
+
 }

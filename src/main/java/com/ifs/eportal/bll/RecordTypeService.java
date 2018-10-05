@@ -1,5 +1,7 @@
 package com.ifs.eportal.bll;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -7,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ifs.eportal.dal.RecordTypeDao;
 import com.ifs.eportal.dto.RecordTypeDto;
 import com.ifs.eportal.model.RecordType;
+import com.ifs.eportal.req.PagingReq;
 
 @Service(value = "recordTypeService")
 @Transactional
@@ -36,21 +39,16 @@ public class RecordTypeService {
 	 * @return
 	 */
 	public RecordTypeDto read(int id) {
-		RecordTypeDto res = recordTypeDao.getBy(id);
-		return res;
+		return recordTypeDao.getBy(id);
 	}
 
 	/**
-	 * Get by
+	 * Search by
 	 * 
-	 * @param sObjectType
-	 * @param name
+	 * @param req
 	 * @return
 	 */
-	public RecordTypeDto getBy(String sObjectType, String name) {
-		RecordTypeDto res = recordTypeDao.getBy(sObjectType, name);
-		return res;
+	public List<RecordTypeDto> search(PagingReq req) {
+		return recordTypeDao.search(req);
 	}
-
-	// end
 }

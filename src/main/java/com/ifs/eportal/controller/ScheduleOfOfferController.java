@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ifs.eportal.bll.ScheduleOfOfferService;
-import com.ifs.eportal.dto.ScheduleOfOfferDetailDto;
+import com.ifs.eportal.dto.ScheduleOfOfferDetailsDto;
 import com.ifs.eportal.dto.ScheduleOfOfferDto;
 import com.ifs.eportal.model.ScheduleOfOffer;
 import com.ifs.eportal.req.PagingReq;
@@ -21,11 +21,6 @@ import com.ifs.eportal.rsp.BaseRsp;
 import com.ifs.eportal.rsp.MultipleRsp;
 import com.ifs.eportal.rsp.SingleRsp;
 
-/**
- * 
- * @author ToanNguyen 2018-Oct-05 (verified)
- *
- */
 @RestController
 @RequestMapping("/schedule-of-offer")
 public class ScheduleOfOfferController {
@@ -70,21 +65,28 @@ public class ScheduleOfOfferController {
 	}
 
 	/**
-	 * Read by
+	 * Search by
 	 * 
-	 * @param sfId
+	 * @param req
 	 * @return
 	 */
-	@PostMapping("/read")
-	public ResponseEntity<?> read(@RequestBody String sfId) {
-		SingleRsp res = new SingleRsp();
+	@PostMapping("/search")
+	public ResponseEntity<?> search(@RequestBody PagingReq req) {
+		MultipleRsp res = new MultipleRsp();
 
 		try {
 			// Handle
-			ScheduleOfOfferDetailDto t;
-			t = scheduleOfOfferService.read(sfId);
+			List<ScheduleOfOfferDto> tmp;
+			tmp = scheduleOfOfferService.search(req);
 
-			res.setResult(t);
+			// Set data
+			Map<String, Object> data = new LinkedHashMap<>();
+			data.put("page", req.getPage());
+			data.put("size", req.getSize());
+			data.put("total", req.getTotal());
+			data.put("data", tmp);
+
+			res.setResult(data);
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}
@@ -98,21 +100,13 @@ public class ScheduleOfOfferController {
 	 * @param req
 	 * @return
 	 */
-	@PostMapping("/search")
-	public ResponseEntity<?> search(@RequestBody PagingReq req) {
-		MultipleRsp res = new MultipleRsp();
+	@PostMapping("/GetById")
+	public ResponseEntity<?> GetById(@RequestBody String Id) {
+		SingleRsp res = new SingleRsp();
 
 		try {
 			// Handle
-			List<ScheduleOfOfferDto> t;
-			t = scheduleOfOfferService.search(req);
-
-			// Set data
-			Map<String, Object> data = new LinkedHashMap<>();
-			data.put("page", req.getPage());
-			data.put("size", req.getSize());
-			data.put("total", req.getTotal());
-			data.put("data", t);
+			ScheduleOfOfferDetailsDto data = scheduleOfOfferService.getById(Id);
 
 			res.setResult(data);
 		} catch (Exception ex) {
