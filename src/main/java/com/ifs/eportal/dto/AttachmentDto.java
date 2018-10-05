@@ -1,5 +1,8 @@
 package com.ifs.eportal.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -10,55 +13,58 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class AttachmentDto extends BaseDto {
 	// region -- Fields --
 
-	@JsonProperty(value = "no")
-	private Integer no;
+	@JsonProperty(value = "sfId")
+	private String sfId;
 
-	@JsonProperty(value = "attachedFile")
-	private String attachedFile;
+	@JsonProperty(value = "name")
+	private String name;
 
 	@JsonProperty(value = "fileSize")
-	private String fileSize;
+	private Double fileSize;
 
-	@JsonProperty(value = "owner")
-	private String owner;
+	@JsonProperty(value = "uploadedBy")
+	private String uploadedBy;
 
 	@JsonProperty(value = "uploadedOn")
 	private String uploadedOn;
+
+	@JsonProperty(value = "rowNumber")
+	private Integer rowNumber;
 
 	// end
 
 	// region -- Get set --
 
-	public Integer getNo() {
-		return no;
+	public String getSfId() {
+		return sfId;
 	}
 
-	public void setNo(Integer no) {
-		this.no = no;
+	public void setSfId(String sfId) {
+		this.sfId = sfId;
 	}
 
-	public String getAttachedFile() {
-		return attachedFile;
+	public String getName() {
+		return name;
 	}
 
-	public void setAttachedFile(String attachedFile) {
-		this.attachedFile = attachedFile;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public String getFileSize() {
+	public Double getFileSize() {
 		return fileSize;
 	}
 
-	public void setFileSize(String fileSize) {
+	public void setFileSize(Double fileSize) {
 		this.fileSize = fileSize;
 	}
 
-	public String getOwner() {
-		return owner;
+	public String getUploadedBy() {
+		return uploadedBy;
 	}
 
-	public void setOwner(String owner) {
-		this.owner = owner;
+	public void setUploadedBy(String uploadedBy) {
+		this.uploadedBy = uploadedBy;
 	}
 
 	public String getUploadedOn() {
@@ -67,6 +73,14 @@ public class AttachmentDto extends BaseDto {
 
 	public void setUploadedOn(String uploadedOn) {
 		this.uploadedOn = uploadedOn;
+	}
+
+	public Integer getRowNumber() {
+		return rowNumber;
+	}
+
+	public void setRowNumber(Integer rowNumber) {
+		this.rowNumber = rowNumber;
 	}
 
 	// end
@@ -79,11 +93,48 @@ public class AttachmentDto extends BaseDto {
 	public AttachmentDto() {
 		super();
 
-		no = 1;
-		attachedFile = "";
-		fileSize = "";
-		owner = "";
+		sfId = "";
+		name = "";
+		fileSize = null;
+		uploadedBy = "";
 		uploadedOn = "";
+		rowNumber = 0;
+	}
+
+	/**
+	 * Convert
+	 * 
+	 * @param o
+	 * @return
+	 */
+	public static AttachmentDto convert(Object[] o) {
+		AttachmentDto res = new AttachmentDto();
+
+		res.setId((Integer) o[0]);
+		res.setSfId((String) o[1]);
+		res.setName((String) o[2]);
+		res.setFileSize((Double) o[3]);
+		res.setUploadedBy((String) o[4]);
+		res.setUploadedOn((String) o[5]);
+		res.setRowNumber((Integer) o[6]);
+
+		return res;
+	}
+
+	/**
+	 * Convert
+	 * 
+	 * @param l
+	 * @return
+	 */
+	public static List<AttachmentDto> convert(List<Object[]> l) {
+		List<AttachmentDto> res = new ArrayList<AttachmentDto>();
+
+		for (Object[] o : l) {
+			res.add(convert(o));
+		}
+
+		return res;
 	}
 
 	// end

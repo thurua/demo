@@ -10,6 +10,7 @@ import { AddScheduleComponent } from './add-schedule/add-schedule.component';
 import { ScheduleDetailsComponent } from './schedule-details/schedule-details.component';
 import { CreditNotesComponent } from './credit-notes/credit-notes.component';
 import { InvoicesComponent } from './invoices/invoices.component';
+import { CreditNotesDetailsComponent } from './credit-notes-details/credit-notes-details.component';
 
 export const routes: Routes = [
     {
@@ -26,7 +27,9 @@ export const routes: Routes = [
             { path: 'add-schedule', component: AddScheduleComponent, data: { breadcrumb: 'Schedules' } },
             { path: 'schedule-details/:_id', component: ScheduleDetailsComponent, data: { breadcrumb: 'Schedules Details' } },
             { path: 'credit-notes', component: CreditNotesComponent, data: { breadcrumb: 'Credit Notes' } },
-            { path: 'invoices', component: InvoicesComponent, data: { breadcrumb: 'Invoices' } }
+            { path: 'invoices', component: InvoicesComponent, data: { breadcrumb: 'Invoices' } },
+            { path: 'credit-notes-details', component: CreditNotesDetailsComponent, data: { breadcrumb: 'Credit Note Details' } }
+
         ]
     }
 ];

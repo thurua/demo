@@ -31,6 +31,7 @@ import { AddScheduleComponent } from './add-schedule/add-schedule.component';
 import { ScheduleDetailsComponent } from './schedule-details/schedule-details.component';
 import { CreditNotesComponent } from './credit-notes/credit-notes.component';
 import { InvoicesComponent } from './invoices/invoices.component';
+import { CreditNotesDetailsComponent } from './credit-notes-details/credit-notes-details.component';
 
 @NgModule({
     imports: [
@@ -61,7 +62,8 @@ import { InvoicesComponent } from './invoices/invoices.component';
         AddScheduleComponent,
         ScheduleDetailsComponent,
         CreditNotesComponent,
-        InvoicesComponent
+        InvoicesComponent,
+        CreditNotesDetailsComponent
     ],
     providers: [
         {

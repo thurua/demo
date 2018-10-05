@@ -361,14 +361,13 @@ public class FileController {
 		}
 
 		// Check schedule no
-		List<ScheduleOfOfferDto> lso = scheduleOfOfferService.read(scheduleNo, clientId);
-
+		ScheduleOfOfferDto so = scheduleOfOfferService.read(scheduleNo, clientId);
 		Float sequence = 0f;
-		if (lso.size() > 0) {
+		if (so.getId() > 0) {
 			if (amendSchedule) {
 				/* ToanNguyen 2018-Aug-23 IFS-976 */
-				if (lso.get(0).getSequence() != null) {
-					sequence = lso.get(0).getSequence().floatValue();
+				if (so.getSequence() != null) {
+					sequence = so.getSequence().floatValue();
 				}
 				sequence = sequence + 1;
 			}
@@ -426,8 +425,7 @@ public class FileController {
 
 					/* ToanNguyen 2018-Aug-30 IFS-977,1027 */
 					if (!amendSchedule) {
-						lso = scheduleOfOfferService.read(scheduleNo, clientId);
-						if (lso.size() > 0) {
+						if (so.getId() > 0) {
 							err = "Schedule Number exists under Client Account.";
 							res = Utils.addError(res, err);
 						}

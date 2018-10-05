@@ -44,7 +44,7 @@ public class ClientAccountService {
 	 * @return
 	 */
 	public List<ClientAccountDto> read(PagingReq req) {
-		return clientAccountDao.read(req);
+		return clientAccountDao.search(req);
 	}
 
 	// end

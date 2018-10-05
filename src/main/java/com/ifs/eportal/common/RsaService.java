@@ -18,18 +18,29 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.crypto.Cipher;
 
 import org.apache.commons.codec.binary.Base64;
 
+import com.ifs.eportal.dal.AccountDao;
+
 /**
- * RSA service
  * 
- * @author T
+ * @author ToanNguyen 2018-Oct-05 (verified)
  *
  */
 public class RsaService {
+	// region -- Fields --
+
+	private static final Logger _log = Logger.getLogger(AccountDao.class.getName());
+
+	// end
+
+	// region -- Methods --
+
 	/**
 	 * Read key from file
 	 * 
@@ -213,8 +224,13 @@ public class RsaService {
 				PublicKey k = getPublicKeyFromString(key);
 				res = encrypt(s, k);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
 		}
 
 		return res;
@@ -236,8 +252,13 @@ public class RsaService {
 				PrivateKey k = getPrivateKeyFromString(key);
 				res = decrypt(s, k);
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
 		}
 
 		return res;
@@ -262,4 +283,6 @@ public class RsaService {
 		System.out.println("Private Key: " + priKey);
 		System.out.println("Public Key: " + pubKey);
 	}
+
+	// end
 }

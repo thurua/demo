@@ -46,7 +46,7 @@ export class ScheduleComponent implements OnInit {
                 type: 'html',
                 valuePrepareFunction: (cell, row) => {
 
-                    return `<a href="/#/pages/schedule-details/${row.id}">${row.scheduleNo}</a>`
+                    return `<a href="/#/pages/schedule-details/${row.sfId}">${row.scheduleNo}</a>`
                 },
             },
             clientAccount: {

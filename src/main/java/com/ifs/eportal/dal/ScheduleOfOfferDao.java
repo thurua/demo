@@ -104,10 +104,10 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 			// Execute
 			Query q = _em.createNativeQuery(sql);
 			q.setParameter("id", id);
-			Object[] i = (Object[]) q.getSingleResult();
+			Object[] t = (Object[]) q.getSingleResult();
 
 			// Convert
-			res = ScheduleOfOfferDto.convert(i);
+			res = ScheduleOfOfferDto.convert(t);
 		} catch (Exception ex) {
 			if (Utils.printStackTrace) {
 				ex.printStackTrace();
@@ -136,10 +136,10 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 			// Execute
 			Query q = _em.createNativeQuery(sql);
 			q.setParameter("sfId", sfId);
-			Object[] i = (Object[]) q.getSingleResult();
+			Object[] t = (Object[]) q.getSingleResult();
 
 			// Convert
-			res = ScheduleOfOfferDetailDto.convert(i);
+			res = ScheduleOfOfferDetailDto.convert(t);
 		} catch (Exception ex) {
 			if (Utils.printStackTrace) {
 				ex.printStackTrace();
@@ -159,9 +159,9 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 	 * @param clientName
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
-	public List<ScheduleOfOfferDto> getBy(String scheduleNo, String clientName) {
-		List<ScheduleOfOfferDto> res = new ArrayList<ScheduleOfOfferDto>();
+
+	public ScheduleOfOfferDto getBy(String scheduleNo, String clientName) {
+		ScheduleOfOfferDto res = new ScheduleOfOfferDto();
 
 		try {
 			String sql = _sql + " WHERE a.schedule_no__c = :scheduleNo AND a.client_name__c = :clientName";
@@ -170,10 +170,10 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 			Query q = _em.createNativeQuery(sql);
 			q.setParameter("scheduleNo", scheduleNo);
 			q.setParameter("clientName", clientName);
-			List<Object[]> l = q.getResultList();
+			Object[] t = (Object[]) q.getSingleResult();
 
 			// Convert
-			res = ScheduleOfOfferDto.convert(l);
+			res = ScheduleOfOfferDto.convert(t);
 		} catch (Exception ex) {
 			if (Utils.printStackTrace) {
 				ex.printStackTrace();
@@ -243,10 +243,10 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 				limit += " OFFSET " + offset + " LIMIT " + size;
 			}
 			q = createQuery(sql, filter, limit);
-			List<Object[]> l = q.getResultList();
+			List<Object[]> t = q.getResultList();
 
 			// Convert
-			res = ScheduleOfOfferDto.convert(l);
+			res = ScheduleOfOfferDto.convert(t);
 		} catch (Exception ex) {
 			if (Utils.printStackTrace) {
 				ex.printStackTrace();

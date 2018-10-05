@@ -23,6 +23,15 @@ export class ScheduleProvider {
     }
 
     /**
+     * Update
+     * @param info
+     */
+    public update(info: any) {
+        return this.api.post('schedule-of-offer/update-schedule-details', info);
+    }
+
+
+    /**
      * Search Client Account
      * @param info
      */

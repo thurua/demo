@@ -84,12 +84,43 @@ public class AccountDao implements Repository<Account, Integer> {
 	}
 
 	/**
-	 * Read by
+	 * Get by
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public AccountDto getBy(Integer id) {
+		AccountDto res = new AccountDto();
+
+		try {
+			String sql = _sql + " WHERE a.id = :id";
+
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("id", id);
+			Object[] i = (Object[]) q.getSingleResult();
+
+			// Convert
+			res = AccountDto.convert(i);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * Get by
 	 * 
 	 * @param sfId
 	 * @return
 	 */
-	public AccountDto read(String sfId) {
+	public AccountDto getBy(String sfId) {
 		AccountDto res = new AccountDto();
 
 		try {
@@ -115,13 +146,13 @@ public class AccountDao implements Repository<Account, Integer> {
 	}
 
 	/**
-	 * Read by
+	 * Search by
 	 * 
 	 * @param req
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public List<AccountDto> read(PagingReq req) {
+	public List<AccountDto> search(PagingReq req) {
 		List<AccountDto> res = new ArrayList<AccountDto>();
 
 		try {

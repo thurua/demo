@@ -11,20 +11,8 @@ import { HTTP } from '../../utilities/const';
 })
 export class ScheduleDetailsComponent implements OnInit {
 
-    public id: string = "";
-    public data = {
-        "scheduleNo": "",
-        "clientName": "",
-        "clientAccount": "",
-        "scheduleStatus": "",
-        "scheduleDate": "",
-        "currencyIsoCode": "",
-        "total": "",
-        "totalAmount": "",
-        "recordType": "",
-        "exchangeRate": "",
-        "factorCode": ""
-    };
+    public sfid: string = "";
+    public entity: any = {};
     constructor(
         private act: ActivatedRoute,
         private pro: ScheduleProvider) { }
@@ -33,23 +21,37 @@ export class ScheduleDetailsComponent implements OnInit {
 
 
         this.act.params.subscribe((params: Params) => {
-            this.id = params["_id"];
-            console.log(this.id);
-            this.id = "a1Pp0000002QWmoEAG";
-            this.getDetail();
+            this.sfid = params["_id"];
+            this.getDetail(this.sfid );
         });
     }
-    public getDetail() {
-        let x = this.id
-        this.pro.getById(x).subscribe((rsp: any) => {
-            console.log(rsp);
+    public getDetail(sfid) {
+        this.pro.getById(sfid).subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
-                this.data = rsp.result;
+                this.entity = rsp.result;
             }
         }, (err) => {
             console.log(err);
         });
+    }
+    public UpdateSchedule() {
+        console.log(this.entity);
 
+        let x = {
+            currencyIsoCode:this.entity.currencyIsoCode,
+            scheduleNo :this.entity.scheduleNo,
+            factorCode :this.entity.factorCode,
+            //recordTypeId:this.entity.recordTypeId,
+            exchangeRate:this.entity.exchangeRate,
+            id:this.entity.id
+        }
+        this.pro.update(x).subscribe((rsp: any) => {
+            if (rsp.status === HTTP.STATUS_SUCCESS) {
+                
+            }
+        }, (err) => {
+            console.log(err);
+        });
     }
 
 }

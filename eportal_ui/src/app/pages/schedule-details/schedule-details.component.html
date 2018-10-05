@@ -8,7 +8,7 @@
                         <strong>Schedule of Offer</strong>
                     </div>
                     <div class="col-md-8">
-                        <label class="col-form-label">{{data.scheduleNo}}</label>
+                        <label class="col-form-label">{{entity.scheduleNo}}</label>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -16,7 +16,7 @@
                         <strong>Client</strong>
                     </div>
                     <div class="col-md-8">
-                        <label class="col-form-label">{{data.clientName}}</label>
+                        <label class="col-form-label">{{entity.clientName}}</label>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -24,7 +24,7 @@
                         <strong>Client Account</strong>
                     </div>
                     <div class="col-md-8">
-                        <label class="col-form-label">{{data.clientAccount}}</label>
+                        <label class="col-form-label">{{entity.clientAccount}}</label>
                     </div>
                 </div>
             </div>
@@ -42,7 +42,7 @@
                         <strong>Status</strong>
                     </div>
                     <div class="col-md-8">
-                        <label class="col-form-label">{{data.scheduleStatus}}</label>
+                        <label class="col-form-label">{{entity.scheduleStatus}}</label>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -50,7 +50,7 @@
                         <strong>Schedule Date</strong>
                     </div>
                     <div class="col-md-8">
-                        <label class="col-form-label">{{data.scheduleDate}}</label>
+                        <label class="col-form-label">{{entity.scheduleDate}}</label>
                     </div>
                 </div>
             </div>
@@ -61,80 +61,82 @@
     <div class="card-body">
         <tabset class="nav-justified">
             <tab heading="Schedule">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group row">
-                                <div class="col-md-4">
-                                    <strong>Schedule of Offer</strong>
+                <form enctype="multipart/form-data" class="form-horizontal" novalidate #frm="ngForm" (ngSubmit)="UpdateSchedule(frm.valid)" *ngIf="entity">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-4">
+                                        <strong>Schedule of Offer</strong>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" name="scheduleNo" #scheduleNo="ngModel" [(ngModel)]="entity.scheduleNo" value="{{entity.scheduleNo}}" class="form-control">
+                                    </div>
                                 </div>
-                                <div class="col-md-8">
-                                    <label class="col-form-label">{{data.scheduleNo}}</label>
+                                <div class="form-group row">
+                                    <div class="col-md-4">
+                                        <strong>Currency</strong>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" name="currencyIsoCode" #currencyIsoCode="ngModel" [(ngModel)]="entity.currencyIsoCode" value="{{entity.currencyIsoCode}}" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-4">
+                                        <strong>Total No. of Invoice</strong>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <label class="col-form-label">{{entity.total}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-4">
+                                        <strong>Total Amount of Invoice</strong>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <label class="col-form-label">{{entity.totalAmount}}</label>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <div class="col-md-4">
-                                    <strong>Currency</strong>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-4">
+                                        <strong>Document Type</strong>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <label class="col-form-label">{{entity.recordType}}</label>
+                                    </div>
                                 </div>
-                                <div class="col-md-8">
-                                    <label class="col-form-label">{{data.currencyIsoCode}}</label>
+                                <div class="form-group row">
+                                    <div class="col-md-4">
+                                        <strong>Exchange Rate</strong>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" name="exchangeRate" #exchangeRate="ngModel" [(ngModel)]="entity.exchangeRate" value="{{entity.exchangeRate}}" class="form-control">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-md-4">
-                                    <strong>Total No. of Invoice</strong>
-                                </div>
-                                <div class="col-md-8">
-                                    <label class="col-form-label">{{data.total}}</label>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-md-4">
-                                    <strong>Total Amount of Invoice</strong>
-                                </div>
-                                <div class="col-md-8">
-                                    <label class="col-form-label">{{data.totalAmount}}</label>
+                                <div class="form-group row">
+                                    <div class="col-md-4">
+                                        <strong>Factor Code</strong>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" name="factorCode" #factorCode="ngModel" [(ngModel)]="entity.factorCode" value="{{entity.factorCode}}" class="form-control">
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group row">
-                                <div class="col-md-4">
-                                    <strong>Document Type</strong>
-                                </div>
-                                <div class="col-md-8">
-                                    <label class="col-form-label">{{data.recordType}}</label>
-                                </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <button class="btn btn-gray btn-block" type="button" routerLink="../../schedule">Cancel</button>
                             </div>
-                            <div class="form-group row">
-                                <div class="col-md-4">
-                                    <strong>Exchange Rate</strong>
-                                </div>
-                                <div class="col-md-8">
-                                    <label class="col-form-label">{{data.exchangeRate}}</label>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-md-4">
-                                    <strong>Factor Code</strong>
-                                </div>
-                                <div class="col-md-8">
-                                    <label class="col-form-label">{{data.factorCode}}</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-2">
-                            <button class="btn btn-gray btn-block" type="button" routerLink="../schedule">Cancel</button>
-                        </div>
-                        <div class="col-md-2 cancel">
-                            <button class="btn btn-success btn-block" type="submit">Save</button>
+                            <div class="col-md-2 cancel">
+                                <button class="btn btn-success btn-block" type="submit">Save</button>
 
+                            </div>
+                            <div class="col-md-6"></div>
                         </div>
-                        <div class="col-md-6"></div>
                     </div>
-                </div>
+                </form>
             </tab>
             <tab heading="Invoice Listing">
             </tab>

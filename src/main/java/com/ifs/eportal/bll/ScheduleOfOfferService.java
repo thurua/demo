@@ -11,6 +11,7 @@ import com.ifs.eportal.dto.ScheduleOfOfferDetailDto;
 import com.ifs.eportal.dto.ScheduleOfOfferDto;
 import com.ifs.eportal.model.ScheduleOfOffer;
 import com.ifs.eportal.req.PagingReq;
+import com.ifs.eportal.req.ScheduleOfOfferReq;
 
 /**
  * 
@@ -36,6 +37,41 @@ public class ScheduleOfOfferService {
 	 */
 	public void create(ScheduleOfOffer m) {
 		_scheduleOfOfferDao.create(m);
+	}
+
+	/**
+	 * Update ScheduleOfOffe
+	 * 
+	 * @param req
+	 * @return
+	 */
+	public String update(ScheduleOfOfferReq req) {
+		String res = "";
+
+		// Get data
+		Integer id = req.getId();
+
+		String currencyIsoCode = req.getCurrencyIsoCode();
+		String scheduleNo = req.getScheduleNo();
+		String factorCode = req.getFactorCode();
+		// String recordTypeId = req.getRecordTypeId();
+		Float exchangeRate = req.getExchangeRate();
+
+		// Handle
+		ScheduleOfOffer m = _scheduleOfOfferDao.read(id);
+		if (m == null) {
+			res = "Id does not exist";
+		} else {
+			m.setCurrencyIsoCode(currencyIsoCode);
+			m.setScheduleNo(scheduleNo);
+			m.setFactorCode(factorCode);
+			// m.setRecordTypeId(recordTypeId);
+			m.setExchangeRate(exchangeRate);
+
+			_scheduleOfOfferDao.update(m);
+		}
+
+		return res;
 	}
 
 	/**
@@ -67,8 +103,8 @@ public class ScheduleOfOfferService {
 	 * @param clientName
 	 * @return
 	 */
-	public List<ScheduleOfOfferDto> read(String scheduleNo, String clientName) {
-		List<ScheduleOfOfferDto> res = _scheduleOfOfferDao.getBy(scheduleNo, clientName);
+	public ScheduleOfOfferDto read(String scheduleNo, String clientName) {
+		ScheduleOfOfferDto res = _scheduleOfOfferDao.getBy(scheduleNo, clientName);
 		return res;
 	}
 

@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,6 +19,7 @@ import com.ifs.eportal.dto.ScheduleOfOfferDetailDto;
 import com.ifs.eportal.dto.ScheduleOfOfferDto;
 import com.ifs.eportal.model.ScheduleOfOffer;
 import com.ifs.eportal.req.PagingReq;
+import com.ifs.eportal.req.ScheduleOfOfferReq;
 import com.ifs.eportal.rsp.BaseRsp;
 import com.ifs.eportal.rsp.MultipleRsp;
 import com.ifs.eportal.rsp.SingleRsp;
@@ -85,6 +88,27 @@ public class ScheduleOfOfferController {
 			t = scheduleOfOfferService.read(sfId);
 
 			res.setResult(t);
+		} catch (Exception ex) {
+			res.setError(ex.getMessage());
+		}
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
+	/**
+	 * Update profile
+	 * 
+	 * @param header
+	 * @param req
+	 * @return
+	 */
+	@PostMapping("/update-schedule-details")
+	public ResponseEntity<?> update(@RequestHeader HttpHeaders header, @RequestBody ScheduleOfOfferReq req) {
+		BaseRsp res = new BaseRsp();
+
+		try {
+
+			scheduleOfOfferService.update(req);
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}

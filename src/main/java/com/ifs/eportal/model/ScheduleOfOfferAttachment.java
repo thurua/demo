@@ -79,6 +79,9 @@ public class ScheduleOfOfferAttachment {
 	@Column(columnDefinition = "text", name = "_hc_err")
 	private String hcErr;
 
+	@Column(columnDefinition = "varchar(18)", name = "schedule_of_offer__c")
+	private String scheduleOfOffer;
+
 	// end
 
 	// region -- Get set --
@@ -217,6 +220,14 @@ public class ScheduleOfOfferAttachment {
 
 	public void setHcErr(String hcErr) {
 		this.hcErr = hcErr;
+	}
+
+	public String getScheduleOfOffer() {
+		return scheduleOfOffer;
+	}
+
+	public void setScheduleOfOffer(String scheduleOfOffer) {
+		this.scheduleOfOffer = scheduleOfOffer;
 	}
 
 	// end

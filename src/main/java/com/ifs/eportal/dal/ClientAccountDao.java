@@ -118,13 +118,13 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 	}
 
 	/**
-	 * Read by
+	 * Search by
 	 * 
 	 * @param req
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public List<ClientAccountDto> read(PagingReq req) {
+	public List<ClientAccountDto> search(PagingReq req) {
 		List<ClientAccountDto> res = new ArrayList<ClientAccountDto>();
 
 		try {

@@ -47,7 +47,6 @@ export class CreditNotesComponent implements OnInit {
         filter: false,
         type: 'html',
         valuePrepareFunction: (cell, row) => {
-
           return `<a href="/#/pages/credit-notes-details/${row.id}">${row.creditNoteNo}</a>`
         },
       },

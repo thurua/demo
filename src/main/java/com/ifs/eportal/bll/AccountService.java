@@ -34,7 +34,7 @@ public class AccountService {
 	 * @return
 	 */
 	public AccountDto read(String sfid) {
-		return accountDao.read(sfid);
+		return accountDao.getBy(sfid);
 	}
 
 	/**
@@ -44,7 +44,7 @@ public class AccountService {
 	 * @return
 	 */
 	public List<AccountDto> read(PagingReq req) {
-		return accountDao.read(req);
+		return accountDao.search(req);
 	}
 
 	// end
