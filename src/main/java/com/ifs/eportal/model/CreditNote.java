@@ -102,6 +102,18 @@ public class CreditNote {
 	@Column(columnDefinition = "text", name = "_hc_err")
 	private String hcErr;
 
+	@Column(columnDefinition = "varchar(18)", name = "createdbyid")
+	private String createdById;
+
+	@Column(columnDefinition = "float", name = "outstanding_amount_ca__c")
+	private String outstandingAmountCa;
+
+	@Column(columnDefinition = "float", name = "outstanding_amount__c")
+	private String outstandingAmount;
+
+	@Column(columnDefinition = "text", name = "ops_remarks__c")
+	private String opsRemarks;
+
 	// end
 
 	// region -- Get set --
@@ -312,6 +324,38 @@ public class CreditNote {
 
 	public void setHcErr(String hcErr) {
 		this.hcErr = hcErr;
+	}
+
+	public String getCreatedById() {
+		return createdById;
+	}
+
+	public void setCreatedById(String createdById) {
+		this.createdById = createdById;
+	}
+
+	public String getOutstandingAmountCa() {
+		return outstandingAmountCa;
+	}
+
+	public void setOutstandingAmountCa(String outstandingAmountCa) {
+		this.outstandingAmountCa = outstandingAmountCa;
+	}
+
+	public String getOutstandingAmount() {
+		return outstandingAmount;
+	}
+
+	public void setOutstandingAmount(String outstandingAmount) {
+		this.outstandingAmount = outstandingAmount;
+	}
+
+	public String getOpsRemarks() {
+		return opsRemarks;
+	}
+
+	public void setOpsRemarks(String opsRemarks) {
+		this.opsRemarks = opsRemarks;
 	}
 
 	// end

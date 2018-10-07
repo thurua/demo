@@ -1,6 +1,7 @@
 package com.ifs.eportal.filter;
 
 import java.io.IOException;
+import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +18,29 @@ public class CreditNoteFilter {
 	@JsonProperty(value = "status")
 	private String status;
 
+	// HoanNguyen 2018-Oct-05 (Updated)
+
+	@JsonProperty(value = "clientAccount")
+	private String clientAccount;
+
+	@JsonProperty(value = "customer")
+	private String customer;
+
+	@JsonProperty(value = "client")
+	private String client;
+
+	@JsonProperty(value = "scheduleNo")
+	private String scheduleNo;
+
+	@JsonProperty(value = "name")
+	private String name;
+
+	@JsonProperty(value = "frCreatedDate")
+	private Date frCreatedDate;
+
+	@JsonProperty(value = "toCreatedDate")
+	private Date toCreatedDate;
+
 	// end
 
 	// region -- Get set --
@@ -29,6 +53,62 @@ public class CreditNoteFilter {
 		this.status = status;
 	}
 
+	public String getClientAccount() {
+		return clientAccount;
+	}
+
+	public void setClientAccount(String clientAccount) {
+		this.clientAccount = clientAccount;
+	}
+
+	public String getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(String customer) {
+		this.customer = customer;
+	}
+
+	public String getClient() {
+		return client;
+	}
+
+	public void setClient(String client) {
+		this.client = client;
+	}
+
+	public String getScheduleNo() {
+		return scheduleNo;
+	}
+
+	public void setScheduleNo(String scheduleNo) {
+		this.scheduleNo = scheduleNo;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Date getFrCreatedDate() {
+		return frCreatedDate;
+	}
+
+	public void setFrCreatedDate(Date frCreatedDate) {
+		this.frCreatedDate = frCreatedDate;
+	}
+
+	public Date getToCreatedDate() {
+		return toCreatedDate;
+	}
+
+	public void setToCreatedDate(Date toCreatedDate) {
+		this.toCreatedDate = toCreatedDate;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -38,6 +118,13 @@ public class CreditNoteFilter {
 	 */
 	public CreditNoteFilter() {
 		status = "";
+		clientAccount = "";
+		customer = "";
+		client = "";
+		scheduleNo = "";
+		name = "";
+		frCreatedDate = null;
+		toCreatedDate = null;
 	}
 
 	/**

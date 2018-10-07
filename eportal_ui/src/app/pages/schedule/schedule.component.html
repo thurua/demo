@@ -18,7 +18,7 @@
                         <strong>Created Date From</strong>
                     </div>
                     <div class="col-md-8">
-                        <input type="text" class="form-control" [minDate]="minDate" bsDatepicker [(bsValue)]="fromDate" value="{{ fromDate | date:'dd-MM-yyyy' }}">
+                        <input type="text" class="form-control" [minDate]="minDate" bsDatepicker [(bsValue)]="fromDate" value="{{ fromDate | date:'dd-MMM-yyyy' }}">
                     </div>
                 </div>
                 <div class="form-group row">
@@ -35,7 +35,7 @@
                     <div class="col-md-4">
                     </div>
                     <div class="col-md-8">
-                        <button class="btn btn-success" type="button" (click)="searchClick(1)">Search</button> &nbsp;
+                        <button class="btn btn-primary" type="button" (click)="searchClick(1)">Search</button> &nbsp;
                         <button class="btn btn-gray" type="button" (click)="resetClick()">Reset</button>
                     </div>
                 </div>
@@ -56,7 +56,7 @@
                         <strong>To</strong>
                     </div>
                     <div class="col-md-8">
-                        <input type="text" class="form-control" [minDate]="minDate" bsDatepicker [(bsValue)]="toDate" value="{{ toDate | date:'dd-MM-yyyy' }}">
+                        <input type="text" class="form-control" [minDate]="minDate" bsDatepicker [(bsValue)]="toDate" value="{{ toDate | date:'dd-MMM-yyyy' }}">
                     </div>
                 </div>
             </div>
@@ -65,7 +65,7 @@
 </div>
 <div class="card header-margin">
     <div class="card-body">
-        <button class="btn btn-success" type="button" routerLink="/pages/add-schedule">New</button>
+        <button class="btn btn-primary" type="button" routerLink="/pages/add-schedule">New</button>
         <div widget class="card border-0 box-shadow header-margin">
             <div class="card-body pt-0 widget-body">
                 <div class="table-responsive">

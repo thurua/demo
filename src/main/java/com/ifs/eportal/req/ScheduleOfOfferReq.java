@@ -71,6 +71,9 @@ public class ScheduleOfOfferReq {
 	@JsonProperty(value = "listType")
 	private String listType;
 
+	@JsonProperty(value = "portalStatus")
+	private String portalStatus;
+
 	// end
 
 	// region -- Get set --
@@ -249,6 +252,14 @@ public class ScheduleOfOfferReq {
 
 	public void setListType(String listType) {
 		this.listType = listType;
+	}
+
+	public String getPortalStatus() {
+		return portalStatus;
+	}
+
+	public void setPortalStatus(String portalStatus) {
+		this.portalStatus = portalStatus;
 	}
 
 	// end

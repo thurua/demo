@@ -110,6 +110,15 @@ public class Invoice {
 	@Column(columnDefinition = "text", name = "_hc_err")
 	private String hcErr;
 
+	@Column(columnDefinition = "float", name = "outstanding_amount__c")
+	private String outstandingAmount;
+
+	@Column(columnDefinition = "date", name = "added_credit_period__c")
+	private Date addedCreditPeriod;
+
+	@Column(columnDefinition = "date", name = "supplier_from_excel__c")
+	private Date supplierFromExcel;
+
 	// end
 
 	// region -- Get set --
@@ -344,6 +353,30 @@ public class Invoice {
 
 	public void setHcErr(String hcErr) {
 		this.hcErr = hcErr;
+	}
+
+	public String getOutstandingAmount() {
+		return outstandingAmount;
+	}
+
+	public void setOutstandingAmount(String outstandingAmount) {
+		this.outstandingAmount = outstandingAmount;
+	}
+
+	public Date getAddedCreditPeriod() {
+		return addedCreditPeriod;
+	}
+
+	public void setAddedCreditPeriod(Date addedCreditPeriod) {
+		this.addedCreditPeriod = addedCreditPeriod;
+	}
+
+	public Date getSupplierFromExcel() {
+		return supplierFromExcel;
+	}
+
+	public void setSupplierFromExcel(Date supplierFromExcel) {
+		this.supplierFromExcel = supplierFromExcel;
 	}
 
 	// end

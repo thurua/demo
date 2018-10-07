@@ -172,6 +172,8 @@ public class PortalUserService implements UserDetailsService {
 				if (isReset) {
 					m.setPassReminderExpire(null);
 					m.setPassReminderToken(null);
+					m.setStatus("ACTD");
+					m.setActivatedOn(new Date());
 				}
 
 				portalUserDao.update(m);

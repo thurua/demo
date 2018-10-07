@@ -21,6 +21,7 @@ import com.ifs.eportal.model.Invoice;
 import com.ifs.eportal.req.PagingReq;
 import com.ifs.eportal.rsp.BaseRsp;
 import com.ifs.eportal.rsp.MultipleRsp;
+import com.ifs.eportal.rsp.SingleRsp;
 
 @RestController
 @RequestMapping("/invoice")
@@ -103,5 +104,29 @@ public class InvoiceController {
 		List<ClientAccountCustomerDto> lcc = clientAccountCustomerService.getByClientId("a0Hp0000003T9hvEAC");
 
 	}
+
+	/**
+	 * Read by
+	 * 
+	 * @param Id
+	 * @return
+	 */
+	@PostMapping("/read")
+	public ResponseEntity<?> read(@RequestBody int id) {
+		SingleRsp res = new SingleRsp();
+
+		try {
+			// Handle
+			InvoiceDto t;
+			t = invoiceService.read(id);
+
+			res.setResult(t);
+		} catch (Exception ex) {
+			res.setError(ex.getMessage());
+		}
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
 	// end
 }

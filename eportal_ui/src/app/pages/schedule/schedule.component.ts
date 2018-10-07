@@ -46,7 +46,6 @@ export class ScheduleComponent implements OnInit {
                 filter: false,
                 type: 'html',
                 valuePrepareFunction: (cell, row) => {
-
                     return `<a href="/#/pages/schedule-details/${row.sfId}">${row.scheduleNo}</a>`
                 },
             },
@@ -58,7 +57,7 @@ export class ScheduleComponent implements OnInit {
             scheduleDate: {
                 title: 'Schedule Date',
                 type: 'date',
-                valuePrepareFunction: (value) => { return this.utl.formatDate(value, 'dd-MM-yyyy') },
+                valuePrepareFunction: (value) => { return this.utl.formatDate(value, 'dd-MMM-yyyy') },
                 filter: false
             },
             documentType: {
@@ -79,12 +78,11 @@ export class ScheduleComponent implements OnInit {
             createdDate: {
                 title: 'Created Date/Time',
                 type: 'date',
-                valuePrepareFunction: (value) => { return this.utl.formatDate(value, 'dd-MM-yyyy') },
+                valuePrepareFunction: (value) => { return this.utl.formatDate(value, 'dd-MMM-yyyy') },
                 filter: false
             }
         }
     };
-
 
     constructor(
         private pro: ScheduleProvider,
@@ -127,6 +125,24 @@ export class ScheduleComponent implements OnInit {
         this.portalStatus = "";
         this.clientAccountId = "";
         this.data = [];
+
+        // Reset Date
+        let d = new Date();
+        let d1 = this.utl.formatDate(this.utl.addMonths(d, -6), 'dd-MMM-yyyy');
+        let d2 = this.utl.formatDate(this.fromDate, 'dd-MMM-yyyy');
+        if (d1 != d2) {
+            d = new Date();
+            this.fromDate = this.utl.addMonths(d, -6);
+        }
+
+        d = new Date();
+        d1 = this.utl.formatDate(this.utl.addMonths(d, -6), 'dd-MMM-yyyy');
+        d2 = this.utl.formatDate(this.toDate, 'dd-MMM-yyyy');
+
+        if (d1 != d2) {
+            d = new Date();
+            this.toDate = this.utl.addMonths(d, -6);
+        }
     }
 
     public search(page: any) {

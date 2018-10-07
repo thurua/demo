@@ -47,6 +47,9 @@ public class ClientAccountDto extends BaseDto {
 	@JsonProperty(value = "recordTypeName")
 	private String recordTypeName;
 
+	@JsonProperty(value = "fciName")
+	private String fciName;
+
 	// end
 
 	// region -- Get set --
@@ -139,6 +142,14 @@ public class ClientAccountDto extends BaseDto {
 		this.recordTypeName = recordTypeName;
 	}
 
+	public String getFciName() {
+		return fciName;
+	}
+
+	public void setFciName(String fciName) {
+		this.fciName = fciName;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -183,6 +194,7 @@ public class ClientAccountDto extends BaseDto {
 		res.setVerificationExceedingInvoiceAmount((Double) o[9]);
 		res.setStatus((String) o[10]);
 		res.setRecordTypeName((String) o[11]);
+		res.setFciName((String) o[12]);
 
 		return res;
 	}

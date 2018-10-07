@@ -41,6 +41,11 @@ public class ScheduleOfOfferDto extends BaseDto {
 	@JsonProperty(value = "createdDate")
 	private Date createdDate;
 
+	@JsonProperty(value = "recordTypeId")
+	private String recordTypeId;
+
+	@JsonProperty(value = "recordTypeName")
+	private String recordTypeName;
 	// end
 
 	// region -- Get set --
@@ -117,6 +122,22 @@ public class ScheduleOfOfferDto extends BaseDto {
 		this.createdDate = createdDate;
 	}
 
+	public String getRecordTypeId() {
+		return recordTypeId;
+	}
+
+	public void setRecordTypeId(String recordTypeId) {
+		this.recordTypeId = recordTypeId;
+	}
+
+	public String getRecordTypeName() {
+		return recordTypeName;
+	}
+
+	public void setRecordTypeName(String recordTypeName) {
+		this.recordTypeName = recordTypeName;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -157,7 +178,8 @@ public class ScheduleOfOfferDto extends BaseDto {
 		res.setDocumentType((String) o[7]);
 		res.setSequence((Double) o[8]);
 		res.setCreatedDate((Date) o[9]);
-
+		res.setRecordTypeId((String) o[10]);
+		res.setRecordTypeName((String) o[11]);
 		return res;
 	}
 

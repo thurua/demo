@@ -14,6 +14,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class InvoiceDto extends BaseDto {
 	// region -- Fields --
 
+	@JsonProperty(value = "sfId")
+	private String sfId;
+
 	@JsonProperty(value = "customerBranch")
 	private String customerBranch;
 
@@ -56,9 +59,29 @@ public class InvoiceDto extends BaseDto {
 	@JsonProperty(value = "status")
 	private String status;
 
+	@JsonProperty(value = "contract")
+	private String contract;
+
+	@JsonProperty(value = "creditPeriod")
+	private Double creditPeriod;
+
+	@JsonProperty(value = "outstandingAmount")
+	private Double outstandingAmount;
+
+	@JsonProperty(value = "invoiceAmount")
+	private Double invoiceAmount;
+
 	// end
 
 	// region -- Get set --
+
+	public String getSfId() {
+		return sfId;
+	}
+
+	public void setSfId(String sfId) {
+		this.sfId = sfId;
+	}
 
 	public String getCustomerBranch() {
 		return customerBranch;
@@ -172,6 +195,38 @@ public class InvoiceDto extends BaseDto {
 		this.status = status;
 	}
 
+	public String getContract() {
+		return contract;
+	}
+
+	public void setContract(String contract) {
+		this.contract = contract;
+	}
+
+	public Double getCreditPeriod() {
+		return creditPeriod;
+	}
+
+	public void setCreditPeriod(Double creditPeriod) {
+		this.creditPeriod = creditPeriod;
+	}
+
+	public Double getOutstandingAmount() {
+		return outstandingAmount;
+	}
+
+	public void setOutstandingAmount(Double outstandingAmount) {
+		this.outstandingAmount = outstandingAmount;
+	}
+
+	public Double getInvoiceAmount() {
+		return invoiceAmount;
+	}
+
+	public void setInvoiceAmount(Double invoiceAmount) {
+		this.invoiceAmount = invoiceAmount;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -182,6 +237,7 @@ public class InvoiceDto extends BaseDto {
 	public InvoiceDto() {
 		super();
 
+		sfId = "";
 		customerBranch = "";
 		customerFromExcel = "";
 		currencyIsoCode = "";
@@ -196,6 +252,10 @@ public class InvoiceDto extends BaseDto {
 		clientAccount = "";
 		name = "";
 		status = "";
+		contract = "";
+		creditPeriod = null;
+		outstandingAmount = null;
+		invoiceAmount = null;
 	}
 
 	/**
@@ -208,20 +268,24 @@ public class InvoiceDto extends BaseDto {
 		InvoiceDto res = new InvoiceDto();
 
 		res.setId((Integer) o[0]);
-		res.setCustomerBranch((String) o[1]);
-		res.setCustomerFromExcel((String) o[2]);
-		res.setCurrencyIsoCode((String) o[3]);
-		res.setInvoiceDate((Date) o[4]);
-		res.setClientName((String) o[5]);
+		res.setSfId((String) o[1]);
+		res.setCustomerBranch((String) o[2]);
+		res.setCustomerFromExcel((String) o[3]);
+		res.setCurrencyIsoCode((String) o[4]);
+		res.setInvoiceDate((Date) o[5]);
 		res.setPo((String) o[6]);
 		res.setClientRemarks((String) o[7]);
 		res.setCustomer((String) o[8]);
 		res.setDocumentType((String) o[9]);
-		res.setRecordTypeId((String) o[10]);
-		res.setScheduleOfOffer((String) o[11]);
-		res.setClientAccount((String) o[12]);
-		res.setName((String) o[13]);
-		res.setStatus((String) o[14]);
+		res.setName((String) o[10]);
+		res.setStatus((String) o[11]);
+		res.setContract((String) o[12]);
+		res.setScheduleOfOffer((String) o[13]);
+		res.setClientAccount((String) o[14]);
+		res.setClientName((String) o[15]);
+		res.setCreditPeriod((Double) o[16]);
+		res.setOutstandingAmount((Double) o[17]);
+		res.setInvoiceAmount((Double) o[18]);
 
 		return res;
 	}

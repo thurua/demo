@@ -49,7 +49,7 @@
                     </div>
                     <div class="col-md-9">
                         <select name="customer" #customer="ngModel" [(ngModel)]="customerId" class="form-control">
-                          <option *ngFor="let i of lstCustomer" value="{{i.code}}">{{i.value}}</option>
+                          <option *ngFor="let i of lstCustomer" value="{{i.code}}">{{i.customer}}</option>
                       </select>
                     </div>
                 </div>
@@ -89,7 +89,7 @@
             <div class="col-md-4">
             </div>
             <div class="col-md-8">
-                <button class="btn btn-success" type="button" (click)="searchClick()">Search</button> &nbsp;
+                <button class="btn btn-success" type="button" (click)="searchClick(0)">Search</button> &nbsp;
                 <button class="btn btn-gray" type="button" (click)="resetClick()">Reset</button>
             </div>
         </div>

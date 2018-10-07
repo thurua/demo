@@ -9,6 +9,7 @@ import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ifs.eportal.common.ZFile;
 import com.ifs.eportal.dto.ReasonDto;
 import com.ifs.eportal.dto.SortDto;
 import com.ifs.eportal.filter.ReasonFilter;
@@ -65,6 +66,8 @@ public class ReasonDao implements Repository<Reason, Integer> {
 
 	private String _sql;
 
+	private String _path;
+
 	// end
 
 	// region -- Methods --
@@ -73,7 +76,8 @@ public class ReasonDao implements Repository<Reason, Integer> {
 	 * Initialize
 	 */
 	public ReasonDao() {
-		_sql = "SELECT \r\n" + "	a.id, \r\n" + "	a.sfid, \r\n" + "	a.name\r\n" + "FROM salesforce.recordtype a ";
+		_path = ZFile.getPath("/sql/" + ReasonDao.class.getSimpleName());
+		_sql = ZFile.read(_path + "_sql.sql");
 	}
 
 	/**
@@ -83,6 +87,7 @@ public class ReasonDao implements Repository<Reason, Integer> {
 	 * @return
 	 */
 	public ReasonDto getBy(Integer id) {
+		_sql = ZFile.read(_path + "_sql.sql");
 		String sql = _sql + " WHERE a.id = :id";
 
 		// Execute
@@ -92,6 +97,28 @@ public class ReasonDao implements Repository<Reason, Integer> {
 
 		// Convert
 		ReasonDto res = ReasonDto.convert(i);
+		return res;
+	}
+
+	/**
+	 * Get by Invoice or Credit Note
+	 * 
+	 * @param sfId
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<ReasonDto> getBy(String sfId) {
+		_sql = ZFile.read(_path + "_sql.sql");
+		String sql = _sql + " WHERE a.invoice__c = :sfId OR a.credit_note__c = :sfId";
+
+		// Execute
+		Query q = _em.createNativeQuery(sql);
+		q.setParameter("sfId", sfId);
+
+		List<Object[]> l = q.getResultList();
+
+		// Convert
+		List<ReasonDto> res = ReasonDto.convert(l);
 		return res;
 	}
 

@@ -115,6 +115,26 @@ public class AccountDao implements Repository<Account, Integer> {
 	}
 
 	/**
+	 * get list account from list customer name
+	 * 
+	 * @param names
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<AccountDto> getByNames(List<String> names) {
+		String sql = _sql + " WHERE a.name in :names";
+
+		// Execute
+		Query q = _em.createNativeQuery(sql);
+		q.setParameter("names", names);
+		List<Object[]> l = q.getResultList();
+
+		// Convert
+		List<AccountDto> res = AccountDto.convert(l);
+		return res;
+	}
+
+	/**
 	 * Get by
 	 * 
 	 * @param sfId

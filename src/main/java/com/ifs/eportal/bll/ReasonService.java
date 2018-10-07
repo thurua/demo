@@ -43,6 +43,16 @@ public class ReasonService {
 	}
 
 	/**
+	 * Read by Invoice or Credit Note
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public List<ReasonDto> read(String sfId) {
+		return reasonDao.getBy(sfId);
+	}
+
+	/**
 	 * Search by
 	 * 
 	 * @param req

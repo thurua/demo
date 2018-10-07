@@ -70,9 +70,10 @@ public class ClientAccountCustomerDao implements Repository<ClientAccountCustome
 	 */
 	public ClientAccountCustomerDao() {
 		_sql = "SELECT a.id, c.Name, a.Activation_Date__c, a.Status__c,  a.Customer__c,\r\n"
-				+ "a.Verification__c, a.Verification_Exceeding_Invoice_Amount__c\r\n"
-				+ "FROM salesforce.Client_Account_Customer__c a \r\n"
-				+ "JOIN salesforce.account  c on  a.customer__c = c.sfid ";
+				+ "a.Verification__c, a.Verification_Exceeding_Invoice_Amount__c,\r\n"
+				+ "d.name as fciname, c.name as ccname\r\n" + "FROM salesforce.Client_Account_Customer__c a \r\n"
+				+ "JOIN salesforce.account  c on  a.customer__c = c.sfid \r\n"
+				+ "JOIN salesforce.fcicountry__c d on d.sfid = a.fci_factor__c ";
 	}
 
 	@SuppressWarnings("unchecked")

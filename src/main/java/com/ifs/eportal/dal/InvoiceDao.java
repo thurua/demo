@@ -1,14 +1,18 @@
 package com.ifs.eportal.dal;
 
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ifs.eportal.common.ZFile;
+import com.ifs.eportal.dto.CustomDto;
 import com.ifs.eportal.dto.InvoiceDto;
 import com.ifs.eportal.dto.SortDto;
 import com.ifs.eportal.filter.InvoiceFilter;
@@ -65,6 +69,8 @@ public class InvoiceDao implements Repository<Invoice, Integer> {
 
 	private String _sql;
 
+	private String _path;
+
 	// end
 
 	// region -- Methods --
@@ -73,11 +79,14 @@ public class InvoiceDao implements Repository<Invoice, Integer> {
 	 * Initialize
 	 */
 	public InvoiceDao() {
-		_sql = "SELECT \r\n"
-				+ "	a.id, a.customer_branch__c, a.customer_from_excel__c, a.currencyisocode, a.invoice_date__c, \r\n"
-				+ "	a.client_name__c ,a.po__c, a.client_remarks__c,  a.customer__c, a.document_type__c, \r\n"
-				+ "	a.recordtypeid, a.schedule_of_offer__c, a.client_account__c, a.name, a.status__c\r\n"
-				+ "FROM salesforce.invoice__c a ";
+//		_sql = "SELECT \r\n"
+//				+ "	a.id, a.customer_branch__c, a.customer_from_excel__c, a.currencyisocode, a.invoice_date__c, \r\n"
+//				+ "	a.client_name__c ,a.po__c, a.client_remarks__c,  a.customer__c, a.document_type__c, \r\n"
+//				+ "	a.recordtypeid, a.schedule_of_offer__c, a.client_account__c, a.name, a.status__c\r\n"
+//				+ "FROM salesforce.invoice__c a ";
+
+		_path = ZFile.getPath("/sql/" + InvoiceDao.class.getSimpleName());
+		_sql = ZFile.read(_path + "_sql.sql");
 	}
 
 	/**
@@ -87,6 +96,7 @@ public class InvoiceDao implements Repository<Invoice, Integer> {
 	 * @return
 	 */
 	public InvoiceDto getBy(Integer id) {
+		_sql = ZFile.read(_path + "detail.sql");
 		String sql = _sql + " WHERE a.id = :id";
 
 		// Execute
@@ -96,6 +106,218 @@ public class InvoiceDao implements Repository<Invoice, Integer> {
 
 		// Convert
 		InvoiceDto res = InvoiceDto.convert(i);
+		return res;
+	}
+
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<InvoiceDto> getBy(List<String> names, String clientAccountId) {
+		_sql = ZFile.read(_path + "detail.sql");
+		String sql = _sql + " WHERE a.name in :names " + "AND a.client_account__c = :clientAccountId";
+
+		// Execute
+		Query q = _em.createNativeQuery(sql);
+		q.setParameter("names", names);
+		q.setParameter("clientAccountId", clientAccountId);
+		List<Object[]> l = q.getResultList();
+
+		// Convert
+		List<InvoiceDto> res = InvoiceDto.convert(l);
+		return res;
+	}
+
+	/**
+	 * task IFS-1044, 1055
+	 * 
+	 * @param clientAccountId
+	 * @return
+	 */
+	public CustomDto getAverage(String clientAccountId) {
+		String sql = "SELECT '1' as code, AVG(invoice_amount__c) as value " + "FROM salesforce.invoice__c a "
+				+ "WHERE a.client_account__c = :clientAccountId";
+
+		// Execute
+		Query q = _em.createNativeQuery(sql);
+		q.setParameter("clientAccountId", clientAccountId);
+		Object[] i = (Object[]) q.getSingleResult();
+
+		// Convert
+		CustomDto res = CustomDto.convert(i);
+		return res;
+	}
+
+	/**
+	 * 
+	 * @param clientAccountId
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<CustomDto> getOverdueOutstanding(List<String> names, String clientAccountId) {
+		String sql = "SELECT b.name as code, SUM(outstanding_amount__c) as value " + "FROM salesforce.invoice__c a "
+				+ "JOIN salesforce.account b on a.customer__c = b.sfid " + "WHERE b.name in :names "
+				+ "AND a.added_credit_period__c < current_date" + "AND a.client_account__c = :clientAccountId"
+				+ "GROUP BY b.name";
+
+		// Execute
+		Query q = _em.createNativeQuery(sql);
+		q.setParameter("names", names);
+		q.setParameter("clientAccountId", clientAccountId);
+		List<Object[]> l = q.getResultList();
+
+		// Convert
+		List<CustomDto> res = CustomDto.convert(l);
+		return res;
+	}
+
+	/**
+	 * 
+	 * @param l
+	 * @param caId
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<CustomDto> getDisputedOutstanding(List<String> names, String clientAccountId) {
+		String sql = "SELECT b.name as code, SUM(outstanding_amount__c) as value " + "FROM salesforce.invoice__c a "
+				+ "JOIN salesforce.account b on a.customer__c = b.sfid " + "WHERE b.name in :names "
+				+ "AND a.status__c = 'Disputed' " + "AND a.client_account__c = :clientAccountId" + "GROUP BY b.name";
+
+		// Execute
+		Query q = _em.createNativeQuery(sql);
+		q.setParameter("names", names);
+		q.setParameter("clientAccountId", clientAccountId);
+		List<Object[]> l = q.getResultList();
+
+		// Convert
+		List<CustomDto> res = CustomDto.convert(l);
+		return res;
+	}
+
+	/**
+	 * 
+	 * @param names
+	 * @param clientAccountId
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<CustomDto> getInvoiceSumary(List<String> names, String clientAccountId, Date d) {
+		String sql = "SELECT b.name as code, SUM(invoice_amount__c) as value " + "FROM salesforce.invoice__c a "
+				+ "JOIN salesforce.account b on a.customer__c = b.sfid " + "WHERE b.name in :names "
+				+ "AND a.invoice_date__c >= :fr " + "AND a.invoice_date__c <= :to "
+				+ "AND a.client_account__c = :clientAccountId" + "GROUP BY b.name";
+
+		// Execute
+		Date fr = (new DateTime(d)).minusYears(1).withDayOfMonth(1).toDate();
+		Date to = (new DateTime(d)).plusMonths(1).withDayOfMonth(1).minusDays(1).toDate();
+		Query q = _em.createNativeQuery(sql);
+		q.setParameter("fr", fr);
+		q.setParameter("to", to);
+		q.setParameter("names", names);
+		q.setParameter("clientAccountId", clientAccountId);
+		List<Object[]> l = q.getResultList();
+
+		// Convert
+		List<CustomDto> res = CustomDto.convert(l);
+		return res;
+	}
+
+	/**
+	 * 
+	 * @param names
+	 * @param clientAccountId
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<CustomDto> getTotalOutstanding(List<String> names, String clientAccountId) {
+		String sql = "SELECT b.name as code, SUM(outstanding_amount__c) as value " + "FROM salesforce.invoice__c a "
+				+ "JOIN salesforce.account b on a.customer__c = b.sfid " + "WHERE b.name in :names "
+				+ "AND a.client_account__c = :clientAccountId " + "GROUP BY b.name";
+
+		// Execute
+		Query q = _em.createNativeQuery(sql);
+		q.setParameter("names", names);
+		q.setParameter("clientAccountId", clientAccountId);
+		List<Object[]> l = q.getResultList();
+
+		// Convert
+		List<CustomDto> res = CustomDto.convert(l);
+		return res;
+	}
+
+	/**
+	 * 
+	 * @param names
+	 * @param clientAccountId
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<CustomDto> getTotalOutstandingAmount(List<String> names, String clientAccountId) {
+		String sql = "SELECT b.sfid as code, SUM(outstanding_amount__c) as value " + "FROM salesforce.invoice__c a "
+				+ "JOIN salesforce.account b on a.customer__c = b.sfid " + "WHERE b.name in :names "
+				+ "AND a.client_account__c = :clientAccountId " + "GROUP BY b.name";
+
+		// Execute
+		Query q = _em.createNativeQuery(sql);
+		q.setParameter("names", names);
+		q.setParameter("clientAccountId", clientAccountId);
+		List<Object[]> l = q.getResultList();
+
+		// Convert
+		List<CustomDto> res = CustomDto.convert(l);
+		return res;
+	}
+
+	/**
+	 * 
+	 * @param names
+	 * @param clientAccountId
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<CustomDto> getInvoiceAvg(List<String> names, String clientAccountId) {
+		String sql = "SELECT b.name as code, AVG(invoice_amount__c) as value " + "FROM salesforce.invoice__c a "
+				+ "JOIN salesforce.account b on a.customer__c = b.sfid " + "WHERE b.name in :names "
+				+ "AND a.client_account__c = :clientAccountId " + "GROUP BY b.name";
+
+		// Execute
+		Query q = _em.createNativeQuery(sql);
+		q.setParameter("names", names);
+		q.setParameter("clientAccountId", clientAccountId);
+		List<Object[]> l = q.getResultList();
+
+		// Convert
+		List<CustomDto> res = CustomDto.convert(l);
+		return res;
+	}
+
+	/**
+	 * 
+	 * @param names
+	 * @param clientAccountId
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<CustomDto> getCreditSumary(List<String> names, String clientAccountId, Date d) {
+		String sql = "SELECT b.name as code, SUM(credit_amount__c) as value " + "FROM salesforce.credit_note__c a "
+				+ "JOIN salesforce.account b on a.customer__c = b.sfid " + "WHERE b.name in :names "
+				+ "AND a.credit_note_date__c >= :fr " + "AND a.credit_note_date__c <= :to "
+				+ "AND a.client_account__c = :clientAccountId" + "GROUP BY b.name";
+
+		// Execute
+		Date fr = (new DateTime(d)).minusYears(1).withDayOfMonth(1).toDate();
+		Date to = (new DateTime(d)).plusMonths(1).withDayOfMonth(1).minusDays(1).toDate();
+		Query q = _em.createNativeQuery(sql);
+		q.setParameter("fr", fr);
+		q.setParameter("to", to);
+		q.setParameter("names", names);
+		q.setParameter("clientAccountId", clientAccountId);
+		List<Object[]> l = q.getResultList();
+
+		// Convert
+		List<CustomDto> res = CustomDto.convert(l);
 		return res;
 	}
 

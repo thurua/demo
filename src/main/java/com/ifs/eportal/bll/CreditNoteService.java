@@ -8,16 +8,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ifs.eportal.dal.CreditNoteDao;
 import com.ifs.eportal.dto.CreditNoteDto;
+import com.ifs.eportal.dto.CustomDto;
 import com.ifs.eportal.model.CreditNote;
 import com.ifs.eportal.req.PagingReq;
 
-@Service(value = "creditNoteService")
+/**
+ * 
+ * @author HoanNguyen 2018-Oct-05
+ *
+ */
+@Service(value = "_creditNoteService")
 @Transactional
 public class CreditNoteService {
 	// region -- Fields --
 
 	@Autowired
-	private CreditNoteDao creditNoteDao;
+	private CreditNoteDao _creditNoteDao;
 
 	// end
 
@@ -29,7 +35,34 @@ public class CreditNoteService {
 	 * @param m
 	 */
 	public void create(CreditNote m) {
-		creditNoteDao.create(m);
+		_creditNoteDao.create(m);
+	}
+
+	/**
+	 * Update CreditNote
+	 * 
+	 * @param req
+	 * @return
+	 */
+	public String update(CreditNote req) {
+		String res = "";
+
+		// Get data
+		Integer id = req.getId();
+
+		String status = req.getStatus();
+
+		// Handle
+		CreditNote m = _creditNoteDao.read(id);
+		if (m == null) {
+			res = "Id does not exist";
+		} else {
+			m.setStatus(status);
+
+			_creditNoteDao.update(m);
+		}
+
+		return res;
 	}
 
 	/**
@@ -39,7 +72,31 @@ public class CreditNoteService {
 	 * @return
 	 */
 	public CreditNoteDto read(int id) {
-		return creditNoteDao.getBy(id);
+		CreditNoteDto res = _creditNoteDao.getBy(id);
+		return res;
+	}
+
+	/**
+	 * Read by
+	 * 
+	 * @param sfId
+	 * @return
+	 */
+//	public CreditNoteDto read(String sfId) {
+//		CreditNoteDto res = _creditNoteDao.getBy(sfId);
+//		return res;
+//	}
+
+	/**
+	 * Read by
+	 * 
+	 * @param scheduleNo
+	 * @param clientName
+	 * @return
+	 */
+	public CreditNoteDto read(String scheduleNo, String clientName) {
+		CreditNoteDto res = _creditNoteDao.getBy(scheduleNo, clientName);
+		return res;
 	}
 
 	/**
@@ -49,7 +106,12 @@ public class CreditNoteService {
 	 * @return
 	 */
 	public List<CreditNoteDto> search(PagingReq req) {
-		return creditNoteDao.search(req);
+		List<CreditNoteDto> res = _creditNoteDao.search(req);
+		return res;
+	}
+
+	public CustomDto getAverage(String clientAccountId) {
+		return _creditNoteDao.getAverage(clientAccountId);
 	}
 
 	// end

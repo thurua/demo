@@ -47,6 +47,13 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 	@JsonProperty(value = "clientAccount")
 	private String clientAccount;
 
+	@JsonProperty(value = "documentType")
+	private String documentType;
+
+	List<SOCreditNoteDto> lstCreditNote;
+
+	List<SOInvoiceDto> lstInvoice;
+
 	// end
 
 	// region -- Get set --
@@ -139,6 +146,30 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 		this.clientAccount = clientAccount;
 	}
 
+	public String getDocumentType() {
+		return documentType;
+	}
+
+	public void setDocumentType(String documentType) {
+		this.documentType = documentType;
+	}
+
+	public List<SOCreditNoteDto> getLstCreditNote() {
+		return lstCreditNote;
+	}
+
+	public void setLstCreditNote(List<SOCreditNoteDto> lstCreditNote) {
+		this.lstCreditNote = lstCreditNote;
+	}
+
+	public List<SOInvoiceDto> getLstInvoice() {
+		return lstInvoice;
+	}
+
+	public void setLstInvoice(List<SOInvoiceDto> lstInvoice) {
+		this.lstInvoice = lstInvoice;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -168,7 +199,7 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 	 * @param o
 	 * @return
 	 */
-	public static ScheduleOfOfferDetailDto convert(Object[] o) {
+	public static ScheduleOfOfferDetailDto convert(Object[] o, List<Object[]> lc, List<Object[]> li) {
 		ScheduleOfOfferDetailDto res = new ScheduleOfOfferDetailDto();
 
 		res.setId((Integer) o[0]);
@@ -183,6 +214,9 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 		res.setClientName((String) o[9]);
 		res.setCurrencyIsoCode((String) o[10]);
 		res.setClientAccount((String) o[11]);
+		res.setDocumentType((String) o[12]);
+		res.setLstCreditNote(SOCreditNoteDto.convert(lc));
+		res.setLstInvoice(SOInvoiceDto.convert(li));
 
 		return res;
 	}
@@ -197,7 +231,7 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 		List<ScheduleOfOfferDetailDto> res = new ArrayList<ScheduleOfOfferDetailDto>();
 
 		for (Object[] o : l) {
-			res.add(convert(o));
+			res.add(convert(o, null, null));
 		}
 
 		return res;

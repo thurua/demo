@@ -14,7 +14,10 @@ import {
     UserProvider,
     FileProvider,
     CommonProvider,
-    ScheduleProvider
+    ScheduleProvider,
+    CreditNoteProvider,
+    InvoiceProvider,
+    ReasonProvider
 } from './providers/provider';
 
 // Import utilities
@@ -39,7 +42,10 @@ import { RsaService, Utils } from './utilities/utility';
         CommonProvider,
         RsaService,
         ScheduleProvider,
-        Utils
+        CreditNoteProvider,
+        Utils,
+        InvoiceProvider,
+        ReasonProvider
     ],
     bootstrap: [AppComponent]
 })

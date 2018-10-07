@@ -11,6 +11,7 @@ import { ScheduleDetailsComponent } from './schedule-details/schedule-details.co
 import { CreditNotesComponent } from './credit-notes/credit-notes.component';
 import { InvoicesComponent } from './invoices/invoices.component';
 import { CreditNotesDetailsComponent } from './credit-notes-details/credit-notes-details.component';
+import { InvoicesDetailsComponent } from './invoices-details/invoices-details.component';
 
 export const routes: Routes = [
     {
@@ -28,8 +29,8 @@ export const routes: Routes = [
             { path: 'schedule-details/:_id', component: ScheduleDetailsComponent, data: { breadcrumb: 'Schedules Details' } },
             { path: 'credit-notes', component: CreditNotesComponent, data: { breadcrumb: 'Credit Notes' } },
             { path: 'invoices', component: InvoicesComponent, data: { breadcrumb: 'Invoices' } },
-            { path: 'credit-notes-details', component: CreditNotesDetailsComponent, data: { breadcrumb: 'Credit Note Details' } }
-
+            { path: 'credit-notes-details/:_id', component: CreditNotesDetailsComponent, data: { breadcrumb: 'Credit Note Details' } },
+            { path: 'invoices-details/:_id', component: InvoicesDetailsComponent, data: { breadcrumb: 'Invoices Details' } }
         ]
     }
 ];

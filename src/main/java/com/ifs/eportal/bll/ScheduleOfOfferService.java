@@ -1,5 +1,6 @@
 package com.ifs.eportal.bll;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,7 @@ public class ScheduleOfOfferService {
 		String currencyIsoCode = req.getCurrencyIsoCode();
 		String scheduleNo = req.getScheduleNo();
 		String factorCode = req.getFactorCode();
-		// String recordTypeId = req.getRecordTypeId();
+		String portalStatus = req.getPortalStatus();
 		Float exchangeRate = req.getExchangeRate();
 
 		// Handle
@@ -65,7 +66,11 @@ public class ScheduleOfOfferService {
 			m.setCurrencyIsoCode(currencyIsoCode);
 			m.setScheduleNo(scheduleNo);
 			m.setFactorCode(factorCode);
-			// m.setRecordTypeId(recordTypeId);
+			m.setPortalStatus(portalStatus);
+			if (portalStatus == "Authorise") {
+				Date t = new Date();
+				m.setAuthorisedDate(t);
+			}
 			m.setExchangeRate(exchangeRate);
 
 			_scheduleOfOfferDao.update(m);

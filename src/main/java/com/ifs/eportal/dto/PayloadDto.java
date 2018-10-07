@@ -188,14 +188,5 @@ public class PayloadDto extends BaseDto {
 		return res;
 	}
 
-	/**
-	 * Get full name
-	 * 
-	 * @return
-	 */
-	public String getName() {
-		return firstName + " " + lastName;
-	}
-
 	// end
 }

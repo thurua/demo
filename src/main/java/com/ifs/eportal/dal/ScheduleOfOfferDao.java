@@ -126,6 +126,7 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 	 * @param sfId
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public ScheduleOfOfferDetailDto getBy(String sfId) {
 		ScheduleOfOfferDetailDto res = new ScheduleOfOfferDetailDto();
 
@@ -138,8 +139,26 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 			q.setParameter("sfId", sfId);
 			Object[] t = (Object[]) q.getSingleResult();
 
+			// Credit note
+			sql = ZFile.read(_path + "detail_credit_note.sql");
+			sql += " WHERE a.schedule_of_offer__c = :sfId";
+
+			// Execute
+			q = _em.createNativeQuery(sql);
+			q.setParameter("sfId", sfId);
+			List<Object[]> lc = q.getResultList();
+
+			// Invoice
+			sql = ZFile.read(_path + "detail_invoice.sql");
+			sql += " WHERE a.schedule_of_offer__c = :sfId";
+
+			// Execute
+			q = _em.createNativeQuery(sql);
+			q.setParameter("sfId", sfId);
+			List<Object[]> li = q.getResultList();
+
 			// Convert
-			res = ScheduleOfOfferDetailDto.convert(t);
+			res = ScheduleOfOfferDetailDto.convert(t, lc, li);
 		} catch (Exception ex) {
 			if (Utils.printStackTrace) {
 				ex.printStackTrace();
@@ -319,7 +338,6 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 			if (fr != null && to != null) {
 				fr = ZDate.getStartOfDay(fr);
 				q.setParameter("fr", fr);
-
 				to = ZDate.getEndOfDay(to);
 				q.setParameter("to", to);
 			} else if (fr != null && to == null) {

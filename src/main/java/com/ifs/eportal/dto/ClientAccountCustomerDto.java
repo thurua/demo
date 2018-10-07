@@ -29,6 +29,12 @@ public class ClientAccountCustomerDto {
 	@JsonProperty(value = "verification_exceeding_invoice_amount__c")
 	private String verificationExceedingInvoiceAmountc;
 
+	@JsonProperty(value = "fciName")
+	private String fciName;
+
+	@JsonProperty(value = "ccName")
+	private String ccName;
+
 	// end
 
 	// region -- Get set --
@@ -89,6 +95,22 @@ public class ClientAccountCustomerDto {
 		this.verificationExceedingInvoiceAmountc = verificationExceedingInvoiceAmountc;
 	}
 
+	public String getFciName() {
+		return fciName;
+	}
+
+	public void setFciName(String fciName) {
+		this.fciName = fciName;
+	}
+
+	public String getCcName() {
+		return ccName;
+	}
+
+	public void setCcName(String ccName) {
+		this.ccName = ccName;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -118,6 +140,8 @@ public class ClientAccountCustomerDto {
 		res.setCustomer((String) o[4]);
 		res.setVerification((String) o[5]);
 		res.setVerificationExceedingInvoiceAmountc((String) o[6]);
+		res.setFciName((String) o[7]);
+		res.setCcName((String) o[8]);
 
 		return res;
 	}

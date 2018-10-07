@@ -1,6 +1,7 @@
 package com.ifs.eportal.dto;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -18,6 +19,15 @@ public class ReasonDto extends BaseDto {
 
 	@JsonProperty(value = "sfid")
 	private String sfid;
+
+	@JsonProperty(value = "reason")
+	private String reason;
+
+	@JsonProperty(value = "date")
+	private Date date;
+
+	@JsonProperty(value = "amount")
+	private Double amount;
 
 	// end
 
@@ -39,6 +49,30 @@ public class ReasonDto extends BaseDto {
 		this.sfid = sfid;
 	}
 
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public Double getAmount() {
+		return amount;
+	}
+
+	public void setAmount(Double amount) {
+		this.amount = amount;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -51,6 +85,9 @@ public class ReasonDto extends BaseDto {
 
 		sfid = "";
 		name = "";
+		reason = "";
+		date = null;
+		amount = null;
 
 	}
 
@@ -63,9 +100,9 @@ public class ReasonDto extends BaseDto {
 	public static ReasonDto convert(Object[] o) {
 		ReasonDto res = new ReasonDto();
 
-		res.setId((Integer) o[0]);
-		res.setName((String) o[1]);
-		res.setSfid((String) o[2]);
+		res.setReason((String) o[0]);
+		res.setDate((Date) o[1]);
+		res.setAmount((Double) o[2]);
 
 		return res;
 	}

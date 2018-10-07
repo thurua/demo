@@ -18,6 +18,7 @@ import com.ifs.eportal.model.CreditNote;
 import com.ifs.eportal.req.PagingReq;
 import com.ifs.eportal.rsp.BaseRsp;
 import com.ifs.eportal.rsp.MultipleRsp;
+import com.ifs.eportal.rsp.SingleRsp;
 
 @RestController
 @RequestMapping("/credit-note")
@@ -59,6 +60,49 @@ public class CreditNoteController {
 
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
+
+	/**
+	 * Read by
+	 * 
+	 * @param sfId
+	 * @return
+	 */
+	@PostMapping("/read")
+	public ResponseEntity<?> read(@RequestBody int id) {
+		SingleRsp res = new SingleRsp();
+
+		try {
+			// Handle
+			CreditNoteDto t;
+			t = creditNoteService.read(id);
+
+			res.setResult(t);
+		} catch (Exception ex) {
+			res.setError(ex.getMessage());
+		}
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
+	/**
+	 * Update profile
+	 * 
+	 * @param header
+	 * @param req
+	 * @return
+	 */
+//	@PostMapping("/update-credit-notes-details")
+//	public ResponseEntity<?> update(@RequestHeader HttpHeaders header, @RequestBody CreditNoteReq req) {
+//		BaseRsp res = new BaseRsp();
+//
+//		try {
+//			creService.update(req);
+//		} catch (Exception ex) {
+//			res.setError(ex.getMessage());
+//		}
+//
+//		return new ResponseEntity<>(res, HttpStatus.OK);
+//	}
 
 	/**
 	 * Search by

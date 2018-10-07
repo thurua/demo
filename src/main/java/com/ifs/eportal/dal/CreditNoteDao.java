@@ -1,7 +1,11 @@
 package com.ifs.eportal.dal;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -9,7 +13,11 @@ import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZDate;
+import com.ifs.eportal.common.ZFile;
 import com.ifs.eportal.dto.CreditNoteDto;
+import com.ifs.eportal.dto.CustomDto;
 import com.ifs.eportal.dto.SortDto;
 import com.ifs.eportal.filter.CreditNoteFilter;
 import com.ifs.eportal.model.CreditNote;
@@ -17,10 +25,10 @@ import com.ifs.eportal.req.PagingReq;
 
 /**
  * 
- * @author ToanNguyen 2018-Sep-27
+ * @author HoanNguyen 2018-Oct-05
  *
  */
-@Service(value = "creditNoteDao")
+@Service(value = "_creditNoteDao")
 public class CreditNoteDao implements Repository<CreditNote, Integer> {
 	// region -- Implements --
 
@@ -63,7 +71,11 @@ public class CreditNoteDao implements Repository<CreditNote, Integer> {
 	@Autowired
 	private EntityManager _em;
 
+	private String _path;
+
 	private String _sql;
+
+	private static final Logger _log = Logger.getLogger(CreditNoteDao.class.getName());
 
 	// end
 
@@ -73,10 +85,8 @@ public class CreditNoteDao implements Repository<CreditNote, Integer> {
 	 * Initialize
 	 */
 	public CreditNoteDao() {
-		_sql = "SELECT \r\n" + "	a.id, a.customer_branch__c, a.customer_from_excel__c, a.currencyisocode, \r\n"
-				+ "	a.client_remarks__c, a.credit_amount__c, a.customer__c, a.schedule_of_offer__c, \r\n"
-				+ "	a.client_account__c, a.name, a.credit_note_date__c, a.status__c\r\n"
-				+ "FROM salesforce.credit_note__c a ";
+		_path = ZFile.getPath("/sql/" + CreditNoteDao.class.getSimpleName());
+		_sql = ZFile.read(_path + "_sql.sql");
 	}
 
 	/**
@@ -86,15 +96,94 @@ public class CreditNoteDao implements Repository<CreditNote, Integer> {
 	 * @return
 	 */
 	public CreditNoteDto getBy(Integer id) {
-		String sql = _sql + " WHERE a.id = :id";
+		CreditNoteDto res = new CreditNoteDto();
 
-		// Execute
-		Query q = _em.createNativeQuery(sql);
-		q.setParameter("id", id);
-		Object[] i = (Object[]) q.getSingleResult();
+		try {
+			_sql = ZFile.read(_path + "detail.sql");
+			String sql = _sql + " WHERE a.id = :id";
 
-		// Convert
-		CreditNoteDto res = CreditNoteDto.convert(i);
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("id", id);
+			Object[] t = (Object[]) q.getSingleResult();
+
+			// Convert
+			res = CreditNoteDto.convert(t);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * Get by
+	 * 
+	 * @param sfId
+	 * @return
+	 */
+//	public CreditNoteDto getBy(String sfId) {
+//		CreditNoteDto res = new CreditNoteDto();
+//
+//		try {
+//			String sql = ZFile.read(_path + "detail.sql");
+//			sql += " WHERE a.sfid = :sfId";
+//
+//			// Execute
+//			Query q = _em.createNativeQuery(sql);
+//			q.setParameter("sfId", sfId);
+//			Object[] t = (Object[]) q.getSingleResult();
+//
+//			// Convert
+//			res = CreditNoteDto.convert(t);
+//		} catch (Exception ex) {
+//			if (Utils.printStackTrace) {
+//				ex.printStackTrace();
+//			}
+//			if (Utils.writeLog) {
+//				_log.log(Level.SEVERE, ex.getMessage(), ex);
+//			}
+//		}
+//
+//		return res;
+//	}
+
+	/**
+	 * Get by
+	 * 
+	 * @param scheduleNo
+	 * @param clientName
+	 * @return
+	 */
+
+	public CreditNoteDto getBy(String scheduleNo, String clientName) {
+		CreditNoteDto res = new CreditNoteDto();
+
+		try {
+			String sql = _sql + " WHERE a.schedule_of_offer__c = :scheduleNo AND a.client_account__c = :clientName";
+
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("scheduleNo", scheduleNo);
+			q.setParameter("clientName", clientName);
+			Object[] t = (Object[]) q.getSingleResult();
+
+			// Convert
+			res = CreditNoteDto.convert(t);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
 		return res;
 	}
 
@@ -106,52 +195,76 @@ public class CreditNoteDao implements Repository<CreditNote, Integer> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<CreditNoteDto> search(PagingReq req) {
-		// Get data
-		Object filter = req.getFilter();
-		int page = req.getPage();
-		int size = req.getSize();
-		List<SortDto> sort = req.getSort();
-		int offset = (page - 1) * size;
+		List<CreditNoteDto> res = new ArrayList<CreditNoteDto>();
 
-		// Order by
-		String orderBy = "";
-		for (SortDto o : sort) {
-			String field = o.getField();
-			String direction = o.getDirection();
+		try {
+			// Get data
+			Object filter = req.getFilter();
+			int page = req.getPage();
+			int size = req.getSize();
+			List<SortDto> sort = req.getSort();
+			int offset = (page - 1) * size;
 
-			if ("id".equals(field)) {
-				if (!orderBy.isEmpty()) {
-					orderBy += ",";
+			// Order by
+			String orderBy = "";
+			for (SortDto o : sort) {
+				String field = o.getField();
+				String direction = o.getDirection();
+
+				if ("id".equals(field)) {
+					if (!orderBy.isEmpty()) {
+						orderBy += ",";
+					}
+					orderBy += " a.id " + direction;
 				}
-				orderBy += " a.id " + direction;
+
+				if ("status".equals(field)) {
+					if (!orderBy.isEmpty()) {
+						orderBy += ",";
+					}
+					orderBy += " a.status__c " + direction;
+				}
+
+				if ("customer".equals(field)) {
+					if (!orderBy.isEmpty()) {
+						orderBy += ",";
+					}
+					orderBy += " a.customer__c " + direction;
+				}
 			}
 
-			if ("status".equals(field)) {
-				if (!orderBy.isEmpty()) {
-					orderBy += ",";
-				}
-				orderBy += " a.status__c " + direction;
+			if (!orderBy.isEmpty()) {
+				orderBy = " ORDER BY " + orderBy;
+			}
+
+			// Execute to count all
+			String sql = ZFile.read(_path + "count.sql");
+			String limit = "";
+			Query q = createQuery(sql, filter, limit);
+			BigInteger total = (BigInteger) q.getSingleResult();
+			req.setTotal(total.longValue());
+
+			// Execute to search
+			sql = _sql;
+			limit = orderBy;
+			if (req.isPaging()) {
+				limit += " OFFSET " + offset + " LIMIT " + size;
+			}
+			q = createQuery(sql, filter, limit);
+			List<Object[]> t = q.getResultList();
+
+			// Convert
+			res = CreditNoteDto.convert(t);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
 
-		if (!orderBy.isEmpty()) {
-			orderBy = " ORDER BY " + orderBy;
-		}
-
-		// Execute to count all
-		String sql = "SELECT \r\n" + "	count(*)\r\n" + "FROM salesforce.credit_note__c a ";
-		String limit = "";
-		Query q = createQuery(sql, filter, limit);
-		BigInteger total = (BigInteger) q.getSingleResult();
-		req.setTotal(total.longValue());
-
-		// Execute to search
-		sql = _sql;
-		limit = orderBy + " OFFSET " + offset + " LIMIT " + size;
-		q = createQuery(sql, filter, limit);
-		List<Object[]> l = q.getResultList();
-
-		return CreditNoteDto.convert(l);
+		return res;
 	}
 
 	/**
@@ -163,12 +276,41 @@ public class CreditNoteDao implements Repository<CreditNote, Integer> {
 	 */
 	private Query createQuery(String sql, Object o, String limit) {
 		CreditNoteFilter filter = CreditNoteFilter.convert(o);
+		String clientName = filter.getClient();
+		String clientAccount = filter.getClientAccount();
 		String status = filter.getStatus();
+		String scheduleNo = filter.getScheduleNo();
+		String creditNoteNo = filter.getName();
+		String customer = filter.getCustomer();
+		Date fr = filter.getFrCreatedDate();
+		Date to = filter.getToCreatedDate();
 
 		// Where
 		String where = "";
+		if (!clientName.isEmpty()) {
+			where += " AND a.client__c = :clientName";
+		}
+		if (!clientAccount.isEmpty()) {
+			where += " AND a.client_account__c = :clientAccount";
+		}
 		if (!status.isEmpty()) {
 			where += " AND a.status__c = :status";
+		}
+		if (!scheduleNo.isEmpty()) {
+			where += " AND d.schedule_no__c = :scheduleNo";
+		}
+		if (!creditNoteNo.isEmpty()) {
+			where += " AND a.name = :creditNoteNo";
+		}
+		if (!customer.isEmpty()) {
+			where += " AND a.customer__c = :customer";
+		}
+		if (fr != null && to != null) {
+			where += " AND a.createddate BETWEEN :fr AND :to";
+		} else if (fr != null && to == null) {
+			where += " AND :fr <= a.createddate";
+		} else if (fr == null && to != null) {
+			where += " AND a.createddate <= :to";
 		}
 
 		// Replace first
@@ -180,13 +322,60 @@ public class CreditNoteDao implements Repository<CreditNote, Integer> {
 
 		// Set parameter
 		if (!where.isEmpty()) {
-			int i = where.indexOf(":status");
+			int i = where.indexOf(":clientName");
+			if (i > 0) {
+				q.setParameter("clientName", clientName);
+			}
+			i = where.indexOf(":clientAccount");
+			if (i > 0) {
+				q.setParameter("clientAccount", clientAccount);
+			}
+			i = where.indexOf(":status");
 			if (i > 0) {
 				q.setParameter("status", status);
+			}
+			i = where.indexOf(":scheduleNo");
+			if (i > 0) {
+				q.setParameter("scheduleNo", scheduleNo);
+			}
+			i = where.indexOf(":creditNoteNo");
+			if (i > 0) {
+				q.setParameter("creditNoteNo", creditNoteNo);
+			}
+			i = where.indexOf(":customer");
+			if (i > 0) {
+				q.setParameter("customer", customer);
+			}
+			if (fr != null && to != null) {
+				fr = ZDate.getStartOfDay(fr);
+				q.setParameter("fr", fr);
+
+				to = ZDate.getEndOfDay(to);
+				q.setParameter("to", to);
+			} else if (fr != null && to == null) {
+				fr = ZDate.getStartOfDay(fr);
+				q.setParameter("fr", fr);
+			} else if (fr == null && to != null) {
+				to = ZDate.getEndOfDay(to);
+				q.setParameter("to", to);
 			}
 		}
 
 		return q;
+	}
+
+	public CustomDto getAverage(String clientAccountId) {
+		String sql = "SELECT '1' as code, AVG(credit_amount__c) as value " + "FROM credit_note__c a "
+				+ "WHERE a.Client_Account__c = :clientAccountId";
+
+		// Execute
+		Query q = _em.createNativeQuery(sql);
+		q.setParameter("clientAccountId", clientAccountId);
+		Object[] i = (Object[]) q.getSingleResult();
+
+		// Convert
+		CustomDto res = CustomDto.convert(i);
+		return res;
 	}
 
 	// end

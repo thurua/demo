@@ -6,3 +6,5 @@ LEFT JOIN salesforce.client_account__c c
 	ON a.client_account__c = c.sfid 
 LEFT JOIN salesforce.contact d 
 	ON b.contact__c = d.sfid 
+LEFT JOIN salesforce.recordtype e 
+	ON a.recordtypeid = e.sfid 

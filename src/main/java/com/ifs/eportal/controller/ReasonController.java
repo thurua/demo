@@ -16,6 +16,7 @@ import com.ifs.eportal.bll.ReasonService;
 import com.ifs.eportal.dto.ReasonDto;
 import com.ifs.eportal.req.PagingReq;
 import com.ifs.eportal.rsp.MultipleRsp;
+import com.ifs.eportal.rsp.SingleRsp;
 
 @RestController
 @RequestMapping("/reason")
@@ -50,6 +51,29 @@ public class ReasonController {
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
+	/**
+	 * Read by
+	 * 
+	 * @param Id
+	 * @return
+	 */
+	@PostMapping("/read")
+	public ResponseEntity<?> read(@RequestBody String sfId) {
+		SingleRsp res = new SingleRsp();
+
+		try {
+			// Handle
+			List<ReasonDto> t;
+			t = reasonService.read(sfId);
+
+			res.setResult(t);
+		} catch (Exception ex) {
+			res.setError(ex.getMessage());
+		}
+
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 

@@ -14,6 +14,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class CreditNoteDto extends BaseDto {
 	// region -- Fields --
 
+	@JsonProperty(value = "sfId")
+	private String sfId;
+
 	@JsonProperty(value = "customerBranch")
 	private String customerBranch;
 
@@ -47,9 +50,32 @@ public class CreditNoteDto extends BaseDto {
 	@JsonProperty(value = "status")
 	private String status;
 
+	@JsonProperty(value = "scheduleNo")
+	private String scheduleNo;
+
+	@JsonProperty(value = "clientAccountNo")
+	private String clientAccountNo;
+
+	@JsonProperty(value = "appliedInvoice")
+	private String appliedInvoice;
+
+	@JsonProperty(value = "opsRemarks")
+	private String opsRemarks;
+
+	@JsonProperty(value = "outstandingAmount")
+	private Double outstandingAmount;
+
 	// end
 
 	// region -- Get set --
+
+	public String getSfId() {
+		return sfId;
+	}
+
+	public void setSfId(String sfId) {
+		this.sfId = sfId;
+	}
 
 	public String getCustomerBranch() {
 		return customerBranch;
@@ -139,6 +165,46 @@ public class CreditNoteDto extends BaseDto {
 		this.status = status;
 	}
 
+	public String getScheduleNo() {
+		return scheduleNo;
+	}
+
+	public void setScheduleNo(String scheduleNo) {
+		this.scheduleNo = scheduleNo;
+	}
+
+	public String getClientAccountNo() {
+		return clientAccountNo;
+	}
+
+	public void setClientAccountNo(String clientAccountNo) {
+		this.clientAccountNo = clientAccountNo;
+	}
+
+	public String getAppliedInvoice() {
+		return appliedInvoice;
+	}
+
+	public void setAppliedInvoice(String appliedInvoice) {
+		this.appliedInvoice = appliedInvoice;
+	}
+
+	public String getOpsRemarks() {
+		return opsRemarks;
+	}
+
+	public void setOpsRemarks(String opsRemarks) {
+		this.opsRemarks = opsRemarks;
+	}
+
+	public Double getOutstandingAmount() {
+		return outstandingAmount;
+	}
+
+	public void setOutstandingAmount(Double outstandingAmount) {
+		this.outstandingAmount = outstandingAmount;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -149,18 +215,22 @@ public class CreditNoteDto extends BaseDto {
 	public CreditNoteDto() {
 		super();
 
-		customerBranch = "";
+		sfId = "";
 		customerFromExcel = "";
-		currencyIsoCode = "";
-		clientRemarks = "";
-		creditAmount = null;
-		customer = "";
-		scheduleOfOffer = "";
 		clientAccount = "";
 		name = "";
-		creditNoteDate = null;
+		customer = "";
+		currencyIsoCode = "";
+		appliedInvoice = "";
+		clientRemarks = "";
+		opsRemarks = "";
 		status = "";
-
+		scheduleOfOffer = "";
+		creditNoteDate = null;
+		customerBranch = "";
+		creditAmount = null;
+		outstandingAmount = null;
+		clientAccountNo = "";
 	}
 
 	/**
@@ -173,17 +243,21 @@ public class CreditNoteDto extends BaseDto {
 		CreditNoteDto res = new CreditNoteDto();
 
 		res.setId((Integer) o[0]);
-		res.setCustomerBranch((String) o[1]);
+		res.setSfId((String) o[1]);
 		res.setCustomerFromExcel((String) o[2]);
-		res.setCurrencyIsoCode((String) o[3]);
-		res.setClientRemarks((String) o[4]);
-		res.setCreditAmount((Double) o[5]);
-		res.setCustomer((String) o[6]);
-		res.setScheduleOfOffer((String) o[7]);
-		res.setClientAccount((String) o[8]);
-		res.setName((String) o[9]);
-		res.setCreditNoteDate((Date) o[10]);
-		res.setStatus((String) o[11]);
+		res.setClientAccount((String) o[3]);
+		res.setName((String) o[4]);
+		res.setCustomer((String) o[5]);
+		res.setCurrencyIsoCode((String) o[6]);
+		res.setAppliedInvoice((String) o[7]);
+		res.setClientRemarks((String) o[8]);
+		res.setOpsRemarks((String) o[9]);
+		res.setStatus((String) o[10]);
+		res.setScheduleOfOffer((String) o[11]);
+		res.setCreditNoteDate((Date) o[12]);
+		res.setCustomerBranch((String) o[13]);
+		res.setCreditAmount((Double) o[14]);
+		res.setOutstandingAmount((Double) o[15]);
 
 		return res;
 	}

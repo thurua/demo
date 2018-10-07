@@ -36,6 +36,8 @@ import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
+import com.ifs.eportal.dto.AccountDto;
+import com.ifs.eportal.dto.ClientAccountCustomerDto;
 import com.ifs.eportal.dto.LineItemDto;
 import com.ifs.eportal.dto.PayloadDto;
 import com.ifs.eportal.rsp.SingleRsp;
@@ -579,6 +581,68 @@ public class Utils {
 			res = hexString.toString();
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
+		}
+
+		return res;
+	}
+
+	/**
+	 * Use for supplier
+	 * 
+	 * @param l
+	 * @param name
+	 * @return
+	 */
+	public static String getAccIdByName(List<AccountDto> l, String name) {
+		String res = "";
+
+		if (l == null || l.size() == 0) {
+			return res;
+		}
+
+		name = name.trim();
+		for (AccountDto i : l) {
+			if (i.getName().equals(name)) {
+				res = i.getSfid();
+				break;
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * Use for customer
+	 * 
+	 * @param l
+	 * @param name
+	 * @return
+	 */
+	public static String getAccCusIdByName(List<ClientAccountCustomerDto> l, String name) {
+		String res = "";
+
+		if (l == null || l.size() == 0) {
+			return res;
+		}
+
+		name = name.trim();
+		for (ClientAccountCustomerDto i : l) {
+			if (i.getCcName().equals(name)) {
+				res = i.getCustomer();
+				break;
+			}
+		}
+
+		return res;
+	}
+
+	public static List<String> getNames(List<LineItemDto> l) {
+		List<String> res = new ArrayList<>();
+
+		for (LineItemDto i : l) {
+			if (i.getName() != null && !i.getName().isEmpty()) {
+				res.add(i.getName().trim());
+			}
 		}
 
 		return res;

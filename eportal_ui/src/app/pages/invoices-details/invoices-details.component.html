@@ -1,0 +1,173 @@
+<div class="card header-margin container">
+    <div class="card-body">
+        <div class="form-group row header">
+            <div class="col-md-4">
+                <strong>Details</strong>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-4">
+                        <strong>Client</strong>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="col-form-label">{{data.clientName}}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <strong>Client Account</strong>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="col-form-label">{{data.clientAccount}}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <strong>Document Type</strong>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="col-form-label">{{data.documentType}}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <strong>Invoice No.</strong>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="col-form-label">{{data.name}}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <strong>Customer</strong>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="col-form-label">{{data.customer}}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <strong>Currency</strong>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="col-form-label">{{data.currencyIsoCode}}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <strong>Credit Peiod (Days)</strong>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="col-form-label">{{data.creditPeriod}}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <strong>Contract</strong>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="col-form-label">{{data.contract}}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <strong>Client Remarks</strong>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="col-form-label">{{data.clientRemarks}}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <strong>OPS Remarks</strong>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="col-form-label">{{data.opsMarks}}</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-5">
+                        <strong>Status</strong>
+                    </div>
+                    <div class="col-md-7">
+                        <label class="col-form-label">{{data.status}}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">
+                        <strong>Schedule of Offer</strong>
+                    </div>
+                    <div class="col-md-7">
+                        <label class="col-form-label">{{data.scheduleOfOffer}}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">
+                        <strong></strong>
+                    </div>
+                    <div class="col-md-7">
+                        <label class="col-form-label"></label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">
+                        <strong>Invoice Date</strong>
+                    </div>
+                    <div class="col-md-7">
+                        <label class="col-form-label">{{data.invoiceDate}}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">
+                        <strong>Customer Branch</strong>
+                    </div>
+                    <div class="col-md-7">
+                        <label class="col-form-label">{{data.customerBranch}}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">
+                        <strong>Credit Amount</strong>
+                    </div>
+                    <div class="col-md-7">
+                        <label class="col-form-label">{{data.creditAmount}}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">
+                        <strong>Outstanding Amount</strong>
+                    </div>
+                    <div class="col-md-7">
+                        <label class="col-form-label">{{data.outstandingAmount}}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-5">
+                        <strong>PO</strong>
+                    </div>
+                    <div class="col-md-7">
+                        <label class="col-form-label">{{data.po}}</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-body" *ngIf="loader">
+        <div class="form-group row header">
+            <div class="col-md-4">
+                <strong>Reasons</strong>
+            </div>
+        </div>
+        <div widget class="card border-0 box-shadow header-margin">
+            <div class="card-body pt-0 widget-body">
+                <div class="table-responsive">
+                    <ng2-smart-table class="table table-hover" [settings]="settings" [source]="dataReason"></ng2-smart-table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

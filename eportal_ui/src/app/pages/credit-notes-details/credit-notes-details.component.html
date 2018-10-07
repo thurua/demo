@@ -9,15 +9,15 @@
             <div class="col-md-6">
                 <div class="row">
                     <div class="col-md-4">
-                        <p>Client</p>
+                        <strong>Client</strong>
                     </div>
                     <div class="col-md-8">
-                        <label class="col-form-label">{{data.clientName}}</label>
+                        <label class="col-form-label">{{data.customerFromExcel}}</label>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-4">
-                        <p>Client Account</p>
+                        <strong>Client Account</strong>
                     </div>
                     <div class="col-md-8">
                         <label class="col-form-label">{{data.clientAccount}}</label>
@@ -25,15 +25,15 @@
                 </div>
                 <div class="row">
                     <div class="col-md-4">
-                        <p>Credit Note No.</p>
+                        <strong>Credit Note No.</strong>
                     </div>
                     <div class="col-md-8">
-                        <label class="col-form-label">{{data.creditNoteNo}}</label>
+                        <label class="col-form-label">{{data.name}}</label>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-4">
-                        <p>Customer</p>
+                        <strong>Customer</strong>
                     </div>
                     <div class="col-md-8">
                         <label class="col-form-label">{{data.customer}}</label>
@@ -41,15 +41,15 @@
                 </div>
                 <div class="row">
                     <div class="col-md-4">
-                        <p>Currency</p>
+                        <strong>Currency</strong>
                     </div>
                     <div class="col-md-8">
-                        <label class="col-form-label">{{data.currency}}</label>
+                        <label class="col-form-label">{{data.currencyIsoCode}}</label>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-4">
-                        <p>Applied Invoice</p>
+                        <strong>Applied Invoice</strong>
                     </div>
                     <div class="col-md-8">
                         <label class="col-form-label">{{data.appliedInvoice}}</label>
@@ -57,25 +57,25 @@
                 </div>
                 <div class="row">
                     <div class="col-md-4">
-                        <p>Client Remarks</p>
+                        <strong>Client Remarks</strong>
                     </div>
                     <div class="col-md-8">
-                        <label class="col-form-label">{{data.clientMarks}}</label>
+                        <label class="col-form-label">{{data.clientRemarks}}</label>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-4">
-                        <p>OPS Remarks</p>
+                        <strong>OPS Remarks</strong>
                     </div>
                     <div class="col-md-8">
-                        <label class="col-form-label">{{data.opsMarks}}</label>
+                        <label class="col-form-label">{{data.opsRemarks}}</label>
                     </div>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="row">
                     <div class="col-md-5">
-                        <p>Status</p>
+                        <strong>Status</strong>
                     </div>
                     <div class="col-md-7">
                         <label class="col-form-label">{{data.status}}</label>
@@ -83,7 +83,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-5">
-                        <p>Schedule of Offer</p>
+                        <strong>Schedule of Offer</strong>
                     </div>
                     <div class="col-md-7">
                         <label class="col-form-label">{{data.scheduleOfOffer}}</label>
@@ -91,7 +91,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-5">
-                        <p>Credit Note Date</p>
+                        <strong>Credit Note Date</strong>
                     </div>
                     <div class="col-md-7">
                         <label class="col-form-label">{{data.creditNoteDate}}</label>
@@ -99,7 +99,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-5">
-                        <p>Customer Branch</p>
+                        <strong>Customer Branch</strong>
                     </div>
                     <div class="col-md-7">
                         <label class="col-form-label">{{data.customerBranch}}</label>
@@ -107,7 +107,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-5">
-                        <p>Credit Amount</p>
+                        <strong>Credit Amount</strong>
                     </div>
                     <div class="col-md-7">
                         <label class="col-form-label">{{data.creditAmount}}</label>
@@ -115,7 +115,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-5">
-                        <p>Outstanding Amount</p>
+                        <strong>Outstanding Amount</strong>
                     </div>
                     <div class="col-md-7">
                         <label class="col-form-label">{{data.outstandingAmount}}</label>
@@ -124,7 +124,7 @@
             </div>
         </div>
     </div>
-    <div class="card-body" *ngIf="loader">
+    <div class="card-body" *ngIf="data.status == 'Rejected'">
         <div class="form-group row header">
             <div class="col-md-4">
                 <strong>Reasons</strong>

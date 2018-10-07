@@ -113,7 +113,7 @@ public class ScheduleOfOffer {
 	private Date originalAcceptanceDate;
 
 	@Column(columnDefinition = "varchar(255)", name = "portal_status__c")
-	private String portal_status__c;
+	private String portalStatus;
 
 	@Column(columnDefinition = "varchar(18)", name = "sfid")
 	private String sfId;
@@ -352,12 +352,12 @@ public class ScheduleOfOffer {
 		this.originalAcceptanceDate = originalAcceptanceDate;
 	}
 
-	public String getPortal_status__c() {
-		return portal_status__c;
+	public String getPortalStatus() {
+		return portalStatus;
 	}
 
-	public void setPortal_status__c(String portal_status__c) {
-		this.portal_status__c = portal_status__c;
+	public void setPortalStatus(String portalStatus) {
+		this.portalStatus = portalStatus;
 	}
 
 	public String getSfId() {

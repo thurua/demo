@@ -104,7 +104,7 @@
                                         <strong>Document Type</strong>
                                     </div>
                                     <div class="col-md-8">
-                                        <label class="col-form-label">{{entity.recordType}}</label>
+                                        <label class="col-form-label">{{entity.documentType}}</label>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -130,7 +130,7 @@
                                 <button class="btn btn-gray btn-block" type="button" routerLink="../../schedule">Cancel</button>
                             </div>
                             <div class="col-md-2 cancel">
-                                <button class="btn btn-success btn-block" type="submit">Save</button>
+                                <button class="btn btn-primary btn-block" type="submit">Save</button>
 
                             </div>
                             <div class="col-md-6"></div>
@@ -138,15 +138,85 @@
                     </div>
                 </form>
             </tab>
-            <tab heading="Invoice Listing">
+            <tab heading="Invoice Listing" *ngIf="checkIv">
+                <div class="card header-margin" [hidden]="entity.documentType=='Cash Disbursement'">
+                    <div class="card-header">
+                        <strong>Invoice Listing</strong>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div widget class="card border-0 box-shadow">
+                                <div class="card-body pt-0 widget-body">
+                                    <div class="table-responsive">
+                                        <ng2-smart-table class="table table-hover" [settings]="settingsIv" [source]="ivList"></ng2-smart-table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card header-margin" [hidden]="entity.documentType=='Invoice'">
+                    <div class="card-header">
+                        <strong>Cash Disbursment</strong>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div widget class="card border-0 box-shadow">
+                                <div class="card-body pt-0 widget-body">
+                                    <div class="table-responsive">
+                                        <ng2-smart-table class="table table-hover" [settings]="settingsCas" [source]="csList"></ng2-smart-table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body col-md-6">
+                    <div class="row">
+                        <div class="col-md-6"></div>
+                        <div class="col-md-4">
+                            <button class="btn btn-primary btn-block" type="button" (click)="authorsiedModal.show();">Authorsied</button>
+                        </div>
+                        <div class="col-md-2">
+                        </div>
+                    </div>
+                </div>
             </tab>
-            <tab heading="Attachments">
+            <tab heading="Credit Note Listing" *ngIf="checkCd">
+                <div class="card header-margin">
+                    <div class="card-header">
+                        <strong>Credit Note Listing</strong>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div widget class="card border-0 box-shadow">
+                                <div class="card-body pt-0 widget-body">
+                                    <div class="table-responsive">
+                                        <ng2-smart-table class="table table-hover" [settings]="settings" [source]="cnList"></ng2-smart-table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body col-md-6">
+                    <div class="row">
+                        <div class="col-md-6"></div>
+                        <div class="col-md-4">
+                            <button class="btn btn-primary btn-block" type="button" (click)="authorsiedModal.show();">Authorsied</button>
+                        </div>
+                        <div class="col-md-2">
+                        </div>
+                    </div>
+                </div>
+            </tab>
+            <tab heading="Attachments" *ngIf="checkAtt">
                 <div class="row">
                     <div class="card-body col-md-6">
                         <div class="form-group row">
                             <div class="col-md-6">
                                 <div class="input-group file-upload">
-                                    <input type="file" name="Importfile" title="Select File" id="importData" ng2FileSelect [uploader]="uploader" multiple (change)="fileChanged($event)" class="file-upload-btn" />
+                                    <input type="file" ng2FileSelect [uploader]="uploader" (change)="fileChangeEvent($event)" class="file-upload-btn" />
                                     <input type="text" class="form-control" placeholder="Choose a file..." value="{{(file !=null)? file.name :'' }}">
                                     <i class="fa fa-times delete-file" (click)="removeFile()" *ngIf="file"></i>
                                     <span class="input-group-append upload">
@@ -155,6 +225,7 @@
                                 </div>
                             </div>
                         </div>
+
                     </div>
                     <div class="card-body col-md-6">
                         <div class="row">
@@ -170,4 +241,45 @@
             </tab>
         </tabset>
     </div>
+</div>
+
+<div bsModal #authorsiedModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Confirm Authorsie</h4>
+                <button type="button" class="close" (click)="authorsiedModal.hide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body size-text-content-modal text-center">
+                <!-- <div class="form-group row">
+                    <div class="col-md-12">
+                        <i class="fa fa-check-square-o icon-check-square"></i>
+                    </div>
+                </div> -->
+                <div class="form-group row">
+                    <div class="col-md-12 text-bold">
+                        <span>Are you sure, you want to proceed?</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-1">
+                </div>
+                <div class="col-md-10 row">
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-block" (click)="authorsiedModal.hide();">No</button>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-primary btn-block" (click)="Authorise();authorsiedModal.hide();">Yes</button>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
 </div>
