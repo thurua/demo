@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ifs.eportal.bll.ScheduleOfOfferAttachmentService;
+import com.ifs.eportal.bll.ScheduleOfOfferService;
 import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.dto.AttachmentDto;
 import com.ifs.eportal.dto.PayloadDto;
@@ -50,6 +51,9 @@ public class ScheduleOfOfferAttachmentController {
 
 	@Autowired
 	private ScheduleOfOfferAttachmentService scheduleOfOfferAttachmentService;
+
+	@Autowired
+	private ScheduleOfOfferService scheduleOfOfferService;
 
 	// end
 
@@ -112,10 +116,11 @@ public class ScheduleOfOfferAttachmentController {
 
 			// Load file from DB
 			List<SortDto> sort = new ArrayList<SortDto>();
-			sort.add(new SortDto("uploadedOn"));
+			sort.add(new SortDto("uploadedOn", "DESC"));
 			PagingReq pr;
 			pr = new PagingReq(new AttachmentFilter(scheduleOfOffer), sort, false);
 			return search(pr);
+
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}

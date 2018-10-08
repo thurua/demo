@@ -50,8 +50,8 @@ public class CreditNoteDto extends BaseDto {
 	@JsonProperty(value = "scheduleNo")
 	private String scheduleNo;
 
-	@JsonProperty(value = "clientAccountNo")
-	private String clientAccountNo;
+	@JsonProperty(value = "accountName")
+	private String accountName;
 
 	@JsonProperty(value = "appliedInvoice")
 	private String appliedInvoice;
@@ -162,12 +162,12 @@ public class CreditNoteDto extends BaseDto {
 		this.scheduleNo = scheduleNo;
 	}
 
-	public String getClientAccountNo() {
-		return clientAccountNo;
+	public String getAccountName() {
+		return accountName;
 	}
 
-	public void setClientAccountNo(String clientAccountNo) {
-		this.clientAccountNo = clientAccountNo;
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
 	}
 
 	public String getAppliedInvoice() {
@@ -204,21 +204,23 @@ public class CreditNoteDto extends BaseDto {
 	public CreditNoteDto() {
 		super();
 
+		customerBranch = "";
 		customerFromExcel = "";
+		currencyIsoCode = "";
+		clientRemarks = "";
+		creditAmount = null;
+		customer = "";
+		scheduleOfOffer = "";
 		clientAccount = "";
 		name = "";
-		customer = "";
-		currencyIsoCode = "";
-		appliedInvoice = "";
-		clientRemarks = "";
-		opsRemarks = "";
-		status = "";
-		scheduleOfOffer = "";
 		creditNoteDate = null;
-		customerBranch = "";
-		creditAmount = null;
+		status = "";
+		scheduleNo = "";
+		accountName = "";
+		appliedInvoice = "";
+		opsRemarks = "";
 		outstandingAmount = null;
-		clientAccountNo = "";
+
 	}
 
 	/**
@@ -233,20 +235,22 @@ public class CreditNoteDto extends BaseDto {
 		res.setId((Integer) o[0]);
 		res.setSfId((String) o[1]);
 
-		res.setCustomerFromExcel((String) o[2]);
-		res.setClientAccount((String) o[3]);
-		res.setName((String) o[4]);
-		res.setCustomer((String) o[5]);
-		res.setCurrencyIsoCode((String) o[6]);
-		res.setAppliedInvoice((String) o[7]);
-		res.setClientRemarks((String) o[8]);
-		res.setOpsRemarks((String) o[9]);
-		res.setStatus((String) o[10]);
-		res.setScheduleOfOffer((String) o[11]);
-		res.setCreditNoteDate((Date) o[12]);
-		res.setCustomerBranch((String) o[13]);
-		res.setCreditAmount((Double) o[14]);
-		res.setOutstandingAmount((Double) o[15]);
+		res.setCustomerBranch((String) o[2]);
+		res.setCustomerFromExcel((String) o[3]);
+		res.setCurrencyIsoCode((String) o[4]);
+		res.setClientRemarks((String) o[5]);
+		res.setCreditAmount((Double) o[6]);
+		res.setCustomer((String) o[7]);
+		res.setScheduleOfOffer((String) o[8]);
+		res.setClientAccount((String) o[9]);
+		res.setName((String) o[10]);
+		res.setCreditNoteDate((Date) o[11]);
+		res.setStatus((String) o[12]);
+		res.setScheduleNo((String) o[13]);
+		res.setAccountName((String) o[14]);
+		res.setAppliedInvoice((String) o[15]);
+		res.setOpsRemarks((String) o[16]);
+		res.setOutstandingAmount((Double) o[17]);
 
 		return res;
 	}

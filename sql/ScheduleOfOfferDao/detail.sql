@@ -1,7 +1,7 @@
 SELECT 
 	a.id, a.sfid, a.schedule_no__c, a.schedule_date__c, a.exchange_rate__c, a.factor_code__c, 
 	b.name record_type, e.total, e.total_amount, c.name client_name, a.currencyisocode, 
-	d.client_account__c, a.document_type__c 
+	d.client_account__c, a.document_type__c, a.portal_status__c 
 FROM salesforce.schedule_of_offer__c a 
 LEFT JOIN salesforce.recordtype b 
 	ON a.recordtypeid = b.sfid 

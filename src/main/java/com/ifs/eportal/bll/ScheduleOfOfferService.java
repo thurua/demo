@@ -46,7 +46,7 @@ public class ScheduleOfOfferService {
 	 * @param req
 	 * @return
 	 */
-	public String update(ScheduleOfOfferReq req) {
+	public String update(String sfId, ScheduleOfOfferReq req) {
 		String res = "";
 
 		// Get data
@@ -67,9 +67,10 @@ public class ScheduleOfOfferService {
 			m.setScheduleNo(scheduleNo);
 			m.setFactorCode(factorCode);
 			m.setPortalStatus(portalStatus);
-			if (portalStatus == "Authorise") {
+			if ("Authorise".equals(portalStatus)) {
 				Date t = new Date();
 				m.setAuthorisedDate(t);
+				m.setAuthorisedBy(sfId);
 			}
 			m.setExchangeRate(exchangeRate);
 

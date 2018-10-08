@@ -3,7 +3,6 @@ package com.ifs.eportal.controller;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +35,6 @@ import com.ifs.eportal.bll.CreditNoteService;
 import com.ifs.eportal.bll.CurrencyTypeService;
 import com.ifs.eportal.bll.InvoiceService;
 import com.ifs.eportal.bll.RecordTypeService;
-import com.ifs.eportal.bll.ScheduleOfOfferAttachmentService;
 import com.ifs.eportal.bll.ScheduleOfOfferService;
 import com.ifs.eportal.common.Const;
 import com.ifs.eportal.common.Utils;
@@ -53,6 +51,7 @@ import com.ifs.eportal.dto.InvoiceDto;
 import com.ifs.eportal.dto.LineItemDto;
 import com.ifs.eportal.dto.RecordTypeDto;
 import com.ifs.eportal.dto.ScheduleOfOfferDto;
+import com.ifs.eportal.dto.ValidDto;
 import com.ifs.eportal.model.CreditNote;
 import com.ifs.eportal.model.Invoice;
 import com.ifs.eportal.model.ScheduleOfOffer;
@@ -87,9 +86,6 @@ public class FileController {
 
 	@Autowired
 	private ClientAccountService clientAccountService;
-
-	@Autowired
-	private ScheduleOfOfferAttachmentService scheduleOfOfferAttachmentService;
 
 	@Autowired
 	private CurrencyTypeService currencyTypeService;
@@ -258,6 +254,7 @@ public class FileController {
 
 	private SingleRsp validateSchedule(MultipartFile file, UploadReq req) {
 		SingleRsp res = new SingleRsp();
+		ValidDto dto = new ValidDto();
 		String err = "File format is incorrect.";
 
 		// Get data
@@ -279,12 +276,11 @@ public class FileController {
 		boolean isCN = "CREDIT NOTE".equals(type);
 		boolean isIV = "INVOICE".equals(type);
 		boolean isFactoring = isCN || isIV;
-		boolean isInvoice = isLoan || isIV;
 
 		// Get params
 		String clientId = req.getClientId();
 		String scheduleNo = req.getScheduleNo().trim();
-		Date acceptanceDate = Utils.getTime(Calendar.HOUR, 24);
+		Date acceptanceDate = new Date();
 		Boolean amendSchedule = req.getAmendSchedule();
 		String clientAccountId = req.getClientAccountId();
 		String scheduleType = req.getScheduleType();
@@ -297,7 +293,7 @@ public class FileController {
 			scheduleNo = o.getScheduleNo();
 		} else {
 			/* ToanNguyen 2018-Aug-23 IFS-1013 */
-			if (scheduleNo != o.getScheduleNo()) {
+			if (!scheduleNo.equals(o.getScheduleNo())) {
 				err = "Schedule No. entered is not the same as in Excel.";
 				res = Utils.addError(res, err);
 			}
@@ -305,13 +301,12 @@ public class FileController {
 
 		// Check schedule no
 		ScheduleOfOfferDto so = scheduleOfOfferService.read(scheduleNo, clientId);
-
-		Float sequence = 0f;
+		Double sequence = 0d;
 		if (so.getId() > 0) {
 			if (amendSchedule) {
 				/* ToanNguyen 2018-Aug-23 IFS-976 */
 				if (so.getSequence() != null) {
-					sequence = so.getSequence().floatValue();
+					sequence = so.getSequence();
 				}
 				sequence = sequence + 1;
 			}
@@ -344,7 +339,7 @@ public class FileController {
 			ClientAccountDto ca = clientAccountService.read(clientAccountId);
 			if (ca.getId() > 0) {
 				/* NguyenMinh 2018-Sep-24 IFS-1203 */
-				if (!ca.getClientAccount().equals(o.getClientAccount())) {
+				if (!ca.getClientAccount().equals(clientAccount)) {
 					err = "Selected Client Account is not same as in Excel.";
 					res = Utils.addError(res, err);
 				}
@@ -355,12 +350,12 @@ public class FileController {
 					err = "Client Account is not of Loan Type.";
 					res = Utils.addError(res, err);
 				}
-				if (isLoan && !"Factoring".equals(recordTypeName)) {
+				if (isFactoring && !"Factoring".equals(recordTypeName)) {
 					err = "Client Account is not of Factoring Type.";
 					res = Utils.addError(res, err);
 				}
 
-				if (!"Activated".equals(ca.getStatus())) {
+				if ("Activated".equals(ca.getStatus())) {
 					/* ToanNguyen 2018-Aug-23 IFS-974 */
 					if (acceptanceDate.before(ca.getActivatedOn())) {
 						err = "Schedule Acceptance Date cannot be before client account activation date.";
@@ -370,14 +365,12 @@ public class FileController {
 					/* TriNguyen 2018-Sep-04 IFS-1048 */
 					if (!isCN) {
 						DateTime t = new DateTime(ca.getActivatedOn());
-						t.plusMonths(6);
-						t.plusDays(-1);
-						DateTime tempAcceptanceDate = new DateTime(acceptanceDate);
-						if (tempAcceptanceDate.isBefore(t)) {
+						t.plusMonths(6).plusDays(-1);
+						if (acceptanceDate.after(t.toDate())) {
 							// Client - New.
 							err = "IVE";
 							errors = ZError.addError(errors, err, allNo);
-							// res.invoiceValid = false;
+							dto.setInvoiceValid(false);
 						}
 					}
 
@@ -386,7 +379,7 @@ public class FileController {
 						// Client - 100% Verification Required.
 						err = "IVJ";
 						errors = ZError.addError(errors, err, allNo);
-						// res.invoiceValid = false;
+						dto.setInvoiceValid(false);
 					}
 
 					/* ToanNguyen 2018-Aug-30 IFS-977,1027 */
@@ -405,7 +398,7 @@ public class FileController {
 					// Client - Suspended.
 					err = "IVF";
 					errors = ZError.addError(errors, err, allNo);
-					// res.invoiceValid = false;
+					dto.setInvoiceValid(false);
 				} else {
 					/* ToanNguyen 2018-Aug-30 IFS-1024 */
 					err = "Client Account is not activated.";
@@ -427,58 +420,56 @@ public class FileController {
 			// 1. Validate step 1 (with Excel), add Schedule_Of_Offer__c data
 			String rid; // RecordType ID
 			if (isLoan) {
-				if ("Loan".equals(so.getRecordTypeName())) {
-					rid = so.getRecordTypeId();
-					so.setRecordTypeId(rid);
-				}
-				// rid =
-				// Schema.SObjectType.Invoice__c.getRecordTypeInfosByName().get('Loan').getRecordTypeId();
+				RecordTypeDto rt = recordTypeService.getBy("Schedule_Of_Offer__c", "Loan");
+				rid = rt.getSfId();
+				so.setRecordTypeId(rid);
+
+				rt = recordTypeService.getBy("Invoice__c", "Loan");
+				rid = rt.getSfId();
 			}
 			if (isCN) {
-				if ("Credit Note".equals(so.getRecordTypeName())) {
-					rid = so.getRecordTypeId();
-					so.setRecordTypeId(rid);
-				}
-			} else {
-				/* ToanNguyen 2018-Sep-06 IFS-1045,1046 */
-//                arOverdue = Utils.getOverdueOutstanding(o.getLineItems(), ca.getSfid());
-//                arDisputed = Utils.getDisputedOutstanding(o.getLineItems(), ca.getSfid());
-//                arTotal = Utils.getTotalOutstanding(o.getLineItems(), ca.getSfid());
-//                
-//                /*TriNguyen 2018-Sep-11 IFS-1039*/
-//                arTotalAmount = Utils.getTotalOutstandingAmount(o.getLineItems(), ca.getSfid());
+				RecordTypeDto rt = recordTypeService.getBy("Schedule_Of_Offer__c", "Credit Note");
+				rid = rt.getSfId();
+				so.setRecordTypeId(rid);
 			}
+
 			if (isIV) {
-				if ("Factoring".equals(so.getRecordTypeName())) {
-					rid = so.getRecordTypeId();
-					so.setRecordTypeId(rid);
-				}
-				// rid =
-				// Schema.SObjectType.Invoice__c.getRecordTypeInfosByName().get('Factoring').getRecordTypeId();
+				RecordTypeDto rt = recordTypeService.getBy("Schedule_Of_Offer__c", "Factoring");
+				rid = rt.getSfId();
+				so.setRecordTypeId(rid);
+
+				rt = recordTypeService.getBy("Invoice__c", "Factoring");
+				rid = rt.getSfId();
 
 				/* TriNguyen 2018-Sep-03 IFS-1052 */
 				// err = ZValid.acceptanceDate(ac.getSfid(), ca.getSfid(), acceptanceDate,
 				// o.getLineItems());
 				if (!err.isEmpty()) {
 					errors = ZError.addError(errors, err, allNo);
-					// res.invoiceValid = false;
+					dto.setInvoiceValid(false);
 				}
 
-				err = res.getMessage();
-				if (!err.isEmpty()) {
-					res.setError(err);
-				} else {
+				if (dto.isSuccess()) {
 					if (isCN) {
 						res = validateCreditNote(o, req);
 					} else {
 						res = validateInvoice(o, req);
 					}
+				} else {
+					res.setError(err);
 				}
 
 				so.setScheduleDate(o.getDocumentDate());
+				if (o.getDocumentDate().toString().isEmpty()) {
+					so.setScheduleDate(o.getDocumentDate());
+					if (so.getScheduleDate() == null) {
+						err = "Invalid Document Date.";
+						res = Utils.addError(res, err);
+					}
 
+				}
 //				if (!o.getProcessDate()().toString().isEmpty()) {
-//					so.setp(Utils.toDate(o.getDocumentDate().toString()));
+//					 so.Process_Date__c = Utils.toDate(o.processDate);
 //					if(so.getScheduleDate().toString() == null) {
 //						err = "Invalid Document Date.";
 //	                    res = Utils.addError(res, err);
@@ -519,6 +510,7 @@ public class FileController {
 	 */
 	private SingleRsp validateInvoice(ExcelDto o, UploadReq req) {
 		SingleRsp res = new SingleRsp();
+		ValidDto dto = new ValidDto();
 
 		String err = "";
 		HashMap<String, String> errors = new HashMap<String, String>();
@@ -544,6 +536,15 @@ public class FileController {
 		List<Invoice> liv = new ArrayList<>();
 		for (LineItemDto i : o.getLineItems()) {
 			Invoice iv = new Invoice();
+			// Schedule_Of_Offer__c = so.Id,
+			// Document_Type__c = so.Document_Type__c,
+			// RecordTypeId = rid,
+			// Client_Name__c = ac.Id,
+			iv.setClientAccount(clientAccountId);
+			// CurrencyIsoCode = so.CurrencyIsoCode,
+			iv.setClientRemarks(i.getRemarks());
+			iv.setInvoiceAmount(0f);
+			iv.setStatus("Pending");
 
 			// Loan Invoice
 			if (!isFac) {
@@ -551,58 +552,73 @@ public class FileController {
 					continue;
 				}
 				iv.setSupplier(Utils.getAccIdByName(lac, i.getName()));
-				// iv.setName(i.getNo());
+				iv.setName(i.getNo());
 
 				/* ToanNguyen 2018-Sep-03 IFS-1030 */
 				if (i.getItemDate() == null) {
 					// Invalid Invoice Date.
 					err = "IV4";
 					errors = ZError.addError(errors, err, i.getName());
+					dto.setSuccess(false);
 				} else {
 					// iv.setInvoiceDate(i.getItemDate());
 					if (i.getItemDate().after(req.getAcceptanceDate())) {
 						// Invoice Date cannot be after Schedule Acceptance Date.
 						err = "IV5";
 						errors = ZError.addError(errors, err, i.getName());
+						dto.setSuccess(false);
 					}
 				}
 
-				String amount = i.getAmount().replaceAll("[^.\\d]", "");
-				if (amount != null && !amount.isEmpty()) {
-					// iv.setInvoiceAmount(Float.parseFloat(amount));
-					if (Float.parseFloat(amount) <= avgInvoiceAmount.getValue()) {
-						// Customer - Invoice Amount more than Client Average Invoice Size.
-						err = "CCD";
-						errors = ZError.addError(errors, err, i.getName());
-					}
+				iv.setInvoiceAmount(i.getAmount().floatValue());
+
+				if (iv.getInvoiceAmount() <= avgInvoiceAmount.getValue()) {
+					// Customer - Invoice Amount more than Client Average Invoice Size.
+					err = "CCD";
+					errors = ZError.addError(errors, err, i.getName());
+					dto.setInvoiceValid(false);
 				}
 
-				err = ZValid.customerAverage(arInvoiceAvg, Double.parseDouble(amount), i.getName());
-				errors = ZError.addError(errors, err, i.getName());
-
-				amount = i.getPeriod().replaceAll("[^.\\d]", "");
-				Integer period = 0;
-				if (amount != null && !amount.isEmpty()) {
-					period = Integer.parseInt(amount);
-					iv.setCreditPeriod(period);
-				}
+				Float period = i.getPeriod().floatValue();
+				iv.setCreditPeriod(period);
 
 				/* HanhNguyen 2018-Aug-29 IFS-1035 */
 				if (i.getItemDate() != null) {
 					DateTime addedPeriod = new DateTime(i.getItemDate());
-					addedPeriod.plusDays(period);
+					addedPeriod.plusDays(period.intValue());
 					if (addedPeriod.toDate().after(req.getAcceptanceDate())) {
 						// Invoice - Overdue by XXX days.
 						err = "IV2";
 						errors = ZError.addError(errors, err, i.getName());
+						dto.setInvoiceValid(false);
 					}
 				}
 
 				err = ZValid.ratioOverdue(arOverdue, arTotal, i.getName());
 				errors = ZError.addError(errors, err, i.getName());
 
+				if (!err.isEmpty()) {
+					dto.setInvoiceValid(false);
+				}
+
 				err = ZValid.ratioDisputed(arDisputed, arTotal, i.getName());
 				errors = ZError.addError(errors, err, i.getName());
+
+				if (!err.isEmpty()) {
+					dto.setInvoiceValid(false);
+				}
+
+				/* ToanNguyen 2018-Sep-06 IFS-1045 */
+				err = ZValid.customerAverage(arInvoiceAvg, i.getAmount(), i.getName());
+				errors = ZError.addError(errors, err, i.getName());
+
+				if (!err.isEmpty()) {
+					dto.setInvoiceValid(false);
+				}
+
+				iv.setPo(i.getPo());
+				iv.setContract(i.getContract());
+				iv.setSupplierFromExcel(i.getName());
 
 				if (i.getPaymentDate() == null) {
 					err = "Invalid Payment Date.";
@@ -619,19 +635,21 @@ public class FileController {
 				iv.setCustomer(Utils.getAccCusIdByName(lcc, i.getName()));
 				iv.setName(i.getNo());
 				iv.setCustomerFromExcel(i.getName());
-				// iv.setCustomerBranch(i.getBranch());
+				iv.setCustomerBranch(i.getBranch());
 
 				/* ToanNguyen 2018-Sep-03 IFS-1030 */
-				// iv.setInvoiceDate(i.getItemDate());
+				iv.setInvoiceDate(i.getItemDate());
 				if (i.getItemDate() == null) {
 					// Invalid Invoice Date.
 					err = "IV4";
 					errors = ZError.addError(errors, err, i.getName());
+					dto.setSuccess(false);
 				}
 				if (i.getItemDate().after(req.getAcceptanceDate())) {
 					// Invoice Date cannot be after Schedule Acceptance Date.
 					err = "IV5";
 					errors = ZError.addError(errors, err, i.getName());
+					dto.setSuccess(false);
 				}
 				/* HanhNguyen 2018-Aug-29 IFS-1034 */
 				Date acceptanceDate = (new DateTime(req.getAcceptanceDate())).minusYears(1).toDate();
@@ -639,77 +657,80 @@ public class FileController {
 					// Invoice - Dated 1 year before Schedule Acceptance Date.
 					err = "IV6";
 					errors = ZError.addError(errors, err, iv.getName());
+					dto.setInvoiceValid(false);
 				}
 
-				String amount = i.getAmount().replaceAll("[^.\\d]", "");
-				if (amount != null && !amount.isEmpty()) {
-					// iv.setInvoiceAmount(Float.parseFloat(amount));
-					/* HanhNguyen 2018-Aug-29 IFS-1033 */
-					if (Float.parseFloat(amount) >= 50000) {
-						// Verification Required - Per Verification Rule.
-						err = "IV3";
-						errors = ZError.addError(errors, err, i.getName());
-					}
+				iv.setInvoiceAmount(i.getAmount().floatValue());
 
-					if (iv.getInvoiceAmount() > 0) {
-						/* CongLe 2018-Aug-29 IFS-1031 */
-						if (ca.getAccountType() == "Import") {
-							// Verification Required - Import Factoring.
-							err = "IV1";
-							errors = ZError.addError(errors, err, iv.getName());
-						}
+				/* HanhNguyen 2018-Aug-29 IFS-1033 */
+				if (iv.getInvoiceAmount() >= 50000) {
+					// Verification Required - Per Verification Rule.
+					err = "IV3";
+					errors = ZError.addError(errors, err, i.getName());
+					dto.setInvoiceValid(false);
+				}
 
-						/* CongLe 2018-Aug-29 IFS-1032 */
-						if (ca.getProgramName() == "SPOT") {
-							// Verification Required - SPOT Program.
-							err = "IV7";
-							errors = ZError.addError(errors, err, iv.getName());
-						}
-						if (ca.getProgramName() == "Multiply") {
-							// Verification Required - Multiply Program.
-							err = "IV8";
-							errors = ZError.addError(errors, err, iv.getName());
-						}
-					}
-
-					/* ToanNguyen 2018-Sep-04 IFS-1044 */
-					if (Float.parseFloat(amount) <= avgInvoiceAmount.getValue()) {
-						// Customer - Invoice Amount more than Client Average Invoice Size.
-						err = "CCD";
+				if (iv.getInvoiceAmount() > 0) {
+					/* CongLe 2018-Aug-29 IFS-1031 */
+					if (ca.getAccountType().equals("Import")) {
+						// Verification Required - Import Factoring.
+						err = "IV1";
 						errors = ZError.addError(errors, err, iv.getName());
+						dto.setInvoiceValid(false);
 					}
 
-					/* NhatNguyen 2018-Sep-06 IFS-1051 */
-					if (Float.parseFloat(amount) > ca.getVerificationExceedingInvoiceAmount()
-							|| ca.getVerificationExceedingInvoiceAmount() == null) {
-						// Client - Per Verification Amount.
-						err = "IVB";
+					/* CongLe 2018-Aug-29 IFS-1032 */
+					if (ca.getProgramName().equals("SPOT")) {
+						// Verification Required - SPOT Program.
+						err = "IV7";
 						errors = ZError.addError(errors, err, iv.getName());
+						dto.setInvoiceValid(false);
+					}
+					if (ca.getProgramName().equals("Multiply")) {
+						// Verification Required - Multiply Program.
+						err = "IV8";
+						errors = ZError.addError(errors, err, iv.getName());
+						dto.setInvoiceValid(false);
 					}
 				}
 
 				/* CongLe 2018-Aug-29 IFS-1032 */
-				if (ca.getProgramName() == "Small Ticket Factoring Program" && iv.getInvoiceAmount() >= 10000) {
+				if (ca.getProgramName().equals("Small Ticket Factoring Program") && iv.getInvoiceAmount() >= 10000) {
 					// Verification Required - Small Ticket Factoring Program.
 					err = "IV9";
 					errors = ZError.addError(errors, err, iv.getName());
+					dto.setInvoiceValid(false);
 				}
 
-				amount = i.getPeriod().replaceAll("[^.\\d]", "");
-				Integer period = 0;
-				if (amount != null && !amount.isEmpty()) {
-					period = Integer.valueOf(amount);
-					// iv.setCreditPeriod(period);
+				/* ToanNguyen 2018-Sep-04 IFS-1044 */
+				if (iv.getInvoiceAmount() > avgInvoiceAmount.getValue()) {
+					// Customer - Invoice Amount more than Client Average Invoice Size.
+					err = "CCD";
+					errors = ZError.addError(errors, err, iv.getName());
+					dto.setInvoiceValid(false);
 				}
+
+				/* NhatNguyen 2018-Sep-06 IFS-1051 */
+				if (iv.getInvoiceAmount() > ca.getVerificationExceedingInvoiceAmount()
+						|| ca.getVerificationExceedingInvoiceAmount() == null) {
+					// Client - Per Verification Amount.
+					err = "IVB";
+					errors = ZError.addError(errors, err, iv.getName());
+					dto.setInvoiceValid(false);
+				}
+
+				Float period = i.getPeriod().floatValue();
+				iv.setCreditPeriod(period);
 
 				/* HanhNguyen 2018-Aug-29 IFS-1035 */
 				if (i.getItemDate() != null) {
 					DateTime addedPeriod = new DateTime(i.getItemDate());
-					addedPeriod.plusDays(period);
+					addedPeriod.plusDays(period.intValue());
 					if (addedPeriod.toDate().after(req.getAcceptanceDate())) {
 						// Invoice - Overdue by XXX days.
 						err = "IV2";
 						errors = ZError.addError(errors, err, iv.getName());
+						dto.setInvoiceValid(false);
 					}
 				}
 
@@ -717,23 +738,42 @@ public class FileController {
 				err = ZValid.ratioCreditInvoice(arCredit, arInvoice, i.getName());
 				errors = ZError.addError(errors, err, iv.getName());
 
+				if (!err.isEmpty()) {
+					dto.setInvoiceValid(false);
+				}
+
 				/* ToanNguyen 2018-Sep-06 IFS-1045 */
 				err = ZValid.ratioOverdue(arOverdue, arTotal, i.getName());
 				errors = ZError.addError(errors, err, iv.getName());
+
+				if (!err.isEmpty()) {
+					dto.setInvoiceValid(false);
+				}
 
 				/* ToanNguyen 2018-Sep-06 IFS-1046 */
 				err = ZValid.ratioDisputed(arDisputed, arTotal, i.getName());
 				errors = ZError.addError(errors, err, iv.getName());
 
+				if (!err.isEmpty()) {
+					dto.setInvoiceValid(false);
+				}
+
 				/* ToanNguyen 2018-Sep-11 IFS-1043 */
 				err = ZValid.customerAverage(arInvoiceAvg, iv.getInvoiceAmount(), i.getName());
 				errors = ZError.addError(errors, err, iv.getName());
 
+				if (!err.isEmpty()) {
+					dto.setInvoiceValid(false);
+				}
+
+				iv.setPo(i.getPo());
+				iv.setContract(i.getContract());
 				liv.add(iv);
 			}
 		}
 
-		if (!res.getStatus().equals(Const.HTTP.STATUS_ERROR)) {
+		if (dto.isSuccess()) {
+			/* TriNguyen 2018-Sep-01 IFS-1036 */
 			List<ApprovedCustomerLimitDto> lcl = approvedCustomerLimitService.read(liv, clientId);
 			if (isFac) {
 				for (Invoice i : liv) {
@@ -742,7 +782,7 @@ public class FileController {
 								o.getFactorCode(), req.getAcceptanceDate(), ca);
 						errors = ZError.addError(errors, err, i.getName());
 					}
-					if (err != "") {
+					if (!err.isEmpty()) {
 						List<String> arr = Arrays.asList(err.split(","));
 						int t1 = arr.indexOf("CC9");
 						int t2 = arr.indexOf("CCA");
@@ -753,12 +793,6 @@ public class FileController {
 							res.setError(Const.HTTP.STATUS_ERROR);
 						}
 					}
-					/* Comment by NhatNguyen 2018-Oct-01 IFS-1247 */
-					/*
-					 * else { //ToanNguyen 2018-Aug-23 IFS-1025 // Customer Name is not found in
-					 * Client Account. err = 'CC1'; errors = ZError.addError(errors, err,
-					 * liv[i].Name); res.success = false; }
-					 */
 
 					/* TriNguyen 2018-Sep-01 IFS-1036,1037,1038,1039 */
 					err = ZValid.acl(i, lcl, ca.getFactoringType(), arTotalAmount);
@@ -766,6 +800,9 @@ public class FileController {
 				}
 			}
 		}
+
+		dto.setErrors(errors);
+		res.setResult(dto);
 
 		return res;
 	}
@@ -779,6 +816,7 @@ public class FileController {
 	 */
 	private SingleRsp validateCreditNote(ExcelDto o, UploadReq req) {
 		SingleRsp res = new SingleRsp();
+		ValidDto dto = new ValidDto();
 
 		String err = "";
 		HashMap<String, String> errors = new HashMap<String, String>();
@@ -792,6 +830,15 @@ public class FileController {
 		List<CreditNote> lcn = new ArrayList<>();
 		for (LineItemDto i : o.getLineItems()) {
 			CreditNote cn = new CreditNote();
+			// Schedule_Of_Offer__c = so.Id,
+			// Document_Type__c = so.Document_Type__c,
+			// RecordTypeId = rid,
+			// Client_Name__c = ac.Id,
+			cn.setClientAccount(clientAccountId);
+			// CurrencyIsoCode = so.CurrencyIsoCode,
+			cn.setClientRemarks(i.getRemarks());
+			cn.setCreditAmount(0f);
+			cn.setStatus("Pending");
 
 			if (i.getName() != null && i.getName().isEmpty()) {
 				continue;
@@ -808,40 +855,37 @@ public class FileController {
 				// Invalid Credit Note Date.
 				err = "CN4";
 				errors = ZError.addError(errors, err, cn.getName());
-				// res.success = false;
+				dto.setSuccess(false);
 			}
 			if (i.getItemDate().after(req.getAcceptanceDate())) {
 				// Credit Note Date cannot be after Schedule Acceptance Date.
 				err = "CN5";
 				errors = ZError.addError(errors, err, cn.getName());
-				// res.success = false;
+				dto.setSuccess(false);
 			}
 			Date acceptanceDate = (new DateTime(req.getAcceptanceDate())).minusYears(1).toDate();
 			if (i.getItemDate().before(acceptanceDate)) {
 				// Credit Note - Dated 1 year before Schedule Acceptance Date.
 				err = "CN6";
 				errors = ZError.addError(errors, err, cn.getName());
-				// res.success = false;
+				dto.setSuccess(false);
 			}
 
-			String amount = i.getAmount().replaceAll("[^.\\d]", "");
-			if (amount != null && !amount.isEmpty()) {
-				cn.setCreditAmount(Float.parseFloat(amount));
-			}
+			cn.setCreditAmount(i.getAmount().floatValue());
 
 			/* ToanNguyen 2018-Sep-04 IFS-1055 */
 			if (cn.getCreditAmount() > avgInvoiceAmount.getValue()) {
 				// Credit Note - Amount more than Client Average Invoice Size.
 				err = "CN7";
 				errors = ZError.addError(errors, err, cn.getName());
-				// res.creditValid = false;
+				dto.setCreditValid(false);
 			}
 			cn.setAppliedInvoice(i.getInvoiceApplied());
 
 			lcn.add(cn);
 		}
 
-		if (!res.getStatus().equals(Const.HTTP.STATUS_ERROR)) {
+		if (dto.isSuccess()) {
 			List<InvoiceDto> lin = new ArrayList<>();
 			lin = invoiceService.read(o.getLineItems(), clientAccountId);
 
@@ -850,29 +894,33 @@ public class FileController {
 					err = ZValid.customer(lcc, i.getCustomerFromExcel(), 0, false, o.getFactorCode(),
 							req.getAcceptanceDate(), ca);
 					errors = ZError.addError(errors, err, i.getName());
-					if (err != "") {
+					if (!err.isEmpty()) {
 						/* ToanNguyen 2018-Aug-23 IFS-974,1025,1026 */
-						res.setStatus(Const.HTTP.STATUS_ERROR);
+						dto.setSuccess(false);
 					}
 				}
-				/* Comment by NhatNguyen 2018-Oct-01 IFS-1247 */
-				/*
-				 * else { // ToanNguyen 2018-Aug-23 IFS-1025 // Customer Name is not found in
-				 * Client Account. err = "CC1"; errors = ZError.addError(errors, err,
-				 * i.getName()); }
-				 */
 
 				/* ToanNguyen 2018-Sep-02 IFS-1056 */
 				if (lin.size() > 0) {
 					err = ZValid.appliedInvoices(lin, i);
 					errors = ZError.addError(errors, err, i.getName());
+
+					if (!err.isEmpty()) {
+						dto.setCreditValid(false);
+					}
 				} else {
 					// Credit Note - Invoice Number not found.
 					err = "CN1";
 					errors = ZError.addError(errors, err, i.getName());
+					if (!err.isEmpty()) {
+						dto.setCreditValid(false);
+					}
 				}
 			}
 		}
+
+		dto.setErrors(errors);
+		res.setResult(dto);
 
 		return res;
 	}
@@ -885,7 +933,7 @@ public class FileController {
 	 * @param acceptanceDate
 	 * @return
 	 */
-	private boolean createSchedule(ExcelDto o, Float sequence, Date acceptanceDate) {
+	private boolean createSchedule(ExcelDto o, Double sequence, Date acceptanceDate) {
 		boolean res = true;
 
 		try {
@@ -898,7 +946,7 @@ public class FileController {
 			ScheduleOfOffer m = new ScheduleOfOffer();
 			m.setDocumentType(type);
 			m.setScheduleNo(o.getScheduleNo());
-			m.setSequence(sequence);
+			m.setSequence(sequence.floatValue());
 			m.setAcceptanceDate(acceptanceDate);
 			m.setOriginalAcceptanceDate(acceptanceDate);
 			m.setFactorCode(o.getFactorCode());
@@ -951,7 +999,7 @@ public class FileController {
 
 			for (LineItemDto i : l) {
 				Invoice m = new Invoice();
-				m.setScheduleOfOffer(m.getSfid());
+				m.setScheduleOfOffer(m.getSfId());
 				m.setDocumentType(m.getDocumentType());
 				m.setRecordTypeId(dto.getSfId());
 				m.setClientName("x");
@@ -967,10 +1015,8 @@ public class FileController {
 				m.setCustomerBranch(i.getBranch());
 				m.setName(i.getNo());
 				m.setInvoiceDate(i.getItemDate());
-				String amount = i.getAmount().replaceAll("[^.\\d]", "");
-				m.setInvoiceAmount(Float.parseFloat(amount));
-				amount = i.getPeriod().replaceAll("[^.\\d]", "");
-				m.setCreditPeriod(Integer.parseInt(amount));
+				m.setInvoiceAmount(i.getAmount().floatValue());
+				m.setCreditPeriod(i.getPeriod().floatValue());
 				m.setPo(i.getPo());
 				i.setContract(i.getContract());
 
@@ -1005,7 +1051,7 @@ public class FileController {
 		try {
 			for (LineItemDto i : l) {
 				CreditNote m = new CreditNote();
-				m.setScheduleOfOffer(m.getSfid());
+				m.setScheduleOfOffer(m.getSfId());
 				// m.setDocumentType("x");
 				// m.setRecordTypeId("x");
 				m.setClient("x");
@@ -1020,8 +1066,7 @@ public class FileController {
 				m.setCustomerBranch(i.getBranch());
 				m.setName(i.getNo());
 				m.setCreditNoteDate(i.getItemDate());
-				String amount = i.getAmount().replaceAll("[^.\\d]", "");
-				m.setCreditAmount(Float.parseFloat(amount));
+				m.setCreditAmount(i.getAmount().floatValue());
 				m.setAppliedInvoice(m.getAppliedInvoice());
 
 				creditNoteService.create(m);

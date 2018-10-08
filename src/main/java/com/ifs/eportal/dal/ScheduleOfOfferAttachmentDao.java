@@ -237,7 +237,7 @@ public class ScheduleOfOfferAttachmentDao implements Repository<ScheduleOfOfferA
 		// Where
 		String where = "";
 		if (!scheduleOfOffer.isEmpty()) {
-			where += " AND a.schedule_of_offer__c = :scheduleOfOffer";
+			where += " AND a.schedule_of_offer__c = :scheduleOfOffer AND a.isdeleted = FALSE AND a.isactive__c = TRUE";
 		}
 		// Replace first
 		if (!where.isEmpty()) {

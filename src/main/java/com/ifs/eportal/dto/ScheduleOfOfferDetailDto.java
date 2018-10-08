@@ -47,9 +47,14 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 	@JsonProperty(value = "documentType")
 	private String documentType;
 
+	@JsonProperty(value = "portalStatus")
+	private String portalStatus;
+
 	List<SOCreditNoteDto> lstCreditNote;
 
 	List<SOInvoiceDto> lstInvoice;
+
+	List<AttachmentDto> lstAttachment;
 
 	// end
 
@@ -143,6 +148,14 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 		this.documentType = documentType;
 	}
 
+	public String getPortalStatus() {
+		return portalStatus;
+	}
+
+	public void setPortalStatus(String portalStatus) {
+		this.portalStatus = portalStatus;
+	}
+
 	public List<SOCreditNoteDto> getLstCreditNote() {
 		return lstCreditNote;
 	}
@@ -157,6 +170,14 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 
 	public void setLstInvoice(List<SOInvoiceDto> lstInvoice) {
 		this.lstInvoice = lstInvoice;
+	}
+
+	public List<AttachmentDto> getLstAttachment() {
+		return lstAttachment;
+	}
+
+	public void setLstAttachment(List<AttachmentDto> lstAttachment) {
+		this.lstAttachment = lstAttachment;
 	}
 
 	// end
@@ -179,6 +200,7 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 		clientName = "";
 		currencyIsoCode = "";
 		clientAccount = "";
+		portalStatus = "";
 	}
 
 	/**
@@ -187,7 +209,8 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 	 * @param o
 	 * @return
 	 */
-	public static ScheduleOfOfferDetailDto convert(Object[] o, List<Object[]> lc, List<Object[]> li) {
+	public static ScheduleOfOfferDetailDto convert(Object[] o, List<Object[]> lc, List<Object[]> li,
+			List<Object[]> la) {
 		ScheduleOfOfferDetailDto res = new ScheduleOfOfferDetailDto();
 
 		res.setId((Integer) o[0]);
@@ -204,8 +227,10 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 		res.setCurrencyIsoCode((String) o[10]);
 		res.setClientAccount((String) o[11]);
 		res.setDocumentType((String) o[12]);
+		res.setPortalStatus((String) o[13]);
 		res.setLstCreditNote(SOCreditNoteDto.convert(lc));
 		res.setLstInvoice(SOInvoiceDto.convert(li));
+		res.setLstAttachment(AttachmentDto.convert(la));
 
 		return res;
 	}
@@ -220,7 +245,7 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 		List<ScheduleOfOfferDetailDto> res = new ArrayList<ScheduleOfOfferDetailDto>();
 
 		for (Object[] o : l) {
-			res.add(convert(o, null, null));
+			res.add(convert(o, null, null, null));
 		}
 
 		return res;

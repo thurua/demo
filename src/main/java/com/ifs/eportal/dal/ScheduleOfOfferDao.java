@@ -157,8 +157,17 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 			q.setParameter("sfId", sfId);
 			List<Object[]> li = q.getResultList();
 
+			// Attachment
+			sql = ZFile.read(_path + "detail_attachment.sql");
+			sql += " WHERE a.schedule_of_offer__c = :sfId AND a.isdeleted = FALSE AND a.isactive__c = TRUE";
+
+			// Execute
+			q = _em.createNativeQuery(sql);
+			q.setParameter("sfId", sfId);
+			List<Object[]> la = q.getResultList();
+
 			// Convert
-			res = ScheduleOfOfferDetailDto.convert(t, lc, li);
+			res = ScheduleOfOfferDetailDto.convert(t, lc, li, la);
 		} catch (Exception ex) {
 			if (Utils.printStackTrace) {
 				ex.printStackTrace();

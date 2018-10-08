@@ -82,10 +82,10 @@ public class CreditNoteService {
 	 * @param sfId
 	 * @return
 	 */
-//	public CreditNoteDto read(String sfId) {
-//		CreditNoteDto res = _creditNoteDao.getBy(sfId);
-//		return res;
-//	}
+	public CreditNoteDto read(String sfId) {
+		CreditNoteDto res = _creditNoteDao.getBy(sfId);
+		return res;
+	}
 
 	/**
 	 * Read by
@@ -97,6 +97,16 @@ public class CreditNoteService {
 	public CreditNoteDto read(String scheduleNo, String clientName) {
 		CreditNoteDto res = _creditNoteDao.getBy(scheduleNo, clientName);
 		return res;
+	}
+
+	/**
+	 * Read by
+	 * 
+	 * @param req
+	 * @return
+	 */
+	public List<CreditNoteDto> read(PagingReq req) {
+		return _creditNoteDao.search(req);
 	}
 
 	/**

@@ -1,5 +1,4 @@
 <div class="card header-margin">
-
     <div class="card-body">
         <div class="row">
             <div class="col-md-6">
@@ -42,7 +41,7 @@
                         <strong>Status</strong>
                     </div>
                     <div class="col-md-8">
-                        <label class="col-form-label">{{entity.scheduleStatus}}</label>
+                        <label class="col-form-label">{{entity.portalStatus}}</label>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -139,9 +138,10 @@
                 </form>
             </tab>
             <tab heading="Invoice Listing" *ngIf="checkIv">
-                <div class="card header-margin" [hidden]="entity.documentType=='Cash Disbursement'">
+                <div class="card header-margin">
                     <div class="card-header">
-                        <strong>Invoice Listing</strong>
+                        <strong [hidden]="entity.documentType=='Cash Disbursement'">Invoice Listing</strong>
+                        <strong [hidden]="entity.documentType=='Invoice'">Cash Disbursment</strong>
                     </div>
                     <div class="card">
                         <div class="card-body">
@@ -149,22 +149,6 @@
                                 <div class="card-body pt-0 widget-body">
                                     <div class="table-responsive">
                                         <ng2-smart-table class="table table-hover" [settings]="settingsIv" [source]="ivList"></ng2-smart-table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card header-margin" [hidden]="entity.documentType=='Invoice'">
-                    <div class="card-header">
-                        <strong>Cash Disbursment</strong>
-                    </div>
-                    <div class="card">
-                        <div class="card-body">
-                            <div widget class="card border-0 box-shadow">
-                                <div class="card-body pt-0 widget-body">
-                                    <div class="table-responsive">
-                                        <ng2-smart-table class="table table-hover" [settings]="settingsCas" [source]="csList"></ng2-smart-table>
                                     </div>
                                 </div>
                             </div>
@@ -216,22 +200,8 @@
                         <div class="form-group row">
                             <div class="col-md-6">
                                 <div class="input-group file-upload">
-
-                                    <div class="drop-container" ngFileDrop [options]="options" (uploadOutput)="onUploadOutput($event)" [uploadInput]="uploadInput" [ngClass]="{ 'is-drop-over': dragOver }">
-                                        <h1>Drag &amp; Drop</h1>
-                                    </div>
-
-                                    <label class="upload-button">
-                                        <input type="file" ngFileSelect [options]="options" (uploadOutput)="onUploadOutput($event)" [uploadInput]="uploadInput" multiple>
-                                        or choose file(s)
-                                      </label>
-
-                                    <button type="button" class="start-upload-btn" (click)="startUpload()">
-                                        Start Upload
-                                      </button>
-
-                                    <input type="file" ng2FileSelect [uploader]="uploader" (change)="fileChangeEvent($event)" class="file-upload-btn" />
-                                    <input type="text" class="form-control" placeholder="Choose a file..." value="{{(file !=null)? file.name :'' }}">
+                                    <input type="file" ngFileSelect [options]="options" (uploadOutput)="onUploadOutput($event)" [uploadInput]="uploadInput" accept=".pdf,.tiff,.jpeg,.gif,.png" multiple class="file-upload-btn">
+                                    <input type="text" class="form-control" placeholder="Choose file..." value="{{(file !=null)? file.name :'' }}">
                                     <i class="fa fa-times delete-file" (click)="removeFile()" *ngIf="file"></i>
                                     <span class="input-group-append upload">
                                                 <button class="btn btn-primary" type="button"><i class="fa fa-upload"> </i></button>
@@ -245,9 +215,20 @@
                         <div class="row">
                             <div class="col-md-6"></div>
                             <div class="col-md-4">
-                                <button class="btn btn-primary btn-block" type="button" (click)="UpdateFile()">Upload</button>
+                                <button class="btn btn-primary btn-block" type="button" (click)="startUpload()">Upload</button>
                             </div>
                             <div class="col-md-2">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card col-md-12">
+                        <div class="card-body">
+                            <div widget class="card border-0 box-shadow">
+                                <div class="card-body pt-0 widget-body">
+                                    <div class="table-responsive">
+                                        <ng2-smart-table class="table table-hover" [settings]="settingsAtt" [source]="attList" (deleteConfirm)="onDelete($event)"></ng2-smart-table>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -288,6 +269,77 @@
                     <div class="col-md-6">
                         <button type="button" class="btn btn-primary btn-block" (click)="Authorise();authorsiedModal.hide();">Yes</button>
                     </div>
+                </div>
+                <div class="col-md-1">
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div bsModal #uploadModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Error</h4>
+                <button type="button" class="close" (click)="authorsiedModal.hide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body size-text-content-modal text-center">
+                <!-- <div class="form-group row">
+                    <div class="col-md-12">
+                        <i class="fa fa-check-square-o icon-check-square"></i>
+                    </div>
+                </div> -->
+                <div class="form-group row">
+                    <div class="col-md-12 text-bold">
+                        <span>{{mesErr}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-1">
+                </div>
+                <div class="col-md-10 row">
+                    <button type="button" class="btn btn-primary btn-block" (click)="uploadModal.hide();">OK</button>
+                </div>
+                <div class="col-md-1">
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<div bsModal #infoModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>{{title}}</h4>
+                <button type="button" class="close" (click)="infoModal.hide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body size-text-content-modal text-center">
+                <div class="form-group row">
+                    <div class="col-md-12">
+                        <i class="fa fa-check-square-o icon-check-square"></i>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-12 text-bold">
+                        <span>{{msgInfo}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-1">
+                </div>
+                <div class="col-md-10">
+                    <button type="button" class="btn btn-success btn-block text-bold" (click)="infoModal.hide()">OK</button>
                 </div>
                 <div class="col-md-1">
                 </div>

@@ -78,15 +78,15 @@ public class InvoiceController {
 
 		try {
 			// Handle
-			List<InvoiceDto> tmp;
-			tmp = invoiceService.search(req);
+			List<InvoiceDto> t;
+			t = invoiceService.search(req);
 
 			// Set data
 			Map<String, Object> data = new LinkedHashMap<>();
 			data.put("page", req.getPage());
 			data.put("size", req.getSize());
 			data.put("total", req.getTotal());
-			data.put("data", tmp);
+			data.put("data", t);
 
 			res.setResult(data);
 		} catch (Exception ex) {

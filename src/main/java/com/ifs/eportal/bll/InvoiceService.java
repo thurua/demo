@@ -64,7 +64,8 @@ public class InvoiceService {
 	 * @return
 	 */
 	public List<InvoiceDto> search(PagingReq req) {
-		return invoiceDao.search(req);
+		List<InvoiceDto> res = invoiceDao.search(req);
+		return res;
 	}
 
 	/**

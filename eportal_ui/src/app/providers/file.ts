@@ -39,4 +39,13 @@ export class FileProvider {
         f.append('req', data);
         return this.api.upload('file/call', f);
     }
+
+    /**
+     * delete
+     * @param info
+     */
+    public delete(info: any) {
+        return this.api.post('schedule-of-offer-attachment/delete', info);
+    }
+
 }

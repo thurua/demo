@@ -14,12 +14,12 @@ import javax.persistence.TemporalType;
 
 /**
  * 
- * @author ToanNguyen 2018-Oct-03
+ * @author ToanNguyen 2018-Oct-08 (verified)
  *
  */
 @Entity
 @Table(name = "portal_user__c", schema = "salesforce")
-public class PortalUser {
+public class PortalUser extends BaseModel {
 	// region -- Fields --
 
 	@Id
@@ -54,13 +54,6 @@ public class PortalUser {
 	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "lastmodifieddate")
 	private Date lastModifiedDate;
 
-	@Column(columnDefinition = "bool", name = "isdeleted")
-	private boolean isDeleted;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "systemmodstamp")
-	private Date systemModStamp;
-
 	@Column(columnDefinition = "varchar(18)", name = "lastmodifiedbyid")
 	private String lastModifiedById;
 
@@ -73,16 +66,12 @@ public class PortalUser {
 	@Column(columnDefinition = "varchar(80)", name = "user_id__c")
 	private String userId;
 
-	@Column(columnDefinition = "float", name = "external_id__c")
+	@Column(columnDefinition = "float(8)", name = "external_id__c")
 	private Float externalId;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "activated_on__c")
 	private Date activatedOn;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "createddate")
-	private Date createdDate;
 
 	@Column(columnDefinition = "varchar(18)", name = "client__c")
 	private String client;
@@ -92,15 +81,6 @@ public class PortalUser {
 
 	@Column(columnDefinition = "bool", name = "active__c")
 	private boolean active;
-
-	@Column(columnDefinition = "varchar(18)", name = "sfid")
-	private String sfid;
-
-	@Column(columnDefinition = "varchar(32)", name = "_hc_lastop")
-	private String hcLastop;
-
-	@Column(columnDefinition = "text", name = "_hc_err")
-	private String hcErr;
 
 	@Column(columnDefinition = "bool", name = "is_resend__c")
 	private boolean isResend;
@@ -184,22 +164,6 @@ public class PortalUser {
 		this.lastModifiedDate = lastModifiedDate;
 	}
 
-	public boolean isDeleted() {
-		return isDeleted;
-	}
-
-	public void setDeleted(boolean isDeleted) {
-		this.isDeleted = isDeleted;
-	}
-
-	public Date getSystemModStamp() {
-		return systemModStamp;
-	}
-
-	public void setSystemModStamp(Date systemModStamp) {
-		this.systemModStamp = systemModStamp;
-	}
-
 	public String getLastModifiedById() {
 		return lastModifiedById;
 	}
@@ -248,14 +212,6 @@ public class PortalUser {
 		this.activatedOn = activatedOn;
 	}
 
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
 	public String getClient() {
 		return client;
 	}
@@ -280,30 +236,6 @@ public class PortalUser {
 		this.active = active;
 	}
 
-	public String getSfid() {
-		return sfid;
-	}
-
-	public void setSfid(String sfid) {
-		this.sfid = sfid;
-	}
-
-	public String getHcLastop() {
-		return hcLastop;
-	}
-
-	public void setHcLastop(String hcLastop) {
-		this.hcLastop = hcLastop;
-	}
-
-	public String getHcErr() {
-		return hcErr;
-	}
-
-	public void setHcErr(String hcErr) {
-		this.hcErr = hcErr;
-	}
-
 	public boolean isResend() {
 		return isResend;
 	}
@@ -324,8 +256,11 @@ public class PortalUser {
 
 	// region -- Methods --
 
+	/**
+	 * Initialize
+	 */
 	public PortalUser() {
-
+		super();
 	}
 
 	// end

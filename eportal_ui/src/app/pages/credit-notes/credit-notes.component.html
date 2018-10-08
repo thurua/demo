@@ -39,7 +39,7 @@
                     </div>
                     <div class="col-md-9">
                         <select name="clientAccount" #clientAccount="ngModel" [(ngModel)]="clientAccountId" class="form-control">
-                          <option *ngFor="let i of lstCA" value="{{i.code}}">{{i.clientAccount}}</option>
+                          <option *ngFor="let i of lstCA" value="{{i.sfId}}">{{i.clientAccount}}</option>
                       </select>
                     </div>
                 </div>
@@ -48,8 +48,8 @@
                         <strong>Customer</strong>
                     </div>
                     <div class="col-md-9">
-                        <select name="customer" #customer="ngModel" [(ngModel)]="customerId" class="form-control">
-                          <option *ngFor="let i of lstCustomer" value="{{i.code}}">{{i.customer}}</option>
+                        <select name="accountName" #accountName="ngModel" [(ngModel)]="customerId" class="form-control">
+                          <option *ngFor="let i of lstCustomer" value="{{i.code}}">{{i.accountName}}</option>
                       </select>
                     </div>
                 </div>
@@ -68,7 +68,7 @@
                                 <strong>SO Created Date From</strong>
                             </div>
                             <div class="col-md-6 inputDateFrom">
-                                <input type="date" id="toDate" name="{{toDate}}" value="{{ toDate | date:'yyyy-MM-dd' }}" max="{{ maxDate | date:'yyyy-MM-dd' }}" class="form-control">
+                                <input type="text" class="form-control" [minDate]="minDate" bsDatepicker [(bsValue)]="fromDate" value="{{ fromDate | date:'dd-MMM-yyyy' }}">
                             </div>
                         </div>
                     </div>
@@ -78,7 +78,7 @@
                                 <strong>To</strong>
                             </div>
                             <div class="col-md-9">
-                                <input type="date" id="toDate" name="{{toDate}}" value="{{ toDate | date:'yyyy-MM-dd' }}" max="{{ maxDate | date:'yyyy-MM-dd' }}" class="form-control">
+                                <input type="text" class="form-control" [minDate]="minDate" bsDatepicker [(bsValue)]="toDate" value="{{ toDate | date:'dd-MMM-yyyy' }}">
                             </div>
                         </div>
                     </div>
@@ -89,7 +89,7 @@
             <div class="col-md-4">
             </div>
             <div class="col-md-8">
-                <button class="btn btn-success" type="button" (click)="searchClick(0)">Search</button> &nbsp;
+                <button class="btn btn-primary" type="button" (click)="searchClick(1)">Search</button> &nbsp;
                 <button class="btn btn-gray" type="button" (click)="resetClick()">Reset</button>
             </div>
         </div>
@@ -104,5 +104,18 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div _ngcontent-c32="" _nghost-c34="" class="ng-star-inserted" style="padding: 1.25rem;" [hidden]="data.length==0">
+        <nav _ngcontent-c34="" class="ng2-smart-pagination-nav ng-star-inserted">
+            <ul _ngcontent-c34="" class="ng2-smart-pagination pagination">
+                <li _ngcontent-c34="" [ngClass]="{'disabled': pager.currentPage === 1}" class="ng2-smart-page-item page-item disabled"><a _ngcontent-c34="" aria-label="First" class="ng2-smart-page-link page-link" (click)="searchClick(1)"><span _ngcontent-c34="" aria-hidden="true">«</span><span _ngcontent-c34="" class="sr-only">First</span></a></li>
+                <li [ngClass]="{disabled:pager.currentPage === 1}" _ngcontent-c34="" class="ng2-smart-page-item page-item"><a _ngcontent-c34="" aria-label="Prev" class="ng2-smart-page-link page-link page-link-prev" (click)="searchClick(pager.currentPage - 1)"><span _ngcontent-c34="" aria-hidden="true">&lt;</span><span _ngcontent-c34="" class="sr-only">Prev</span></a></li>
+                <li _ngcontent-c34="" *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage === page}" class="ng2-smart-page-item page-item ng-star-inserted" (click)="searchClick(page)">
+                    <span _ngcontent-c34="" class="ng2-smart-page-link page-link ng-star-inserted">{{page}}<span _ngcontent-c34="" class="sr-only">(current)</span></span>
+                </li>
+                <li _ngcontent-c34="" [ngClass]="{disabled:pager.currentPage === pager.totalPages}" class="ng2-smart-page-item page-item"><a _ngcontent-c34="" aria-label="Next" class="ng2-smart-page-link page-link page-link-next" (click)="searchClick(pager.currentPage + 1)"><span _ngcontent-c34="" aria-hidden="true">&gt;</span><span _ngcontent-c34="" class="sr-only">Next</span></a></li>
+                <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}" _ngcontent-c34="" class="ng2-smart-page-item page-item"><a _ngcontent-c34="" aria-label="Last" class="ng2-smart-page-link page-link" (click)="searchClick(pager.totalPages)"><span _ngcontent-c34="" aria-hidden="true">»</span><span _ngcontent-c34="" class="sr-only">Last</span></a></li>
+            </ul>
+        </nav>
     </div>
 </div>

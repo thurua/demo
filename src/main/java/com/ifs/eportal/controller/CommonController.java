@@ -24,10 +24,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ifs.eportal.bll.AccountService;
 import com.ifs.eportal.bll.ClientAccountService;
 import com.ifs.eportal.bll.CodeService;
+import com.ifs.eportal.bll.CreditNoteService;
 import com.ifs.eportal.common.RsaService;
 import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.dto.AccountDto;
 import com.ifs.eportal.dto.ClientAccountDto;
+import com.ifs.eportal.dto.CreditNoteDto;
 import com.ifs.eportal.dto.TokenDto;
 import com.ifs.eportal.model.Code;
 import com.ifs.eportal.req.BaseReq;
@@ -50,6 +52,9 @@ public class CommonController {
 
 	@Autowired
 	private ClientAccountService clientAccountService;
+
+	@Autowired
+	private CreditNoteService creditNoteService;
 
 	@Autowired
 	private CodeService codeService;
@@ -104,6 +109,37 @@ public class CommonController {
 		try {
 			// Handle
 			List<ClientAccountDto> l = clientAccountService.read(req);
+
+			// Set data
+			Map<String, Object> data = new LinkedHashMap<>();
+			data.put("count", l.size());
+			data.put("data", l);
+			res.setResult(data);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
+	/**
+	 * Search client account
+	 * 
+	 * @param req
+	 * @return
+	 */
+	@PostMapping("/search-customer")
+	public ResponseEntity<?> searchCustomer(@RequestBody PagingReq req) {
+		MultipleRsp res = new MultipleRsp();
+
+		try {
+			// Handle
+			List<CreditNoteDto> l = creditNoteService.read(req);
 
 			// Set data
 			Map<String, Object> data = new LinkedHashMap<>();

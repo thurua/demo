@@ -12,9 +12,14 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Oct-08 (verified)
+ *
+ */
 @Entity
 @Table(name = "client_account__c", schema = "salesforce")
-public class ClientAccount {
+public class ClientAccount extends BaseModel {
 	// region -- Fields --
 
 	@Id
@@ -26,24 +31,17 @@ public class ClientAccount {
 	@Column(columnDefinition = "varchar(18)", name = "fci_country__c")
 	private String fciCountry;
 
-	@Column(columnDefinition = "float", name = "verification_exceeding_invoice_amount__c")
-	private String verificationExceedingInvoiceAmount;
+	@Column(columnDefinition = "float(8)", name = "verification_exceeding_invoice_amount__c")
+	private Float verificationExceedingInvoiceAmount;
 
-	@Column(columnDefinition = "float", name = "verification__c")
-	private String verification;
+	@Column(columnDefinition = "float(8)", name = "verification__c")
+	private Float verification;
 
 	@Column(columnDefinition = "varchar(255)", name = "client_account__c")
 	private String clientAccount;
 
-	@Column(columnDefinition = "varchar(255)", name = "name")
+	@Column(columnDefinition = "varchar(80)", name = "name")
 	private String name;
-
-	@Column(columnDefinition = "bool", name = "isdeleted")
-	private boolean isDeleted;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "systemmodstamp")
-	private Date systemModStamp;
 
 	@Column(columnDefinition = "varchar(255)", name = "status__c")
 	private String status;
@@ -51,10 +49,6 @@ public class ClientAccount {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "activated_on__c")
 	private Date activatedOn;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "createddate")
-	private Date createdDate;
 
 	@Column(columnDefinition = "varchar(255)", name = "account_type__c")
 	private String accountType;
@@ -67,15 +61,6 @@ public class ClientAccount {
 
 	@Column(columnDefinition = "varchar(255)", name = "program_name__c")
 	private String programName;
-
-	@Column(columnDefinition = "varchar(18)", name = "sfid")
-	private String sfid;
-
-	@Column(columnDefinition = "varchar(32)", name = "_hc_lastop")
-	private String hcLastop;
-
-	@Column(columnDefinition = "text", name = "_hc_err")
-	private String hcErr;
 
 	@Column(columnDefinition = "varchar(18)", name = "recordtypeid")
 	private String recordTypeId;
@@ -100,19 +85,19 @@ public class ClientAccount {
 		this.fciCountry = fciCountry;
 	}
 
-	public String getVerificationExceedingInvoiceAmount() {
+	public Float getVerificationExceedingInvoiceAmount() {
 		return verificationExceedingInvoiceAmount;
 	}
 
-	public void setVerificationExceedingInvoiceAmount(String verificationExceedingInvoiceAmount) {
+	public void setVerificationExceedingInvoiceAmount(Float verificationExceedingInvoiceAmount) {
 		this.verificationExceedingInvoiceAmount = verificationExceedingInvoiceAmount;
 	}
 
-	public String getVerification() {
+	public Float getVerification() {
 		return verification;
 	}
 
-	public void setVerification(String verification) {
+	public void setVerification(Float verification) {
 		this.verification = verification;
 	}
 
@@ -132,22 +117,6 @@ public class ClientAccount {
 		this.name = name;
 	}
 
-	public boolean isDeleted() {
-		return isDeleted;
-	}
-
-	public void setDeleted(boolean isDeleted) {
-		this.isDeleted = isDeleted;
-	}
-
-	public Date getSystemModStamp() {
-		return systemModStamp;
-	}
-
-	public void setSystemModStamp(Date systemModStamp) {
-		this.systemModStamp = systemModStamp;
-	}
-
 	public String getStatus() {
 		return status;
 	}
@@ -162,14 +131,6 @@ public class ClientAccount {
 
 	public void setActivatedOn(Date activatedOn) {
 		this.activatedOn = activatedOn;
-	}
-
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
 	}
 
 	public String getAccountType() {
@@ -204,30 +165,6 @@ public class ClientAccount {
 		this.programName = programName;
 	}
 
-	public String getSfid() {
-		return sfid;
-	}
-
-	public void setSfid(String sfid) {
-		this.sfid = sfid;
-	}
-
-	public String getHcLastop() {
-		return hcLastop;
-	}
-
-	public void setHcLastop(String hcLastop) {
-		this.hcLastop = hcLastop;
-	}
-
-	public String getHcErr() {
-		return hcErr;
-	}
-
-	public void setHcErr(String hcErr) {
-		this.hcErr = hcErr;
-	}
-
 	public String getRecordTypeId() {
 		return recordTypeId;
 	}
@@ -240,8 +177,11 @@ public class ClientAccount {
 
 	// region -- Methods --
 
+	/**
+	 * Initialize
+	 */
 	public ClientAccount() {
-
+		super();
 	}
 
 	// end

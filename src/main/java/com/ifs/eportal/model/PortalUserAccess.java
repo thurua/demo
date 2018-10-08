@@ -12,9 +12,14 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Oct-08 (verified)
+ *
+ */
 @Entity
 @Table(name = "portal_user_access__c", schema = "salesforce")
-public class PortalUserAccess {
+public class PortalUserAccess extends BaseModel {
 	// region -- Fields --
 
 	@Id
@@ -34,23 +39,12 @@ public class PortalUserAccess {
 	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "logout_on__c")
 	private Date logoutOn;
 
-	@Column(columnDefinition = "bool", name = "isdeleted")
-	private boolean isDeleted;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "systemmodstamp")
-	private Date systemModStamp;
-
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "last_access_on__c")
 	private Date lastAccessOn;
 
-	@Column(columnDefinition = "float", name = "external_id__c")
-	private float externalId;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "createddate")
-	private Date createdDate;
+	@Column(columnDefinition = "float(8)", name = "external_id__c")
+	private Float externalId;
 
 	@Column(columnDefinition = "varchar(18)", name = "user__c")
 	private String user;
@@ -62,14 +56,8 @@ public class PortalUserAccess {
 	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "otp_expire_on__c")
 	private Date otpExpireOn;
 
-	@Column(columnDefinition = "varchar(18)", name = "sfid")
-	private String sfid;
-
-	@Column(columnDefinition = "varchar(32)", name = "_hc_lastop")
-	private String hcLastop;
-
-	@Column(columnDefinition = "text", name = "_hc_err")
-	private String hcErr;
+	@Column(columnDefinition = "varchar(100)", name = "uuid__c")
+	private String uuId;
 
 	// end
 
@@ -107,22 +95,6 @@ public class PortalUserAccess {
 		this.logoutOn = logoutOn;
 	}
 
-	public boolean isDeleted() {
-		return isDeleted;
-	}
-
-	public void setDeleted(boolean isDeleted) {
-		this.isDeleted = isDeleted;
-	}
-
-	public Date getSystemModStamp() {
-		return systemModStamp;
-	}
-
-	public void setSystemModStamp(Date systemModStamp) {
-		this.systemModStamp = systemModStamp;
-	}
-
 	public Date getLastAccessOn() {
 		return lastAccessOn;
 	}
@@ -131,20 +103,12 @@ public class PortalUserAccess {
 		this.lastAccessOn = lastAccessOn;
 	}
 
-	public float getExternalId() {
+	public Float getExternalId() {
 		return externalId;
 	}
 
-	public void setExternalId(float externalId) {
+	public void setExternalId(Float externalId) {
 		this.externalId = externalId;
-	}
-
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
 	}
 
 	public String getUser() {
@@ -171,36 +135,23 @@ public class PortalUserAccess {
 		this.otpExpireOn = otpExpireOn;
 	}
 
-	public String getSfid() {
-		return sfid;
+	public String getUuId() {
+		return uuId;
 	}
 
-	public void setSfid(String sfid) {
-		this.sfid = sfid;
-	}
-
-	public String getHcLastop() {
-		return hcLastop;
-	}
-
-	public void setHcLastop(String hcLastop) {
-		this.hcLastop = hcLastop;
-	}
-
-	public String getHcErr() {
-		return hcErr;
-	}
-
-	public void setHcErr(String hcErr) {
-		this.hcErr = hcErr;
+	public void setUuId(String uuId) {
+		this.uuId = uuId;
 	}
 
 	// end
 
 	// region -- Methods --
 
+	/**
+	 * Initialize
+	 */
 	public PortalUserAccess() {
-
+		super();
 	}
 
 	// end

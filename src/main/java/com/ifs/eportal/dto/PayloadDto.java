@@ -44,6 +44,9 @@ public class PayloadDto extends BaseDto {
 	@JsonProperty(value = "accessRights")
 	private List<String> accessRights;
 
+	@JsonProperty(value = "uuId")
+	private String uuId;
+
 	// end
 
 	// region -- Get set --
@@ -120,6 +123,14 @@ public class PayloadDto extends BaseDto {
 		this.accessRights = accessRights;
 	}
 
+	public String getUuId() {
+		return uuId;
+	}
+
+	public void setUuId(String uuId) {
+		this.uuId = uuId;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -165,6 +176,8 @@ public class PayloadDto extends BaseDto {
 		List<String> t;
 		t = Arrays.asList(o.getAccessRights().split(";"));
 		res.setAccessRights(t);
+
+		res.setUuId(o.getUuId());
 
 		return res;
 	}

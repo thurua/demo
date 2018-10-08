@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ifs.eportal.bll.ScheduleOfOfferService;
+import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.dto.PayloadDto;
 import com.ifs.eportal.dto.ScheduleOfOfferDetailDto;
 import com.ifs.eportal.dto.ScheduleOfOfferDto;
 import com.ifs.eportal.model.ScheduleOfOffer;
@@ -107,8 +109,10 @@ public class ScheduleOfOfferController {
 		BaseRsp res = new BaseRsp();
 
 		try {
-
-			scheduleOfOfferService.update(req);
+			// Get data
+			PayloadDto pl = Utils.getTokenInfor(header);
+			String sfId = pl.getSfId();
+			scheduleOfOfferService.update(sfId, req);
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}

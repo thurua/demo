@@ -14,12 +14,12 @@ import javax.persistence.TemporalType;
 
 /**
  * 
- * @author ToanNguyen 2018-Oct-04 (verified)
+ * @author ToanNguyen 2018-Oct-08 (verified)
  *
  */
 @Entity
 @Table(name = "schedule_of_offer_attachment__c", schema = "salesforce")
-public class ScheduleOfOfferAttachment {
+public class ScheduleOfOfferAttachment extends BaseModel {
 	// region -- Fields --
 
 	@Id
@@ -44,15 +44,8 @@ public class ScheduleOfOfferAttachment {
 	@Column(columnDefinition = "varchar(18)", name = "uploaded_by__c")
 	private String uploadedBy;
 
-	@Column(columnDefinition = "bool", name = "isdeleted")
-	private boolean isDeleted;
-
 	@Column(columnDefinition = "varchar(50)", name = "contenttype__c")
 	private String contentType;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "systemmodstamp")
-	private Date systemModStamp;
 
 	@Column(columnDefinition = "bool", name = "isactive__c")
 	private boolean isActive;
@@ -60,24 +53,11 @@ public class ScheduleOfOfferAttachment {
 	@Column(columnDefinition = "varchar(50)", name = "external_id__c")
 	private String externalId;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "createddate")
-	private Date createdDate;
-
 	@Column(columnDefinition = "varchar(255)", name = "file_path__c")
 	private String filePath;
 
 	@Column(columnDefinition = "float(8)", name = "file_size__c")
 	private Float fileSize;
-
-	@Column(columnDefinition = "varchar(18)", name = "sfid")
-	private String sfId;
-
-	@Column(columnDefinition = "varchar(32)", name = "_hc_lastop")
-	private String hcLastop;
-
-	@Column(columnDefinition = "text", name = "_hc_err")
-	private String hcErr;
 
 	@Column(columnDefinition = "varchar(18)", name = "schedule_of_offer__c")
 	private String scheduleOfOffer;
@@ -134,28 +114,12 @@ public class ScheduleOfOfferAttachment {
 		this.uploadedBy = uploadedBy;
 	}
 
-	public boolean isDeleted() {
-		return isDeleted;
-	}
-
-	public void setDeleted(boolean isDeleted) {
-		this.isDeleted = isDeleted;
-	}
-
 	public String getContentType() {
 		return contentType;
 	}
 
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
-	}
-
-	public Date getSystemModStamp() {
-		return systemModStamp;
-	}
-
-	public void setSystemModStamp(Date systemModStamp) {
-		this.systemModStamp = systemModStamp;
 	}
 
 	public boolean isActive() {
@@ -174,14 +138,6 @@ public class ScheduleOfOfferAttachment {
 		this.externalId = externalId;
 	}
 
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
 	public String getFilePath() {
 		return filePath;
 	}
@@ -198,30 +154,6 @@ public class ScheduleOfOfferAttachment {
 		this.fileSize = fileSize;
 	}
 
-	public String getSfId() {
-		return sfId;
-	}
-
-	public void setSfId(String sfId) {
-		this.sfId = sfId;
-	}
-
-	public String getHcLastop() {
-		return hcLastop;
-	}
-
-	public void setHcLastop(String hcLastop) {
-		this.hcLastop = hcLastop;
-	}
-
-	public String getHcErr() {
-		return hcErr;
-	}
-
-	public void setHcErr(String hcErr) {
-		this.hcErr = hcErr;
-	}
-
 	public String getScheduleOfOffer() {
 		return scheduleOfOffer;
 	}
@@ -234,8 +166,11 @@ public class ScheduleOfOfferAttachment {
 
 	// region -- Methods --
 
+	/**
+	 * Initialize
+	 */
 	public ScheduleOfOfferAttachment() {
-
+		super();
 	}
 
 	// end

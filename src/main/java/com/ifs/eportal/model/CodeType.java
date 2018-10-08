@@ -8,6 +8,11 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Oct-08 (verified)
+ *
+ */
 @Entity
 @Table(name = "code_type", schema = "public")
 public class CodeType {
@@ -68,6 +73,9 @@ public class CodeType {
 
 	// region -- Methods --
 
+	/**
+	 * Initialize
+	 */
 	public CodeType() {
 
 	}

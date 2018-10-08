@@ -33,13 +33,26 @@ public class PortalUserAccessService {
 	}
 
 	/**
-	 * Read by
+	 * Update
 	 * 
-	 * @param id
+	 * @param m
 	 * @return
 	 */
-	public PortalUserAccessDto read(int id) {
-		return portalUserAccessDao.getBy(id);
+	public PortalUserAccess update(PortalUserAccess m) {
+		PortalUserAccess res = portalUserAccessDao.update(m);
+		return res;
+	}
+
+	/**
+	 * Get by
+	 * 
+	 * @param user
+	 * @param uuid
+	 * @return
+	 */
+	public PortalUserAccess getBy(String user, String uuid) {
+		PortalUserAccess res = portalUserAccessDao.getBy(user, uuid);
+		return res;
 	}
 
 	/**

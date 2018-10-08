@@ -102,14 +102,14 @@ export class ScheduleComponent implements OnInit {
                 code: "",
                 value: "-- Please Select --"
             }, {
-                code: "PEND",
+                code: "Pending Authorization",
                 value: "Pending Authorization"
             }, {
-                code: "AUTH",
+                code: "Authorized",
                 value: "Authorized"
             }, {
-                code: "SUBM",
-                value: "Submitted"
+                code: "Accepted",
+                value: "Accepted"
             }]
         }
 
@@ -148,7 +148,6 @@ export class ScheduleComponent implements OnInit {
     public search(page: any) {
         let fr = this.fromDate == null ? null : this.fromDate.toISOString();
         let to = this.toDate == null ? null : this.toDate.toISOString();
-
         let x = {
             filter: {
                 client: this.clientId,
@@ -157,6 +156,7 @@ export class ScheduleComponent implements OnInit {
                 frCreatedDate: fr,
                 toCreatedDate: to
             },
+
             page: page,
             size: this.pageSize,
             sort: [
@@ -171,7 +171,6 @@ export class ScheduleComponent implements OnInit {
                 this.data = rsp.result.data;
                 this.total = rsp.result.total;
                 this.setPage(page);
-                console.log(rsp);
             }
         }, (err) => {
             console.log(err);
@@ -238,7 +237,6 @@ export class ScheduleComponent implements OnInit {
                 endPage = currentPage + 4;
             }
         }
-
         // calculate start and end item indexes
         let startIndex = (currentPage - 1) * pageSize;
         let endIndex = Math.min(startIndex + pageSize - 1, totalItems - 1);

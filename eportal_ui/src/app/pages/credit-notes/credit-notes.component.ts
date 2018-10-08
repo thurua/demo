@@ -6,12 +6,13 @@ import { Utils } from 'app/utilities/utils';
 @Component({
     selector: 'app-credit-notes',
     templateUrl: './credit-notes.component.html',
-    styleUrls: ['./credit-notes.component.scss'],
+    styleUrls: ['./credit-notes.component.scss',
+    '../../../scss/vendors/bs-datepicker/bs-datepicker.scss'],
     encapsulation: ViewEncapsulation.None
 })
 export class CreditNotesComponent implements OnInit {
     public portalStatus: string = "";
-    public customer: string = "";
+    public accountName: string = "";
     public clientId: string = "";
     public clientName: string = "";
     public pageSize = 5;
@@ -51,7 +52,7 @@ export class CreditNotesComponent implements OnInit {
                 filter: false,
                 type: 'html',
                 valuePrepareFunction: (cell, row) => {
-                    return `<a href="/#/pages/credit-notes-details/${row.id}">${row.name}</a>`
+                    return `<a href="/#/pages/credit-notes-details/${row.sfId}">${row.name}</a>`
                 },
             },
             scheduleNo: {
@@ -64,8 +65,8 @@ export class CreditNotesComponent implements OnInit {
                 type: 'string',
                 filter: false
             },
-            customer: {
-                title: 'Customer.',
+            accountName: {
+                title: 'Customer',
                 type: 'string',
                 filter: false
             },
@@ -83,6 +84,16 @@ export class CreditNotesComponent implements OnInit {
                 title: 'Status',
                 type: 'string',
                 filter: false
+            },
+            createdBy: {
+                title: 'Created By',
+                type: 'string',
+                filter: false
+            },
+            createdDateTime: {
+                title: 'Created Date / Time',
+                type: 'date',
+                filter: false
             }
         }
     };
@@ -99,30 +110,37 @@ export class CreditNotesComponent implements OnInit {
         this.toDate = this.utl.addMonths(this.toDate, -6);
 
         let user = JSON.parse(localStorage.getItem("CURRENT_TOKEN"));
+
+
         this.clientId = user.clientId;
         this.clientName = user.clientName;
-        this.customer = user.customerId;
+        // this.customer = user.accountName;
         this.searchCA();
+        this.searchCustomer();
 
         let tmpStatus = {
             dataS: [{
                 code: "",
                 value: "-- Please Select --"
             }, {
-                code: "1",
+                code: "Accepted",
                 value: "Accepted"
             }, {
-                code: "2",
+                code: "Rejected",
                 value: "Rejected"
             }, {
-                code: "3",
+                code: "Reassigned",
                 value: "Reassigned"
             }, {
-                code: "4",
+                code: "Reversed",
                 value: "Reversed"
             }]
         }
         this.lstStatus = tmpStatus.dataS;
+        
+        console.log(this.lstStatus);
+        
+
 
     }
 
@@ -133,6 +151,23 @@ export class CreditNotesComponent implements OnInit {
         this.scheduleNo = "";
         this.creditNoteNo = "";
         this.data = [];
+        // Reset Date
+        let d = new Date();
+        let d1 = this.utl.formatDate(this.utl.addMonths(d, -6), 'dd-MMM-yyyy');
+        let d2 = this.utl.formatDate(this.fromDate, 'dd-MMM-yyyy');
+        if (d1 != d2) {
+            d = new Date();
+            this.fromDate = this.utl.addMonths(d, -6);
+        }
+
+        d = new Date();
+        d1 = this.utl.formatDate(this.utl.addMonths(d, -6), 'dd-MMM-yyyy');
+        d2 = this.utl.formatDate(this.toDate, 'dd-MMM-yyyy');
+
+        if (d1 != d2) {
+            d = new Date();
+            this.toDate = this.utl.addMonths(d, -6);
+        }
     }
 
     // serach function
@@ -144,13 +179,16 @@ export class CreditNotesComponent implements OnInit {
     public search(page: any) {
         let fr = this.fromDate == null ? null : this.fromDate.toISOString();
         let to = this.toDate == null ? null : this.toDate.toISOString();
-        alert(this.clientId);
+        //alert(this.clientId);
 
         let x = {
             filter: {
                 client: this.clientId,
                 clientAccount: this.clientAccountId,
-                status: this.portalStatus
+                customer : this.customerId,
+                status: this.portalStatus,
+                frCreatedDate: fr,
+                toCreatedDate: to
             },
             page: page,
             size: this.pageSize,
@@ -161,11 +199,12 @@ export class CreditNotesComponent implements OnInit {
                 }
             ]
         }
+        
         this.pro.search(x).subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 this.data = rsp.result.data;
                 this.total = rsp.result.total;
-                //this.setPage(page);
+                this.setPage(page);
                 console.log(rsp);
             }
         }, (err) => {
@@ -179,6 +218,7 @@ export class CreditNotesComponent implements OnInit {
         this.pager = this.getPager(this.total, page, this.pageSize);
         this.pagedItems = this.data.slice(this.pager.startIndex, this.pager.endIndex + 1);
     }
+
     public searchCA() {
         let x = {
             filter: {
@@ -190,7 +230,7 @@ export class CreditNotesComponent implements OnInit {
 
         this.pro.searchCA(x).subscribe((rsp: any) => {
             let itemCA = {
-                sfId: "",
+                sfid: "",
                 clientAccount: "-- Please select --"
             }
             if (rsp.status === HTTP.STATUS_SUCCESS) {
@@ -204,6 +244,31 @@ export class CreditNotesComponent implements OnInit {
             console.log(err);
         });
     }
+    public searchCustomer() {
+        let x = {
+            filter: {
+                //client: this.clientId
+            },
+            page: 1,
+            size: 20
+        }
+        this.pro.searchCustomer(x).subscribe((rsp: any) => {
+            let itemCM = {
+                sfid: "",
+                accountName: "-- Please select --"
+            }
+            if (rsp.status === HTTP.STATUS_SUCCESS) {
+                rsp.result.data.unshift(itemCM);
+                this.lstCustomer = rsp.result.data;
+            }
+            else {
+                this.lstCustomer.unshift(itemCM);
+            }
+        }, (err) => {
+            console.log(err);
+        });
+    }
+
     private getPager(totalItems: number, currentPage: number = 1, pageSize: number = 1) {
         let totalPages = Math.ceil(totalItems / pageSize);
 

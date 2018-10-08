@@ -30,10 +30,10 @@ public class LineItemDto {
 	private Date itemDate;
 
 	@JsonProperty(value = "amount")
-	private String amount;
+	private Double amount;
 
 	@JsonProperty(value = "period")
-	private String period;
+	private Double period;
 
 	@JsonProperty(value = "po")
 	private String po;
@@ -95,19 +95,19 @@ public class LineItemDto {
 		this.itemDate = itemDate;
 	}
 
-	public String getAmount() {
+	public Double getAmount() {
 		return amount;
 	}
 
-	public void setAmount(String amount) {
+	public void setAmount(Double amount) {
 		this.amount = amount;
 	}
 
-	public String getPeriod() {
+	public Double getPeriod() {
 		return period;
 	}
 
-	public void setPeriod(String period) {
+	public void setPeriod(Double period) {
 		this.period = period;
 	}
 

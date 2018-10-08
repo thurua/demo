@@ -12,6 +12,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Oct-08 (verified)
+ *
+ */
 @Entity
 @Table(name = "password_change_history", schema = "public")
 public class PasswordChangeHistory {
@@ -84,6 +89,9 @@ public class PasswordChangeHistory {
 
 	// region -- Methods --
 
+	/**
+	 * Initialize
+	 */
 	public PasswordChangeHistory() {
 
 	}

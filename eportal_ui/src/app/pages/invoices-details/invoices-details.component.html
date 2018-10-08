@@ -39,12 +39,20 @@
                         <label class="col-form-label">{{data.name}}</label>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" *ngIf="data.documentType == 'Invoice'">
                     <div class="col-md-4">
                         <strong>Customer</strong>
                     </div>
                     <div class="col-md-8">
                         <label class="col-form-label">{{data.customer}}</label>
+                    </div>
+                </div>
+                <div class="row" *ngIf="data.documentType != 'Invoice'">
+                    <div class="col-md-4">
+                        <p>Supplier</p>
+                    </div>
+                    <div class="col-md-8">
+                        <label class="col-form-label">{{data.supplier}}</label>
                     </div>
                 </div>
                 <div class="row">
@@ -121,7 +129,7 @@
                         <label class="col-form-label">{{data.invoiceDate}}</label>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" *ngIf="data.documentType == 'Invoice'">
                     <div class="col-md-5">
                         <strong>Customer Branch</strong>
                     </div>
@@ -156,7 +164,7 @@
             </div>
         </div>
     </div>
-    <div class="card-body" *ngIf="loader">
+    <div class="card-body" *ngIf="data.status == 'Rejected'">
         <div class="form-group row header">
             <div class="col-md-4">
                 <strong>Reasons</strong>

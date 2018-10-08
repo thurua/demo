@@ -1,6 +1,7 @@
 package com.ifs.eportal.dto;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,20 +12,20 @@ public class ClientAccountCustomerDto extends BaseDto {
 	@JsonProperty(value = "name")
 	private String name;
 
-	@JsonProperty(value = "activation_date__c")
-	private String activationDate;
+	@JsonProperty(value = "activationDate")
+	private Date activationDate;
 
-	@JsonProperty(value = "status__c")
+	@JsonProperty(value = "status")
 	private String status;
 
-	@JsonProperty(value = "customer__c")
+	@JsonProperty(value = "customer")
 	private String customer;
 
-	@JsonProperty(value = "verification__c")
-	private String verification;
+	@JsonProperty(value = "verification")
+	private Float verification;
 
-	@JsonProperty(value = "verification_exceeding_invoice_amount__c")
-	private String verificationExceedingInvoiceAmountc;
+	@JsonProperty(value = "verificationExceedingInvoiceAmount")
+	private Float verificationExceedingInvoiceAmount;
 
 	@JsonProperty(value = "fciName")
 	private String fciName;
@@ -44,11 +45,11 @@ public class ClientAccountCustomerDto extends BaseDto {
 		this.name = name;
 	}
 
-	public String getActivationDate() {
+	public Date getActivationDate() {
 		return activationDate;
 	}
 
-	public void setActivationDate(String activationDate) {
+	public void setActivationDate(Date activationDate) {
 		this.activationDate = activationDate;
 	}
 
@@ -68,20 +69,20 @@ public class ClientAccountCustomerDto extends BaseDto {
 		this.customer = customer;
 	}
 
-	public String getVerification() {
+	public Float getVerification() {
 		return verification;
 	}
 
-	public void setVerification(String verification) {
+	public void setVerification(Float verification) {
 		this.verification = verification;
 	}
 
-	public String getVerificationExceedingInvoiceAmountc() {
-		return verificationExceedingInvoiceAmountc;
+	public Float getVerificationExceedingInvoiceAmount() {
+		return verificationExceedingInvoiceAmount;
 	}
 
-	public void setVerificationExceedingInvoiceAmountc(String verificationExceedingInvoiceAmountc) {
-		this.verificationExceedingInvoiceAmountc = verificationExceedingInvoiceAmountc;
+	public void setVerificationExceedingInvoiceAmount(Float verificationExceedingInvoiceAmount) {
+		this.verificationExceedingInvoiceAmount = verificationExceedingInvoiceAmount;
 	}
 
 	public String getFciName() {
@@ -124,11 +125,11 @@ public class ClientAccountCustomerDto extends BaseDto {
 
 		res.setId((Integer) o[0]);
 		res.setName((String) o[1]);
-		res.setActivationDate((String) o[2]);
+		res.setActivationDate((Date) o[2]);
 		res.setStatus((String) o[3]);
 		res.setCustomer((String) o[4]);
-		res.setVerification((String) o[5]);
-		res.setVerificationExceedingInvoiceAmountc((String) o[6]);
+		res.setVerification((Float) o[5]);
+		res.setVerificationExceedingInvoiceAmount((Float) o[6]);
 		res.setFciName((String) o[7]);
 		res.setCcName((String) o[8]);
 

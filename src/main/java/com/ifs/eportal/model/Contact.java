@@ -1,7 +1,5 @@
 package com.ifs.eportal.model;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,12 +7,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Oct-08 (verified)
+ *
+ */
 @Entity
 @Table(name = "account", schema = "salesforce")
-public class Contact {
+public class Contact extends BaseModel {
 	// region -- Fields --
 
 	@Id
@@ -38,17 +39,6 @@ public class Contact {
 	@Column(columnDefinition = "varchar(40)", name = "phone")
 	private String phone;
 
-	@Column(columnDefinition = "bool", name = "isdeleted")
-	private boolean isDeleted;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "systemmodstamp")
-	private Date systemModStamp;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "createddate")
-	private Date createdDate;
-
 	@Column(columnDefinition = "varchar(40)", name = "salutation")
 	private String salutation;
 
@@ -60,15 +50,6 @@ public class Contact {
 
 	@Column(columnDefinition = "varchar(80)", name = "email")
 	private String email;
-
-	@Column(columnDefinition = "varchar(18)", name = "sfid")
-	private String sfid;
-
-	@Column(columnDefinition = "varchar(32)", name = "_hc_lastop")
-	private String hcLastop;
-
-	@Column(columnDefinition = "text", name = "_hc_err")
-	private String hcErr;
 
 	// end
 
@@ -122,30 +103,6 @@ public class Contact {
 		this.phone = phone;
 	}
 
-	public boolean isDeleted() {
-		return isDeleted;
-	}
-
-	public void setDeleted(boolean isDeleted) {
-		this.isDeleted = isDeleted;
-	}
-
-	public Date getSystemModStamp() {
-		return systemModStamp;
-	}
-
-	public void setSystemModStamp(Date systemModStamp) {
-		this.systemModStamp = systemModStamp;
-	}
-
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
 	public String getSalutation() {
 		return salutation;
 	}
@@ -178,36 +135,15 @@ public class Contact {
 		this.email = email;
 	}
 
-	public String getSfid() {
-		return sfid;
-	}
-
-	public void setSfid(String sfid) {
-		this.sfid = sfid;
-	}
-
-	public String getHcLastop() {
-		return hcLastop;
-	}
-
-	public void setHcLastop(String hcLastop) {
-		this.hcLastop = hcLastop;
-	}
-
-	public String getHcErr() {
-		return hcErr;
-	}
-
-	public void setHcErr(String hcErr) {
-		this.hcErr = hcErr;
-	}
-
 	// end
 
 	// region -- Methods --
 
+	/**
+	 * Initialize
+	 */
 	public Contact() {
-
+		super();
 	}
 
 	// end

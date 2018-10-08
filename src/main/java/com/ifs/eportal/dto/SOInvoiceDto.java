@@ -201,7 +201,7 @@ public class SOInvoiceDto extends BaseDto {
 		res.setCustomerFromExcel((String) o[2]);
 		res.setCustomer((String) o[3]);
 		res.setCustomerBranch((String) o[4]);
-		res.setInvoiceNo((String) o[4]);
+		res.setInvoiceNo((String) o[5]);
 		res.setInvoiceDate((Date) o[6]);
 		res.setCreditPeriod((Double) o[7]);
 		res.setInvoiceAmount((Double) o[8]);

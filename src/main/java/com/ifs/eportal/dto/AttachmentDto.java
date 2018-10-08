@@ -29,6 +29,9 @@ public class AttachmentDto extends BaseDto {
 	@JsonProperty(value = "rowNumber")
 	private Integer rowNumber;
 
+	@JsonProperty(value = "owner")
+	private String owner;
+
 	// end
 
 	// region -- Get set --
@@ -73,6 +76,14 @@ public class AttachmentDto extends BaseDto {
 		this.rowNumber = rowNumber;
 	}
 
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -88,6 +99,7 @@ public class AttachmentDto extends BaseDto {
 		uploadedBy = "";
 		uploadedOn = null;
 		rowNumber = 0;
+		owner = "";
 	}
 
 	/**
@@ -107,6 +119,7 @@ public class AttachmentDto extends BaseDto {
 		res.setUploadedBy((String) o[4]);
 		res.setUploadedOn((Date) o[5]);
 		res.setRowNumber((Integer) o[6]);
+		res.setOwner((String) o[7]);
 
 		return res;
 	}

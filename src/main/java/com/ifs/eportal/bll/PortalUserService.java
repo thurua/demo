@@ -3,6 +3,7 @@ package com.ifs.eportal.bll;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +20,12 @@ import com.ifs.eportal.common.Const;
 import com.ifs.eportal.common.RsaService;
 import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.dal.PasswordChangeHistoryDao;
+import com.ifs.eportal.dal.PortalUserAccessDao;
 import com.ifs.eportal.dal.PortalUserDao;
 import com.ifs.eportal.dto.PortalUserDto;
 import com.ifs.eportal.model.PasswordChangeHistory;
 import com.ifs.eportal.model.PortalUser;
+import com.ifs.eportal.model.PortalUserAccess;
 import com.ifs.eportal.req.PagingReq;
 import com.ifs.eportal.req.PasswordReq;
 import com.ifs.eportal.req.ProfileReq;
@@ -64,6 +67,9 @@ public class PortalUserService implements UserDetailsService {
 
 	@Autowired
 	private PasswordChangeHistoryDao passwordChangeHistoryDao;
+
+	@Autowired
+	private PortalUserAccessDao portalUserAccessDao;
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -174,18 +180,21 @@ public class PortalUserService implements UserDetailsService {
 					m.setPassReminderToken(null);
 					m.setStatus("ACTD");
 					m.setActivatedOn(new Date());
+					mode = "A";
+				} else {
+					mode = "U";
 				}
 
 				portalUserDao.update(m);
-				mode = "A";
+
 			} else {
 				res.setError("Old password is incorrect");
-				mode = "U";
+
 			}
 
 			Date today = new Date();
 			PasswordChangeHistory pwch = new PasswordChangeHistory();
-			pwch.setUserSfid(m.getSfid());
+			pwch.setUserSfid(m.getSfId());
 			pwch.setUserName(m.getUserId());
 			pwch.setChangeBy(mode);
 			pwch.setChangedOn(today);
@@ -263,7 +272,7 @@ public class PortalUserService implements UserDetailsService {
 	}
 
 	/**
-	 * Check Expired
+	 * Check expired
 	 * 
 	 * @param token
 	 * @return
@@ -277,6 +286,30 @@ public class PortalUserService implements UserDetailsService {
 		} else {
 			res = Const.HTTP.STATUS_SUCCESS;
 		}
+
+		return res;
+	}
+
+	/**
+	 * Create user access
+	 * 
+	 * @param o
+	 * @return
+	 */
+	public String create(PortalUserDto o) {
+		Date now = new Date();
+		String res = UUID.randomUUID().toString();
+
+		PortalUserAccess m = new PortalUserAccess();
+		m.setLoginOn(now);
+		m.setLastAccessOn(now);
+		m.setCreatedDate(now);
+		m.setUuId(res);
+
+		m.setUser(o.getSfId());
+		m.setDeleted(false);
+
+		portalUserAccessDao.create(m);
 
 		return res;
 	}

@@ -38,7 +38,8 @@ export class InvoiceProvider {
     public searchCA(info: any) {
         return this.api.post('common/search-client-account', info);
     }
-/**
+
+    /**
      * Search Customer
      * @param info
      */

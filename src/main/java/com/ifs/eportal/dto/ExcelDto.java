@@ -46,7 +46,7 @@ public class ExcelDto {
 	private String documentCurrency;
 
 	@JsonProperty(value = "totalAmount")
-	private String totalAmount;
+	private Double totalAmount;
 
 	@JsonProperty(value = "listType")
 	private String listType;
@@ -117,11 +117,11 @@ public class ExcelDto {
 		this.documentCurrency = documentCurrency;
 	}
 
-	public String getTotalAmount() {
+	public Double getTotalAmount() {
 		return totalAmount;
 	}
 
-	public void setTotalAmount(String totalAmount) {
+	public void setTotalAmount(Double totalAmount) {
 		this.totalAmount = totalAmount;
 	}
 
@@ -220,7 +220,7 @@ public class ExcelDto {
 		ExcelDto note = new ExcelDto();
 
 		try {
-			String FILE_NAME = "Factoring-CN-0.2.xlsx";
+			String FILE_NAME = "Factoring-CN-0.4.xlsx";
 			Workbook workbook;
 
 			if (file == null) {
@@ -239,142 +239,124 @@ public class ExcelDto {
 			String scheduleNo = "";
 			Date date = null;
 			String currency = "";
-			String totalAmount = "";
+			Double totalAmount = null;
 			String listType = "";
 			Date processDate = null;
 			Date keyInByDate = null;
 
 			try {
-				type = datatypeSheet.getRow(0).getCell(6).getStringCellValue();
+				type = datatypeSheet.getRow(0).getCell(6).getStringCellValue().trim();
 			} catch (Exception ex) {
-
 			}
 
 			try {
-				client = datatypeSheet.getRow(3).getCell(1).getStringCellValue();
+				client = datatypeSheet.getRow(3).getCell(1).getStringCellValue().trim();
 			} catch (Exception ex) {
-
 			}
 
 			try {
-				clientAccount = datatypeSheet.getRow(4).getCell(1).getStringCellValue();
+				clientAccount = datatypeSheet.getRow(4).getCell(1).getStringCellValue().trim();
 			} catch (Exception ex) {
-
 			}
 
 			try {
-				factorCode = datatypeSheet.getRow(5).getCell(1).getStringCellValue();
+				factorCode = datatypeSheet.getRow(5).getCell(1).getStringCellValue().trim();
 			} catch (Exception ex) {
-
 			}
 
 			try {
-				scheduleNo = datatypeSheet.getRow(6).getCell(1).getStringCellValue();
+				scheduleNo = datatypeSheet.getRow(6).getCell(1).getStringCellValue().trim();
 			} catch (Exception ex) {
-
 			}
 
 			try {
 				date = datatypeSheet.getRow(3).getCell(7).getDateCellValue();
 			} catch (Exception ex) {
-
 			}
 
 			try {
-				currency = datatypeSheet.getRow(4).getCell(7).getStringCellValue();
+				currency = datatypeSheet.getRow(4).getCell(7).getStringCellValue().trim();
 			} catch (Exception ex) {
-
 			}
 
 			try {
-				totalAmount = datatypeSheet.getRow(5).getCell(7).getNumericCellValue() + "";
+				totalAmount = datatypeSheet.getRow(5).getCell(7).getNumericCellValue();
 			} catch (Exception ex) {
-
 			}
 
 			try {
-				listType = datatypeSheet.getRow(8).getCell(0).getStringCellValue();
+				listType = datatypeSheet.getRow(8).getCell(0).getStringCellValue().trim();
 			} catch (Exception ex) {
-
 			}
 
 			try {
 				processDate = datatypeSheet.getRow(51).getCell(1).getDateCellValue();
 			} catch (Exception ex) {
-
 			}
 
 			try {
 				keyInByDate = datatypeSheet.getRow(51).getCell(7).getDateCellValue();
 			} catch (Exception ex) {
-
 			}
 
 			Iterator<Row> iterator = datatypeSheet.iterator();
-
 			int count = 0;
+			int index = 1;
+
 			while (iterator.hasNext() && count < 10) {
 				count += 1;
 				iterator.next();
 			}
 
-			int index = 1;
 			while (iterator.hasNext() && count < 40) {
-				count += 1;
 				Row row = iterator.next();
-
 				String customerName = "";
 				String customerBranch = "";
 				String creditNoteNo = "";
 				Date creditNoteDate = null;
-				String amount = "";
+				Double amount = null;
 				String invoiceApplied = "";
 				String remarks = "";
 
 				try {
-					customerName = row.getCell(0).toString();
+					customerName = row.getCell(0).getStringCellValue().trim();
+					if (customerName.isEmpty()) {
+						break;
+					}
 				} catch (Exception ex) {
-
 				}
 
 				try {
-					customerBranch = row.getCell(2).toString();
+					customerBranch = row.getCell(2).getStringCellValue().trim();
 				} catch (Exception ex) {
-
 				}
 
 				try {
-					creditNoteNo = row.getCell(3).toString();
+					creditNoteNo = row.getCell(3).getStringCellValue().trim();
 				} catch (Exception ex) {
-
 				}
 
 				try {
 					creditNoteDate = row.getCell(4).getDateCellValue();
 				} catch (Exception ex) {
-
 				}
 
 				try {
-					amount = row.getCell(5).toString();
+					amount = row.getCell(5).getNumericCellValue();
 				} catch (Exception ex) {
-
 				}
 
 				try {
-					invoiceApplied = row.getCell(6).toString();
+					invoiceApplied = row.getCell(6).getStringCellValue().trim();
 				} catch (Exception ex) {
-
 				}
 
 				try {
-					remarks = row.getCell(7).toString();
+					remarks = row.getCell(7).getStringCellValue().trim();
 				} catch (Exception ex) {
-
 				}
 
 				LineItemDto item = new LineItemDto();
-
 				item.setIndex(index);
 				item.setName(customerName);
 				item.setBranch(customerBranch);
@@ -383,9 +365,10 @@ public class ExcelDto {
 				item.setAmount(amount);
 				item.setInvoiceApplied(invoiceApplied);
 				item.setRemarks(remarks);
-
 				note.addLineItem(item);
+
 				index += 1;
+				count += 1;
 			}
 
 			note.setType(type);
@@ -423,7 +406,7 @@ public class ExcelDto {
 		ExcelDto note = new ExcelDto();
 
 		try {
-			String FILE_NAME = "Factoring-INV-0.2.xlsx";
+			String FILE_NAME = "Factoring-INV-0.3.xlsx";
 			Workbook workbook;
 
 			if (file == null) {
@@ -442,156 +425,136 @@ public class ExcelDto {
 			String scheduleNo = "";
 			Date date = null;
 			String currency = "";
-			String totalAmount = "";
+			Double totalAmount = null;
 			String listType = "";
 			Date processDate = null;
 			Date keyInByDate = null;
 
 			try {
-				type = datatypeSheet.getRow(0).getCell(8).getStringCellValue();
+				type = datatypeSheet.getRow(0).getCell(8).getStringCellValue().trim();
 			} catch (Exception ex) {
-
 			}
 
 			try {
-				client = datatypeSheet.getRow(3).getCell(1).getStringCellValue();
+				client = datatypeSheet.getRow(3).getCell(1).getStringCellValue().trim();
 			} catch (Exception ex) {
-
 			}
 
 			try {
-				clientAccount = datatypeSheet.getRow(4).getCell(1).getStringCellValue();
+				clientAccount = datatypeSheet.getRow(4).getCell(1).getStringCellValue().trim();
 			} catch (Exception ex) {
-
 			}
 
 			try {
-				factorCode = datatypeSheet.getRow(5).getCell(1).getStringCellValue();
+				factorCode = datatypeSheet.getRow(5).getCell(1).getStringCellValue().trim();
 			} catch (Exception ex) {
-
 			}
 
 			try {
-				scheduleNo = datatypeSheet.getRow(6).getCell(1).getStringCellValue();
+				scheduleNo = datatypeSheet.getRow(6).getCell(1).getStringCellValue().trim();
 			} catch (Exception ex) {
-
 			}
 
 			try {
 				date = datatypeSheet.getRow(3).getCell(9).getDateCellValue();
 			} catch (Exception ex) {
-
 			}
 
 			try {
-				currency = datatypeSheet.getRow(4).getCell(9).getStringCellValue();
+				currency = datatypeSheet.getRow(4).getCell(9).getStringCellValue().trim();
 			} catch (Exception ex) {
-
 			}
 
 			try {
-				totalAmount = datatypeSheet.getRow(5).getCell(9).toString();
+				totalAmount = datatypeSheet.getRow(5).getCell(9).getNumericCellValue();
 			} catch (Exception ex) {
-
 			}
 
 			try {
-				listType = datatypeSheet.getRow(8).getCell(0).getStringCellValue();
+				listType = datatypeSheet.getRow(8).getCell(0).getStringCellValue().trim();
 			} catch (Exception ex) {
-
 			}
 
 			try {
 				processDate = datatypeSheet.getRow(51).getCell(1).getDateCellValue();
 			} catch (Exception ex) {
-
 			}
 
 			try {
 				keyInByDate = datatypeSheet.getRow(51).getCell(7).getDateCellValue();
 			} catch (Exception ex) {
-
 			}
 
 			Iterator<Row> iterator = datatypeSheet.iterator();
-
 			int count = 0;
+			int index = 1;
+
 			while (iterator.hasNext() && count < 10) {
 				count += 1;
 				iterator.next();
 			}
 
-			int index = 1;
 			while (iterator.hasNext() && count < 40) {
-				count += 1;
 				Row row = iterator.next();
-
 				String customerName = "";
 				String customerBranch = "";
 				String invoiceNo = "";
 				Date invoiceDate = null;
-				String invoiceAmount = "";
-				String creditPeriod = "";
+				Double invoiceAmount = null;
+				Double creditPeriod = null;
 				String po = "";
 				String contract = "";
 				String remarks = "";
 
 				try {
-					customerName = row.getCell(0).toString();
+					customerName = row.getCell(0).getStringCellValue().trim();
+					if (customerName.isEmpty()) {
+						break;
+					}
 				} catch (Exception ex) {
-
 				}
 
 				try {
-					customerBranch = row.getCell(2).toString();
+					customerBranch = row.getCell(2).getStringCellValue().trim();
 				} catch (Exception ex) {
-
 				}
 
 				try {
-					invoiceNo = row.getCell(3).toString();
+					invoiceNo = row.getCell(3).getStringCellValue().trim();
 				} catch (Exception ex) {
-
 				}
 
 				try {
 					invoiceDate = row.getCell(4).getDateCellValue();
 				} catch (Exception ex) {
-
 				}
 
 				try {
-					invoiceAmount = row.getCell(5).toString();
+					invoiceAmount = row.getCell(5).getNumericCellValue();
 				} catch (Exception ex) {
-
 				}
 
 				try {
-					creditPeriod = row.getCell(6).toString();
+					creditPeriod = row.getCell(6).getNumericCellValue();
 				} catch (Exception ex) {
-
 				}
 
 				try {
-					po = row.getCell(7).toString();
+					po = row.getCell(7).getStringCellValue().trim();
 				} catch (Exception ex) {
-
 				}
 
 				try {
-					contract = row.getCell(8).toString();
+					contract = row.getCell(8).getStringCellValue().trim();
 				} catch (Exception ex) {
-
 				}
 
 				try {
-					remarks = row.getCell(9).toString();
+					remarks = row.getCell(9).getStringCellValue().trim();
 				} catch (Exception ex) {
-
 				}
 
 				LineItemDto item = new LineItemDto();
-
 				item.setIndex(index);
 				item.setName(customerName);
 				item.setBranch(customerBranch);
@@ -602,9 +565,10 @@ public class ExcelDto {
 				item.setPo(po);
 				item.setContract(contract);
 				item.setRemarks(remarks);
-
 				note.addLineItem(item);
+
 				index += 1;
+				count += 1;
 			}
 
 			note.setType(type);
@@ -642,7 +606,7 @@ public class ExcelDto {
 		ExcelDto note = new ExcelDto();
 
 		try {
-			String FILE_NAME = "Loan-INV-0.3.xlsx";
+			String FILE_NAME = "Loan-INV-0.4.xlsx";
 			Workbook workbook;
 
 			if (file == null) {
@@ -661,156 +625,136 @@ public class ExcelDto {
 			String scheduleNo = "";
 			Date date = null;
 			String currency = "";
-			String totalAmount = "";
+			Double totalAmount = null;
 			String listType = "";
 			Date processDate = null;
 			Date keyInByDate = null;
 
 			try {
-				type = datatypeSheet.getRow(0).getCell(7).getStringCellValue();
+				type = datatypeSheet.getRow(0).getCell(7).getStringCellValue().trim();
 			} catch (Exception ex) {
-
 			}
 
 			try {
-				client = datatypeSheet.getRow(3).getCell(1).getStringCellValue();
+				client = datatypeSheet.getRow(3).getCell(1).getStringCellValue().trim();
 			} catch (Exception ex) {
-
 			}
 
 			try {
-				clientAccount = datatypeSheet.getRow(4).getCell(1).getStringCellValue();
+				clientAccount = datatypeSheet.getRow(4).getCell(1).getStringCellValue().trim();
 			} catch (Exception ex) {
-
 			}
 
 			try {
-				// factorCode = datatypeSheet.getRow(5).getCell(1).getStringCellValue();
+				// factorCode = datatypeSheet.getRow(5).getCell(1).getStringCellValue().trim();
 			} catch (Exception ex) {
-
 			}
 
 			try {
-				scheduleNo = datatypeSheet.getRow(5).getCell(1).getStringCellValue();
+				scheduleNo = datatypeSheet.getRow(5).getCell(1).getStringCellValue().trim();
 			} catch (Exception ex) {
-
 			}
 
 			try {
 				date = datatypeSheet.getRow(3).getCell(9).getDateCellValue();
 			} catch (Exception ex) {
-
 			}
 
 			try {
-				currency = datatypeSheet.getRow(4).getCell(9).getStringCellValue();
+				currency = datatypeSheet.getRow(4).getCell(9).getStringCellValue().trim();
 			} catch (Exception ex) {
-
 			}
 
 			try {
-				totalAmount = datatypeSheet.getRow(5).getCell(9).toString();
+				totalAmount = datatypeSheet.getRow(5).getCell(9).getNumericCellValue();
 			} catch (Exception ex) {
-
 			}
 
 			try {
-				listType = datatypeSheet.getRow(8).getCell(0).getStringCellValue();
+				listType = datatypeSheet.getRow(8).getCell(0).getStringCellValue().trim();
 			} catch (Exception ex) {
-
 			}
 
 			try {
 				processDate = datatypeSheet.getRow(51).getCell(1).getDateCellValue();
 			} catch (Exception ex) {
-
 			}
 
 			try {
 				keyInByDate = datatypeSheet.getRow(51).getCell(7).getDateCellValue();
 			} catch (Exception ex) {
-
 			}
 
 			Iterator<Row> iterator = datatypeSheet.iterator();
-
 			int count = 0;
+			int index = 1;
+
 			while (iterator.hasNext() && count < 10) {
 				count += 1;
 				iterator.next();
 			}
 
-			int index = 1;
 			while (iterator.hasNext() && count < 40) {
-				count += 1;
 				Row row = iterator.next();
-
 				String supplierName = "";
 				String invoiceNo = "";
 				Date invoiceDate = null;
-				String invoiceAmount = "";
-				String creditPeriod = "";
+				Double invoiceAmount = null;
+				Double creditPeriod = null;
 				String po = "";
 				String contract = "";
 				Date paymentDate = null;
 				String remarks = "";
 
 				try {
-					supplierName = row.getCell(0).toString();
+					supplierName = row.getCell(0).getStringCellValue().trim();
+					if (supplierName.isEmpty()) {
+						break;
+					}
 				} catch (Exception ex) {
-
 				}
 
 				try {
-					invoiceNo = row.getCell(2).toString();
+					invoiceNo = row.getCell(2).getStringCellValue().trim();
 				} catch (Exception ex) {
-
 				}
 
 				try {
 					invoiceDate = row.getCell(3).getDateCellValue();
 				} catch (Exception ex) {
-
 				}
 
 				try {
-					invoiceAmount = row.getCell(4).toString();
+					invoiceAmount = row.getCell(4).getNumericCellValue();
 				} catch (Exception ex) {
-
 				}
 
 				try {
-					creditPeriod = row.getCell(5).toString();
+					creditPeriod = row.getCell(5).getNumericCellValue();
 				} catch (Exception ex) {
-
 				}
 
 				try {
-					po = row.getCell(6).toString();
+					po = row.getCell(6).getStringCellValue().trim();
 				} catch (Exception ex) {
-
 				}
 
 				try {
-					contract = row.getCell(7).toString();
+					contract = row.getCell(7).getStringCellValue().trim();
 				} catch (Exception ex) {
-
 				}
 
 				try {
 					paymentDate = row.getCell(8).getDateCellValue();
 				} catch (Exception ex) {
-
 				}
 
 				try {
-					remarks = row.getCell(9).toString();
+					remarks = row.getCell(9).getStringCellValue().trim();
 				} catch (Exception ex) {
-
 				}
 
 				LineItemDto item = new LineItemDto();
-
 				item.setIndex(index);
 				item.setName(supplierName);
 				item.setNo(invoiceNo);
@@ -821,9 +765,10 @@ public class ExcelDto {
 				item.setContract(contract);
 				item.setPaymentDate(paymentDate);
 				item.setRemarks(remarks);
-
 				note.addLineItem(item);
+
 				index += 1;
+				count += 1;
 			}
 
 			note.setType(type);

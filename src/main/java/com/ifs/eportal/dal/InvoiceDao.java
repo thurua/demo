@@ -1,8 +1,11 @@
 package com.ifs.eportal.dal;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -11,6 +14,8 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZDate;
 import com.ifs.eportal.common.ZFile;
 import com.ifs.eportal.dto.CustomDto;
 import com.ifs.eportal.dto.InvoiceDto;
@@ -70,6 +75,8 @@ public class InvoiceDao implements Repository<Invoice, Integer> {
 	private String _sql;
 
 	private String _path;
+
+	private static final Logger _log = Logger.getLogger(InvoiceDao.class.getName());
 
 	// end
 
@@ -157,10 +164,7 @@ public class InvoiceDao implements Repository<Invoice, Integer> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<CustomDto> getOverdueOutstanding(List<String> names, String clientAccountId) {
-		String sql = "SELECT b.name as code, SUM(outstanding_amount__c) as value " + "FROM salesforce.invoice__c a "
-				+ "JOIN salesforce.account b on a.customer__c = b.sfid " + "WHERE b.name in :names "
-				+ "AND a.added_credit_period__c < current_date" + "AND a.client_account__c = :clientAccountId"
-				+ "GROUP BY b.name";
+		String sql = ZFile.read(_path + "getOverdueOutstanding.sql");
 
 		// Execute
 		Query q = _em.createNativeQuery(sql);
@@ -181,9 +185,7 @@ public class InvoiceDao implements Repository<Invoice, Integer> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<CustomDto> getDisputedOutstanding(List<String> names, String clientAccountId) {
-		String sql = "SELECT b.name as code, SUM(outstanding_amount__c) as value " + "FROM salesforce.invoice__c a "
-				+ "JOIN salesforce.account b on a.customer__c = b.sfid " + "WHERE b.name in :names "
-				+ "AND a.status__c = 'Disputed' " + "AND a.client_account__c = :clientAccountId" + "GROUP BY b.name";
+		String sql = ZFile.read(_path + "getDisputedOutstanding.sql");
 
 		// Execute
 		Query q = _em.createNativeQuery(sql);
@@ -204,10 +206,7 @@ public class InvoiceDao implements Repository<Invoice, Integer> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<CustomDto> getInvoiceSumary(List<String> names, String clientAccountId, Date d) {
-		String sql = "SELECT b.name as code, SUM(invoice_amount__c) as value " + "FROM salesforce.invoice__c a "
-				+ "JOIN salesforce.account b on a.customer__c = b.sfid " + "WHERE b.name in :names "
-				+ "AND a.invoice_date__c >= :fr " + "AND a.invoice_date__c <= :to "
-				+ "AND a.client_account__c = :clientAccountId" + "GROUP BY b.name";
+		String sql = ZFile.read(_path + "getInvoiceSumary.sql");
 
 		// Execute
 		Date fr = (new DateTime(d)).minusYears(1).withDayOfMonth(1).toDate();
@@ -232,9 +231,7 @@ public class InvoiceDao implements Repository<Invoice, Integer> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<CustomDto> getTotalOutstanding(List<String> names, String clientAccountId) {
-		String sql = "SELECT b.name as code, SUM(outstanding_amount__c) as value " + "FROM salesforce.invoice__c a "
-				+ "JOIN salesforce.account b on a.customer__c = b.sfid " + "WHERE b.name in :names "
-				+ "AND a.client_account__c = :clientAccountId " + "GROUP BY b.name";
+		String sql = ZFile.read(_path + "getTotalOutstanding.sql");
 
 		// Execute
 		Query q = _em.createNativeQuery(sql);
@@ -255,9 +252,7 @@ public class InvoiceDao implements Repository<Invoice, Integer> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<CustomDto> getTotalOutstandingAmount(List<String> names, String clientAccountId) {
-		String sql = "SELECT b.sfid as code, SUM(outstanding_amount__c) as value " + "FROM salesforce.invoice__c a "
-				+ "JOIN salesforce.account b on a.customer__c = b.sfid " + "WHERE b.name in :names "
-				+ "AND a.client_account__c = :clientAccountId " + "GROUP BY b.name";
+		String sql = ZFile.read(_path + "getTotalOutstandingAmount.sql");
 
 		// Execute
 		Query q = _em.createNativeQuery(sql);
@@ -278,9 +273,7 @@ public class InvoiceDao implements Repository<Invoice, Integer> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<CustomDto> getInvoiceAvg(List<String> names, String clientAccountId) {
-		String sql = "SELECT b.name as code, AVG(invoice_amount__c) as value " + "FROM salesforce.invoice__c a "
-				+ "JOIN salesforce.account b on a.customer__c = b.sfid " + "WHERE b.name in :names "
-				+ "AND a.client_account__c = :clientAccountId " + "GROUP BY b.name";
+		String sql = ZFile.read(_path + "getInvoiceAvg.sql");
 
 		// Execute
 		Query q = _em.createNativeQuery(sql);
@@ -301,10 +294,7 @@ public class InvoiceDao implements Repository<Invoice, Integer> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<CustomDto> getCreditSumary(List<String> names, String clientAccountId, Date d) {
-		String sql = "SELECT b.name as code, SUM(credit_amount__c) as value " + "FROM salesforce.credit_note__c a "
-				+ "JOIN salesforce.account b on a.customer__c = b.sfid " + "WHERE b.name in :names "
-				+ "AND a.credit_note_date__c >= :fr " + "AND a.credit_note_date__c <= :to "
-				+ "AND a.client_account__c = :clientAccountId" + "GROUP BY b.name";
+		String sql = ZFile.read(_path + "getCreditSumary.sql");
 
 		// Execute
 		Date fr = (new DateTime(d)).minusYears(1).withDayOfMonth(1).toDate();
@@ -329,52 +319,69 @@ public class InvoiceDao implements Repository<Invoice, Integer> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<InvoiceDto> search(PagingReq req) {
-		// Get data
-		Object filter = req.getFilter();
-		int page = req.getPage();
-		int size = req.getSize();
-		List<SortDto> sort = req.getSort();
-		int offset = (page - 1) * size;
+		List<InvoiceDto> res = new ArrayList<InvoiceDto>();
 
-		// Order by
-		String orderBy = "";
-		for (SortDto o : sort) {
-			String field = o.getField();
-			String direction = o.getDirection();
+		try {
+			// Get data
+			Object filter = req.getFilter();
+			int page = req.getPage();
+			int size = req.getSize();
+			List<SortDto> sort = req.getSort();
+			int offset = (page - 1) * size;
 
-			if ("id".equals(field)) {
-				if (!orderBy.isEmpty()) {
-					orderBy += ",";
+			// Order by
+			String orderBy = "";
+			for (SortDto o : sort) {
+				String field = o.getField();
+				String direction = o.getDirection();
+
+				if ("id".equals(field)) {
+					if (!orderBy.isEmpty()) {
+						orderBy += ",";
+					}
+					orderBy += " a.id " + direction;
 				}
-				orderBy += " a.id " + direction;
+
+				if ("status".equals(field)) {
+					if (!orderBy.isEmpty()) {
+						orderBy += ",";
+					}
+					orderBy += " a.status__c " + direction;
+				}
 			}
 
-			if ("status".equals(field)) {
-				if (!orderBy.isEmpty()) {
-					orderBy += ",";
-				}
-				orderBy += " a.status__c " + direction;
+			if (!orderBy.isEmpty()) {
+				orderBy = " ORDER BY " + orderBy;
+			}
+
+			// Execute to count all
+			String sql = ZFile.read(_path + "count.sql");
+			String limit = "";
+			Query q = createQuery(sql, filter, limit);
+			BigInteger total = (BigInteger) q.getSingleResult();
+			req.setTotal(total.longValue());
+
+			// Execute to search
+			sql = _sql;
+			limit = orderBy;
+			if (req.isPaging()) {
+				limit += " OFFSET " + offset + " LIMIT " + size;
+			}
+			q = createQuery(sql, filter, limit);
+			List<Object[]> t = q.getResultList();
+
+			// Convert
+			res = InvoiceDto.convert(t);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
 
-		if (!orderBy.isEmpty()) {
-			orderBy = " ORDER BY " + orderBy;
-		}
-
-		// Execute to count all
-		String sql = "SELECT \r\n" + "	count(*)\r\n" + "FROM salesforce.invoice__c a ";
-		String limit = "";
-		Query q = createQuery(sql, filter, limit);
-		BigInteger total = (BigInteger) q.getSingleResult();
-		req.setTotal(total.longValue());
-
-		// Execute to search
-		sql = _sql;
-		limit = orderBy + " OFFSET " + offset + " LIMIT " + size;
-		q = createQuery(sql, filter, limit);
-		List<Object[]> l = q.getResultList();
-
-		return InvoiceDto.convert(l);
+		return res;
 	}
 
 	/**
@@ -386,12 +393,50 @@ public class InvoiceDao implements Repository<Invoice, Integer> {
 	 */
 	private Query createQuery(String sql, Object o, String limit) {
 		InvoiceFilter filter = InvoiceFilter.convert(o);
+		String clientName = filter.getClient();
+		String clientAccount = filter.getClientAccount();
 		String status = filter.getStatus();
+		String scheduleNo = filter.getScheduleNo();
+		String documentType = filter.getDocumentType();
+		String customer = filter.getCustomer();
+		String supplier = filter.getSupplier();
+		String invoiceNo = filter.getInvoiceNo();
+		Date fr = filter.getFrCreatedDate();
+		Date to = filter.getToCreatedDate();
 
 		// Where
 		String where = "";
+		if (!clientName.isEmpty()) {
+			where += " AND a.client_name__c = :clientName";
+		}
+		if (!clientAccount.isEmpty()) {
+			where += " AND a.client_account__c = :clientAccount";
+		}
 		if (!status.isEmpty()) {
 			where += " AND a.status__c = :status";
+		}
+		if (!scheduleNo.isEmpty()) {
+			where += " AND a.schedule_of_offer__c = :scheduleNo";
+		}
+		if (!documentType.isEmpty()) {
+			where += " AND a.document_type__c = :documentType";
+		}
+		if (!customer.isEmpty()) {
+			where += " AND a.customer__c = :customer";
+		}
+		if (!supplier.isEmpty()) {
+			where += " AND a.supplier__c = :supplier";
+		}
+		if (!invoiceNo.isEmpty()) {
+			where += " AND a.supplier__c = :name";
+		}
+
+		if (fr != null && to != null) {
+			where += " AND a.createddate BETWEEN :fr AND :to";
+		} else if (fr != null && to == null) {
+			where += " AND :fr <= a.createddate";
+		} else if (fr == null && to != null) {
+			where += " AND a.createddate <= :to";
 		}
 
 		// Replace first
@@ -403,9 +448,50 @@ public class InvoiceDao implements Repository<Invoice, Integer> {
 
 		// Set parameter
 		if (!where.isEmpty()) {
-			int i = where.indexOf(":status");
+			int i = where.indexOf(":clientName");
+			if (i > 0) {
+				q.setParameter("clientName", clientName);
+			}
+			i = where.indexOf(":clientAccount");
+			if (i > 0) {
+				q.setParameter("clientAccount", clientAccount);
+			}
+			i = where.indexOf(":status");
 			if (i > 0) {
 				q.setParameter("status", status);
+			}
+			i = where.indexOf(":scheduleNo");
+			if (i > 0) {
+				q.setParameter("scheduleNo", scheduleNo);
+			}
+			i = where.indexOf(":documentType");
+			if (i > 0) {
+				q.setParameter("documentType", documentType);
+			}
+			i = where.indexOf(":customer");
+			if (i > 0) {
+				q.setParameter("customer", customer);
+			}
+			i = where.indexOf(":supplier");
+			if (i > 0) {
+				q.setParameter("supplier", supplier);
+			}
+			i = where.indexOf(":invoiceNo");
+			if (i > 0) {
+				q.setParameter("invoiceNo", invoiceNo);
+			}
+
+			if (fr != null && to != null) {
+				fr = ZDate.getStartOfDay(fr);
+				q.setParameter("fr", fr);
+				to = ZDate.getEndOfDay(to);
+				q.setParameter("to", to);
+			} else if (fr != null && to == null) {
+				fr = ZDate.getStartOfDay(fr);
+				q.setParameter("fr", fr);
+			} else if (fr == null && to != null) {
+				to = ZDate.getEndOfDay(to);
+				q.setParameter("to", to);
 			}
 		}
 

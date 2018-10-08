@@ -1,6 +1,7 @@
 package com.ifs.eportal.dto;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,35 +9,35 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ApprovedCustomerLimitDto extends BaseDto {
 	// region -- Fields --
 
-	@JsonProperty(value = "valid_to__c")
-	private String validTo;
+	@JsonProperty(value = "validTo")
+	private Date validTo;
 
-	@JsonProperty(value = "valid_from__c")
-	private String validFrom;
+	@JsonProperty(value = "validFrom")
+	private Date validFrom;
 
-	@JsonProperty(value = "customer__c")
+	@JsonProperty(value = "customer")
 	private String customer;
 
-	@JsonProperty(value = "approved_limit__c")
+	@JsonProperty(value = "approvedLimit")
 	private double approvedLimit;
 
 	// end
 
 	// region -- Get set --
 
-	public String getValidTo() {
+	public Date getValidTo() {
 		return validTo;
 	}
 
-	public void setValidTo(String validTo) {
+	public void setValidTo(Date validTo) {
 		this.validTo = validTo;
 	}
 
-	public String getValidFrom() {
+	public Date getValidFrom() {
 		return validFrom;
 	}
 
-	public void setValidFrom(String validFrom) {
+	public void setValidFrom(Date validFrom) {
 		this.validFrom = validFrom;
 	}
 
@@ -79,8 +80,8 @@ public class ApprovedCustomerLimitDto extends BaseDto {
 		res.setId((Integer) o[0]);
 		res.setSfId((String) o[1]);
 
-		res.setValidFrom((String) o[2]);
-		res.setValidTo((String) o[3]);
+		res.setValidFrom((Date) o[2]);
+		res.setValidTo((Date) o[3]);
 		res.setCustomer((String) o[4]);
 		res.setApprovedLimit((double) o[5]);
 

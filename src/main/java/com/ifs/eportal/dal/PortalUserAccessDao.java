@@ -2,6 +2,8 @@ package com.ifs.eportal.dal;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -9,6 +11,8 @@ import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZFile;
 import com.ifs.eportal.dto.PortalUserAccessDto;
 import com.ifs.eportal.dto.SortDto;
 import com.ifs.eportal.filter.PortalUserAccessFilter;
@@ -59,14 +63,22 @@ public class PortalUserAccessDao implements Repository<PortalUserAccess, Integer
 	@Autowired
 	private EntityManager _em;
 
+	private String _path;
+
 	private String _sql;
+
+	private static final Logger _log = Logger.getLogger(PortalUserAccessDao.class.getName());
 
 	// end
 
 	// region -- Methods --
 
+	/**
+	 * Initialize
+	 */
 	public PortalUserAccessDao() {
-		_sql = "SELECT \r\n" + "	a.id, a.name\r\n" + "FROM salesforce.portal_user_access__c a ";
+		_path = ZFile.getPath("/sql/" + PortalUserAccessDao.class.getSimpleName());
+		_sql = ZFile.read(_path + "_sql.sql");
 	}
 
 	/**
@@ -76,15 +88,88 @@ public class PortalUserAccessDao implements Repository<PortalUserAccess, Integer
 	 * @return
 	 */
 	public PortalUserAccessDto getBy(Integer id) {
-		String sql = _sql + " WHERE a.id = :id";
+		PortalUserAccessDto res = new PortalUserAccessDto();
 
-		// Execute
-		Query q = _em.createNativeQuery(sql);
-		q.setParameter("id", id);
-		Object[] i = (Object[]) q.getSingleResult();
+		try {
+			String sql = _sql + " WHERE a.id = :id";
 
-		// Convert
-		PortalUserAccessDto res = PortalUserAccessDto.convert(i);
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("id", id);
+			Object[] i = (Object[]) q.getSingleResult();
+
+			// Convert
+			res = PortalUserAccessDto.convert(i);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * Get by
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public PortalUserAccessDto getBy(String sfId) {
+		PortalUserAccessDto res = new PortalUserAccessDto();
+
+		try {
+			String sql = _sql + " WHERE a.sfid = :sfId";
+
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("sfId", sfId);
+			Object[] i = (Object[]) q.getSingleResult();
+
+			// Convert
+			res = PortalUserAccessDto.convert(i);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * Get by
+	 * 
+	 * @param user
+	 * @param uuid
+	 * @return
+	 */
+	public PortalUserAccess getBy(String user, String uuId) {
+		PortalUserAccess res = new PortalUserAccess();
+
+		try {
+			String sql = "FROM PortalUserAccess a WHERE a.user = :user AND a.uuId = :uuId AND a.logoutOn IS NULL";
+
+			// Execute
+			Query q = _em.createQuery(sql, PortalUserAccess.class);
+			q.setParameter("user", user);
+			q.setParameter("uuId", uuId);
+			res = (PortalUserAccess) q.getSingleResult();
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
 		return res;
 	}
 

@@ -12,9 +12,14 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Oct-08 (verified)
+ *
+ */
 @Entity
 @Table(name = "credit_note__c", schema = "salesforce")
-public class CreditNote {
+public class CreditNote extends BaseModel {
 	// region -- Fields --
 
 	@Id
@@ -35,7 +40,7 @@ public class CreditNote {
 	@Column(columnDefinition = "text", name = "client_remarks__c")
 	private String clientRemarks;
 
-	@Column(columnDefinition = "float8", name = "credit_amount__c")
+	@Column(columnDefinition = "float(8)", name = "credit_amount__c")
 	private Float creditAmount;
 
 	@Column(columnDefinition = "varchar(18)", name = "customer__c")
@@ -54,13 +59,6 @@ public class CreditNote {
 	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "credit_note_date__c")
 	private Date creditNoteDate;
 
-	@Column(columnDefinition = "bool", name = "isdeleted")
-	private boolean isDeleted;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "systemmodstamp")
-	private Date systemModStamp;
-
 	@Column(columnDefinition = "varchar(255)", name = "status__c")
 	private String status;
 
@@ -68,15 +66,11 @@ public class CreditNote {
 	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "cn_application_date__c")
 	private Date cnApplicationDate;
 
-	@Column(columnDefinition = "float8", name = "external_id__c")
-	private String externalId;
+	@Column(columnDefinition = "float(8)", name = "external_id__c")
+	private Float externalId;
 
-	@Column(columnDefinition = "float8", name = "cn_applied_amount__c")
+	@Column(columnDefinition = "float(8)", name = "cn_applied_amount__c")
 	private Float cnAppliedAmount;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "createddate")
-	private Date createdDate;
 
 	@Column(columnDefinition = "bool", name = "flag__c")
 	private boolean flag;
@@ -93,26 +87,23 @@ public class CreditNote {
 	@Column(columnDefinition = "bool", name = "isselected__c")
 	private boolean isSelected;
 
-	@Column(columnDefinition = "varchar(18)", name = "sfid")
-	private String sfid;
-
-	@Column(columnDefinition = "varchar(32)", name = "_hc_lastop")
-	private String hcLastop;
-
-	@Column(columnDefinition = "text", name = "_hc_err")
-	private String hcErr;
-
 	@Column(columnDefinition = "varchar(18)", name = "createdbyid")
 	private String createdById;
 
-	@Column(columnDefinition = "float", name = "outstanding_amount_ca__c")
-	private String outstandingAmountCa;
+	@Column(columnDefinition = "float(8)", name = "outstanding_amount_ca__c")
+	private Float outstandingAmountCa;
 
-	@Column(columnDefinition = "float", name = "outstanding_amount__c")
-	private String outstandingAmount;
+	@Column(columnDefinition = "float(8)", name = "outstanding_amount__c")
+	private Float outstandingAmount;
 
 	@Column(columnDefinition = "text", name = "ops_remarks__c")
 	private String opsRemarks;
+
+	@Column(columnDefinition = "varchar(18)", name = "unapplied_reason__c")
+	private String unappliedReason;
+
+	@Column(columnDefinition = "varchar(255)", name = "reason_code__c")
+	private String reasonCode;
 
 	// end
 
@@ -206,22 +197,6 @@ public class CreditNote {
 		this.creditNoteDate = creditNoteDate;
 	}
 
-	public boolean isDeleted() {
-		return isDeleted;
-	}
-
-	public void setDeleted(boolean isDeleted) {
-		this.isDeleted = isDeleted;
-	}
-
-	public Date getSystemModStamp() {
-		return systemModStamp;
-	}
-
-	public void setSystemModStamp(Date systemModStamp) {
-		this.systemModStamp = systemModStamp;
-	}
-
 	public String getStatus() {
 		return status;
 	}
@@ -238,11 +213,11 @@ public class CreditNote {
 		this.cnApplicationDate = cnApplicationDate;
 	}
 
-	public String getExternalId() {
+	public Float getExternalId() {
 		return externalId;
 	}
 
-	public void setExternalId(String externalId) {
+	public void setExternalId(Float externalId) {
 		this.externalId = externalId;
 	}
 
@@ -252,14 +227,6 @@ public class CreditNote {
 
 	public void setCnAppliedAmount(Float cnAppliedAmount) {
 		this.cnAppliedAmount = cnAppliedAmount;
-	}
-
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
 	}
 
 	public boolean isFlag() {
@@ -302,30 +269,6 @@ public class CreditNote {
 		this.isSelected = isSelected;
 	}
 
-	public String getSfid() {
-		return sfid;
-	}
-
-	public void setSfid(String sfid) {
-		this.sfid = sfid;
-	}
-
-	public String getHcLastop() {
-		return hcLastop;
-	}
-
-	public void setHcLastop(String hcLastop) {
-		this.hcLastop = hcLastop;
-	}
-
-	public String getHcErr() {
-		return hcErr;
-	}
-
-	public void setHcErr(String hcErr) {
-		this.hcErr = hcErr;
-	}
-
 	public String getCreatedById() {
 		return createdById;
 	}
@@ -334,19 +277,19 @@ public class CreditNote {
 		this.createdById = createdById;
 	}
 
-	public String getOutstandingAmountCa() {
+	public Float getOutstandingAmountCa() {
 		return outstandingAmountCa;
 	}
 
-	public void setOutstandingAmountCa(String outstandingAmountCa) {
+	public void setOutstandingAmountCa(Float outstandingAmountCa) {
 		this.outstandingAmountCa = outstandingAmountCa;
 	}
 
-	public String getOutstandingAmount() {
+	public Float getOutstandingAmount() {
 		return outstandingAmount;
 	}
 
-	public void setOutstandingAmount(String outstandingAmount) {
+	public void setOutstandingAmount(Float outstandingAmount) {
 		this.outstandingAmount = outstandingAmount;
 	}
 
@@ -358,12 +301,31 @@ public class CreditNote {
 		this.opsRemarks = opsRemarks;
 	}
 
+	public String getUnappliedReason() {
+		return unappliedReason;
+	}
+
+	public void setUnappliedReason(String unappliedReason) {
+		this.unappliedReason = unappliedReason;
+	}
+
+	public String getReasonCode() {
+		return reasonCode;
+	}
+
+	public void setReasonCode(String reasonCode) {
+		this.reasonCode = reasonCode;
+	}
+
 	// end
 
 	// region -- Methods --
 
+	/**
+	 * Initialize
+	 */
 	public CreditNote() {
-
+		super();
 	}
 
 	// end

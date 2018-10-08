@@ -3,6 +3,8 @@ package com.ifs.eportal.controller;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ifs.eportal.bll.CreditNoteService;
+import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.dto.CreditNoteDto;
 import com.ifs.eportal.model.CreditNote;
 import com.ifs.eportal.req.PagingReq;
@@ -27,6 +30,8 @@ public class CreditNoteController {
 
 	@Autowired
 	private CreditNoteService creditNoteService;
+
+	private static final Logger _log = Logger.getLogger(CreditNoteController.class.getName());
 
 	// end
 
@@ -68,13 +73,13 @@ public class CreditNoteController {
 	 * @return
 	 */
 	@PostMapping("/read")
-	public ResponseEntity<?> read(@RequestBody int id) {
+	public ResponseEntity<?> read(@RequestBody String sfId) {
 		SingleRsp res = new SingleRsp();
 
 		try {
 			// Handle
 			CreditNoteDto t;
-			t = creditNoteService.read(id);
+			t = creditNoteService.read(sfId);
 
 			res.setResult(t);
 		} catch (Exception ex) {
@@ -129,6 +134,37 @@ public class CreditNoteController {
 			res.setResult(data);
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
+		}
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
+	/**
+	 * Search by customer
+	 * 
+	 * @param req
+	 * @return
+	 */
+	@PostMapping("/search-customer")
+	public ResponseEntity<?> searchCustomer(@RequestBody PagingReq req) {
+		MultipleRsp res = new MultipleRsp();
+
+		try {
+			// Handle
+			List<CreditNoteDto> l = creditNoteService.read(req);
+
+			// Set data
+			Map<String, Object> data = new LinkedHashMap<>();
+			data.put("count", l.size());
+			data.put("data", l);
+			res.setResult(data);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
 		}
 
 		return new ResponseEntity<>(res, HttpStatus.OK);

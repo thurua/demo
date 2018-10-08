@@ -8,6 +8,11 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Oct-08 (verified)
+ *
+ */
 @Entity
 @Table(name = "code", schema = "public")
 public class Code {
@@ -112,6 +117,9 @@ public class Code {
 
 	// region -- Methods --
 
+	/**
+	 * Initialize
+	 */
 	public Code() {
 
 	}

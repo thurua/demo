@@ -71,6 +71,9 @@ public class InvoiceDto extends BaseDto {
 	@JsonProperty(value = "invoiceAmount")
 	private Double invoiceAmount;
 
+	@JsonProperty(value = "supplier")
+	private String supplier;
+
 	// end
 
 	// region -- Get set --
@@ -227,6 +230,14 @@ public class InvoiceDto extends BaseDto {
 		this.invoiceAmount = invoiceAmount;
 	}
 
+	public String getSupplier() {
+		return supplier;
+	}
+
+	public void setSupplier(String supplier) {
+		this.supplier = supplier;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -256,6 +267,7 @@ public class InvoiceDto extends BaseDto {
 		creditPeriod = null;
 		outstandingAmount = null;
 		invoiceAmount = null;
+		supplier = "";
 	}
 
 	/**
@@ -286,6 +298,7 @@ public class InvoiceDto extends BaseDto {
 		res.setCreditPeriod((Double) o[16]);
 		res.setOutstandingAmount((Double) o[17]);
 		res.setInvoiceAmount((Double) o[18]);
+		res.setSupplier((String) o[19]);
 
 		return res;
 	}

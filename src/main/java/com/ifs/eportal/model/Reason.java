@@ -12,9 +12,14 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Oct-08 (verified)
+ *
+ */
 @Entity
 @Table(name = "reason__c", schema = "salesforce")
-public class Reason {
+public class Reason extends BaseModel {
 	// region -- Fields --
 
 	@Id
@@ -29,46 +34,27 @@ public class Reason {
 	@Column(columnDefinition = "varchar(18)", name = "credit_note__c")
 	private String creditNote;
 
-	@Column(columnDefinition = "float8", name = "amount__c")
-	private float amount;
+	@Column(columnDefinition = "float(8)", name = "amount__c")
+	private Float amount;
 
 	@Column(columnDefinition = "varchar(80)", name = "name")
 	private String name;
 
-	@Column(columnDefinition = "bool", name = "isdeleted")
-	private boolean isDeleted;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "systemmodstamp")
-	private Date systemModStamp;
-
 	@Column(columnDefinition = "varchar(255)", name = "remarks__c")
 	private String remarks;
 
-	@Column(columnDefinition = "text", name = "external_id__c")
+	@Column(columnDefinition = "varchar(50)", name = "external_id__c")
 	private String externalId;
 
-	@Column(columnDefinition = "date", name = "date__c")
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "date__c")
 	private Date date;
 
 	@Column(columnDefinition = "varchar(18)", name = "invoice__c")
 	private String invoice;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "createddate")
-	private Date createdDate;
-
 	@Column(columnDefinition = "varchar(255)", name = "reason__c")
 	private String reason;
-
-	@Column(columnDefinition = "varchar(18)", name = "sfid")
-	private String sfid;
-
-	@Column(columnDefinition = "varchar(32)", name = "_hc_lastop")
-	private String hcLastop;
-
-	@Column(columnDefinition = "text", name = "_hc_err")
-	private String hcErr;
 
 	// end
 
@@ -98,11 +84,11 @@ public class Reason {
 		this.creditNote = creditNote;
 	}
 
-	public float getAmount() {
+	public Float getAmount() {
 		return amount;
 	}
 
-	public void setAmount(float amount) {
+	public void setAmount(Float amount) {
 		this.amount = amount;
 	}
 
@@ -112,22 +98,6 @@ public class Reason {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public boolean isDeleted() {
-		return isDeleted;
-	}
-
-	public void setDeleted(boolean isDeleted) {
-		this.isDeleted = isDeleted;
-	}
-
-	public Date getSystemModStamp() {
-		return systemModStamp;
-	}
-
-	public void setSystemModStamp(Date systemModStamp) {
-		this.systemModStamp = systemModStamp;
 	}
 
 	public String getRemarks() {
@@ -162,14 +132,6 @@ public class Reason {
 		this.invoice = invoice;
 	}
 
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
 	public String getReason() {
 		return reason;
 	}
@@ -178,36 +140,15 @@ public class Reason {
 		this.reason = reason;
 	}
 
-	public String getSfid() {
-		return sfid;
-	}
-
-	public void setSfid(String sfid) {
-		this.sfid = sfid;
-	}
-
-	public String getHcLastop() {
-		return hcLastop;
-	}
-
-	public void setHcLastop(String hcLastop) {
-		this.hcLastop = hcLastop;
-	}
-
-	public String getHcErr() {
-		return hcErr;
-	}
-
-	public void setHcErr(String hcErr) {
-		this.hcErr = hcErr;
-	}
-
 	// end
 
 	// region -- Methods --
 
+	/**
+	 * Initialize
+	 */
 	public Reason() {
-
+		super();
 	}
 
 	// end

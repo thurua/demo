@@ -12,9 +12,14 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Oct-08 (verified)
+ *
+ */
 @Entity
 @Table(name = "invoice__c", schema = "salesforce")
-public class Invoice {
+public class Invoice extends BaseModel {
 	// region -- Fields --
 
 	@Id
@@ -66,13 +71,6 @@ public class Invoice {
 	@Column(columnDefinition = "varchar(80)", name = "name")
 	private String name;
 
-	@Column(columnDefinition = "bool", name = "isdeleted")
-	private boolean isDeleted;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "systemmodstamp")
-	private Date systemModStamp;
-
 	@Column(columnDefinition = "varchar(255)", name = "contract__c")
 	private String contract;
 
@@ -82,42 +80,37 @@ public class Invoice {
 	@Column(columnDefinition = "varchar(255)", name = "status__c")
 	private String status;
 
-	@Column(columnDefinition = "float", name = "external_id__c")
-	private float externalId;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "createddate")
-	private Date createdDate;
+	@Column(columnDefinition = "float(8)", name = "external_id__c")
+	private Float externalId;
 
 	@Column(columnDefinition = "varchar(18)", name = "supplier__c")
 	private String supplier;
 
-	@Column(columnDefinition = "float", name = "invoice_amount__c")
-	private float invoiceAmount;
+	@Column(columnDefinition = "float(8)", name = "invoice_amount__c")
+	private Float invoiceAmount;
 
-	@Column(columnDefinition = "date", name = "payment_date__c")
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "payment_date__c")
 	private Date paymentDate;
 
-	@Column(columnDefinition = "float", name = "credit_period__c")
-	private float creditPeriod;
+	@Column(columnDefinition = "float(8)", name = "credit_period__c")
+	private Float creditPeriod;
 
-	@Column(columnDefinition = "varchar(18)", name = "sfid")
-	private String sfid;
+	@Column(columnDefinition = "float(8)", name = "outstanding_amount__c")
+	private Float outstandingAmount;
 
-	@Column(columnDefinition = "varchar(32)", name = "_hc_lastop")
-	private String hcLastop;
-
-	@Column(columnDefinition = "text", name = "_hc_err")
-	private String hcErr;
-
-	@Column(columnDefinition = "float", name = "outstanding_amount__c")
-	private String outstandingAmount;
-
-	@Column(columnDefinition = "date", name = "added_credit_period__c")
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "added_credit_period__c")
 	private Date addedCreditPeriod;
 
-	@Column(columnDefinition = "date", name = "supplier_from_excel__c")
-	private Date supplierFromExcel;
+	@Column(columnDefinition = "varchar(255)", name = "supplier_from_excel__c")
+	private String supplierFromExcel;
+
+	@Column(columnDefinition = "text", name = "ops_remarks__c")
+	private String opsRemarks;
+
+	@Column(columnDefinition = "varchar(255)", name = "reason_code__c")
+	private String reasonCode;
 
 	// end
 
@@ -243,22 +236,6 @@ public class Invoice {
 		this.name = name;
 	}
 
-	public boolean isDeleted() {
-		return isDeleted;
-	}
-
-	public void setDeleted(boolean isDeleted) {
-		this.isDeleted = isDeleted;
-	}
-
-	public Date getSystemModStamp() {
-		return systemModStamp;
-	}
-
-	public void setSystemModStamp(Date systemModStamp) {
-		this.systemModStamp = systemModStamp;
-	}
-
 	public String getContract() {
 		return contract;
 	}
@@ -283,20 +260,12 @@ public class Invoice {
 		this.status = status;
 	}
 
-	public float getExternalId() {
+	public Float getExternalId() {
 		return externalId;
 	}
 
-	public void setExternalId(float externalId) {
+	public void setExternalId(Float externalId) {
 		this.externalId = externalId;
-	}
-
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
 	}
 
 	public String getSupplier() {
@@ -307,11 +276,11 @@ public class Invoice {
 		this.supplier = supplier;
 	}
 
-	public float getInvoiceAmount() {
+	public Float getInvoiceAmount() {
 		return invoiceAmount;
 	}
 
-	public void setInvoiceAmount(float invoiceAmount) {
+	public void setInvoiceAmount(Float invoiceAmount) {
 		this.invoiceAmount = invoiceAmount;
 	}
 
@@ -323,43 +292,19 @@ public class Invoice {
 		this.paymentDate = paymentDate;
 	}
 
-	public float getCreditPeriod() {
+	public Float getCreditPeriod() {
 		return creditPeriod;
 	}
 
-	public void setCreditPeriod(float creditPeriod) {
+	public void setCreditPeriod(Float creditPeriod) {
 		this.creditPeriod = creditPeriod;
 	}
 
-	public String getSfid() {
-		return sfid;
-	}
-
-	public void setSfid(String sfid) {
-		this.sfid = sfid;
-	}
-
-	public String getHcLastop() {
-		return hcLastop;
-	}
-
-	public void setHcLastop(String hcLastop) {
-		this.hcLastop = hcLastop;
-	}
-
-	public String getHcErr() {
-		return hcErr;
-	}
-
-	public void setHcErr(String hcErr) {
-		this.hcErr = hcErr;
-	}
-
-	public String getOutstandingAmount() {
+	public Float getOutstandingAmount() {
 		return outstandingAmount;
 	}
 
-	public void setOutstandingAmount(String outstandingAmount) {
+	public void setOutstandingAmount(Float outstandingAmount) {
 		this.outstandingAmount = outstandingAmount;
 	}
 
@@ -371,20 +316,39 @@ public class Invoice {
 		this.addedCreditPeriod = addedCreditPeriod;
 	}
 
-	public Date getSupplierFromExcel() {
+	public String getSupplierFromExcel() {
 		return supplierFromExcel;
 	}
 
-	public void setSupplierFromExcel(Date supplierFromExcel) {
+	public void setSupplierFromExcel(String supplierFromExcel) {
 		this.supplierFromExcel = supplierFromExcel;
+	}
+
+	public String getOpsRemarks() {
+		return opsRemarks;
+	}
+
+	public void setOpsRemarks(String opsRemarks) {
+		this.opsRemarks = opsRemarks;
+	}
+
+	public String getReasonCode() {
+		return reasonCode;
+	}
+
+	public void setReasonCode(String reasonCode) {
+		this.reasonCode = reasonCode;
 	}
 
 	// end
 
 	// region -- Methods --
 
+	/**
+	 * Initialize
+	 */
 	public Invoice() {
-
+		super();
 	}
 
 	// end

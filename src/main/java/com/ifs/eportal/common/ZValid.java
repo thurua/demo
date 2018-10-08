@@ -33,7 +33,7 @@ public class ZValid {
 		// Find customer in curr sumary
 		double amountCurr = 0;
 		for (CustomDto i : curr) {
-			if (name.trim() == i.getCode()) {
+			if (name.trim().equals(i.getCode())) {
 				amountCurr = i.getValue();
 			}
 		}
@@ -41,7 +41,7 @@ public class ZValid {
 		// Find customer in total sumary
 		double amountTotal = 0;
 		for (CustomDto i : total) {
-			if (name.trim() == i.getCode()) {
+			if (name.trim().equals(i.getCode())) {
 				amountTotal = i.getValue();
 			}
 		}
@@ -70,7 +70,7 @@ public class ZValid {
 		// Find customer in curr sumary
 		double amountCurr = 0;
 		for (CustomDto i : curr) {
-			if (name.trim() == i.getCode()) {
+			if (name.trim().equals(i.getCode())) {
 				amountCurr = i.getValue();
 			}
 		}
@@ -78,7 +78,7 @@ public class ZValid {
 		// Find customer in total sumary
 		double amountTotal = 0;
 		for (CustomDto i : total) {
-			if (name.trim() == i.getCode()) {
+			if (name.trim().equals(i.getCode())) {
 				amountTotal = i.getValue();
 			}
 		}
@@ -107,7 +107,7 @@ public class ZValid {
 		// Find customer in curr sumary
 		double amountCurr = 0;
 		for (CustomDto i : curr) {
-			if (name.trim() == i.getCode()) {
+			if (name.trim().equals(i.getCode())) {
 				amountCurr = i.getValue();
 			}
 		}
@@ -136,18 +136,18 @@ public class ZValid {
 		// Boolean found = false;
 		name = name.trim();
 		for (ClientAccountCustomerDto i : lcc) {
-			if (name != i.getCcName()) {
+			if (!name.equals(i.getCcName())) {
 				continue;
 			}
 
 			// found = true;
 			res = "";
 
-			if (i.getStatus() == "Activated") {
-				Boolean t1 = (factor == ca.getFciName() && ca.getAccountType() == "Import");
-				Boolean t2 = (factor == i.getFciName() && ca.getAccountType() == "Export");
-				DateTime activationDate = new DateTime(Utils.dateFormat(i.getActivationDate()));
-				if (t1 || t2 || ca.getAccountType() == "Domestic") {
+			if (i.getStatus().equals("Activated")) {
+				Boolean t1 = (factor.equals(ca.getFciName()) && ca.getAccountType().equals("Import"));
+				Boolean t2 = (factor.equals(i.getFciName()) && ca.getAccountType().equals("Export"));
+				DateTime activationDate = new DateTime(i.getActivationDate());
+				if (t1 || t2 || ca.getAccountType().equals("Domestic")) {
 					if (d.after(activationDate.toDate())) {
 						/* ToanNguyen 2018-Aug-23 IFS-974 */
 						// Schedule Acceptance Date cannot be before client account customer activation
@@ -155,8 +155,8 @@ public class ZValid {
 						res = "CC2";
 					} else {
 						if (isInvoiceFactoring) {
-							Boolean t3 = i.getVerificationExceedingInvoiceAmountc() == null;
-							if (amount > Double.parseDouble(i.getVerificationExceedingInvoiceAmountc()) || t3) {
+							Boolean t3 = i.getVerificationExceedingInvoiceAmount() == null;
+							if (amount > i.getVerificationExceedingInvoiceAmount() || t3) {
 								/* NhatNguyen 2018-Sep-03 IFS-1042 */
 								// Customer - Per Verification Amount.
 								res = "CCB";
@@ -169,7 +169,7 @@ public class ZValid {
 								res += ",CC9";
 							}
 
-							if (Float.parseFloat(i.getVerification()) == 100) {
+							if (i.getVerification() == 100) {
 								/* TriNguyen 2018-Aug-31 IFS-1041 */
 								// Customer - 100% Verification Required.
 								res += ",CCA";
@@ -181,7 +181,7 @@ public class ZValid {
 					// Customer Branch and/or Factor Code is not found in Client Account.
 					res = "CC3";
 				}
-			} else if (i.getStatus() == "Terminated" || i.getStatus() == "Closed") {
+			} else if (i.getStatus().equals("Terminated") || i.getStatus().equals("Closed")) {
 				/* ToanNguyen 2018-Aug-31 IFS-1026 */
 				// Customer is already terminated in Client Account.
 				res = "CC4";
@@ -213,7 +213,7 @@ public class ZValid {
 		// Find customer in credit sumary
 		double amountCredit = 0;
 		for (CustomDto i : credit) {
-			if (name.trim() == i.getCode()) {
+			if (name.trim().equals(i.getCode())) {
 				amountCredit = i.getValue();
 			}
 		}
@@ -221,7 +221,7 @@ public class ZValid {
 		// Find customer in invoice sumary
 		double amountInvoice = 0;
 		for (CustomDto i : invoice) {
-			if (name.trim() == i.getCode()) {
+			if (name.trim().equals(i.getCode())) {
 				amountInvoice = i.getValue();
 			}
 		}
@@ -253,8 +253,8 @@ public class ZValid {
 				isExistsACL = false;
 
 				for (ApprovedCustomerLimitDto acl : lcl) {
-					if (acl.getCustomer() == o.getCustomer()) {
-						if (Utils.dateFormat(acl.getValidFrom()).before(o.getInvoiceDate())) {
+					if (acl.getCustomer().equals(o.getCustomer())) {
+						if (acl.getValidFrom().before(o.getInvoiceDate())) {
 							/* TriNguyen 2018-Aug-30 IFS-1038 */
 							// Customer - Invoice dated before Approved CL Date.
 							res = "CC7,";
@@ -264,7 +264,7 @@ public class ZValid {
 						for (Integer i = 0; i < total.size(); i++) {
 							String name = total.get(i).getCode();
 							double totalOutstandingInvAmount = (double) total.get(i).getValue();
-							if (acl.getCustomer() == name && acl.getApprovedLimit() < totalOutstandingInvAmount) {
+							if (acl.getCustomer().equals(name) && acl.getApprovedLimit() < totalOutstandingInvAmount) {
 								// Customer - Total Outstanding Invoice Amount more than Approved CL Limit.
 								res += "IVG";
 							}
@@ -290,9 +290,9 @@ public class ZValid {
 				isExistsACL = false;
 
 				for (ApprovedCustomerLimitDto acl : lcl) {
-					if (acl.getCustomer() == o.getCustomer()) {
-						Date t = (new DateTime(o.getInvoiceDate())).plusDays((int) o.getCreditPeriod()).toDate();
-						if (Utils.dateFormat(acl.getValidTo()).after(t)) {
+					if (acl.getCustomer().equals(o.getCustomer())) {
+						Date t = (new DateTime(o.getInvoiceDate())).plusDays(o.getCreditPeriod().intValue()).toDate();
+						if (acl.getValidTo().after(t)) {
 							/* TriNguyen 2018-Aug-30 IFS-1037 */
 							// Customer - Invoice Credit Period exceed Approved CL Credit Period.
 							res = "CC8";
@@ -324,7 +324,7 @@ public class ZValid {
 		Boolean found = false;
 
 		for (InvoiceDto i : l) {
-			if (cn.getAppliedInvoice() != i.getName()) {
+			if (!cn.getAppliedInvoice().equals(i.getName())) {
 				continue;
 			}
 
@@ -333,7 +333,8 @@ public class ZValid {
 			// o.Applied_INV_As_per_schedule__c = i.Id;
 
 			/* ToanNguyen 2018-Sep-02 IFS-1056 */
-			if (i.getStatus() == "Reassigned" || i.getStatus() == "Reversed" || i.getStatus() == "Disputed") {
+			if (i.getStatus().equals("Reassigned") || i.getStatus().equals("Reversed")
+					|| i.getStatus().equals("Disputed")) {
 				// Credit Note - Invoice not outstanding.
 				err = "CN2";
 			}

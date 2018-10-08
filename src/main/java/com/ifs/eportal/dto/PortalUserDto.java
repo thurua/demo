@@ -53,6 +53,9 @@ public class PortalUserDto extends BaseDto {
 	@JsonProperty(value = "accessRights")
 	private String accessRights;
 
+	@JsonProperty(value = "uuId")
+	private String uuId;
+
 	// end
 
 	// region -- Get set --
@@ -159,6 +162,14 @@ public class PortalUserDto extends BaseDto {
 
 	public void setAccessRights(String accessRights) {
 		this.accessRights = accessRights;
+	}
+
+	public String getUuId() {
+		return uuId;
+	}
+
+	public void setUuId(String uuId) {
+		this.uuId = uuId;
 	}
 
 	// end

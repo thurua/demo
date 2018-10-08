@@ -12,9 +12,14 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Oct-08 (verified)
+ *
+ */
 @Entity
 @Table(name = "schedule_of_offer__c", schema = "salesforce")
-public class ScheduleOfOffer {
+public class ScheduleOfOffer extends BaseModel {
 	// region -- Fields --
 
 	@Id
@@ -82,13 +87,6 @@ public class ScheduleOfOffer {
 	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "schedule_date__c")
 	private Date scheduleDate;
 
-	@Column(columnDefinition = "bool", name = "isdeleted")
-	private boolean isDeleted;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "systemmodstamp")
-	private Date systemModStamp;
-
 	@Column(columnDefinition = "varchar(18)", name = "createdby_portaluserid__c")
 	private String createdByPortalUserId;
 
@@ -101,10 +99,6 @@ public class ScheduleOfOffer {
 	@Column(columnDefinition = "bool", name = "allow_submit__c")
 	private boolean allowSubmit;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(columnDefinition = "TIMESTAMP WITH TIME ZONE", name = "createddate")
-	private Date createdDate;
-
 	@Column(columnDefinition = "varchar(255)", name = "schedule_no__c")
 	private String scheduleNo;
 
@@ -115,14 +109,8 @@ public class ScheduleOfOffer {
 	@Column(columnDefinition = "varchar(255)", name = "portal_status__c")
 	private String portalStatus;
 
-	@Column(columnDefinition = "varchar(18)", name = "sfid")
-	private String sfId;
-
-	@Column(columnDefinition = "varchar(32)", name = "_hc_lastop")
-	private String hcLastop;
-
-	@Column(columnDefinition = "text", name = "_hc_err")
-	private String hcErr;
+	@Column(columnDefinition = "varchar(255)", name = "invoice_data_path__c")
+	private String invoiceDataPath;
 
 	// end
 
@@ -280,22 +268,6 @@ public class ScheduleOfOffer {
 		this.scheduleDate = scheduleDate;
 	}
 
-	public boolean isDeleted() {
-		return isDeleted;
-	}
-
-	public void setDeleted(boolean isDeleted) {
-		this.isDeleted = isDeleted;
-	}
-
-	public Date getSystemModStamp() {
-		return systemModStamp;
-	}
-
-	public void setSystemModStamp(Date systemModStamp) {
-		this.systemModStamp = systemModStamp;
-	}
-
 	public String getCreatedByPortalUserId() {
 		return createdByPortalUserId;
 	}
@@ -328,14 +300,6 @@ public class ScheduleOfOffer {
 		this.allowSubmit = allowSubmit;
 	}
 
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
 	public String getScheduleNo() {
 		return scheduleNo;
 	}
@@ -360,36 +324,23 @@ public class ScheduleOfOffer {
 		this.portalStatus = portalStatus;
 	}
 
-	public String getSfId() {
-		return sfId;
+	public String getInvoiceDataPath() {
+		return invoiceDataPath;
 	}
 
-	public void setSfId(String sfId) {
-		this.sfId = sfId;
-	}
-
-	public String getHcLastop() {
-		return hcLastop;
-	}
-
-	public void setHcLastop(String hcLastop) {
-		this.hcLastop = hcLastop;
-	}
-
-	public String getHcErr() {
-		return hcErr;
-	}
-
-	public void setHcErr(String hcErr) {
-		this.hcErr = hcErr;
+	public void setInvoiceDataPath(String invoiceDataPath) {
+		this.invoiceDataPath = invoiceDataPath;
 	}
 
 	// end
 
 	// region -- Methods --
 
+	/**
+	 * Initialize
+	 */
 	public ScheduleOfOffer() {
-
+		super();
 	}
 
 	// end

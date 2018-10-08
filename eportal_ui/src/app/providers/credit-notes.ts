@@ -43,7 +43,7 @@ export class CreditNoteProvider {
      * @param info
      */
     public searchCustomer(info: any) {
-        return this.api.post('credit-note/search-customer', info);
+        return this.api.post('common/search-customer', info);
     }
 
     /**

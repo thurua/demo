@@ -8,12 +8,10 @@
                 <div class="col-md 6 left">
                     <div class="form-group row">
                         <div class="col-md-4">
-                            <strong>Client Name</strong>
+                            <strong>Client</strong>
                         </div>
                         <div class="col-md-8">
-                            <select id="account" name="account" #account="ngModel" [(ngModel)]="vm.account" (change)="changeAccount()" class="form-control" required>
-                                <option *ngFor="let i of listClient" value="{{i.sfId}}">{{i.name}}</option>
-                            </select>
+                            <label class="col-form-label">{{clientName}}</label>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -29,20 +27,16 @@
                             </select>
                             <span [hidden]="scheduleType.valid || (scheduleType.pristine && !f.submitted && validate)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="scheduleType" data-valmsg-for="scheduleType" id="scheduleType_validationMessage"
                                 role="alert">
-                                    <i class="fa fa-exclamation-triangle"></i>Please select a Client Account.
+                                    <i class="fa fa-exclamation-triangle"></i>&nbsp; Please select a Schedule Type.
                             </span>
                         </div>
                     </div>
                     <div class="form-group row">
                         <div class="col-md-4">
-                            <strong>Amend Schedule &nbsp;<sup>&#9432;</sup></strong>
+                            <strong>Amend Schedule</strong>
                         </div>
                         <div class="col-md-8">
                             <input type="checkbox" name="amendSchedule" #amendSchedule="ngModel" [(ngModel)]="vm.amendSchedule">
-                            <!-- <span [hidden]="vm.amendSchedule || (amendSchedule.pristine && !f.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="amendSchedule" data-valmsg-for="amendSchedule" id="amendSchedule_validationMessage"
-                                role="alert">
-                                <i class="fa fa-exclamation-triangle"></i>Required 
-                            </span>-->
                         </div>
                     </div>
                 </div>
@@ -52,13 +46,13 @@
                             <strong>Client Account<span class="text-danger">*</span></strong>
                         </div>
                         <div class="col-md-8">
-                            <select class="form-control" name="clientAccount" #clientAccount="ngModel" [(ngModel)]="vm.clientAccount" required>
-                                    <option *ngFor="let i of listClientAccount" value="{{i.id}}">{{i.clientAccount}}</option>
-                                </select>
-                            <span [hidden]="clientAccount.valid || (clientAccount.pristine && !f.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="clientAccount" data-valmsg-for="clientAccount" id="clientAccount_validationMessage"
+                            <select name="clientAccountId" #clientAccountId="ngModel" [(ngModel)]="vm.clientAccountId" class="form-control" required>
+                                <option *ngFor="let i of lstCA" value="{{i.sfId}}">{{i.clientAccount}}</option>
+                            </select>
+                            <span [hidden]="clientAccountId.valid || (clientAccountId.pristine && !f.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="clientAccountId" data-valmsg-for="clientAccountId" id="clientAccountId_validationMessage"
                                 role="alert">
-                                        <i class="fa fa-exclamation-triangle"></i>Please select a plan.
-                                </span>
+                                    <i class="fa fa-exclamation-triangle"></i>&nbsp;Please select a Client Account.
+                            </span>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -77,7 +71,7 @@
                 <strong>File Upload</strong>
             </div>
             <div class="row">
-                <div class="card-body col-md-6">
+                <div class="card-body col-md-6 uploadfile">
                     <div class="form-group row">
                         <div class="col-md-6">
                             <div class="input-group file-upload">
@@ -91,12 +85,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body col-md-6">
+                <div class="card-body col-md-5">
                     <a *ngIf="!validate" href="../../../assets/excel/{{fileName}}" class="btn btn-primary download" download>Dowload Template</a>
                     <button *ngIf="validate" type="button" (click)="hideShow('Required')" class="btn btn-primary download">Dowload Template</button>
                 </div>
             </div>
-            {{message}}
+            <div class="card-body" *ngIf="isCheck">
+                <p [innerHTML]="message"></p>
+                <input type="checkbox" name="agree"> I agree
+            </div>
             <div class="card-body col-md-6">
                 <div class="row">
                     <div class="col-md-6"></div>

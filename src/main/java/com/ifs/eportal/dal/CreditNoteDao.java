@@ -127,31 +127,31 @@ public class CreditNoteDao implements Repository<CreditNote, Integer> {
 	 * @param sfId
 	 * @return
 	 */
-//	public CreditNoteDto getBy(String sfId) {
-//		CreditNoteDto res = new CreditNoteDto();
-//
-//		try {
-//			String sql = ZFile.read(_path + "detail.sql");
-//			sql += " WHERE a.sfid = :sfId";
-//
-//			// Execute
-//			Query q = _em.createNativeQuery(sql);
-//			q.setParameter("sfId", sfId);
-//			Object[] t = (Object[]) q.getSingleResult();
-//
-//			// Convert
-//			res = CreditNoteDto.convert(t);
-//		} catch (Exception ex) {
-//			if (Utils.printStackTrace) {
-//				ex.printStackTrace();
-//			}
-//			if (Utils.writeLog) {
-//				_log.log(Level.SEVERE, ex.getMessage(), ex);
-//			}
-//		}
-//
-//		return res;
-//	}
+	public CreditNoteDto getBy(String sfId) {
+		CreditNoteDto res = new CreditNoteDto();
+
+		try {
+			String sql = ZFile.read(_path + "detail.sql");
+			sql += " WHERE a.sfid = :sfId";
+
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("sfId", sfId);
+			Object[] t = (Object[]) q.getSingleResult();
+
+			// Convert
+			res = CreditNoteDto.convert(t);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return res;
+	}
 
 	/**
 	 * Get by
@@ -303,7 +303,7 @@ public class CreditNoteDao implements Repository<CreditNote, Integer> {
 			where += " AND a.name = :creditNoteNo";
 		}
 		if (!customer.isEmpty()) {
-			where += " AND a.customer__c = :customer";
+			where += " AND b.name = :customer";
 		}
 		if (fr != null && to != null) {
 			where += " AND a.createddate BETWEEN :fr AND :to";
@@ -365,16 +365,26 @@ public class CreditNoteDao implements Repository<CreditNote, Integer> {
 	}
 
 	public CustomDto getAverage(String clientAccountId) {
-		String sql = "SELECT '1' as code, AVG(credit_amount__c) as value " + "FROM credit_note__c a "
-				+ "WHERE a.Client_Account__c = :clientAccountId";
+		CustomDto res = new CustomDto();
+		try {
+			String sql = ZFile.read(_path + "getAverage.sql");
 
-		// Execute
-		Query q = _em.createNativeQuery(sql);
-		q.setParameter("clientAccountId", clientAccountId);
-		Object[] i = (Object[]) q.getSingleResult();
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("clientAccountId", clientAccountId);
+			Object[] i = (Object[]) q.getSingleResult();
 
-		// Convert
-		CustomDto res = CustomDto.convert(i);
+			// Convert
+			res = CustomDto.convert(i);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
 		return res;
 	}
 
