@@ -16,9 +16,6 @@ public class PortalRoleDto extends BaseDto {
 	@JsonProperty(value = "name")
 	private String name;
 
-	@JsonProperty(value = "sfid")
-	private String sfid;
-
 	// end
 
 	// region -- Get set --
@@ -31,14 +28,6 @@ public class PortalRoleDto extends BaseDto {
 		this.name = name;
 	}
 
-	public String getSfid() {
-		return sfid;
-	}
-
-	public void setSfid(String sfid) {
-		this.sfid = sfid;
-	}
-
 	// end
 
 	// region -- Methods --
@@ -49,7 +38,6 @@ public class PortalRoleDto extends BaseDto {
 	public PortalRoleDto() {
 		super();
 
-		sfid = "";
 		name = "";
 
 	}
@@ -64,8 +52,9 @@ public class PortalRoleDto extends BaseDto {
 		PortalRoleDto res = new PortalRoleDto();
 
 		res.setId((Integer) o[0]);
-		res.setName((String) o[1]);
-		res.setSfid((String) o[2]);
+		res.setSfId((String) o[1]);
+
+		res.setName((String) o[2]);
 
 		return res;
 	}

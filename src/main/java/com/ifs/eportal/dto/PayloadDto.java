@@ -1,6 +1,9 @@
 package com.ifs.eportal.dto;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,9 +16,6 @@ import com.ifs.eportal.common.Utils;
  */
 public class PayloadDto extends BaseDto {
 	// region -- Fields --
-
-	@JsonProperty(value = "sfId")
-	private String sfId;
 
 	@JsonProperty(value = "userId")
 	private String userId;
@@ -41,17 +41,12 @@ public class PayloadDto extends BaseDto {
 	@JsonProperty(value = "clientName")
 	private String clientName;
 
+	@JsonProperty(value = "accessRights")
+	private List<String> accessRights;
+
 	// end
 
 	// region -- Get set --
-
-	public String getSfId() {
-		return sfId;
-	}
-
-	public void setSfId(String sfId) {
-		this.sfId = sfId;
-	}
 
 	public String getUserId() {
 		return userId;
@@ -117,6 +112,14 @@ public class PayloadDto extends BaseDto {
 		this.clientName = clientName;
 	}
 
+	public List<String> getAccessRights() {
+		return accessRights;
+	}
+
+	public void setAccessRights(List<String> accessRights) {
+		this.accessRights = accessRights;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -127,7 +130,6 @@ public class PayloadDto extends BaseDto {
 	public PayloadDto() {
 		super();
 
-		sfId = "";
 		userId = "";
 		firstName = "";
 		lastName = "";
@@ -136,6 +138,7 @@ public class PayloadDto extends BaseDto {
 		clientId = "";
 		roleName = "";
 		clientName = "";
+		accessRights = new ArrayList<String>();
 	}
 
 	/**
@@ -149,6 +152,7 @@ public class PayloadDto extends BaseDto {
 
 		res.setId(o.getId());
 		res.setSfId(o.getSfId());
+
 		res.setUserId(o.getUserId());
 		res.setFirstName(o.getFirstName());
 		res.setLastName(o.getLastName());
@@ -157,6 +161,10 @@ public class PayloadDto extends BaseDto {
 		res.setClientId(o.getClientId());
 		res.setRoleName(o.getRoleName());
 		res.setClientName(o.getClientName());
+
+		List<String> t;
+		t = Arrays.asList(o.getAccessRights().split(";"));
+		res.setAccessRights(t);
 
 		return res;
 	}

@@ -8,14 +8,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * 
- * @author ToanNguyen 2018-Sep-27
+ * @author ToanNguyen 2018-Oct-08 (verified)
  *
  */
 public class PortalUserDto extends BaseDto {
 	// region -- Fields --
-
-	@JsonProperty(value = "sfId")
-	private String sfId;
 
 	@JsonProperty(value = "userId")
 	private String userId;
@@ -53,17 +50,12 @@ public class PortalUserDto extends BaseDto {
 	@JsonProperty(value = "clientName")
 	private String clientName;
 
+	@JsonProperty(value = "accessRights")
+	private String accessRights;
+
 	// end
 
 	// region -- Get set --
-
-	public String getSfId() {
-		return sfId;
-	}
-
-	public void setSfId(String sfId) {
-		this.sfId = sfId;
-	}
 
 	public String getUserId() {
 		return userId;
@@ -161,6 +153,14 @@ public class PortalUserDto extends BaseDto {
 		this.clientName = clientName;
 	}
 
+	public String getAccessRights() {
+		return accessRights;
+	}
+
+	public void setAccessRights(String accessRights) {
+		this.accessRights = accessRights;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -171,7 +171,6 @@ public class PortalUserDto extends BaseDto {
 	public PortalUserDto() {
 		super();
 
-		sfId = "";
 		userId = "";
 		firstName = "";
 		lastName = "";
@@ -184,6 +183,7 @@ public class PortalUserDto extends BaseDto {
 		clientId = "";
 		roleName = "";
 		clientName = "";
+		accessRights = "";
 	}
 
 	/**
@@ -197,6 +197,7 @@ public class PortalUserDto extends BaseDto {
 
 		res.setId((Integer) o[0]);
 		res.setSfId((String) o[1]);
+
 		res.setUserId((String) o[2]);
 		res.setFirstName((String) o[3]);
 		res.setLastName((String) o[4]);
@@ -209,6 +210,7 @@ public class PortalUserDto extends BaseDto {
 		res.setClientId((String) o[11]);
 		res.setRoleName((String) o[12]);
 		res.setClientName((String) o[13]);
+		res.setAccessRights((String) o[14]);
 
 		return res;
 	}

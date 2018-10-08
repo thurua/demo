@@ -5,11 +5,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ClientAccountCustomerDto {
+public class ClientAccountCustomerDto extends BaseDto {
 	// region -- Fields --
-
-	@JsonProperty(value = "id")
-	private int id;
 
 	@JsonProperty(value = "name")
 	private String name;
@@ -38,14 +35,6 @@ public class ClientAccountCustomerDto {
 	// end
 
 	// region -- Get set --
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
 
 	public String getName() {
 		return name;
@@ -120,7 +109,7 @@ public class ClientAccountCustomerDto {
 	 */
 	public ClientAccountCustomerDto() {
 		super();
-		id = 0;
+
 		name = "";
 	}
 
@@ -163,5 +152,4 @@ public class ClientAccountCustomerDto {
 	}
 
 	// end
-
 }

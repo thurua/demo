@@ -189,7 +189,7 @@ export class ScheduleComponent implements OnInit {
 
         this.pro.searchCA(x).subscribe((rsp: any) => {
             let item = {
-                sfid: "",
+                sfId: "",
                 clientAccount: "-- Please select --"
             }
 

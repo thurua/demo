@@ -425,14 +425,6 @@ public class FileController {
 			}
 			// ---------------------------------------------------------------------------------------------
 			// 1. Validate step 1 (with Excel), add Schedule_Of_Offer__c data
-			/* ToanNguyen 2018-Sep-06 IFS-1045,1046 */
-			CustomDto arOverdue = new CustomDto();
-			CustomDto arDisputed = new CustomDto();
-			CustomDto arTotal = new CustomDto();
-
-			/* TriNguyen 2018-Sep-11 IFS-1039 */
-			CustomDto arTotalAmount = new CustomDto();
-
 			String rid; // RecordType ID
 			if (isLoan) {
 				if ("Loan".equals(so.getRecordTypeName())) {
@@ -465,7 +457,8 @@ public class FileController {
 				// Schema.SObjectType.Invoice__c.getRecordTypeInfosByName().get('Factoring').getRecordTypeId();
 
 				/* TriNguyen 2018-Sep-03 IFS-1052 */
-				// err = ZValid.acceptanceDate(ac.Id, ca.Id, acceptanceDate, o.lineItems);
+				// err = ZValid.acceptanceDate(ac.getSfid(), ca.getSfid(), acceptanceDate,
+				// o.getLineItems());
 				if (!err.isEmpty()) {
 					errors = ZError.addError(errors, err, allNo);
 					// res.invoiceValid = false;
@@ -481,9 +474,23 @@ public class FileController {
 						res = validateInvoice(o, req);
 					}
 				}
-				if (!o.getDocumentDate().toString().isEmpty()) {
-					// so.getScheduleDate() = Utils.to
-				}
+
+				so.setScheduleDate(o.getDocumentDate());
+
+//				if (!o.getProcessDate()().toString().isEmpty()) {
+//					so.setp(Utils.toDate(o.getDocumentDate().toString()));
+//					if(so.getScheduleDate().toString() == null) {
+//						err = "Invalid Document Date.";
+//	                    res = Utils.addError(res, err);
+//					}
+//				}
+//				if (!o.getKeyInByDate().toString().isEmpty()) {
+//					so.(Utils.toDate(o.getDocumentDate().toString()));
+//					if(so.getScheduleDate().toString() == null) {
+//						err = "Invalid Document Date.";
+//	                    res = Utils.addError(res, err);
+//					}
+//				}
 			}
 			err = res.getMessage();
 			if (!err.isEmpty()) {
@@ -538,7 +545,7 @@ public class FileController {
 		for (LineItemDto i : o.getLineItems()) {
 			Invoice iv = new Invoice();
 
-			// Factoring invoice
+			// Loan Invoice
 			if (!isFac) {
 				if (i.getName() != null && i.getName().isEmpty()) {
 					continue;
@@ -604,7 +611,7 @@ public class FileController {
 
 				liv.add(iv);
 			}
-			// Factoring invoice
+			// Factoring Invoice
 			else {
 				if (i.getName() != null && i.getName().isEmpty()) {
 					continue;

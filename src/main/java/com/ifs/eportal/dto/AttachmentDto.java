@@ -14,9 +14,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class AttachmentDto extends BaseDto {
 	// region -- Fields --
 
-	@JsonProperty(value = "sfId")
-	private String sfId;
-
 	@JsonProperty(value = "name")
 	private String name;
 
@@ -35,14 +32,6 @@ public class AttachmentDto extends BaseDto {
 	// end
 
 	// region -- Get set --
-
-	public String getSfId() {
-		return sfId;
-	}
-
-	public void setSfId(String sfId) {
-		this.sfId = sfId;
-	}
 
 	public String getName() {
 		return name;
@@ -94,7 +83,6 @@ public class AttachmentDto extends BaseDto {
 	public AttachmentDto() {
 		super();
 
-		sfId = "";
 		name = "";
 		fileSize = null;
 		uploadedBy = "";
@@ -113,6 +101,7 @@ public class AttachmentDto extends BaseDto {
 
 		res.setId((Integer) o[0]);
 		res.setSfId((String) o[1]);
+
 		res.setName((String) o[2]);
 		res.setFileSize((Double) o[3]);
 		res.setUploadedBy((String) o[4]);

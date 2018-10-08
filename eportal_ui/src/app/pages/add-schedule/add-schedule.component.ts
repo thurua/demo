@@ -55,7 +55,6 @@ export class AddScheduleComponent implements OnInit {
         };
 
         this.proCommon.searchAccount(x).subscribe((rsp: any) => {
-            console.log(rsp);
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 this.listClient = rsp.result.data;
             }

@@ -17,9 +17,6 @@ public class ReasonDto extends BaseDto {
 	@JsonProperty(value = "name")
 	private String name;
 
-	@JsonProperty(value = "sfid")
-	private String sfid;
-
 	@JsonProperty(value = "reason")
 	private String reason;
 
@@ -39,14 +36,6 @@ public class ReasonDto extends BaseDto {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public String getSfid() {
-		return sfid;
-	}
-
-	public void setSfid(String sfid) {
-		this.sfid = sfid;
 	}
 
 	public String getReason() {
@@ -83,7 +72,6 @@ public class ReasonDto extends BaseDto {
 	public ReasonDto() {
 		super();
 
-		sfid = "";
 		name = "";
 		reason = "";
 		date = null;

@@ -5,14 +5,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ApprovedCustomerLimitDto {
+public class ApprovedCustomerLimitDto extends BaseDto {
 	// region -- Fields --
-
-	@JsonProperty(value = "id")
-	private int id;
-
-	@JsonProperty(value = "sfid")
-	private String sfid;
 
 	@JsonProperty(value = "valid_to__c")
 	private String validTo;
@@ -29,22 +23,6 @@ public class ApprovedCustomerLimitDto {
 	// end
 
 	// region -- Get set --
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public String getSfid() {
-		return sfid;
-	}
-
-	public void setSfid(String sfid) {
-		this.sfid = sfid;
-	}
 
 	public String getValidTo() {
 		return validTo;
@@ -99,7 +77,8 @@ public class ApprovedCustomerLimitDto {
 		ApprovedCustomerLimitDto res = new ApprovedCustomerLimitDto();
 
 		res.setId((Integer) o[0]);
-		res.setSfid((String) o[1]);
+		res.setSfId((String) o[1]);
+
 		res.setValidFrom((String) o[2]);
 		res.setValidTo((String) o[3]);
 		res.setCustomer((String) o[4]);

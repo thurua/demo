@@ -124,7 +124,7 @@ export class ApiProvider {
         let user: any = {
             token: token,
             id: t.user.id,
-            sfid: t.user.sfid,
+            sfId: t.user.sfId,
             userId: t.user.userId,
             firstName: t.user.firstName,
             lastName: t.user.lastName,

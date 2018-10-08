@@ -14,9 +14,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ScheduleOfOfferDetailDto extends BaseDto {
 	// region -- Fields --
 
-	@JsonProperty(value = "sfId")
-	private String sfId;
-
 	@JsonProperty(value = "scheduleNo")
 	private String scheduleNo;
 
@@ -57,14 +54,6 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 	// end
 
 	// region -- Get set --
-
-	public String getSfId() {
-		return sfId;
-	}
-
-	public void setSfId(String sfId) {
-		this.sfId = sfId;
-	}
 
 	public String getScheduleNo() {
 		return scheduleNo;
@@ -180,7 +169,6 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 	public ScheduleOfOfferDetailDto() {
 		super();
 
-		sfId = "";
 		scheduleNo = "";
 		scheduleDate = null;
 		exchangeRate = 0d;
@@ -204,6 +192,7 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 
 		res.setId((Integer) o[0]);
 		res.setSfId((String) o[1]);
+
 		res.setScheduleNo((String) o[2]);
 		res.setScheduleDate((Date) o[3]);
 		res.setExchangeRate((Double) o[4]);

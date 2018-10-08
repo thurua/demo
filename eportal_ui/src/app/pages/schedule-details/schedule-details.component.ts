@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild,EventEmitter } from '@angular/core';
 import { ScheduleProvider } from '../../providers/schedule';
 import { ActivatedRoute, Params } from '@angular/router';
 import { HTTP } from '../../utilities/const';
@@ -6,6 +6,7 @@ import { FileUploader } from 'ng2-file-upload';
 import { FileProvider } from '../../providers/file';
 import { Utils } from 'app/utilities/utils';
 import { ModalDirective } from 'ngx-bootstrap';
+import { UploadOutput, UploadInput, UploadFile, humanizeBytes, UploaderOptions } from 'ngx-uploader';
 
 const URL = 'http://localhost:8080/api/upload';
 
@@ -18,7 +19,14 @@ const URL = 'http://localhost:8080/api/upload';
 
 
 export class ScheduleDetailsComponent implements OnInit {
-    public sfid: string = "";
+    options: UploaderOptions;
+    formData: FormData;
+    files: UploadFile[];
+    uploadInput: EventEmitter<UploadInput>;
+    humanizeBytes: Function;
+    dragOver: boolean;
+
+    public sfId: string = "";
     public checkIv =false;
     public checkCd =false;
     public checkAtt = false;
@@ -49,7 +57,7 @@ export class ScheduleDetailsComponent implements OnInit {
                 filter: false,
                 type: 'html',
                 valuePrepareFunction: (cell, row) => {
-                    return `<a href="/#/pages/credit-notes-details/${row.sfid}">${row.no}</a>`
+                    return `<a href="/#/pages/credit-notes-details/${row.sfId}">${row.no}</a>`
                 },
             },
             customer: {
@@ -115,7 +123,7 @@ export class ScheduleDetailsComponent implements OnInit {
                 filter: false,
                 type: 'html',
                 valuePrepareFunction: (cell, row) => {
-                    return `<a href="/#/pages/invoices-details/${row.sfid}">${row.no}</a>`
+                    return `<a href="/#/pages/invoices-details/${row.sfId}">${row.no}</a>`
                 },
             },
             customerexcel: {
@@ -195,7 +203,7 @@ export class ScheduleDetailsComponent implements OnInit {
                 filter: false,
                 type: 'html',
                 valuePrepareFunction: (cell, row) => {
-                    return `<a href="/#/pages/invoices-details/${row.sfid}">${row.no}</a>`
+                    return `<a href="/#/pages/invoices-details/${row.sfId}">${row.no}</a>`
                 },
             },           
             supplierExcel: {
@@ -249,16 +257,97 @@ export class ScheduleDetailsComponent implements OnInit {
         private act: ActivatedRoute,
         private pro: ScheduleProvider,
         private filepro: FileProvider,
-        private utl: Utils) { }
+        private utl: Utils) {
+            this.options = { concurrency: 1, maxUploads: 10 };
+            this.files = []; // local uploading files array
+            this.uploadInput = new EventEmitter<UploadInput>(); // input events, we use this to emit data to ngx-uploader
+            this.humanizeBytes = humanizeBytes;
+        }
 
     ngOnInit() {
         this.act.params.subscribe((params: Params) => {
-            this.sfid = params["_id"];
-            this.getDetail(this.sfid);
+            this.sfId = params["_id"];
+            this.getDetail(this.sfId);
         });
     }
-    public getDetail(sfid) {
-        this.pro.getById(sfid).subscribe((rsp: any) => {
+
+    onUploadOutput(output: UploadOutput): void {
+        if (output.type === 'allAddedToQueue') { // when all files added in queue
+          // uncomment this if you want to auto upload files when added
+          // const event: UploadInput = {
+          //   type: 'uploadAll',
+          //   url: '/upload',
+          //   method: 'POST',
+          //   data: { foo: 'bar' }
+          // };
+          // this.uploadInput.emit(event);
+        } else if (output.type === 'addedToQueue'  && typeof output.file !== 'undefined') { // add file to array when added
+          this.files.push(output.file);
+        } else if (output.type === 'uploading' && typeof output.file !== 'undefined') {
+          // update current data in files array for uploading file
+          const index = this.files.findIndex(file => typeof output.file !== 'undefined' && file.id === output.file.id);
+          console.log(output.file);
+          this.files[index] = output.file;
+        } else if (output.type === 'removed') {
+          // remove file from array when removed
+          this.files = this.files.filter((file: UploadFile) => file !== output.file);
+        } else if (output.type === 'dragOver') {
+          this.dragOver = true;
+        } else if (output.type === 'dragOut') {
+          this.dragOver = false;
+        } else if (output.type === 'drop') {
+          this.dragOver = false;
+        }
+      }
+     
+      startUpload(): void {
+        let res = localStorage.getItem('CURRENT_TOKEN');
+        let json = JSON.parse(res);
+
+        let xx: File[] = [];
+        this.files.forEach(i => {
+            xx.push(i.nativeFile);
+        });
+       
+       let o =
+       {
+           "scheduleOfOffer": "001p000000UraJCAAZ"
+       };
+
+       let s = JSON.stringify(o);
+       this.filepro.uploadmulti(xx, s).subscribe((rsp: any) => {
+           if (rsp.body != undefined) {
+               let o = JSON.parse(rsp.body);
+           }
+       }, err => console.log(err));
+        
+        /*let token = json.token;  // <----  get token
+        const event: UploadInput = {
+          type: 'uploadAll',
+          url: 'http://localhost:8080/schedule-of-offer-attachment/upload-multi',
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token },  // <----  set headers
+          data: { foo: 'bar' },
+          includeWebKitFormBoundary: true // <----  set WebKitFormBoundary
+        };*/
+       
+      //  this.uploadInput.emit(event);
+      }
+     
+      cancelUpload(id: string): void {
+        this.uploadInput.emit({ type: 'cancel', id: id });
+      }
+     
+      removeFile(id: string): void {
+        this.uploadInput.emit({ type: 'remove', id: id });
+      }
+     
+      removeAllFiles(): void {
+        this.uploadInput.emit({ type: 'removeAll' });
+      }
+
+    public getDetail(sfId) {
+        this.pro.getById(sfId).subscribe((rsp: any) => {
             console.log(rsp);
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 this.entity = rsp.result;

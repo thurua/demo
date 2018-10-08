@@ -8,14 +8,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * 
- * @author ToanNguyen 2018-Oct-04 (verified)
+ * @author ToanNguyen 2018-Oct-08 (verified)
  *
  */
 public class ClientAccountDto extends BaseDto {
 	// region -- Fields --
-
-	@JsonProperty(value = "sfid")
-	private String sfid;
 
 	@JsonProperty(value = "activatedOn")
 	private Date activatedOn;
@@ -53,14 +50,6 @@ public class ClientAccountDto extends BaseDto {
 	// end
 
 	// region -- Get set --
-
-	public String getSfid() {
-		return sfid;
-	}
-
-	public void setSfid(String sfid) {
-		this.sfid = sfid;
-	}
 
 	public Date getActivatedOn() {
 		return activatedOn;
@@ -160,7 +149,6 @@ public class ClientAccountDto extends BaseDto {
 	public ClientAccountDto() {
 		super();
 
-		sfid = "";
 		activatedOn = null;
 		accountType = "";
 		clientAccount = "";
@@ -183,7 +171,8 @@ public class ClientAccountDto extends BaseDto {
 		ClientAccountDto res = new ClientAccountDto();
 
 		res.setId((Integer) o[0]);
-		res.setSfid((String) o[1]);
+		res.setSfId((String) o[1]);
+
 		res.setActivatedOn((Date) o[2]);
 		res.setAccountType((String) o[3]);
 		res.setClientAccount((String) o[4]);

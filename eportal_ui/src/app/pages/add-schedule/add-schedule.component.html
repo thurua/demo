@@ -12,7 +12,7 @@
                         </div>
                         <div class="col-md-8">
                             <select id="account" name="account" #account="ngModel" [(ngModel)]="vm.account" (change)="changeAccount()" class="form-control" required>
-                                <option *ngFor="let i of listClient" value="{{i.sfid}}">{{i.name}}</option>
+                                <option *ngFor="let i of listClient" value="{{i.sfId}}">{{i.name}}</option>
                             </select>
                         </div>
                     </div>
@@ -38,11 +38,11 @@
                             <strong>Amend Schedule &nbsp;<sup>&#9432;</sup></strong>
                         </div>
                         <div class="col-md-8">
-                            <input type="checkbox" name="amendSchedule" #amendSchedule="ngModel" [(ngModel)]="vm.amendSchedule" required>
-                            <span [hidden]="vm.amendSchedule || (amendSchedule.pristine && !f.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="amendSchedule" data-valmsg-for="amendSchedule" id="amendSchedule_validationMessage"
+                            <input type="checkbox" name="amendSchedule" #amendSchedule="ngModel" [(ngModel)]="vm.amendSchedule">
+                            <!-- <span [hidden]="vm.amendSchedule || (amendSchedule.pristine && !f.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="amendSchedule" data-valmsg-for="amendSchedule" id="amendSchedule_validationMessage"
                                 role="alert">
-                                <i class="fa fa-exclamation-triangle"></i>Required
-                        </span>
+                                <i class="fa fa-exclamation-triangle"></i>Required 
+                            </span>-->
                         </div>
                     </div>
                 </div>
@@ -66,7 +66,7 @@
                             <strong>Amend Schedule No.</strong>
                         </div>
                         <div class="col-md-8">
-                            <input class="form-control none-border" name="scheduleNo" #scheduleNo="ngModel" [(ngModel)]="vm.scheduleNo" required/>
+                            <input class="form-control none-border" name="scheduleNo" #scheduleNo="ngModel" [(ngModel)]="vm.scheduleNo" />
                         </div>
                     </div>
                 </div>

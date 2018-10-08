@@ -190,7 +190,7 @@ export class CreditNotesComponent implements OnInit {
 
         this.pro.searchCA(x).subscribe((rsp: any) => {
             let itemCA = {
-                sfid: "",
+                sfId: "",
                 clientAccount: "-- Please select --"
             }
             if (rsp.status === HTTP.STATUS_SUCCESS) {

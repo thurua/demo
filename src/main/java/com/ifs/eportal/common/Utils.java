@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -462,14 +463,21 @@ public class Utils {
 	 */
 	public static String getAllNo(List<LineItemDto> l) {
 		String res = "";
-		for (int i = 0; i < l.size(); i++) {
-			if (l.get(i).getNo().equals("")) {
-				res += l.get(i).getNo().trim() + ",";
-			}
+
+		// Filter
+		Stream<String> t1;
+		t1 = l.stream().map(r -> r.getNo()).filter(r -> !r.isEmpty());
+		List<String> t2 = t1.collect(Collectors.toList());
+		for (String i : t2) {
+			res += i.trim() + ", ";
 		}
-		if (res.length() > 1) {
-			res = res.substring(0, res.length() - 2);
+
+		// Remove ", "
+		int t3 = res.length();
+		if (t3 > 1) {
+			res = res.substring(0, t3 - 2);
 		}
+
 		return res;
 	}
 
@@ -603,7 +611,7 @@ public class Utils {
 		name = name.trim();
 		for (AccountDto i : l) {
 			if (i.getName().equals(name)) {
-				res = i.getSfid();
+				res = i.getSfId();
 				break;
 			}
 		}

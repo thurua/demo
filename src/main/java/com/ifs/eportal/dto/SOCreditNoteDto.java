@@ -14,9 +14,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class SOCreditNoteDto extends BaseDto {
 	// region -- Fields --
 
-	@JsonProperty(value = "sfId")
-	private String sfId;
-
 	@JsonProperty(value = "customerFromExcel")
 	private String customerFromExcel;
 
@@ -50,14 +47,6 @@ public class SOCreditNoteDto extends BaseDto {
 	// end
 
 	// region -- Get set --
-
-	public String getSfId() {
-		return sfId;
-	}
-
-	public void setSfId(String sfId) {
-		this.sfId = sfId;
-	}
 
 	public String getCustomerFromExcel() {
 		return customerFromExcel;
@@ -172,6 +161,7 @@ public class SOCreditNoteDto extends BaseDto {
 
 		res.setId((Integer) o[0]);
 		res.setSfId((String) o[1]);
+
 		res.setCustomerFromExcel((String) o[2]);
 		res.setCustomer((String) o[3]);
 		res.setCustomerBranch((String) o[4]);

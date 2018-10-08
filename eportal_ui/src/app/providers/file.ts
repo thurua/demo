@@ -20,9 +20,11 @@ export class FileProvider {
      * Upload
      * @param info
      */
-    public uploadmulti(info: File, data: any) {
+    public uploadmulti(info: File[], data: any) {
         let f: FormData = new FormData();
-        f.append('file', info);
+        info.forEach(i => {
+            f.append('files', i);
+        });
         f.append('req', data);
         return this.api.upload('schedule-of-offer-attachment/upload-multi', f);
     }

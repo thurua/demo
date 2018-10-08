@@ -7,6 +7,7 @@ import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
 import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { BsDatepickerModule } from 'ngx-bootstrap';
+import { NgxUploaderModule } from 'ngx-uploader';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     suppressScrollX: true
@@ -44,6 +45,7 @@ import { InvoicesDetailsComponent } from './invoices-details/invoices-details.co
         FormsModule,
         FileUploadModule,
         Ng2SmartTableModule,
+        NgxUploaderModule,
         TabsModule.forRoot(),
         BsDatepickerModule.forRoot()
     ],

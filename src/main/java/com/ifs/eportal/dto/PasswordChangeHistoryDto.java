@@ -63,7 +63,6 @@ public class PasswordChangeHistoryDto extends BaseDto {
 		usersfid = "";
 		username = "";
 		changeby = "";
-
 	}
 
 	/**

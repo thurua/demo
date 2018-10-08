@@ -216,6 +216,20 @@
                         <div class="form-group row">
                             <div class="col-md-6">
                                 <div class="input-group file-upload">
+
+                                    <div class="drop-container" ngFileDrop [options]="options" (uploadOutput)="onUploadOutput($event)" [uploadInput]="uploadInput" [ngClass]="{ 'is-drop-over': dragOver }">
+                                        <h1>Drag &amp; Drop</h1>
+                                    </div>
+
+                                    <label class="upload-button">
+                                        <input type="file" ngFileSelect [options]="options" (uploadOutput)="onUploadOutput($event)" [uploadInput]="uploadInput" multiple>
+                                        or choose file(s)
+                                      </label>
+
+                                    <button type="button" class="start-upload-btn" (click)="startUpload()">
+                                        Start Upload
+                                      </button>
+
                                     <input type="file" ng2FileSelect [uploader]="uploader" (change)="fileChangeEvent($event)" class="file-upload-btn" />
                                     <input type="text" class="form-control" placeholder="Choose a file..." value="{{(file !=null)? file.name :'' }}">
                                     <i class="fa fa-times delete-file" (click)="removeFile()" *ngIf="file"></i>

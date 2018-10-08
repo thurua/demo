@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * 
- * @author ToanNguyen 2018-Sep-27
+ * @author ToanNguyen 2018-Oct-08 (verified)
  *
  */
 public class BaseDto {
@@ -12,6 +12,9 @@ public class BaseDto {
 
 	@JsonProperty(value = "id")
 	private Integer id;
+
+	@JsonProperty(value = "sfId")
+	private String sfId;
 
 	// end
 
@@ -25,6 +28,14 @@ public class BaseDto {
 		this.id = id;
 	}
 
+	public String getSfId() {
+		return sfId;
+	}
+
+	public void setSfId(String sfId) {
+		this.sfId = sfId;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -34,6 +45,7 @@ public class BaseDto {
 	 */
 	public BaseDto() {
 		id = 0;
+		sfId = "";
 	}
 
 	// end

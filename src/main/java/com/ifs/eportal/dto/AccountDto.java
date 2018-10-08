@@ -7,14 +7,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * 
- * @author ToanNguyen 2018-Oct-05 (verified)
+ * @author ToanNguyen 2018-Oct-08 (verified)
  *
  */
 public class AccountDto extends BaseDto {
 	// region -- Fields --
-
-	@JsonProperty(value = "sfid")
-	private String sfid;
 
 	@JsonProperty(value = "name")
 	private String name;
@@ -22,14 +19,6 @@ public class AccountDto extends BaseDto {
 	// end
 
 	// region -- Get set --
-
-	public String getSfid() {
-		return sfid;
-	}
-
-	public void setSfid(String sfid) {
-		this.sfid = sfid;
-	}
 
 	public String getName() {
 		return name;
@@ -49,7 +38,6 @@ public class AccountDto extends BaseDto {
 	public AccountDto() {
 		super();
 
-		sfid = "";
 		name = "";
 	}
 
@@ -63,7 +51,8 @@ public class AccountDto extends BaseDto {
 		AccountDto res = new AccountDto();
 
 		res.setId((Integer) o[0]);
-		res.setSfid((String) o[1]);
+		res.setSfId((String) o[1]);
+
 		res.setName((String) o[2]);
 
 		return res;

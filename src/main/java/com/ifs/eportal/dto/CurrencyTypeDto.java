@@ -13,23 +13,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class CurrencyTypeDto extends BaseDto {
 	// region -- Fields --
 
-	@JsonProperty(value = "sfid")
-	private String sfid;
-
 	@JsonProperty(value = "isocode")
 	private String isoCode;
 
 	// end
 
 	// region -- Get set --
-
-	public String getSfid() {
-		return sfid;
-	}
-
-	public void setSfid(String sfid) {
-		this.sfid = sfid;
-	}
 
 	public String getIsoCode() {
 		return isoCode;
@@ -49,7 +38,6 @@ public class CurrencyTypeDto extends BaseDto {
 	public CurrencyTypeDto() {
 		super();
 
-		sfid = "";
 		isoCode = "";
 	}
 
@@ -63,7 +51,8 @@ public class CurrencyTypeDto extends BaseDto {
 		CurrencyTypeDto res = new CurrencyTypeDto();
 
 		res.setId((Integer) o[0]);
-		res.setSfid((String) o[1]);
+		res.setSfId((String) o[1]);
+
 		res.setIsoCode((String) o[2]);
 
 		return res;

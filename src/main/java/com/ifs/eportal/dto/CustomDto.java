@@ -32,9 +32,18 @@ public class CustomDto {
 	public void setValue(double value) {
 		this.value = value;
 	}
+
 	// end
 
 	// region -- Methods --
+
+	/**
+	 * Initialize
+	 */
+	public CustomDto() {
+		code = "";
+		value = 0d;
+	}
 
 	/**
 	 * Convert
