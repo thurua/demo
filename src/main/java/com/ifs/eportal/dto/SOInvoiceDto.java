@@ -209,8 +209,8 @@ public class SOInvoiceDto extends BaseDto {
 		res.setContract((String) o[10]);
 		res.setStatus((String) o[11]);
 		res.setSupplier((String) o[12]);
-		res.setRejectReason((String) o[13]);
-		res.setSupplierFromExcel((String) o[14]);
+		res.setSupplierFromExcel((String) o[13]);
+		res.setRejectReason((String) o[14]);
 
 		return res;
 	}

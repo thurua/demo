@@ -30,6 +30,7 @@ export class AddScheduleComponent implements OnInit {
     public clientAccountId = "";
     public isSuccess = false;
     public isError = false;
+    public checkAgree = true;
 
     @ViewChild("infoModal") public infoModal: ModalDirective;
 
@@ -106,34 +107,46 @@ export class AddScheduleComponent implements OnInit {
         var acceptanceDate = new Date(this.vm.date);
         this.isSuccess = false;
         this.isError = false;
+        if (this.vm.agree == true) {
+            let o =
+            {
+                "clientId": this.clientId,
+                "scheduleNo": this.vm.scheduleNo,
+                "acceptanceDate": "2018-10-01T14:48:00.000Z",
+                "amendSchedule": this.vm.amendSchedule,
+                "clientAccountId": this.vm.clientAccountId,
+                "scheduleType": this.vm.scheduleType
+            };
+            console.log(o);
+            let s = JSON.stringify(o);
+            this.pro.upload(this.file, s).subscribe((rsp: any) => {
+                if (rsp.body != undefined) {
+                    let o = JSON.parse(rsp.body);
 
-        let o =
-        {
-            "clientId": this.clientId,
-            "scheduleNo": this.vm.scheduleNo,
-            "acceptanceDate": "2018-10-01T14:48:00.000Z",
-            "amendSchedule": this.vm.amendSchedule,
-            "clientAccountId": this.vm.clientAccountId,
-            "scheduleType": this.vm.scheduleType
-        };
-        console.log(o);
-        let s = JSON.stringify(o);
-        this.pro.upload(this.file, s).subscribe((rsp: any) => {
-            if (rsp.body != undefined) {
-                let o = JSON.parse(rsp.body);
-
-                if (o.status === HTTP.STATUS_SUCCESS) {
-                    this.isSuccess = true;
-                    this.title = "Confirmation";
-                    this.msg = "New Schedule of Offer is created, successfully!";
+                    if (o.status === HTTP.STATUS_SUCCESS) {
+                        this.isSuccess = true;
+                        this.title = "Confirmation";
+                        this.msg = "New Schedule of Offer is created, successfully!";
+                    }
+                    else {
+                        this.isError = true;
+                        this.title = "Validation Errors";
+                        this.msg = "Follingwing validation errors are found in the uploaded excel. Please rectify and reupload the file.";
+                    }
+                    this.infoModal.show();
                 }
-                else {
-                    this.isError = true;
-                    this.title = "Validation Errors";
-                    this.msg = "Follingwing validation errors are found in the uploaded excel. Please rectify and reupload the file.";
-                }
-                this.infoModal.show();
-            }
-        }, err => console.log(err));
+            }, err => console.log(err));
+        }
+        else{
+            this.checkAgree = false;
+        }
+    }
+    public changeAgree() {
+        if (this.vm.agree == true) {
+            this.checkAgree = true;
+        }
+        else {
+            this.checkAgree = false;
+        }
     }
 }

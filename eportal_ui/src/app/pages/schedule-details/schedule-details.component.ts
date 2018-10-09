@@ -39,6 +39,7 @@ export class ScheduleDetailsComponent implements OnInit {
     public mesErr = "";
     public title = "";
     public msgInfo = "";
+    public strFileName = "";
     filesToUpload: Array<File> = [];
     public uploader: FileUploader = new FileUploader({ url: URL, itemAlias: 'photo' });
     public cnList = [];
@@ -287,6 +288,13 @@ export class ScheduleDetailsComponent implements OnInit {
         }
 
         this.file = this.files[0];
+        this.strFileName = "";
+        if (this.files.length > 0) {
+            this.files.forEach(element => {
+                this.strFileName = this.strFileName + element.name + "; ";
+            });
+        }
+
     }
 
     startUpload(): void {
@@ -308,7 +316,6 @@ export class ScheduleDetailsComponent implements OnInit {
                 if (o.status === HTTP.STATUS_SUCCESS) {
                     this.files = [];
                     this.file = this.files[0];
-                    this.entity = o.result.data;
 
                     let tmpattList = o.result.data;
                     let i = 0;
@@ -339,12 +346,13 @@ export class ScheduleDetailsComponent implements OnInit {
     }
 
     removeAllFiles(): void {
+        this.files = [];
+        this.strFileName = "";
         this.uploadInput.emit({ type: 'removeAll' });
     }
 
     public getDetail(sfId) {
         this.pro.getById(sfId).subscribe((rsp: any) => {
-            console.log(rsp);
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 this.entity = rsp.result;
                 if (this.entity.documentType == "Credit Note") {
@@ -402,7 +410,7 @@ export class ScheduleDetailsComponent implements OnInit {
                 tmpattList.forEach(element => {
                     i++;
                     element.no = i;
-                    element.uploadedOn = this.utl.formatDate(element.uploadedOn, 'dd-MMM-yyyy');
+                    element.uploadedOn = this.utl.formatDate(element.uploadedOn, 'dd-MMM-yyyy HH:mm');
                 });
                 this.attList = tmpattList;
                 this.checkAtt = true;
@@ -413,11 +421,11 @@ export class ScheduleDetailsComponent implements OnInit {
     }
     public UpdateSchedule() {
         let x = {
-            currencyIsoCode: this.entity.currencyIsoCode,
+            //currencyIsoCode: this.entity.currencyIsoCode,
             scheduleNo: this.entity.scheduleNo,
-            factorCode: this.entity.factorCode,
+            //factorCode: this.entity.factorCode,
             //recordTypeId:this.entity.recordTypeId,
-            exchangeRate: this.entity.exchangeRate,
+            //exchangeRate: this.entity.exchangeRate,
             id: this.entity.id
         }
         this.pro.update(x).subscribe((rsp: any) => {
@@ -451,23 +459,28 @@ export class ScheduleDetailsComponent implements OnInit {
     }
 
     onDelete(event) {
-        let id = event.data.id;
-        let user = JSON.parse(localStorage.getItem("CURRENT_TOKEN"));
-        let i = 0;
-        this.attList.forEach((element, index) => {
-            if (element.id == id && element.uploadedBy == user.sfId) {
-                this.attList.splice(index, 1);
-                this.filepro.delete(id).subscribe((rsp: any) => {
-                    if (rsp.status === HTTP.STATUS_SUCCESS) {
+        if (window.confirm('Are you sure, you want to delete?')) {
+            let id = event.data.id;
+            let user = JSON.parse(localStorage.getItem("CURRENT_TOKEN"));
+            let i = 0;
+            this.attList.forEach((element, index) => {
+                if (element.id == id && element.uploadedBy == user.sfId) {
+                    this.attList.splice(index, 1);
+                    this.filepro.delete(id).subscribe((rsp: any) => {
+                        if (rsp.status === HTTP.STATUS_SUCCESS) {
 
-                    }
-                }, err => console.log(err));
-            }
-        });
-        this.attList.forEach((element) => {
-            i++;
-            element.no = i;
-        });
-        event.confirm.resolve(event.source.data);
+                        }
+                    }, err => console.log(err));
+                }
+            });
+            this.attList.forEach((element) => {
+                i++;
+                element.no = i;
+            });
+            event.confirm.resolve(event.source.data);
+        } else {
+            event.confirm.reject();
+        }
+
     }
 }

@@ -150,7 +150,7 @@ public class FileController {
 					dto.invoiceDataPath = url;
 				}
 				dto.lastModifiedByPortalUserId = sfId;
-				createSchedule(dto, new Date());
+				createSchedule(dto, new Date(), o);
 			}
 
 		} catch (Exception ex) {
@@ -900,7 +900,7 @@ public class FileController {
 	 * @param acceptanceDate
 	 * @return
 	 */
-	private boolean createSchedule(ValidDto dto, Date acceptanceDate) {
+	private boolean createSchedule(ValidDto dto, Date acceptanceDate, UploadReq req) {
 		boolean res = true;
 
 		try {
@@ -921,8 +921,8 @@ public class FileController {
 			m.setFactorCode(o.getFactorCode());
 			m.setCurrencyIsoCode(o.getDocumentCurrency());
 			m.setListType(o.getListType());
-			m.setClientAccount(o.getClientAccount());
-			m.setClientName(o.getClient());
+			m.setClientAccount(req.getClientAccountId());
+			m.setClientName(req.getClientId());
 			m.setScheduleStatus("Draft");
 			m.setPortalStatus("Pending Authorisation");
 			m.setCreatedByPortalUserId(dto.lastModifiedByPortalUserId);

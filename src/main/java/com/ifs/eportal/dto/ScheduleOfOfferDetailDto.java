@@ -50,6 +50,12 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 	@JsonProperty(value = "portalStatus")
 	private String portalStatus;
 
+	@JsonProperty(value = "totalCN")
+	private Double totalCN;
+
+	@JsonProperty(value = "totalAmountCN")
+	private Double totalAmountCN;
+
 	List<SOCreditNoteDto> lstCreditNote;
 
 	List<SOInvoiceDto> lstInvoice;
@@ -156,6 +162,22 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 		this.portalStatus = portalStatus;
 	}
 
+	public Double getTotalCN() {
+		return totalCN;
+	}
+
+	public void setTotalCN(Double totalCN) {
+		this.totalCN = totalCN;
+	}
+
+	public Double getTotalAmountCN() {
+		return totalAmountCN;
+	}
+
+	public void setTotalAmountCN(Double totalAmountCN) {
+		this.totalAmountCN = totalAmountCN;
+	}
+
 	public List<SOCreditNoteDto> getLstCreditNote() {
 		return lstCreditNote;
 	}
@@ -197,6 +219,8 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 		recordType = "";
 		total = 0d;
 		totalAmount = 0d;
+		totalCN = 0d;
+		totalAmountCN = 0d;
 		clientName = "";
 		currencyIsoCode = "";
 		clientAccount = "";
@@ -228,6 +252,8 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 		res.setClientAccount((String) o[11]);
 		res.setDocumentType((String) o[12]);
 		res.setPortalStatus((String) o[13]);
+		res.setTotalCN((Double) o[14]);
+		res.setTotalAmountCN((Double) o[15]);
 		res.setLstCreditNote(SOCreditNoteDto.convert(lc));
 		res.setLstInvoice(SOInvoiceDto.convert(li));
 		res.setLstAttachment(AttachmentDto.convert(la));

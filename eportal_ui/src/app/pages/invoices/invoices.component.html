@@ -48,8 +48,8 @@
                         <strong>Client Account</strong>
                     </div>
                     <div class="col-md-9">
-                        <select name="clientAccount" #clientAccount="ngModel" [(ngModel)]="clientAccountId" class="form-control">
-                          <option *ngFor="let i of lstCA" value="{{i.code}}">{{i.clientAccount}}</option>
+                        <select name="clientAccount" #clientAccount="ngModel" [(ngModel)]="clientAccountId" class="form-control" (change)="searchCU($event)">
+                          <option *ngFor="let i of lstCA" value="{{i.sfId}}" >{{i.clientAccount}}</option>
                       </select>
                     </div>
                 </div>
@@ -59,7 +59,7 @@
                     </div>
                     <div class="col-md-9">
                         <select [(ngModel)]="customer" class="form-control">
-                          <option *ngFor="let i of lstCustomer" value="{{i.code}}">{{i.value}}</option>
+                          <option *ngFor="let i of lstCU" value="{{i.sfId}}">{{i.name}}</option>
                       </select>
                     </div>
                 </div>
@@ -69,7 +69,7 @@
                     </div>
                     <div class="col-md-9">
                         <select name="supplier" [(ngModel)]="supplier" class="form-control">
-                            <option *ngFor="let i of lstCustomer" value="{{i.code}}">{{i.value}}</option>
+                            <option *ngFor="let i of lstCU" value="{{i.code}}">{{i.value}}</option>
                         </select>
                     </div>
                 </div>

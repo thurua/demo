@@ -334,7 +334,13 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 			where += " AND a.client_account__c = :clientAccount";
 		}
 		if (!portalStatus.isEmpty()) {
-			where += " AND a.portal_status__c = :portalStatus";
+			if ("Accepted".equals(portalStatus)) {
+				where += " AND a.schedule_status__c = 'Submitted'";
+			} else {
+				where += " AND a.portal_status__c = :portalStatus";
+			}
+		} else {
+			where += " AND (a.schedule_status__c = 'Submitted' OR a.createdby_portaluserid__c IS NOT NULL)";
 		}
 
 		if (fr != null && to != null) {

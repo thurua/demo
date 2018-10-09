@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ifs.eportal.dal.ClientAccountCustomerDao;
 import com.ifs.eportal.dto.ClientAccountCustomerDto;
+import com.ifs.eportal.req.PagingReq;
 
 @Service(value = "clientAccountCustomerService")
 @Transactional
@@ -29,6 +30,16 @@ public class ClientAccountCustomerService {
 	 */
 	public List<ClientAccountCustomerDto> getByClientId(String clientId) {
 		return clientAccountCustomerDao.getByClientId(clientId);
+	}
+
+	/**
+	 * Read by
+	 * 
+	 * @param req
+	 * @return
+	 */
+	public List<ClientAccountCustomerDto> read(PagingReq req) {
+		return clientAccountCustomerDao.search(req);
 	}
 
 	// end

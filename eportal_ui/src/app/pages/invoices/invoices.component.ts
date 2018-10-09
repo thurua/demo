@@ -2,6 +2,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HTTP, Utils } from '../../utilities/utility';
 import { ScheduleProvider } from '../../providers/schedule';
 import { InvoiceProvider } from '../../providers/invoice';
+import { CommonProvider } from '../../providers/common';
 
 @Component({
     selector: 'app-invoices',
@@ -21,10 +22,10 @@ export class InvoicesComponent implements OnInit {
     public clientId: string = "";
     public fromDate = new Date();
     public toDate = new Date();
-    public lstCustomer: any[] = [];
     public lstDocumentType: any[] = [];
     public lstStatus: any[] = [];
     public lstCA: any[] = [];
+    public lstCU: any[] = [];
     public data = [];
     public total: number = 0;
     public pageSize = 10;
@@ -109,7 +110,8 @@ export class InvoicesComponent implements OnInit {
     constructor(
         private pro: ScheduleProvider,
         private utl: Utils,
-        private inv: InvoiceProvider) { }
+        private inv: InvoiceProvider,
+        private com: CommonProvider) { }
 
     ngOnInit() {
         this.fromDate = this.utl.addMonths(this.fromDate, -6);
@@ -146,20 +148,6 @@ export class InvoicesComponent implements OnInit {
         }
         this.lstStatus = tmpStatus.data;
 
-        let tmpCustomer = {
-            dataCustomer: [{
-                code: "",
-                value: "-- Please Select --"
-            }, {
-                code: "1",
-                value: "Hoan"
-            }, {
-                code: "2",
-                value: "Trang"
-            }]
-        }
-        this.lstCustomer = tmpCustomer.dataCustomer;
-
         let tmpDocumentType = {
             data: [{
                 code: "",
@@ -182,6 +170,7 @@ export class InvoicesComponent implements OnInit {
         this.invoiceNo = "";
     }
 
+    // Search Client Account
     public searchCA() {
         let x = {
             filter: {
@@ -204,6 +193,35 @@ export class InvoicesComponent implements OnInit {
             }
             else {
                 this.lstCA.unshift(item);
+            }
+        }, (err) => {
+            console.log(err);
+        });
+    }
+
+    // Search Customer
+    public searchCU(event: any) {
+        let x = {
+            filter: {
+                clientAccount: event.target.value
+            },
+            page: 1,
+            size: 20
+        }
+
+        this.com.searchCustomer(x).subscribe((rsp: any) => {
+            let item = {
+                sfid: "",
+                name: "-- Please select --"
+            }
+
+            if (rsp.status === HTTP.STATUS_SUCCESS) {
+
+                rsp.result.data.unshift(item);
+                this.lstCU = rsp.result.data;
+            }
+            else {
+                this.lstCU.unshift(item);
             }
         }, (err) => {
             console.log(err);

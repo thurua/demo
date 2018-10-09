@@ -77,23 +77,23 @@
                                         <strong>Currency</strong>
                                     </div>
                                     <div class="col-md-8">
-                                        <input type="text" name="currencyIsoCode" #currencyIsoCode="ngModel" [(ngModel)]="entity.currencyIsoCode" value="{{entity.currencyIsoCode}}" class="form-control">
+                                        <label class="col-form-label">{{entity.currencyIsoCode}}</label>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-md-4">
-                                        <strong>Total No. of Invoice</strong>
+                                        <strong>Total No. of {{(entity.documentType == "Credit Note") ? "Credit Notes":'Invoice' }}</strong>
                                     </div>
                                     <div class="col-md-8">
-                                        <label class="col-form-label">{{entity.total}}</label>
+                                        <label class="col-form-label">{{(entity.documentType == "Credit Note") ? entity.totalCN :entity.total}}</label>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-md-4">
-                                        <strong>Total Amount of Invoice</strong>
+                                        <strong>Total Amount of  {{(entity.documentType == "Credit Note") ? "Credit Notes":'Invoice' }}</strong>
                                     </div>
                                     <div class="col-md-8">
-                                        <label class="col-form-label">{{entity.totalAmount}}</label>
+                                        <label class="col-form-label"> {{(entity.documentType == "Credit Note") ? entity.totalAmountCN :entity.totalAmount}}</label>
                                     </div>
                                 </div>
                             </div>
@@ -111,7 +111,7 @@
                                         <strong>Exchange Rate</strong>
                                     </div>
                                     <div class="col-md-8">
-                                        <input type="text" name="exchangeRate" #exchangeRate="ngModel" [(ngModel)]="entity.exchangeRate" value="{{entity.exchangeRate}}" class="form-control">
+                                        <label class="col-form-label">{{entity.exchangeRate}}</label>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -119,7 +119,7 @@
                                         <strong>Factor Code</strong>
                                     </div>
                                     <div class="col-md-8">
-                                        <input type="text" name="factorCode" #factorCode="ngModel" [(ngModel)]="entity.factorCode" value="{{entity.factorCode}}" class="form-control">
+                                        <label class="col-form-label">{{entity.factorCode}}</label>
                                     </div>
                                 </div>
                             </div>
@@ -201,8 +201,8 @@
                             <div class="col-md-6">
                                 <div class="input-group file-upload">
                                     <input type="file" ngFileSelect [options]="options" (uploadOutput)="onUploadOutput($event)" [uploadInput]="uploadInput" accept=".pdf,.tiff,.jpeg,.gif,.png" multiple class="file-upload-btn">
-                                    <input type="text" class="form-control" placeholder="Choose file..." value="{{(file !=null)? file.name :'' }}">
-                                    <i class="fa fa-times delete-file" (click)="removeFile()" *ngIf="file"></i>
+                                    <input type="text" class="form-control" placeholder="Choose file..." value="{{(file !=null)? strFileName :'' }}">
+                                    <i class="fa fa-times delete-file" (click)="removeAllFiles()" *ngIf="file"></i>
                                     <span class="input-group-append upload">
                                                 <button class="btn btn-primary" type="button"><i class="fa fa-upload"> </i></button>
                                     </span>

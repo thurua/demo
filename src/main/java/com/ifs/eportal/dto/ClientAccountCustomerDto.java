@@ -124,14 +124,15 @@ public class ClientAccountCustomerDto extends BaseDto {
 		ClientAccountCustomerDto res = new ClientAccountCustomerDto();
 
 		res.setId((Integer) o[0]);
-		res.setName((String) o[1]);
-		res.setActivationDate((Date) o[2]);
-		res.setStatus((String) o[3]);
-		res.setCustomer((String) o[4]);
-		res.setVerification((Float) o[5]);
-		res.setVerificationExceedingInvoiceAmount((Float) o[6]);
-		res.setFciName((String) o[7]);
-		res.setCcName((String) o[8]);
+		res.setSfId((String) o[1]);
+		res.setName((String) o[2]);
+		res.setActivationDate((Date) o[3]);
+		res.setStatus((String) o[4]);
+		res.setCustomer((String) o[5]);
+		res.setVerification((Float) o[6]);
+		res.setVerificationExceedingInvoiceAmount((Float) o[7]);
+		res.setFciName((String) o[8]);
+		res.setCcName((String) o[9]);
 
 		return res;
 	}

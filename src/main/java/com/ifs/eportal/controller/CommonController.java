@@ -22,14 +22,14 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ifs.eportal.bll.AccountService;
+import com.ifs.eportal.bll.ClientAccountCustomerService;
 import com.ifs.eportal.bll.ClientAccountService;
 import com.ifs.eportal.bll.CodeService;
-import com.ifs.eportal.bll.CreditNoteService;
 import com.ifs.eportal.common.RsaService;
 import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.dto.AccountDto;
+import com.ifs.eportal.dto.ClientAccountCustomerDto;
 import com.ifs.eportal.dto.ClientAccountDto;
-import com.ifs.eportal.dto.CreditNoteDto;
 import com.ifs.eportal.dto.TokenDto;
 import com.ifs.eportal.model.Code;
 import com.ifs.eportal.req.BaseReq;
@@ -54,7 +54,7 @@ public class CommonController {
 	private ClientAccountService clientAccountService;
 
 	@Autowired
-	private CreditNoteService creditNoteService;
+	private ClientAccountCustomerService clientAccountCustomerService;
 
 	@Autowired
 	private CodeService codeService;
@@ -139,7 +139,7 @@ public class CommonController {
 
 		try {
 			// Handle
-			List<CreditNoteDto> l = creditNoteService.read(req);
+			List<ClientAccountCustomerDto> l = clientAccountCustomerService.read(req);
 
 			// Set data
 			Map<String, Object> data = new LinkedHashMap<>();

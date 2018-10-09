@@ -49,6 +49,7 @@ public class ScheduleOfOfferDto extends BaseDto {
 
 	@JsonProperty(value = "keyInByDate")
 	private Date keyInByDate;
+
 	// end
 
 	// region -- Get set --
@@ -148,6 +149,7 @@ public class ScheduleOfOfferDto extends BaseDto {
 	public void setKeyInByDate(Date keyInByDate) {
 		this.keyInByDate = keyInByDate;
 	}
+
 	// end
 
 	// region -- Methods --
@@ -162,10 +164,14 @@ public class ScheduleOfOfferDto extends BaseDto {
 		clientAccount = "";
 		scheduleDate = null;
 		portalStatus = "";
-		createdBy = null;
+		createdBy = "";
 		documentType = "";
 		sequence = null;
 		createdDate = null;
+		recordTypeId = "";
+		recordTypeName = "";
+		processDate = null;
+		keyInByDate = null;
 	}
 
 	/**
@@ -192,6 +198,7 @@ public class ScheduleOfOfferDto extends BaseDto {
 		res.setRecordTypeName((String) o[11]);
 		res.setProcessDate((Date) o[12]);
 		res.setKeyInByDate((Date) o[13]);
+
 		return res;
 	}
 
