@@ -7,7 +7,8 @@ import { CommonProvider } from '../../providers/common';
 @Component({
     selector: 'app-invoices',
     templateUrl: './invoices.component.html',
-    styleUrls: ['./invoices.component.scss'],
+    styleUrls: ['./invoices.component.scss',
+        '../../../scss/vendors/bs-datepicker/bs-datepicker.scss'],
     encapsulation: ViewEncapsulation.None
 })
 export class InvoicesComponent implements OnInit {
@@ -22,10 +23,12 @@ export class InvoicesComponent implements OnInit {
     public clientId: string = "";
     public fromDate = new Date();
     public toDate = new Date();
+    public maxDate = new Date();
     public lstDocumentType: any[] = [];
     public lstStatus: any[] = [];
     public lstCA: any[] = [];
     public lstCU: any[] = [];
+    public lstSU: any[] = [];
     public data = [];
     public total: number = 0;
     public pageSize = 10;
@@ -50,21 +53,21 @@ export class InvoicesComponent implements OnInit {
         },
         noDataMessage: 'No data found',
         columns: {
-            creditNoteNo: {
+            name: {
                 title: 'Invoice No.',
                 filter: false,
                 type: 'html',
                 valuePrepareFunction: (cell, row) => {
 
-                    return `<a href="/#/pages/schedule-details/${row.id}">${row.scheduleNo}</a>`
+                    return `<a href="/#/pages/invoices-details/${row.sfId}">${row.name}</a>`
                 },
             },
-            scheduleNo: {
+            scheduleOfOffer: {
                 title: 'Schedule No.',
                 type: 'string',
                 filter: false
             },
-            clientAccountNo: {
+            clientAccount: {
                 title: 'Client Account No.',
                 type: 'string',
                 filter: false
@@ -115,12 +118,12 @@ export class InvoicesComponent implements OnInit {
 
     ngOnInit() {
         this.fromDate = this.utl.addMonths(this.fromDate, -6);
-        this.toDate = this.utl.addMonths(this.toDate, -6);
         this.minDate = this.utl.addMonths(this.minDate, -12);
         let user = JSON.parse(localStorage.getItem("CURRENT_TOKEN"));
         this.clientId = user.clientId;
         this.clientName = user.clientName;
         this.searchCA();
+        this.searchSU();
 
         let tmpStatus = {
             data: [{
@@ -153,10 +156,10 @@ export class InvoicesComponent implements OnInit {
                 code: "",
                 value: "-- Please Select --"
             }, {
-                code: "1",
+                code: "INV",
                 value: "Invoice"
             }, {
-                code: "2",
+                code: "CAD",
                 value: "Cash Disbursement"
             }]
         }
@@ -168,6 +171,24 @@ export class InvoicesComponent implements OnInit {
         this.scheduleNo = "";
         this.clientAccountId = "";
         this.invoiceNo = "";
+
+        // Reset Date
+        let d = new Date();
+        let d1 = this.utl.formatDate(this.utl.addMonths(d, -6), 'dd-MMM-yyyy');
+        let d2 = this.utl.formatDate(this.fromDate, 'dd-MMM-yyyy');
+        if (d1 != d2) {
+            d = new Date();
+            this.fromDate = this.utl.addMonths(d, -6);
+        }
+
+        d = new Date();
+        d1 = this.utl.formatDate(d, 'dd-MMM-yyyy');
+        d2 = this.utl.formatDate(this.toDate, 'dd-MMM-yyyy');
+
+        if (d1 != d2) {
+            d = new Date();
+            this.toDate = d;
+        }
     }
 
     // Search Client Account
@@ -180,7 +201,7 @@ export class InvoicesComponent implements OnInit {
             size: 20
         }
 
-        this.pro.searchCA(x).subscribe((rsp: any) => {
+        this.com.searchCA(x).subscribe((rsp: any) => {
             let item = {
                 sfid: "",
                 clientAccount: "-- Please select --"
@@ -209,7 +230,7 @@ export class InvoicesComponent implements OnInit {
             size: 20
         }
 
-        this.com.searchCustomer(x).subscribe((rsp: any) => {
+        this.com.searchCU(x).subscribe((rsp: any) => {
             let item = {
                 sfid: "",
                 name: "-- Please select --"
@@ -222,6 +243,35 @@ export class InvoicesComponent implements OnInit {
             }
             else {
                 this.lstCU.unshift(item);
+            }
+        }, (err) => {
+            console.log(err);
+        });
+    }
+
+    // Search Customer
+    public searchSU() {
+        let x = {
+            filter: {
+                client: this.clientId
+            },
+            page: 1,
+            size: 20
+        }
+
+        this.com.searchSU(x).subscribe((rsp: any) => {
+            let item = {
+                sfid: "",
+                name: "-- Please select --"
+            }
+
+            if (rsp.status === HTTP.STATUS_SUCCESS) {
+
+                rsp.result.data.unshift(item);
+                this.lstSU = rsp.result.data;
+            }
+            else {
+                this.lstSU.unshift(item);
             }
         }, (err) => {
             console.log(err);

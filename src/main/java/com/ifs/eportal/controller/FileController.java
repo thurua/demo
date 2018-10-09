@@ -1,5 +1,7 @@
 package com.ifs.eportal.controller;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,14 +14,17 @@ import java.util.logging.Logger;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.amazonaws.services.s3.model.S3Object;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ifs.eportal.bll.AccountService;
 import com.ifs.eportal.bll.ApprovedCustomerLimitService;
@@ -37,6 +43,7 @@ import com.ifs.eportal.bll.CurrencyTypeService;
 import com.ifs.eportal.bll.InvoiceService;
 import com.ifs.eportal.bll.RecordTypeService;
 import com.ifs.eportal.bll.ScheduleOfOfferService;
+import com.ifs.eportal.common.Const;
 import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.common.ZError;
 import com.ifs.eportal.common.ZValid;
@@ -56,6 +63,7 @@ import com.ifs.eportal.dto.ValidDto;
 import com.ifs.eportal.model.CreditNote;
 import com.ifs.eportal.model.Invoice;
 import com.ifs.eportal.model.ScheduleOfOffer;
+import com.ifs.eportal.req.DownloadReq;
 import com.ifs.eportal.req.UploadReq;
 import com.ifs.eportal.rsp.SingleRsp;
 
@@ -110,6 +118,53 @@ public class FileController {
 	}
 
 	/**
+	 * Download file from server
+	 * 
+	 * @param header
+	 * @param req
+	 * @return
+	 */
+	@PostMapping("/download")
+	public ResponseEntity<InputStreamResource> download(@RequestBody DownloadReq req) {
+		String fileName = "noname";
+		Long len = 0l;
+		InputStreamResource res = null;
+
+		try {
+			// Get data
+			String path = req.getPath();
+			String file = req.getFile();
+			Boolean aws = req.getAws();
+
+			String p = path + "/" + file;
+			fileName = "attachment;filename=" + file;
+
+			// Handle
+			if (aws) {
+				S3Object s3 = Utils.download(p);
+				len = s3.getObjectMetadata().getInstanceLength();
+				res = new InputStreamResource(s3.getObjectContent());
+			} else {
+				File f = new File(p);
+				InputStream is = new FileInputStream(f);
+				len = f.length();
+				res = new InputStreamResource(is);
+			}
+
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		BodyBuilder bb = ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, fileName);
+		return bb.contentType(MediaType.APPLICATION_OCTET_STREAM).contentLength(len).body(res);
+	}
+
+	/**
 	 * Upload for Angular (ScheduleOfOffer)
 	 * 
 	 * @param file
@@ -121,10 +176,16 @@ public class FileController {
 	public ResponseEntity<?> upload(@RequestHeader HttpHeaders header, @RequestParam("file") MultipartFile file,
 			@RequestParam("req") String req) {
 		SingleRsp res = new SingleRsp();
-
+		String s = "";
 		try {
 			PayloadDto pl = Utils.getTokenInfor(header);
 			String sfId = pl.getSfId();
+			List<String> ar = pl.getAccessRights();
+			for (String i : ar) {
+				if ("Schedules - Upload Schedule (Authorisation Not Required)".equals(i)) {
+					s = "Authorised";
+				}
+			}
 
 			// Get data
 			String originalName = file.getOriginalFilename();
@@ -140,7 +201,7 @@ public class FileController {
 
 				String url = System.getenv("BUCKETEER_BUCKET_URL");
 				String path = "InvoiceData";
-				String name = UUID.randomUUID().toString() + extension;
+				String name = UUID.randomUUID().toString() + "." + extension;
 				url += "/" + path + "/" + name;
 
 				// Upload file to S3
@@ -150,8 +211,13 @@ public class FileController {
 					dto.invoiceDataPath = url;
 				}
 				dto.lastModifiedByPortalUserId = sfId;
-				createSchedule(dto, new Date(), o);
+				createSchedule(dto, new Date(), o, s);
 			}
+			if (!dto.isSuccess()) {
+				res.setStatus(Const.HTTP.STATUS_ERROR);
+			}
+			res.setMessage(dto.getMessage());
+			res.setResult(dto.getErrors());
 
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
@@ -180,10 +246,23 @@ public class FileController {
 
 			// Get data
 			String originalName = file.getOriginalFilename();
-			UploadReq o = new UploadReq();
+			// UploadReq o = new UploadReq();
 
 			// Handle
-			ValidDto dto = validateSchedule(file, o);
+			// ValidDto dto = validateSchedule(file, o);
+
+			ExcelDto o = new ExcelDto();
+			ValidDto dto = new ValidDto();
+
+			// Handle
+			if (originalName.contains("Factoring-INV")) {
+				o = ExcelDto.getFactoringIv(file);
+			} else if (originalName.contains("Loan-INV")) {
+				o = ExcelDto.getLoanIv(file);
+			} else {
+				o = ExcelDto.getFactoringCn(file);
+			}
+			dto.data = o;
 
 			// Upload file to S3
 			if (Utils.allowUpload) {
@@ -192,7 +271,7 @@ public class FileController {
 				String extension = originalName.substring(t);
 
 				String path = "InvoiceData";
-				String name = UUID.randomUUID().toString() + extension;
+				String name = UUID.randomUUID().toString() + "." + extension;
 
 				InputStream in = file.getInputStream();
 				Utils.upload(in, name, path);
@@ -460,7 +539,14 @@ public class FileController {
 				}
 				res.sequence = sequence;
 			} else {
-				// res.setError(err);
+				res.setErrors(errors);
+			}
+			if (errors.size() > 0) {
+				err = ZError.getError(errors);
+				res = Utils.addResult(res, err);
+
+//				err = ZError.getMessage(errors);
+//                res = Utils.addMessage(res, err);
 			}
 			res.data = o;
 		} catch (Exception ex) {
@@ -900,7 +986,7 @@ public class FileController {
 	 * @param acceptanceDate
 	 * @return
 	 */
-	private boolean createSchedule(ValidDto dto, Date acceptanceDate, UploadReq req) {
+	private boolean createSchedule(ValidDto dto, Date acceptanceDate, UploadReq req, String s) {
 		boolean res = true;
 
 		try {
@@ -911,6 +997,7 @@ public class FileController {
 			boolean isIV = "INVOICE".equals(type);
 			boolean isInvoice = isLoan || isIV;
 			Float sequence = dto.sequence.floatValue();
+			type = Utils.formatStr(type);
 
 			ScheduleOfOffer m = new ScheduleOfOffer();
 			m.setDocumentType(type);
@@ -927,11 +1014,13 @@ public class FileController {
 			m.setPortalStatus("Pending Authorisation");
 			m.setCreatedByPortalUserId(dto.lastModifiedByPortalUserId);
 			m.setInvoiceDataPath(dto.invoiceDataPath);
-
 			m.setScheduleDate(o.getDocumentDate());
 			m.setProcessDate(o.getProcessDate());
 			m.setKeyInByDate(o.getKeyInByDate());
 
+			if (s == "Authorised") {
+				m.setPortalStatus(s);
+			}
 			if (sequence > 0) {
 				String temp = m.getName() + "-" + sequence.toString();
 				m.setName(temp);
@@ -959,6 +1048,20 @@ public class FileController {
 			} else {
 				createInvoice(o, isInvoice, m);
 			}
+			// Insert reason error
+			// ---------------------------------------
+			HashMap<String, String> m1;
+
+			if (!dto.isInvoiceValid()) {
+				// Vinh vost5 https://crimsonworks.atlassian.net/browse/IFS-1228
+				if ("CASH DISBURSEMENT".equals(o.getType())) {
+					rt = recordTypeService.getBy("Reason__c", "System Rejected");
+				} else {
+					rt = recordTypeService.getBy("Reason__c", "System Unfunded");
+				}
+				// m = Utils.toMapInvoice(l)
+			}
+
 		} catch (Exception ex) {
 			if (Utils.printStackTrace) {
 				ex.printStackTrace();

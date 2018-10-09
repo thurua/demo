@@ -11,14 +11,11 @@ import com.ifs.eportal.common.Utils;
  * @author ToanNguyen 2018-Oct-05 (verified)
  *
  */
-public class ClientAccountFilter {
+public class SupplierFilter {
 	// region -- Fields --
 
 	@JsonProperty(value = "client")
 	private String client;
-
-	@JsonProperty(value = "status")
-	private String status;
 
 	// end
 
@@ -32,14 +29,6 @@ public class ClientAccountFilter {
 		this.client = client;
 	}
 
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
 	// end
 
 	// region -- Methods --
@@ -47,7 +36,7 @@ public class ClientAccountFilter {
 	/**
 	 * Initialize
 	 */
-	public ClientAccountFilter() {
+	public SupplierFilter() {
 		client = "";
 	}
 
@@ -57,15 +46,15 @@ public class ClientAccountFilter {
 	 * @param o
 	 * @return
 	 */
-	public static ClientAccountFilter convert(Object o) {
-		ClientAccountFilter res = new ClientAccountFilter();
+	public static SupplierFilter convert(Object o) {
+		SupplierFilter res = new SupplierFilter();
 
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			String s = mapper.writeValueAsString(o);
 
 			try {
-				res = mapper.readValue(s, ClientAccountFilter.class);
+				res = mapper.readValue(s, SupplierFilter.class);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

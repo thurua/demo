@@ -115,7 +115,7 @@ public class AttachmentDto extends BaseDto {
 		res.setSfId((String) o[1]);
 
 		res.setName((String) o[2]);
-		res.setFileSize((Double) o[3]);
+		res.setFileSize(filesize_in_kiloBytes((Double) o[3]));
 		res.setUploadedBy((String) o[4]);
 		res.setUploadedOn((Date) o[5]);
 		res.setRowNumber((Integer) o[6]);
@@ -138,6 +138,10 @@ public class AttachmentDto extends BaseDto {
 		}
 
 		return res;
+	}
+
+	private static Double filesize_in_kiloBytes(Double file) {
+		return file / 1024;
 	}
 
 	// end

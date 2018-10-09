@@ -87,12 +87,6 @@ public class InvoiceDao implements Repository<Invoice, Integer> {
 	 * Initialize
 	 */
 	public InvoiceDao() {
-//		_sql = "SELECT \r\n"
-//				+ "	a.id, a.customer_branch__c, a.customer_from_excel__c, a.currencyisocode, a.invoice_date__c, \r\n"
-//				+ "	a.client_name__c ,a.po__c, a.client_remarks__c,  a.customer__c, a.document_type__c, \r\n"
-//				+ "	a.recordtypeid, a.schedule_of_offer__c, a.client_account__c, a.name, a.status__c\r\n"
-//				+ "FROM salesforce.invoice__c a ";
-
 		_path = ZFile.getPath("/sql/" + InvoiceDao.class.getSimpleName());
 		_sql = ZFile.read(_path + "_sql.sql");
 	}
@@ -104,7 +98,6 @@ public class InvoiceDao implements Repository<Invoice, Integer> {
 	 * @return
 	 */
 	public InvoiceDto getBy(Integer id) {
-		_sql = ZFile.read(_path + "detail.sql");
 		String sql = _sql + " WHERE a.id = :id";
 
 		// Execute

@@ -4,23 +4,13 @@
     </div>
     <div class="card-body">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-5">
                 <div class="form-group row">
                     <div class="col-md-5">
                         <strong>Client</strong>
                     </div>
                     <div class="col-md-7">
                         <label class="col-form-label">{{clientName}}</label>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-md-5">
-                        <strong>Status</strong>
-                    </div>
-                    <div class="col-md-7">
-                        <select [(ngModel)]="status" class="form-control">
-                          <option *ngFor="let i of lstStatus" value="{{i.code}}">{{i.value}}</option>
-                      </select>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -33,6 +23,14 @@
                 </div>
                 <div class="form-group row">
                     <div class="col-md-5">
+                        <strong>Created Date From</strong>
+                    </div>
+                    <div class="col-md-7">
+                        <input type="text" class="form-control" [minDate]="minDate" [maxDate]="maxDate" bsDatepicker [(bsValue)]="fromDate" value="{{ fromDate | date:'dd-MMM-yyyy' }}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-5">
                         <strong>Document Type</strong>
                     </div>
                     <div class="col-md-7">
@@ -41,8 +39,18 @@
                         </select>
                     </div>
                 </div>
+                <div class="form-group row">
+                    <div class="col-md-5">
+                        <strong>Status</strong>
+                    </div>
+                    <div class="col-md-7">
+                        <select [(ngModel)]="status" class="form-control">
+                                  <option *ngFor="let i of lstStatus" value="{{i.code}}">{{i.value}}</option>
+                              </select>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-7">
                 <div class="form-group row">
                     <div class="col-md-3">
                         <strong>Client Account</strong>
@@ -55,26 +63,6 @@
                 </div>
                 <div class="form-group row">
                     <div class="col-md-3">
-                        <strong>Customer</strong>
-                    </div>
-                    <div class="col-md-9">
-                        <select [(ngModel)]="customer" class="form-control">
-                          <option *ngFor="let i of lstCU" value="{{i.sfId}}">{{i.name}}</option>
-                      </select>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-md-3">
-                        <strong>Supplier</strong>
-                    </div>
-                    <div class="col-md-9">
-                        <select name="supplier" [(ngModel)]="supplier" class="form-control">
-                            <option *ngFor="let i of lstCU" value="{{i.code}}">{{i.value}}</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-md-3">
                         <strong>Invoice No.</strong>
                     </div>
                     <div class="col-md-9">
@@ -82,25 +70,31 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <div class="col-md-7">
-                        <div class="form-group row">
-                            <div class="col-md-6">
-                                <strong>SO Created Date From</strong>
-                            </div>
-                            <div class="col-md-6 inputDateFrom">
-                                <input type="text" class="form-control" [minDate]="minDate" bsDatepicker [(bsValue)]="fromDate" value="{{ fromDate | date:'dd-MMM-yyyy' }}">
-                            </div>
-                        </div>
+                    <div class="col-md-3 inputDateTo">
+                        <strong>To</strong>
                     </div>
-                    <div class="col-md-5">
-                        <div class="form-group row">
-                            <div class="col-md-3 inputDateTo">
-                                <strong>To</strong>
-                            </div>
-                            <div class="col-md-9">
-                                <input type="text" class="form-control" [minDate]="minDate" bsDatepicker [(bsValue)]="toDate" value="{{ toDate | date:'dd-MMM-yyyy' }}">
-                            </div>
-                        </div>
+                    <div class="col-md-9">
+                        <input type="text" class="form-control" [minDate]="minDate" [maxDate]="maxDate" bsDatepicker [(bsValue)]="toDate" value="{{ toDate | date:'dd-MMM-yyyy' }}">
+                    </div>
+                </div>
+                <div class="form-group row" *ngIf="documentType == 'INV'">
+                    <div class="col-md-3">
+                        <strong>Customer</strong>
+                    </div>
+                    <div class="col-md-9">
+                        <select [(ngModel)]="customer" class="form-control">
+                              <option *ngFor="let i of lstCU" value="{{i.sfId}}">{{i.name}}</option>
+                          </select>
+                    </div>
+                </div>
+                <div class="form-group row" *ngIf="documentType == 'CAD'">
+                    <div class="col-md-3">
+                        <strong>Supplier</strong>
+                    </div>
+                    <div class="col-md-9">
+                        <select name="supplier" [(ngModel)]="supplier" class="form-control">
+                                <option *ngFor="let i of lstSU" value="{{i.sfId}}">{{i.name}}</option>
+                            </select>
                     </div>
                 </div>
             </div>

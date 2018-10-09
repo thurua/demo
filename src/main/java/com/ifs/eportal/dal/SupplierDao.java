@@ -14,26 +14,26 @@ import org.springframework.stereotype.Service;
 
 import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.common.ZFile;
-import com.ifs.eportal.dto.ClientAccountDto;
 import com.ifs.eportal.dto.SortDto;
-import com.ifs.eportal.filter.ClientAccountFilter;
-import com.ifs.eportal.model.ClientAccount;
+import com.ifs.eportal.dto.SupplierDto;
+import com.ifs.eportal.filter.SupplierFilter;
+import com.ifs.eportal.model.Supplier;
 import com.ifs.eportal.req.PagingReq;
 
 /**
  * 
- * @author HoanNguyen 2018-Sep-28
+ * @author VanPhan 2018-Oct-09
  *
  */
-@Service(value = "clientAccountDao")
-public class ClientAccountDao implements Repository<ClientAccount, Integer> {
+@Service(value = "supplierDao")
+public class SupplierDao implements Repository<Supplier, Integer> {
 	// region -- Implements --
 
 	/**
 	 * Create
 	 */
 	@Override
-	public void create(ClientAccount entity) {
+	public void create(Supplier entity) {
 		_em.persist(entity);
 	}
 
@@ -41,15 +41,15 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 	 * Read
 	 */
 	@Override
-	public ClientAccount read(Integer id) {
-		return _em.find(ClientAccount.class, id);
+	public Supplier read(Integer id) {
+		return _em.find(Supplier.class, id);
 	}
 
 	/**
 	 * Update
 	 */
 	@Override
-	public ClientAccount update(ClientAccount entity) {
+	public Supplier update(Supplier entity) {
 		return _em.merge(entity);
 	}
 
@@ -57,7 +57,7 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 	 * Delete
 	 */
 	@Override
-	public void delete(ClientAccount entity) {
+	public void delete(Supplier entity) {
 		_em.remove(entity);
 	}
 
@@ -68,9 +68,9 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 	@Autowired
 	private EntityManager _em;
 
-	private String _path;
-
 	private String _sql;
+
+	private String _path;
 
 	private static final Logger _log = Logger.getLogger(ClientAccountDao.class.getName());
 
@@ -81,39 +81,22 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 	/**
 	 * Initialize
 	 */
-	public ClientAccountDao() {
-		_path = ZFile.getPath("/sql/" + ClientAccountDao.class.getSimpleName());
+	public SupplierDao() {
+		_path = ZFile.getPath("/sql/" + SupplierDao.class.getSimpleName());
 		_sql = ZFile.read(_path + "_sql.sql");
 	}
 
-	/**
-	 * Read by
-	 * 
-	 * @param sfId
-	 * @return
-	 */
-	public ClientAccountDto read(String sfId) {
-		ClientAccountDto res = new ClientAccountDto();
+	@SuppressWarnings("unchecked")
+	public List<SupplierDto> getByClientId(String clientId) {
+		String sql = _sql + " WHERE a.client1__c = :clientId";
 
-		try {
-			String sql = _sql + " WHERE a.sfid = :sfid";
+		// Execute
+		Query q = _em.createNativeQuery(sql);
+		q.setParameter("clientId", clientId);
+		List<Object[]> l = q.getResultList();
 
-			// Execute
-			Query q = _em.createNativeQuery(sql);
-			q.setParameter("sfid", sfId);
-			Object[] i = (Object[]) q.getSingleResult();
-
-			// Convert
-			res = ClientAccountDto.convert(i);
-		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
-				ex.printStackTrace();
-			}
-			if (Utils.writeLog) {
-				_log.log(Level.SEVERE, ex.getMessage(), ex);
-			}
-		}
-
+		// Convert
+		List<SupplierDto> res = SupplierDto.convert(l);
 		return res;
 	}
 
@@ -124,8 +107,8 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public List<ClientAccountDto> search(PagingReq req) {
-		List<ClientAccountDto> res = new ArrayList<ClientAccountDto>();
+	public List<SupplierDto> search(PagingReq req) {
+		List<SupplierDto> res = new ArrayList<SupplierDto>();
 
 		try {
 			// Get data
@@ -148,11 +131,11 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 					orderBy += " a.id " + direction;
 				}
 
-				if ("clientAccount".equals(field)) {
+				if ("client".equals(field)) {
 					if (!orderBy.isEmpty()) {
 						orderBy += ",";
 					}
-					orderBy += " a.client_account__c " + direction;
+					orderBy += " a.client1__c " + direction;
 				}
 			}
 
@@ -177,7 +160,7 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 			List<Object[]> l = q.getResultList();
 
 			// Convert
-			res = ClientAccountDto.convert(l);
+			res = SupplierDto.convert(l);
 		} catch (Exception ex) {
 			if (Utils.printStackTrace) {
 				ex.printStackTrace();
@@ -198,17 +181,15 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 	 * @return
 	 */
 	private Query createQuery(String sql, Object o, String limit) {
-		ClientAccountFilter filter = ClientAccountFilter.convert(o);
+		SupplierFilter filter = SupplierFilter.convert(o);
 		String client = filter.getClient();
-		String status = filter.getStatus();
+
 		// Where
 		String where = "";
 		// if (!client.isEmpty()) {
-		where += " AND a.client__c = :client ";
+		where += " AND a.client1__c = :client ";
 		// }
-		if (!status.isEmpty()) {
-			where += " AND a.status__c = :status ";
-		}
+
 		// Replace first
 		if (!where.isEmpty()) {
 			where = where.replaceFirst("AND", "WHERE");
@@ -221,10 +202,6 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 			int i = where.indexOf(":client");
 			if (i > 0) {
 				q.setParameter("client", client);
-			}
-			i = where.indexOf(":status");
-			if (i > 0) {
-				q.setParameter("status", status);
 			}
 		}
 

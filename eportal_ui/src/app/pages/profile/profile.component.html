@@ -80,7 +80,7 @@
 
 <div bsModal #changePasswordModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <div class="modal-content">
+        <div class="modal-content chang-pw-popup">
             <div class="modal-header bg-header-modal">
                 <h4 class="modal-title">Change Password</h4>
                 <button type="button" class="close" (click)="closeChangePasswordPopup()" aria-label="Close">
@@ -121,7 +121,7 @@
                                     <i ></i> Required!
                                 </span>
                             <span *ngIf="newPassword.errors?.pattern">
-                                    >{{msgErrSpecialChar}}
+                                    {{msgErrSpecialChar}}
                                 </span>
                             </span>
                         </div>
@@ -186,7 +186,8 @@
                 <div class="col-md-1">
                 </div>
                 <div class="col-md-10">
-                    <button type="button" class="btn btn-success btn-block text-bold" (click)="infoModal.hide()">OK</button>
+                    <button *ngIf="isChangePwSuccess" type="button" class="btn btn-success btn-block text-bold" routerLink="/login">OK</button>
+                    <button *ngIf="isChangePwFail" type="button" class="btn btn-success btn-block text-bold" (click)="infoModal.hide()">OK</button>
                 </div>
                 <div class="col-md-1">
                 </div>

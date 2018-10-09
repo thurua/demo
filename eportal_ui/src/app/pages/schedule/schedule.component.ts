@@ -25,6 +25,7 @@ export class ScheduleComponent implements OnInit {
     public fromDate = new Date();
     public toDate = new Date();
     public minDate = new Date();
+    public maxDate = new Date();
     public data = [];
     public settings = {
         selectMode: 'single',  //single|multi
@@ -90,7 +91,6 @@ export class ScheduleComponent implements OnInit {
 
     ngOnInit() {
         this.fromDate = this.utl.addMonths(this.fromDate, -6);
-        this.toDate = this.utl.addMonths(this.toDate, -6);
         this.minDate = this.utl.addMonths(this.minDate, -12);
         let user = JSON.parse(localStorage.getItem("CURRENT_TOKEN"));
         this.clientId = user.clientId;
@@ -102,11 +102,11 @@ export class ScheduleComponent implements OnInit {
                 code: "",
                 value: "-- Please Select --"
             }, {
-                code: "Pending Authorization",
-                value: "Pending Authorization"
+                code: "Pending Authorisation",
+                value: "Pending Authorisation"
             }, {
-                code: "Authorized",
-                value: "Authorized"
+                code: "Authorised",
+                value: "Authorised"
             }, {
                 code: "Accepted",
                 value: "Accepted"
@@ -136,12 +136,12 @@ export class ScheduleComponent implements OnInit {
         }
 
         d = new Date();
-        d1 = this.utl.formatDate(this.utl.addMonths(d, -6), 'dd-MMM-yyyy');
+        d1 = this.utl.formatDate(d, 'dd-MMM-yyyy');
         d2 = this.utl.formatDate(this.toDate, 'dd-MMM-yyyy');
 
         if (d1 != d2) {
             d = new Date();
-            this.toDate = this.utl.addMonths(d, -6);
+            this.toDate = d;
         }
     }
 
@@ -180,7 +180,8 @@ export class ScheduleComponent implements OnInit {
     public searchCA() {
         let x = {
             filter: {
-                client: this.clientId
+                client: this.clientId,
+                status: "Activated"
             },
             page: 1,
             size: 20

@@ -25,11 +25,13 @@ import com.ifs.eportal.bll.AccountService;
 import com.ifs.eportal.bll.ClientAccountCustomerService;
 import com.ifs.eportal.bll.ClientAccountService;
 import com.ifs.eportal.bll.CodeService;
+import com.ifs.eportal.bll.SupplierService;
 import com.ifs.eportal.common.RsaService;
 import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.dto.AccountDto;
 import com.ifs.eportal.dto.ClientAccountCustomerDto;
 import com.ifs.eportal.dto.ClientAccountDto;
+import com.ifs.eportal.dto.SupplierDto;
 import com.ifs.eportal.dto.TokenDto;
 import com.ifs.eportal.model.Code;
 import com.ifs.eportal.req.BaseReq;
@@ -55,6 +57,9 @@ public class CommonController {
 
 	@Autowired
 	private ClientAccountCustomerService clientAccountCustomerService;
+
+	@Autowired
+	private SupplierService supplierService;
 
 	@Autowired
 	private CodeService codeService;
@@ -128,7 +133,7 @@ public class CommonController {
 	}
 
 	/**
-	 * Search client account
+	 * Search customer
 	 * 
 	 * @param req
 	 * @return
@@ -140,6 +145,37 @@ public class CommonController {
 		try {
 			// Handle
 			List<ClientAccountCustomerDto> l = clientAccountCustomerService.read(req);
+
+			// Set data
+			Map<String, Object> data = new LinkedHashMap<>();
+			data.put("count", l.size());
+			data.put("data", l);
+			res.setResult(data);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
+	/**
+	 * Search supplier
+	 * 
+	 * @param req
+	 * @return
+	 */
+	@PostMapping("/search-supplier")
+	public ResponseEntity<?> searchSupplier(@RequestBody PagingReq req) {
+		MultipleRsp res = new MultipleRsp();
+
+		try {
+			// Handle
+			List<SupplierDto> l = supplierService.read(req);
 
 			// Set data
 			Map<String, Object> data = new LinkedHashMap<>();

@@ -104,6 +104,16 @@ export class ApiProvider {
         return this.http.request(req);
     }
 
+    public download(endpoint: string, body: any, reqOpts?: any): Observable<any> {
+        if (!reqOpts) {
+            reqOpts = {
+                headers: new HttpHeaders().set('Authorization', this.getToken()),
+                responseType: 'blob'
+            };
+        }
+        return this.http.post(this.apiUrl + endpoint, body, reqOpts);
+    }
+
     public getUserId(): string {
         let t = localStorage.getItem('CURRENT_TOKEN');
         let json = JSON.parse(t);

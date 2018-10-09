@@ -6,6 +6,10 @@ export class ScheduleProvider {
 
     constructor(private api: ApiProvider) { }
 
+    public getApiUrl(){
+        return this.api.apiUrl;
+     }
+
     /**
      * Search by
      * @param info

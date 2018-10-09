@@ -452,9 +452,41 @@ public class Utils {
 	 * @return
 	 */
 	public static ValidDto addError(ValidDto rsp, String err) {
+		rsp.setSuccess(false);
 		String s = rsp.message + "\n" + err;
 		rsp.message = s;
 		return rsp;
+	}
+
+	/**
+	 * Add result
+	 * 
+	 * @param rsp
+	 * @param err
+	 * @return
+	 */
+	public static ValidDto addResult(ValidDto rsp, String err) {
+		String s = rsp.message + "\n" + err;
+		rsp.message = s;
+		return rsp;
+	}
+
+	/**
+	 * Format string
+	 * 
+	 * @param s
+	 * @return
+	 */
+	public static String formatStr(String s) {
+		String res = "";
+		s = s.toLowerCase();
+		String[] arr = s.split(" ");
+
+		for (String x : arr) {
+			res += x.substring(0, 1).toUpperCase() + x.substring(1, x.length()) + ' ';
+		}
+
+		return res;
 	}
 
 	/**

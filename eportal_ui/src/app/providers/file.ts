@@ -30,6 +30,14 @@ export class FileProvider {
     }
 
     /**
+     * Download
+     * @param info
+     */
+    public download(info: any) {
+        return this.api.download('file/download', info);
+    }
+
+    /**
      * Call
      * @param info
      */

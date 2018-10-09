@@ -53,6 +53,9 @@ public class SOInvoiceDto extends BaseDto {
 	@JsonProperty(value = "rejectReason")
 	private String rejectReason;
 
+	@JsonProperty(value = "currencyIsoCode")
+	private String currencyIsoCode;
+
 	// end
 
 	// region -- Get set --
@@ -161,6 +164,14 @@ public class SOInvoiceDto extends BaseDto {
 		this.rejectReason = rejectReason;
 	}
 
+	public String getCurrencyIsoCode() {
+		return currencyIsoCode;
+	}
+
+	public void setCurrencyIsoCode(String currencyIsoCode) {
+		this.currencyIsoCode = currencyIsoCode;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -184,6 +195,7 @@ public class SOInvoiceDto extends BaseDto {
 		supplier = "";
 		supplierFromExcel = "";
 		rejectReason = "";
+		currencyIsoCode = "";
 	}
 
 	/**
@@ -211,6 +223,7 @@ public class SOInvoiceDto extends BaseDto {
 		res.setSupplier((String) o[12]);
 		res.setSupplierFromExcel((String) o[13]);
 		res.setRejectReason((String) o[14]);
+		res.setCurrencyIsoCode((String) o[15]);
 
 		return res;
 	}

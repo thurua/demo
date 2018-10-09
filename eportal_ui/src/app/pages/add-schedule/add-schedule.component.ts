@@ -3,6 +3,7 @@ import { CommonProvider, FileProvider, ScheduleProvider } from '../../providers/
 import { HTTP } from '../../utilities/utility';
 import { FileUploader } from 'ng2-file-upload';
 import { ModalDirective } from 'ngx-bootstrap';
+import { saveAs } from "file-saver";
 
 const URL = 'http://localhost:8080/api/upload';
 
@@ -31,6 +32,7 @@ export class AddScheduleComponent implements OnInit {
     public isSuccess = false;
     public isError = false;
     public checkAgree = true;
+    public apiUrl = '';
 
     @ViewChild("infoModal") public infoModal: ModalDirective;
 
@@ -42,13 +44,16 @@ export class AddScheduleComponent implements OnInit {
         let user = JSON.parse(localStorage.getItem("CURRENT_TOKEN"));
         this.clientId = user.clientId;
         this.clientName = user.clientName;
+        this.vm.clientAccountId = "";
         this.searchCA();
         this.hideShow("");
+        this.apiUrl = "../../../assets/excel/";
     }
     public searchCA() {
         let x = {
             filter: {
-                client: this.clientId
+                client: this.clientId,
+                status: "Activated"
             },
             page: 1,
             size: 20
@@ -56,12 +61,11 @@ export class AddScheduleComponent implements OnInit {
 
         this.proSchedule.searchCA(x).subscribe((rsp: any) => {
             let item = {
-                sfid: "",
+                sfId: "",
                 clientAccount: "-- Please select --"
             }
 
             if (rsp.status === HTTP.STATUS_SUCCESS) {
-
                 rsp.result.data.unshift(item);
                 this.lstCA = rsp.result.data;
             }
@@ -117,12 +121,11 @@ export class AddScheduleComponent implements OnInit {
                 "clientAccountId": this.vm.clientAccountId,
                 "scheduleType": this.vm.scheduleType
             };
-            console.log(o);
+            //console.log(o);
             let s = JSON.stringify(o);
             this.pro.upload(this.file, s).subscribe((rsp: any) => {
                 if (rsp.body != undefined) {
                     let o = JSON.parse(rsp.body);
-
                     if (o.status === HTTP.STATUS_SUCCESS) {
                         this.isSuccess = true;
                         this.title = "Confirmation";
@@ -131,16 +134,18 @@ export class AddScheduleComponent implements OnInit {
                     else {
                         this.isError = true;
                         this.title = "Validation Errors";
-                        this.msg = "Follingwing validation errors are found in the uploaded excel. Please rectify and reupload the file.";
+                        // this.msg = "Follingwing validation errors are found in the uploaded excel. Please rectify and reupload the file.";
+                        this.msg = o.message;
                     }
                     this.infoModal.show();
                 }
             }, err => console.log(err));
         }
-        else{
+        else {
             this.checkAgree = false;
         }
     }
+
     public changeAgree() {
         if (this.vm.agree == true) {
             this.checkAgree = true;
@@ -148,5 +153,19 @@ export class AddScheduleComponent implements OnInit {
         else {
             this.checkAgree = false;
         }
+    }
+
+    public download() {
+        let x = {
+            "path": "eportal_ui/src/assets/excel",
+            "file": this.fileName,
+            "aws": false
+        };
+        this.loader = true;
+        this.pro.download(x)
+            .subscribe(blob => {
+                saveAs(blob, this.fileName);
+                this.loader = false;
+            });
     }
 }

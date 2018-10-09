@@ -296,10 +296,10 @@ public class CreditNoteDao implements Repository<CreditNote, Integer> {
 			where += " AND a.status__c = :status";
 		}
 		if (!scheduleNo.isEmpty()) {
-			where += " AND d.schedule_no__c = :scheduleNo";
+			where += " AND LOWER(d.schedule_no__c) like LOWER(:scheduleNo)";
 		}
 		if (!creditNoteNo.isEmpty()) {
-			where += " AND a.name = :creditNoteNo";
+			where += " AND LOWER(a.name) like LOWER(:creditNoteNo)";
 		}
 		if (!customer.isEmpty()) {
 			where += " AND b.name = :customer";
@@ -335,11 +335,11 @@ public class CreditNoteDao implements Repository<CreditNote, Integer> {
 			}
 			i = where.indexOf(":scheduleNo");
 			if (i > 0) {
-				q.setParameter("scheduleNo", scheduleNo);
+				q.setParameter("scheduleNo", "%" + scheduleNo + "%");
 			}
 			i = where.indexOf(":creditNoteNo");
 			if (i > 0) {
-				q.setParameter("creditNoteNo", creditNoteNo);
+				q.setParameter("creditNoteNo", "%" + creditNoteNo + "%");
 			}
 			i = where.indexOf(":customer");
 			if (i > 0) {

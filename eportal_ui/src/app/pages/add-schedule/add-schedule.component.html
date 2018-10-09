@@ -16,7 +16,7 @@
                     </div>
                     <div class="form-group row">
                         <div class="col-md-4">
-                            <strong>Schedule Type<span class="text-danger">*</span></strong>
+                            <strong>Schedule Type<span class="text-danger">&nbsp;*</span></strong>
                         </div>
                         <div class="col-md-8">
                             <select class="form-control" name="scheduleType" #scheduleType="ngModel" [(ngModel)]="vm.scheduleType" (change)="hideShow($event.target.value)" required>
@@ -27,7 +27,7 @@
                             </select>
                             <span [hidden]="scheduleType.valid || (scheduleType.pristine && !f.submitted && validate)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="scheduleType" data-valmsg-for="scheduleType" id="scheduleType_validationMessage"
                                 role="alert">
-                                    <i class="fa fa-exclamation-triangle"></i>&nbsp; Please select a Schedule Type.
+                                    <i class="fa fa-exclamation-triangle"></i>&nbsp; Please select Schedule Type.
                             </span>
                         </div>
                     </div>
@@ -43,7 +43,7 @@
                 <div class="col-md 6">
                     <div class="form-group row">
                         <div class="col-md-4">
-                            <strong>Client Account<span class="text-danger">*</span></strong>
+                            <strong>Client Account<span class="text-danger">&nbsp;*</span></strong>
                         </div>
                         <div class="col-md-8">
                             <select name="clientAccountId" #clientAccountId="ngModel" [(ngModel)]="vm.clientAccountId" class="form-control" required>
@@ -51,7 +51,7 @@
                             </select>
                             <span [hidden]="clientAccountId.valid || (clientAccountId.pristine && !f.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="clientAccountId" data-valmsg-for="clientAccountId" id="clientAccountId_validationMessage"
                                 role="alert">
-                                    <i class="fa fa-exclamation-triangle"></i>&nbsp;Please select a Client Account.
+                                    <i class="fa fa-exclamation-triangle"></i>&nbsp;Please select Client Account.
                             </span>
                         </div>
                     </div>
@@ -86,15 +86,15 @@
                     </div>
                 </div>
                 <div class="card-body col-md-5">
-                    <a *ngIf="!validate" href="../../../assets/excel/{{fileName}}" class="btn btn-primary download" download>Dowload Template</a>
-                    <button *ngIf="validate" type="button" (click)="hideShow('Required')" class="btn btn-primary download">Dowload Template</button>
+                    <a *ngIf="!validate" (click)="download()" class="btn btn-primary download" download>Download Template</a>
+                    <button *ngIf="validate" type="button" (click)="hideShow('Required')" class="btn btn-primary download">Download Template</button>
                 </div>
             </div>
             <div class="card-body" *ngIf="isCheck">
                 <p [innerHTML]="message"></p>
                 <input type="checkbox" name="agree" #agree="ngModel" [(ngModel)]="vm.agree" (change)="changeAgree()"> I agree
                 <span [hidden]="checkAgree" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="agree" data-valmsg-for="agree" id="agree_validationMessage" role="alert">
-                    <i class="fa fa-exclamation-triangle"></i>
+                    <i class="fa fa-exclamation-triangle"></i>&nbsp; Required
                 </span>
             </div>
             <div class="card-body col-md-6">
@@ -124,7 +124,8 @@
             <div class="modal-body size-text-content-modal text-center">
                 <div class="form-group row">
                     <div class="col-md-12">
-                        <i class="fa fa-check-circle-o icon-check-square"></i>
+                        <i [hidden]="!isSuccess" class="fa fa-check-circle-o icon-check-square"></i>
+                        <i [hidden]="!isError" class="fa fa-exclamation-triangle"></i>
                     </div>
                 </div>
                 <div class="form-group row">

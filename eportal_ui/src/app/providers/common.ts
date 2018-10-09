@@ -15,15 +15,21 @@ export class CommonProvider {
     /**
      * Search client account
      */
-    public searchClientAccount(info: any) {
+    public searchCA(info: any) {
         return this.api.post('common/search-client-account', info);
     }
 
     /**
      * Search customer
      */
-    public searchCustomer(info: any) {
-        let x = {};
+    public searchCU(info: any) {
         return this.api.post('common/search-customer', info);
+    }
+
+    /**
+     * Search supplier
+     */
+    public searchSU(info: any) {
+        return this.api.post('common/search-supplier', info);
     }
 }

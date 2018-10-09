@@ -7,7 +7,7 @@ import { Utils } from 'app/utilities/utils';
     selector: 'app-credit-notes',
     templateUrl: './credit-notes.component.html',
     styleUrls: ['./credit-notes.component.scss',
-    '../../../scss/vendors/bs-datepicker/bs-datepicker.scss'],
+        '../../../scss/vendors/bs-datepicker/bs-datepicker.scss'],
     encapsulation: ViewEncapsulation.None
 })
 export class CreditNotesComponent implements OnInit {
@@ -16,6 +16,7 @@ export class CreditNotesComponent implements OnInit {
     public clientId: string = "";
     public clientName: string = "";
     public pageSize = 5;
+    public curentPage = 1;
     public total: number = 0;
     public lstCustomer: any[] = [];
     public lstStatus: any[] = [];
@@ -60,7 +61,7 @@ export class CreditNotesComponent implements OnInit {
                 type: 'string',
                 filter: false
             },
-            clientAccount: {
+            clientAccountNo: {
                 title: 'Client Account No.',
                 type: 'string',
                 filter: false
@@ -106,17 +107,13 @@ export class CreditNotesComponent implements OnInit {
     ngOnInit() {
         this.fromDate = this.utl.addMonths(this.fromDate, -6);
         this.minDate = this.utl.addMonths(this.minDate, -12);
-        this.maxDate = this.utl.addMonths(this.maxDate, 12);
-        this.toDate = this.utl.addMonths(this.toDate, -6);
 
         let user = JSON.parse(localStorage.getItem("CURRENT_TOKEN"));
-
 
         this.clientId = user.clientId;
         this.clientName = user.clientName;
         // this.customer = user.accountName;
         this.searchCA();
-        this.searchCustomer();
 
         let tmpStatus = {
             dataS: [{
@@ -137,11 +134,6 @@ export class CreditNotesComponent implements OnInit {
             }]
         }
         this.lstStatus = tmpStatus.dataS;
-        
-        console.log(this.lstStatus);
-        
-
-
     }
 
     public resetClick() {
@@ -151,6 +143,7 @@ export class CreditNotesComponent implements OnInit {
         this.scheduleNo = "";
         this.creditNoteNo = "";
         this.data = [];
+
         // Reset Date
         let d = new Date();
         let d1 = this.utl.formatDate(this.utl.addMonths(d, -6), 'dd-MMM-yyyy');
@@ -161,32 +154,33 @@ export class CreditNotesComponent implements OnInit {
         }
 
         d = new Date();
-        d1 = this.utl.formatDate(this.utl.addMonths(d, -6), 'dd-MMM-yyyy');
+        d1 = this.utl.formatDate(d, 'dd-MMM-yyyy');
         d2 = this.utl.formatDate(this.toDate, 'dd-MMM-yyyy');
 
         if (d1 != d2) {
             d = new Date();
-            this.toDate = this.utl.addMonths(d, -6);
+            this.toDate = d;
         }
     }
 
     // serach function
     public searchClick(page: any) {
         this.search(page);
-        //this.curentPage = page;
+        this.curentPage = page;
     }
 
     public search(page: any) {
         let fr = this.fromDate == null ? null : this.fromDate.toISOString();
         let to = this.toDate == null ? null : this.toDate.toISOString();
-        //alert(this.clientId);
 
         let x = {
             filter: {
                 client: this.clientId,
                 clientAccount: this.clientAccountId,
-                customer : this.customerId,
+                customer: this.customerId,
                 status: this.portalStatus,
+                scheduleNo: this.scheduleNo,
+                name: this.creditNoteNo,
                 frCreatedDate: fr,
                 toCreatedDate: to
             },
@@ -199,13 +193,12 @@ export class CreditNotesComponent implements OnInit {
                 }
             ]
         }
-        
+
         this.pro.search(x).subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 this.data = rsp.result.data;
                 this.total = rsp.result.total;
                 this.setPage(page);
-                console.log(rsp);
             }
         }, (err) => {
             console.log(err);
@@ -222,10 +215,17 @@ export class CreditNotesComponent implements OnInit {
     public searchCA() {
         let x = {
             filter: {
-                client: this.clientId
+                client: this.clientId,
+                status: "Activated"
             },
             page: 1,
-            size: 20
+            size: 20,
+            sort: [
+                {
+                    direction: "DESC",
+                    field: "client"
+                }
+            ]
         }
 
         this.pro.searchCA(x).subscribe((rsp: any) => {
@@ -244,10 +244,11 @@ export class CreditNotesComponent implements OnInit {
             console.log(err);
         });
     }
-    public searchCustomer() {
+
+    public searchCustomer(event: any) {
         let x = {
             filter: {
-                //client: this.clientId
+                clientAccount: event.target.value
             },
             page: 1,
             size: 20
@@ -255,7 +256,7 @@ export class CreditNotesComponent implements OnInit {
         this.pro.searchCustomer(x).subscribe((rsp: any) => {
             let itemCM = {
                 sfid: "",
-                accountName: "-- Please select --"
+                name: "-- Please select --"
             }
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 rsp.result.data.unshift(itemCM);

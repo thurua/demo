@@ -142,7 +142,7 @@ export class ScheduleDetailsComponent implements OnInit {
                 type: 'string',
                 filter: false
             },
-            supplierExcel: {
+            supplierFromExcel: {
                 title: 'Supplier from Excel',
                 type: 'string',
                 filter: false
@@ -377,12 +377,14 @@ export class ScheduleDetailsComponent implements OnInit {
                     if (this.entity.lstInvoice != null) {
                         let tmpIVList = this.entity.lstInvoice;
                         let i = 0;
+                        let isRejected = false;
+
                         tmpIVList.forEach(element => {
                             i++;
                             element.no = i;
                             element.customerexcel = element.customerFromExcel;
                             element.supplierExcel = element.supplierExcel;
-                            element.invoiceAmount = element.invoiceAmount.toLocaleString();
+                            element.invoiceAmount = Intl.NumberFormat('en-US', { style: 'currency', currency: element.currencyIsoCode }).format(element.invoiceAmount);
                             element.customerBranch = element.customer + ' / ' + element.customerBranch;
                             element.creditDate = this.utl.formatDate(element.invoiceDate, 'dd-MMM-yyyy') + ' / ' + element.creditPeriod;
                             let po = element.po == null ? '' : element.po;
@@ -393,11 +395,25 @@ export class ScheduleDetailsComponent implements OnInit {
 
                                 element.po = element.po.replace(re, '');
                             }
+                            if ((this.entity.portalStatus == 'Pending Authorisation' || this.entity.portalStatus == 'Authorised') && element.status == 'Unfunded') {
+                                element.status = 'Processing';
+                            }
+                            if (this.entity.portalStatus == 'Submitted') {
+                                element.status = 'Undunded';
+                            }
+                            if (element.status == 'Rejected') {
+                                isRejected = true;
+                            }
                         });
+
+                        if (!isRejected) {
+                            delete this.settingsIv.columns.rejectReason;
+                        }
+
                         this.ivList = tmpIVList;
                         if (this.entity.documentType == "Invoice") {
                             delete this.settingsIv.columns.supplier;
-                            delete this.settingsIv.columns.supplierExcel;
+                            delete this.settingsIv.columns.supplierFromExcel;
                         }
                         else {
                             delete this.settingsIv.columns.customerBranch;
@@ -411,6 +427,7 @@ export class ScheduleDetailsComponent implements OnInit {
                     i++;
                     element.no = i;
                     element.uploadedOn = this.utl.formatDate(element.uploadedOn, 'dd-MMM-yyyy HH:mm');
+                    element.fileSize = element.fileSize.toFixed(2) + " KB";
                 });
                 this.attList = tmpattList;
                 this.checkAtt = true;

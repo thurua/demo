@@ -62,6 +62,9 @@ public class CreditNoteDto extends BaseDto {
 	@JsonProperty(value = "outstandingAmount")
 	private Double outstandingAmount;
 
+	@JsonProperty(value = "clientAccountNo")
+	private String clientAccountNo;
+
 	// end
 
 	// region -- Get set --
@@ -194,6 +197,14 @@ public class CreditNoteDto extends BaseDto {
 		this.outstandingAmount = outstandingAmount;
 	}
 
+	public String getClientAccountNo() {
+		return clientAccountNo;
+	}
+
+	public void setClientAccountNo(String clientAccountNo) {
+		this.clientAccountNo = clientAccountNo;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -220,6 +231,7 @@ public class CreditNoteDto extends BaseDto {
 		appliedInvoice = "";
 		opsRemarks = "";
 		outstandingAmount = null;
+		clientAccountNo = "";
 
 	}
 
@@ -251,6 +263,7 @@ public class CreditNoteDto extends BaseDto {
 		res.setAppliedInvoice((String) o[15]);
 		res.setOpsRemarks((String) o[16]);
 		res.setOutstandingAmount((Double) o[17]);
+		res.setClientAccountNo((String) o[18]);
 
 		return res;
 	}

@@ -16,6 +16,8 @@ export class ProfileComponent implements OnInit {
     public msgInfo: string = "";
     public isMatch: boolean = false;
     public msgErrSpecialChar: string = "Password must be 8 characters and include numbers, uppercase and lowercase. Letters and one special character";
+    public isChangePwSuccess = false;
+    public isChangePwFail = false;
 
     @ViewChild('changePasswordModal') public changePasswordModal: ModalDirective;
     @ViewChild('infoModal') public infoModal: ModalDirective;
@@ -66,15 +68,18 @@ export class ProfileComponent implements OnInit {
             newPassword: this.entity.newPassword,
             oldPassword: this.entity.oldPassword
         };
-
+        this.isChangePwSuccess = false;
+        this.isChangePwFail = false;
         this.pro.updatePassword(x).subscribe((rsp: any) => {
             console.log(rsp);
             if (rsp.status === HTTP.STATUS_SUCCESS) {
-                this.msgInfo = "Change password successfully!";
+                this.msgInfo = "Password is changed, successfully";
+                this.isChangePwSuccess = true;
             }
             else {
                 if (rsp.message == 'Old password is incorrect') {
                     this.msgInfo = "Old password is incorrect";
+                    this.isChangePwFail = true;
                 }
             }
         }, (err) => {
