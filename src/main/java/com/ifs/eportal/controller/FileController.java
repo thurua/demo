@@ -41,6 +41,7 @@ import com.ifs.eportal.bll.ClientAccountService;
 import com.ifs.eportal.bll.CreditNoteService;
 import com.ifs.eportal.bll.CurrencyTypeService;
 import com.ifs.eportal.bll.InvoiceService;
+import com.ifs.eportal.bll.ReasonService;
 import com.ifs.eportal.bll.RecordTypeService;
 import com.ifs.eportal.bll.ScheduleOfOfferService;
 import com.ifs.eportal.common.Const;
@@ -62,6 +63,7 @@ import com.ifs.eportal.dto.ScheduleOfOfferDto;
 import com.ifs.eportal.dto.ValidDto;
 import com.ifs.eportal.model.CreditNote;
 import com.ifs.eportal.model.Invoice;
+import com.ifs.eportal.model.Reason;
 import com.ifs.eportal.model.ScheduleOfOffer;
 import com.ifs.eportal.req.DownloadReq;
 import com.ifs.eportal.req.UploadReq;
@@ -105,6 +107,9 @@ public class FileController {
 
 	@Autowired
 	private ApprovedCustomerLimitService approvedCustomerLimitService;
+
+	@Autowired
+	private ReasonService reasonService;
 
 	// end
 
@@ -177,6 +182,7 @@ public class FileController {
 			@RequestParam("req") String req) {
 		SingleRsp res = new SingleRsp();
 		String s = "";
+		String err = "";
 		try {
 			PayloadDto pl = Utils.getTokenInfor(header);
 			String sfId = pl.getSfId();
@@ -194,6 +200,14 @@ public class FileController {
 
 			// Handle
 			ValidDto dto = validateSchedule(file, o);
+			if (dto.getErrors().size() > 0) {
+				/*
+				 * err = ZError.getError(dto.getErrors()); dto = Utils.addError(dto, err);
+				 */
+
+//				err = ZError.getMessage(errors);
+//                res = Utils.addMessage(res, err);
+			}
 			if (dto.isSuccess()) {
 				// Get extension
 				int t = originalName.lastIndexOf(".") + 1;
@@ -458,6 +472,7 @@ public class FileController {
 
 				if ("Activated".equals(ca.getStatus())) {
 					/* ToanNguyen 2018-Aug-23 IFS-974 */
+
 					if (acceptanceDate.before(ca.getActivatedOn())) {
 						err = "Schedule Acceptance Date cannot be before client account activation date.";
 						res = Utils.addError(res, err);
@@ -533,20 +548,13 @@ public class FileController {
 			}
 			if (res.isSuccess()) {
 				if (isCN) {
-					res = validateCreditNote(o, req);
+					res = validateCreditNote(o, req, res);
 				} else {
-					res = validateInvoice(o, req);
+					res = validateInvoice(o, req, res);
 				}
 				res.sequence = sequence;
 			} else {
 				res.setErrors(errors);
-			}
-			if (errors.size() > 0) {
-				err = ZError.getError(errors);
-				res = Utils.addResult(res, err);
-
-//				err = ZError.getMessage(errors);
-//                res = Utils.addMessage(res, err);
 			}
 			res.data = o;
 		} catch (Exception ex) {
@@ -568,9 +576,9 @@ public class FileController {
 	 * @param req
 	 * @return
 	 */
-	private ValidDto validateInvoice(ExcelDto o, UploadReq req) {
+	private ValidDto validateInvoice(ExcelDto o, UploadReq req, ValidDto t) {
 		ValidDto res = new ValidDto();
-
+		res.setErrors(t.getErrors());
 		String err = "";
 		HashMap<String, String> errors = new HashMap<String, String>();
 		String clientAccountId = req.getClientAccountId();
@@ -859,6 +867,7 @@ public class FileController {
 				}
 			}
 		}
+		res.setErrors(errors);
 
 		return res;
 	}
@@ -870,8 +879,9 @@ public class FileController {
 	 * @param req
 	 * @return
 	 */
-	private ValidDto validateCreditNote(ExcelDto o, UploadReq req) {
+	private ValidDto validateCreditNote(ExcelDto o, UploadReq req, ValidDto t) {
 		ValidDto res = new ValidDto();
+		res.setErrors(t.getErrors());
 
 		String err = "";
 		HashMap<String, String> errors = new HashMap<String, String>();
@@ -974,6 +984,7 @@ public class FileController {
 				}
 			}
 		}
+		res.setErrors(errors);
 
 		return res;
 	}
@@ -1017,12 +1028,12 @@ public class FileController {
 			m.setScheduleDate(o.getDocumentDate());
 			m.setProcessDate(o.getProcessDate());
 			m.setKeyInByDate(o.getKeyInByDate());
-
-			if (s == "Authorised") {
+			m.setCreatedDate(new Date());
+			if ("Authorised".equals(s)) {
 				m.setPortalStatus(s);
 			}
 			if (sequence > 0) {
-				String temp = m.getName() + "-" + sequence.toString();
+				String temp = o.getScheduleNo() + "-" + sequence.intValue();
 				m.setName(temp);
 			} else {
 				m.setName(o.getScheduleNo());
@@ -1044,22 +1055,9 @@ public class FileController {
 			scheduleOfOfferService.create(m);
 
 			if (isCN) {
-				createCreditNote(o, m);
+				createCreditNote(o, m, dto);
 			} else {
-				createInvoice(o, isInvoice, m);
-			}
-			// Insert reason error
-			// ---------------------------------------
-			HashMap<String, String> m1;
-
-			if (!dto.isInvoiceValid()) {
-				// Vinh vost5 https://crimsonworks.atlassian.net/browse/IFS-1228
-				if ("CASH DISBURSEMENT".equals(o.getType())) {
-					rt = recordTypeService.getBy("Reason__c", "System Rejected");
-				} else {
-					rt = recordTypeService.getBy("Reason__c", "System Unfunded");
-				}
-				// m = Utils.toMapInvoice(l)
+				createInvoice(o, isInvoice, m, dto);
 			}
 
 		} catch (Exception ex) {
@@ -1080,40 +1078,78 @@ public class FileController {
 	 * @param l
 	 * @return
 	 */
-	private boolean createInvoice(ExcelDto o, boolean isInvoice, ScheduleOfOffer so) {
+	private boolean createInvoice(ExcelDto o, boolean isInvoice, ScheduleOfOffer so, ValidDto t) {
 		boolean res = false;
 
 		try {
 			String name = isInvoice ? "Factoring" : "Loan";
 			RecordTypeDto dto = recordTypeService.getBy("Invoice__c", name);
 			List<AccountDto> lac = accountService.getByNames(o.getLineItems());
+			List<Invoice> l = new ArrayList<Invoice>();
 
 			for (LineItemDto i : o.getLineItems()) {
-				Invoice m = new Invoice();
-				m.setScheduleOfOffer(so.getSfId());
-				m.setDocumentType(so.getDocumentType());
-				m.setRecordTypeId(dto.getSfId());
-				m.setClientName(so.getClientName());
-				m.setClientAccount(so.getClientAccount());
-				m.setCurrencyIsoCode(so.getCurrencyIsoCode());
-				m.setClientRemarks(i.getRemarks());
-				m.setInvoiceAmount(0f);
-				m.setStatus("Pending");
+				if (i.getName() != null && !i.getName().isEmpty()) {
+					Invoice m = new Invoice();
+					m.setScheduleOfOffer(so.getSfId());
+					m.setDocumentType(so.getDocumentType());
+					m.setRecordTypeId(dto.getSfId());
+					m.setClientName(so.getClientName());
+					m.setClientAccount(so.getClientAccount());
+					m.setCurrencyIsoCode(so.getCurrencyIsoCode());
+					m.setClientRemarks(i.getRemarks());
+					m.setInvoiceAmount(0f);
+					m.setStatus("Pending");
 
-				m.setCustomer(Utils.getAccIdByName(lac, i.getName()));
-				m.setSupplier(Utils.getAccIdByName(lac, i.getName()));
-				m.setCustomerFromExcel(i.getName());
-				m.setCustomerBranch(i.getBranch());
-				m.setName(i.getNo());
-				m.setInvoiceDate(i.getItemDate());
-				m.setInvoiceAmount(i.getAmount().floatValue());
-				m.setCreditPeriod(i.getPeriod().floatValue());
-				m.setPo(i.getPo());
-				i.setContract(i.getContract());
-
-				invoiceService.create(m);
+					m.setCustomer(Utils.getAccIdByName(lac, i.getName()));
+					m.setSupplier(Utils.getAccIdByName(lac, i.getName()));
+					m.setCustomerFromExcel(i.getName());
+					m.setCustomerBranch(i.getBranch());
+					m.setName(i.getNo());
+					m.setInvoiceDate(i.getItemDate());
+					m.setInvoiceAmount(i.getAmount().floatValue());
+					m.setCreditPeriod(i.getPeriod().floatValue());
+					m.setPo(i.getPo());
+					m.setContract(i.getContract());
+					m.setCreatedDate(new Date());
+					invoiceService.create(m);
+					l.add(m);
+				}
 			}
 
+			// Insert reason error
+			// ---------------------------------------
+			HashMap<String, String> m1 = new HashMap<>();
+			RecordTypeDto rt = new RecordTypeDto();
+
+			if (!t.isInvoiceValid()) {
+				// Vinh vost5 https://crimsonworks.atlassian.net/browse/IFS-1228
+				if ("CASH DISBURSEMENT".equals(o.getType())) {
+					rt = recordTypeService.getBy("Reason__c", "System Rejected");
+				} else {
+					rt = recordTypeService.getBy("Reason__c", "System Unfunded");
+				}
+				m1 = Utils.toMapInvoice(l);
+			}
+			List<String> listId = new ArrayList<String>();
+			for (String key : t.getErrors().keySet()) {
+				String val = t.getErrors().get(key);
+				String[] arr = val.split(", ");
+
+				for (String i : arr) {
+					String tid = m1.get(i); // get invoice or credit ID
+					listId.add(tid);
+					try {
+						Reason r = new Reason();
+						r.setRecordTypeId(rt.getSfId());
+						r.setReason(key);
+						r.setInvoice(tid);
+
+						reasonService.create(r);
+					} catch (Exception ex) {
+						// res.result = "Missing code reason " + key;
+					}
+				}
+			}
 			res = true;
 		} catch (Exception ex) {
 			if (Utils.printStackTrace) {
@@ -1133,33 +1169,67 @@ public class FileController {
 	 * @param l
 	 * @return
 	 */
-	private boolean createCreditNote(ExcelDto o, ScheduleOfOffer so) {
+	private boolean createCreditNote(ExcelDto o, ScheduleOfOffer so, ValidDto t) {
 		boolean res = false;
 
 		List<ClientAccountCustomerDto> lcc = clientAccountCustomerService.getByClientId(so.getClientAccount());
+		List<CreditNote> l = new ArrayList<CreditNote>();
 
 		try {
 			for (LineItemDto i : o.getLineItems()) {
-				CreditNote m = new CreditNote();
-				m.setScheduleOfOffer(so.getSfId());
-				// m.setDocumentType("x");
-				// m.setRecordTypeId("x");
-				m.setClient(so.getClientName());
-				m.setClientAccount(so.getClientAccount());
-				m.setCurrencyIsoCode(so.getCurrencyIsoCode());
-				m.setClientRemarks(i.getRemarks());
-				m.setCreditAmount(0f);
-				m.setStatus("Accepted");
+				if (i.getName() != null && !i.getName().isEmpty()) {
+					CreditNote m = new CreditNote();
+					m.setScheduleOfOffer(so.getSfId());
+					// m.setDocumentType("x");
+					// m.setRecordTypeId("x");
+					m.setClient(so.getClientName());
+					m.setClientAccount(so.getClientAccount());
+					m.setCurrencyIsoCode(so.getCurrencyIsoCode());
+					m.setClientRemarks(i.getRemarks());
+					m.setCreditAmount(0f);
+					m.setStatus("Accepted");
 
-				m.setCustomer(Utils.getAccCusIdByName(lcc, i.getName()));
-				m.setCustomerFromExcel(i.getName());
-				m.setCustomerBranch(i.getBranch());
-				m.setName(i.getNo());
-				m.setCreditNoteDate(i.getItemDate());
-				m.setCreditAmount(i.getAmount().floatValue());
-				m.setAppliedInvoice(m.getAppliedInvoice());
+					m.setCustomer(Utils.getAccCusIdByName(lcc, i.getName()));
+					m.setCustomerFromExcel(i.getName());
+					m.setCustomerBranch(i.getBranch());
+					m.setName(i.getNo());
+					m.setCreditNoteDate(i.getItemDate());
+					m.setCreditAmount(i.getAmount().floatValue());
+					m.setAppliedInvoice(m.getAppliedInvoice());
+					m.setCreatedDate(new Date());
+					creditNoteService.create(m);
+					l.add(m);
+				}
+			}
 
-				creditNoteService.create(m);
+			// Insert reason error
+			// ---------------------------------------
+			HashMap<String, String> m1 = new HashMap<>();
+			RecordTypeDto rt = new RecordTypeDto();
+
+			if (!t.isCreditValid()) {
+				rt = recordTypeService.getBy("Reason__c", "System Unapplied");
+				m1 = Utils.toMapCredit(l);
+			}
+			List<String> listId = new ArrayList<String>();
+			for (String key : t.getErrors().keySet()) {
+				String val = t.getErrors().get(key);
+				String[] arr = val.split(", ");
+
+				for (String i : arr) {
+					String tid = m1.get(i); // get invoice or credit ID
+					listId.add(tid);
+					try {
+						Reason r = new Reason();
+						r.setRecordTypeId(rt.getSfId());
+						r.setReason(key);
+						r.setCreditNote(tid);
+
+						reasonService.create(r);
+					} catch (Exception ex) {
+						// res.result = "Missing code reason " + key;
+					}
+				}
 			}
 
 			res = true;

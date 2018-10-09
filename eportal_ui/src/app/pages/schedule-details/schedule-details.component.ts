@@ -421,15 +421,17 @@ export class ScheduleDetailsComponent implements OnInit {
                         }
                     }
                 }
-                let tmpattList = this.entity.lstAttachment
-                let i = 0;
-                tmpattList.forEach(element => {
-                    i++;
-                    element.no = i;
-                    element.uploadedOn = this.utl.formatDate(element.uploadedOn, 'dd-MMM-yyyy HH:mm');
-                    element.fileSize = element.fileSize.toFixed(2) + " KB";
-                });
-                this.attList = tmpattList;
+                if (this.entity.lstAttachment != null) {
+                    let tmpattList = this.entity.lstAttachment
+                    let i = 0;
+                    tmpattList.forEach(element => {
+                        i++;
+                        element.no = i;
+                        element.uploadedOn = this.utl.formatDate(element.uploadedOn, 'dd-MMM-yyyy HH:mm');
+                        element.fileSize = element.fileSize.toFixed(2) + " KB";
+                    });
+                    this.attList = tmpattList;
+                }
                 this.checkAtt = true;
             }
         }, (err) => {

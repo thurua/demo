@@ -90,6 +90,7 @@ public class ValidDto {
 		invoiceValid = true;
 		creditValid = true;
 		errors = new HashMap<String, String>();
+		message = "";
 	}
 
 	// end

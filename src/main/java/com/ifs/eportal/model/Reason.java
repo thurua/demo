@@ -56,6 +56,9 @@ public class Reason extends BaseModel {
 	@Column(columnDefinition = "varchar(255)", name = "reason__c")
 	private String reason;
 
+	@Column(columnDefinition = "varchar(255)", name = "recordtypeid")
+	private String recordTypeId;
+
 	// end
 
 	// region -- Get set --
@@ -138,6 +141,14 @@ public class Reason extends BaseModel {
 
 	public void setReason(String reason) {
 		this.reason = reason;
+	}
+
+	public String getRecordTypeId() {
+		return recordTypeId;
+	}
+
+	public void setRecordTypeId(String recordTypeId) {
+		this.recordTypeId = recordTypeId;
 	}
 
 	// end

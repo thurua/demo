@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.TimeZone;
@@ -42,6 +43,8 @@ import com.ifs.eportal.dto.ClientAccountCustomerDto;
 import com.ifs.eportal.dto.LineItemDto;
 import com.ifs.eportal.dto.PayloadDto;
 import com.ifs.eportal.dto.ValidDto;
+import com.ifs.eportal.model.CreditNote;
+import com.ifs.eportal.model.Invoice;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
@@ -709,5 +712,26 @@ public class Utils {
 		_uploadKey = System.getenv("UPLOAD_KEY");
 	}
 
+	/* ToanNguyen 2018-Sep-05 */
+	public static HashMap<String, String> toMapInvoice(List<Invoice> l) {
+		HashMap<String, String> res = new HashMap<String, String>();
+
+		for (Invoice i : l) {
+			res.put(i.getName(), i.getSfId());
+		}
+
+		return res;
+	}
+
+	/* ToanNguyen 2018-Sep-05 */
+	public static HashMap<String, String> toMapCredit(List<CreditNote> l) {
+		HashMap<String, String> res = new HashMap<String, String>();
+
+		for (CreditNote i : l) {
+			res.put(i.getName(), i.getSfId());
+		}
+
+		return res;
+	}
 	// end
 }
