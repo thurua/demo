@@ -252,7 +252,7 @@ public class FileController {
 			// ValidDto dto = validateSchedule(file, o);
 
 			ExcelDto o = new ExcelDto();
-			ValidDto dto = new ValidDto();
+			SingleRsp rsp = new SingleRsp();
 
 			// Handle
 			if (originalName.contains("Factoring-INV")) {
@@ -262,7 +262,7 @@ public class FileController {
 			} else {
 				o = ExcelDto.getFactoringCn(file);
 			}
-			dto.data = o;
+			rsp.setResult(o);
 
 			// Upload file to S3
 			if (Utils.allowUpload) {
@@ -278,7 +278,7 @@ public class FileController {
 			}
 
 			ObjectMapper mapper = new ObjectMapper();
-			res = mapper.writeValueAsString(dto.data);
+			res = mapper.writeValueAsString(rsp);
 		} catch (Exception ex) {
 			if (Utils.printStackTrace) {
 				ex.printStackTrace();
