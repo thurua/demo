@@ -214,6 +214,29 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 		return res;
 	}
 
+	public Date acceptanceDate(String clientAccount) {
+		Date res = null;
+
+		try {
+			String sql = ZFile.read(_path + "acceptanceDate.sql");
+
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("clientAccount", clientAccount);
+			res = (Date) q.getSingleResult();
+
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return res;
+	}
+
 	/**
 	 * Search by
 	 * 

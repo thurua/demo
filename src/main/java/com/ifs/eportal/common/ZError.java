@@ -67,7 +67,7 @@ public class ZError {
 			String[] arr = key.split(",");
 
 			for (String i : arr) {
-				if (i != null && !i.isEmpty()) {
+				if (i != null && i.isEmpty()) {
 					continue;
 				}
 

@@ -364,9 +364,11 @@ public class FileController {
 
 					/* TriNguyen 2018-Sep-04 IFS-1048 */
 					if (!isCN) {
-						DateTime t = new DateTime(ca.getActivatedOn());
-						t.plusMonths(6).plusDays(-1);
-						if (acceptanceDate.after(t.toDate())) {
+						Date activatedOn = ca.getActivatedOn();
+						DateTime t = new DateTime(activatedOn);
+						t = t.plusMonths(6).plusDays(-1);
+						activatedOn = t.toDate();
+						if (acceptanceDate.after(activatedOn)) {
 							// Client - New.
 							err = "IVE";
 							errors = ZError.addError(errors, err, allNo);
@@ -442,8 +444,7 @@ public class FileController {
 				rid = rt.getSfId();
 
 				/* TriNguyen 2018-Sep-03 IFS-1052 */
-				// err = ZValid.acceptanceDate(ac.getSfid(), ca.getSfid(), acceptanceDate,
-				// o.getLineItems());
+				err = scheduleOfOfferService.acceptanceDate(ca.getSfId(), acceptanceDate, o.getLineItems());
 				if (!err.isEmpty()) {
 					errors = ZError.addError(errors, err, allNo);
 					dto.setInvoiceValid(false);
@@ -459,35 +460,10 @@ public class FileController {
 					res.setError(err);
 				}
 
-				so.setScheduleDate(o.getDocumentDate());
-				if (o.getDocumentDate().toString().isEmpty()) {
-					so.setScheduleDate(o.getDocumentDate());
-					if (so.getScheduleDate() == null) {
-						err = "Invalid Document Date.";
-						res = Utils.addError(res, err);
-					}
-
-				}
-//				if (!o.getProcessDate()().toString().isEmpty()) {
-//					 so.Process_Date__c = Utils.toDate(o.processDate);
-//					if(so.getScheduleDate().toString() == null) {
-//						err = "Invalid Document Date.";
-//	                    res = Utils.addError(res, err);
-//					}
-//				}
-//				if (!o.getKeyInByDate().toString().isEmpty()) {
-//					so.(Utils.toDate(o.getDocumentDate().toString()));
-//					if(so.getScheduleDate().toString() == null) {
-//						err = "Invalid Document Date.";
-//	                    res = Utils.addError(res, err);
-//					}
-//				}
 			}
-			err = res.getMessage();
-			if (!err.isEmpty()) {
-				if (res.getMessage().isEmpty()) {
-					createSchedule(o, sequence, acceptanceDate);
-				}
+
+			if (dto.isSuccess()) {
+				createSchedule(o, sequence, acceptanceDate);
 			}
 		} catch (Exception ex) {
 			if (Utils.printStackTrace) {
@@ -672,7 +648,7 @@ public class FileController {
 
 				if (iv.getInvoiceAmount() > 0) {
 					/* CongLe 2018-Aug-29 IFS-1031 */
-					if (ca.getAccountType().equals("Import")) {
+					if (("Import").equals(ca.getAccountType())) {
 						// Verification Required - Import Factoring.
 						err = "IV1";
 						errors = ZError.addError(errors, err, iv.getName());
@@ -680,13 +656,13 @@ public class FileController {
 					}
 
 					/* CongLe 2018-Aug-29 IFS-1032 */
-					if (ca.getProgramName().equals("SPOT")) {
+					if (("SPOT").equals(ca.getProgramName())) {
 						// Verification Required - SPOT Program.
 						err = "IV7";
 						errors = ZError.addError(errors, err, iv.getName());
 						dto.setInvoiceValid(false);
 					}
-					if (ca.getProgramName().equals("Multiply")) {
+					if (("Multiply").equals(ca.getProgramName())) {
 						// Verification Required - Multiply Program.
 						err = "IV8";
 						errors = ZError.addError(errors, err, iv.getName());
@@ -695,7 +671,7 @@ public class FileController {
 				}
 
 				/* CongLe 2018-Aug-29 IFS-1032 */
-				if (ca.getProgramName().equals("Small Ticket Factoring Program") && iv.getInvoiceAmount() >= 10000) {
+				if (("Small Ticket Factoring Program").equals(ca.getProgramName()) && iv.getInvoiceAmount() >= 10000) {
 					// Verification Required - Small Ticket Factoring Program.
 					err = "IV9";
 					errors = ZError.addError(errors, err, iv.getName());
@@ -711,8 +687,8 @@ public class FileController {
 				}
 
 				/* NhatNguyen 2018-Sep-06 IFS-1051 */
-				if (iv.getInvoiceAmount() > ca.getVerificationExceedingInvoiceAmount()
-						|| ca.getVerificationExceedingInvoiceAmount() == null) {
+				if (ca.getVerificationExceedingInvoiceAmount() == null
+						|| iv.getInvoiceAmount() > ca.getVerificationExceedingInvoiceAmount()) {
 					// Client - Per Verification Amount.
 					err = "IVB";
 					errors = ZError.addError(errors, err, iv.getName());
@@ -956,6 +932,17 @@ public class FileController {
 			m.setClientName(o.getClient());
 			m.setScheduleStatus("Draft");
 
+			m.setScheduleDate(o.getDocumentDate());
+			m.setProcessDate(o.getProcessDate());
+			m.setKeyInByDate(o.getKeyInByDate());
+
+			if (sequence > 0) {
+				String temp = m.getName() + "-" + sequence.toString();
+				m.setName(temp);
+			} else {
+				m.setName(o.getScheduleNo());
+			}
+
 			scheduleOfOfferService.create(m);
 
 			List<LineItemDto> l = o.getLineItems();
@@ -964,12 +951,6 @@ public class FileController {
 				createCreditNote(l);
 			} else {
 				createInvoice(l, isInvoice);
-			}
-			if (sequence > 0) {
-				String temp = m.getName() + "-" + sequence.toString();
-				m.setName(temp);
-			} else {
-				m.setName(o.getScheduleNo());
 			}
 		} catch (Exception ex) {
 			if (Utils.printStackTrace) {

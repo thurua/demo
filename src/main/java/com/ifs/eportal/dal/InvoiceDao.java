@@ -20,6 +20,7 @@ import com.ifs.eportal.common.ZFile;
 import com.ifs.eportal.dto.CustomDto;
 import com.ifs.eportal.dto.InvoiceDto;
 import com.ifs.eportal.dto.SortDto;
+import com.ifs.eportal.dto.SummaryDto;
 import com.ifs.eportal.filter.InvoiceFilter;
 import com.ifs.eportal.model.Invoice;
 import com.ifs.eportal.req.PagingReq;
@@ -220,6 +221,42 @@ public class InvoiceDao implements Repository<Invoice, Integer> {
 
 		// Convert
 		List<CustomDto> res = CustomDto.convert(l);
+		return res;
+	}
+
+	/**
+	 * Get invoice summary
+	 * 
+	 * @param clientAccount
+	 * @param fr
+	 * @param to
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<SummaryDto> getInvoiceSummary(String clientAccount, Date fr, Date to) {
+		List<SummaryDto> res = new ArrayList<SummaryDto>();
+
+		try {
+			String sql = ZFile.read(_path + "getInvoiceSummary.sql");
+
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("fr", fr);
+			q.setParameter("to", to);
+			q.setParameter("clientAccount", clientAccount);
+			List<Object[]> l = q.getResultList();
+
+			// Convert
+			res = SummaryDto.convert(l);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
 		return res;
 	}
 

@@ -2,14 +2,19 @@ package com.ifs.eportal.bll;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Stream;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ifs.eportal.dal.InvoiceDao;
 import com.ifs.eportal.dal.ScheduleOfOfferDao;
+import com.ifs.eportal.dto.LineItemDto;
 import com.ifs.eportal.dto.ScheduleOfOfferDetailDto;
 import com.ifs.eportal.dto.ScheduleOfOfferDto;
+import com.ifs.eportal.dto.SummaryDto;
 import com.ifs.eportal.model.ScheduleOfOffer;
 import com.ifs.eportal.req.PagingReq;
 import com.ifs.eportal.req.ScheduleOfOfferReq;
@@ -26,6 +31,9 @@ public class ScheduleOfOfferService {
 
 	@Autowired
 	private ScheduleOfOfferDao _scheduleOfOfferDao;
+
+	@Autowired
+	private InvoiceDao _invoiceDao;
 
 	// end
 
@@ -111,6 +119,61 @@ public class ScheduleOfOfferService {
 	 */
 	public ScheduleOfOfferDto read(String scheduleNo, String clientName) {
 		ScheduleOfOfferDto res = _scheduleOfOfferDao.getBy(scheduleNo, clientName);
+		return res;
+	}
+
+	/**
+	 * Valid acceptance date
+	 * 
+	 * @param clientAccount
+	 * @param d
+	 * @param l
+	 * @return
+	 */
+	public String acceptanceDate(String clientAccount, Date d, List<LineItemDto> l) {
+		String res = "";
+		
+		Date activatedOn = _scheduleOfOfferDao.acceptanceDate(clientAccount);
+		if (activatedOn == null) {
+			return res;
+		}
+
+		DateTime t = new DateTime(activatedOn);
+		t = t.plusMonths(6).plusDays(-1);
+		activatedOn = t.toDate();
+		if (d.after(activatedOn)) {
+			// Client - Dormant Account (Last Schedule submitted more than 6 months ago).
+			res = "IVH";
+		} else {
+
+			t = new DateTime(d);
+			t = t.plusYears(-1).plusDays(-1);
+			Date fr = t.toDate();
+			Date to = d;
+			t = new DateTime(d);
+			List<SummaryDto> ll = _invoiceDao.getInvoiceSummary(clientAccount, fr, to);
+
+			Stream<Double> t1;
+			t1 = l.stream().map(r -> r.getAmount());
+			Double cur = t1.mapToDouble(Double::intValue).sum();
+
+			int m = t.getMonthOfYear();
+			int y = t.getYear();
+			t1 = ll.stream().filter(r -> r.getMonth().equals(m) && r.getYear().equals(y)).map(r -> r.getAmount());
+			Double fv = t1.mapToDouble(Double::intValue).sum();
+
+			t1 = ll.stream().map(r -> r.getAmount());
+			Double afv = t1.mapToDouble(Double::intValue).sum();
+
+			if (afv > 0) {
+				Double t2 = (fv + cur) / ((afv + cur) / 12);
+				if (t2 > 0.3) {
+					// Customer - Invoice Amount more than Client Average Invoice Size.
+					res = "CCD";
+				}
+			}
+		}
+
 		return res;
 	}
 
