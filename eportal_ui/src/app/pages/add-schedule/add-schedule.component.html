@@ -121,7 +121,7 @@
             <div class="modal-body size-text-content-modal text-center">
                 <div class="form-group row">
                     <div class="col-md-12">
-                        <i class="fa fa-check-square-o icon-check-square"></i>
+                        <i class="fa fa-check-circle-o icon-check-square"></i>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -134,7 +134,8 @@
                 <div class="col-md-1">
                 </div>
                 <div class="col-md-10">
-                    <button type="button" class="btn btn-success btn-block text-bold" (click)="infoModal.hide()">OK</button>
+                    <button *ngIf="isError" type="button" class="btn btn-success btn-block text-bold" (click)="infoModal.hide()">OK</button>
+                    <button *ngIf="isSuccess" type="button" class="btn btn-success btn-block text-bold" routerLink="/pages/schedule">OK</button>
                 </div>
                 <div class="col-md-1">
                 </div>

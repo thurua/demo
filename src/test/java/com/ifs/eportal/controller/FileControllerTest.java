@@ -3,7 +3,6 @@ package com.ifs.eportal.controller;
 import java.io.FileInputStream;
 
 import org.junit.Test;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 
 import com.ifs.eportal.common.Utils;
@@ -54,10 +53,10 @@ public class FileControllerTest {
 			String req = ZFile.read(s);
 
 			FileController c = new FileController();
-			ResponseEntity<?> rsp = c.upload(x, req);
+			// ResponseEntity<?> rsp = c.upload(x, req);
 
-			Object o = rsp.getBody();
-			Utils.toString(o, true);
+			// Object o = rsp.getBody();
+			// Utils.toString(o, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

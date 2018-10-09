@@ -41,7 +41,7 @@ import com.ifs.eportal.dto.AccountDto;
 import com.ifs.eportal.dto.ClientAccountCustomerDto;
 import com.ifs.eportal.dto.LineItemDto;
 import com.ifs.eportal.dto.PayloadDto;
-import com.ifs.eportal.rsp.SingleRsp;
+import com.ifs.eportal.dto.ValidDto;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
@@ -53,6 +53,8 @@ public class Utils {
 	public static boolean printStackTrace = false;
 
 	public static boolean writeLog = false;
+
+	public static boolean allowUpload = false;
 
 	private static String _name = "";
 
@@ -449,9 +451,9 @@ public class Utils {
 	 * @param err
 	 * @return
 	 */
-	public static SingleRsp addError(SingleRsp rsp, String err) {
-		String s = rsp.getMessage() + "\n" + err;
-		rsp.setMessage(s);
+	public static ValidDto addError(ValidDto rsp, String err) {
+		String s = rsp.message + "\n" + err;
+		rsp.message = s;
 		return rsp;
 	}
 

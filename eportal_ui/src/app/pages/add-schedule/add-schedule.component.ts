@@ -28,6 +28,8 @@ export class AddScheduleComponent implements OnInit {
     public validate: boolean = true;
     public isCheck: boolean = false;
     public clientAccountId = "";
+    public isSuccess = false;
+    public isError = false;
 
     @ViewChild("infoModal") public infoModal: ModalDirective;
 
@@ -37,38 +39,38 @@ export class AddScheduleComponent implements OnInit {
 
     ngOnInit() {
         let user = JSON.parse(localStorage.getItem("CURRENT_TOKEN"));
-    this.clientId = user.clientId;
-    this.clientName = user.clientName;
-    this.searchCA();
+        this.clientId = user.clientId;
+        this.clientName = user.clientName;
+        this.searchCA();
         this.hideShow("");
     }
     public searchCA() {
         let x = {
-          filter: {
-            client: this.clientId
-          },
-          page: 1,
-          size: 20
+            filter: {
+                client: this.clientId
+            },
+            page: 1,
+            size: 20
         }
-    
+
         this.proSchedule.searchCA(x).subscribe((rsp: any) => {
-          let item = {
-            sfid: "",
-            clientAccount: "-- Please select --"
-          }
-    
-          if (rsp.status === HTTP.STATUS_SUCCESS) {
-    
-            rsp.result.data.unshift(item);
-            this.lstCA = rsp.result.data;
-          }
-          else {
-            this.lstCA.unshift(item);
-          }
+            let item = {
+                sfid: "",
+                clientAccount: "-- Please select --"
+            }
+
+            if (rsp.status === HTTP.STATUS_SUCCESS) {
+
+                rsp.result.data.unshift(item);
+                this.lstCA = rsp.result.data;
+            }
+            else {
+                this.lstCA.unshift(item);
+            }
         }, (err) => {
-          console.log(err);
+            console.log(err);
         });
-      }
+    }
 
     public fileChanged(e) {
         this.file = e.target.files[0];
@@ -102,6 +104,8 @@ export class AddScheduleComponent implements OnInit {
 
     public uploadDocument() {
         var acceptanceDate = new Date(this.vm.date);
+        this.isSuccess = false;
+        this.isError = false;
 
         let o =
         {
@@ -119,10 +123,12 @@ export class AddScheduleComponent implements OnInit {
                 let o = JSON.parse(rsp.body);
 
                 if (o.status === HTTP.STATUS_SUCCESS) {
-                    this.title = "Information";
+                    this.isSuccess = true;
+                    this.title = "Confirmation";
                     this.msg = "New Schedule of Offer is created, successfully!";
                 }
                 else {
+                    this.isError = true;
                     this.title = "Validation Errors";
                     this.msg = "Follingwing validation errors are found in the uploaded excel. Please rectify and reupload the file.";
                 }

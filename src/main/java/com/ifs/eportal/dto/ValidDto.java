@@ -12,6 +12,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ValidDto {
 	// region -- Fields --
 
+	public ExcelDto data;
+
+	public Double sequence;
+
+	public String message;
+
+	public String lastModifiedByPortalUserId;
+
+	public String invoiceDataPath;
+
 	@JsonProperty(value = "success")
 	private boolean success;
 

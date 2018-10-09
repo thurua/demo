@@ -132,7 +132,7 @@ public class ScheduleOfOfferService {
 	 */
 	public String acceptanceDate(String clientAccount, Date d, List<LineItemDto> l) {
 		String res = "";
-		
+
 		Date activatedOn = _scheduleOfOfferDao.acceptanceDate(clientAccount);
 		if (activatedOn == null) {
 			return res;

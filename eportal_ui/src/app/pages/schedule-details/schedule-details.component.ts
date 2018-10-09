@@ -441,7 +441,7 @@ export class ScheduleDetailsComponent implements OnInit {
         this.pro.update(x).subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 this.entity.portalStatus = "Authorise";
-                this.title = 'Information';
+                this.title = 'Confirmation';
                 this.msgInfo = 'Updated Successful!';
                 this.infoModal.show();
             }

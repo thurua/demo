@@ -32,6 +32,9 @@ public class IfsApplication extends SpringBootServletInitializer {
 		t = System.getenv("WRITE_LOG");
 		Utils.writeLog = t != null && "Y".equals(t);
 
+		t = System.getenv("BUCKETEER_ALLOW_UPLOAD");
+		Utils.allowUpload = t != null && "Y".equals(t);
+
 		SpringApplication.run(IfsApplication.class, args);
 	}
 }

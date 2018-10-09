@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,7 +37,6 @@ import com.ifs.eportal.bll.CurrencyTypeService;
 import com.ifs.eportal.bll.InvoiceService;
 import com.ifs.eportal.bll.RecordTypeService;
 import com.ifs.eportal.bll.ScheduleOfOfferService;
-import com.ifs.eportal.common.Const;
 import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.common.ZError;
 import com.ifs.eportal.common.ZValid;
@@ -49,6 +49,7 @@ import com.ifs.eportal.dto.CustomDto;
 import com.ifs.eportal.dto.ExcelDto;
 import com.ifs.eportal.dto.InvoiceDto;
 import com.ifs.eportal.dto.LineItemDto;
+import com.ifs.eportal.dto.PayloadDto;
 import com.ifs.eportal.dto.RecordTypeDto;
 import com.ifs.eportal.dto.ScheduleOfOfferDto;
 import com.ifs.eportal.dto.ValidDto;
@@ -69,8 +70,6 @@ public class FileController {
 	// region -- Fields --
 
 	private static final Logger _log = Logger.getLogger(FileController.class.getName());
-
-	private boolean _allowUploadFile;
 
 	@Autowired
 	private ScheduleOfOfferService scheduleOfOfferService;
@@ -107,7 +106,7 @@ public class FileController {
 	 * Initialize
 	 */
 	public FileController() {
-		_allowUploadFile = false;
+		// Utils.allowUpload = true;
 	}
 
 	/**
@@ -119,23 +118,41 @@ public class FileController {
 	 * @author ToanNguyen 2018-Oct-04
 	 */
 	@PostMapping("/upload")
-	public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file, @RequestParam("req") String req) {
+	public ResponseEntity<?> upload(@RequestHeader HttpHeaders header, @RequestParam("file") MultipartFile file,
+			@RequestParam("req") String req) {
 		SingleRsp res = new SingleRsp();
 
 		try {
+			PayloadDto pl = Utils.getTokenInfor(header);
+			String sfId = pl.getSfId();
+
 			// Get data
-			String name = file.getOriginalFilename();
+			String originalName = file.getOriginalFilename();
 			ObjectMapper mapper = new ObjectMapper();
 			UploadReq o = mapper.readValue(req, UploadReq.class);
 
 			// Handle
-			res = validateSchedule(file, o);
+			ValidDto dto = validateSchedule(file, o);
+			if (dto.isSuccess()) {
+				// Get extension
+				int t = originalName.lastIndexOf(".") + 1;
+				String extension = originalName.substring(t);
 
-			// Upload file to S3
-			if (_allowUploadFile) {
-				InputStream in = file.getInputStream();
-				Utils.upload(in, name, "test");
+				String url = System.getenv("BUCKETEER_BUCKET_URL");
+				String path = "InvoiceData";
+				String name = UUID.randomUUID().toString() + extension;
+				url += "/" + path + "/" + name;
+
+				// Upload file to S3
+				if (Utils.allowUpload) {
+					InputStream in = file.getInputStream();
+					Utils.upload(in, name, path);
+					dto.invoiceDataPath = url;
+				}
+				dto.lastModifiedByPortalUserId = sfId;
+				createSchedule(dto, new Date());
 			}
+
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}
@@ -162,20 +179,27 @@ public class FileController {
 			}
 
 			// Get data
-			String name = file.getOriginalFilename();
+			String originalName = file.getOriginalFilename();
 			UploadReq o = new UploadReq();
 
 			// Handle
-			SingleRsp t = validateSchedule(file, o);
+			ValidDto dto = validateSchedule(file, o);
 
 			// Upload file to S3
-			if (_allowUploadFile) {
+			if (Utils.allowUpload) {
+				// Get extension
+				int t = originalName.lastIndexOf(".") + 1;
+				String extension = originalName.substring(t);
+
+				String path = "InvoiceData";
+				String name = UUID.randomUUID().toString() + extension;
+
 				InputStream in = file.getInputStream();
-				Utils.upload(in, name, "test");
+				Utils.upload(in, name, path);
 			}
 
 			ObjectMapper mapper = new ObjectMapper();
-			res = mapper.writeValueAsString(t);
+			res = mapper.writeValueAsString(dto.data);
 		} catch (Exception ex) {
 			if (Utils.printStackTrace) {
 				ex.printStackTrace();
@@ -252,9 +276,8 @@ public class FileController {
 	 * @return
 	 */
 
-	private SingleRsp validateSchedule(MultipartFile file, UploadReq req) {
-		SingleRsp res = new SingleRsp();
-		ValidDto dto = new ValidDto();
+	private ValidDto validateSchedule(MultipartFile file, UploadReq req) {
+		ValidDto res = new ValidDto();
 		String err = "File format is incorrect.";
 
 		// Get data
@@ -269,7 +292,6 @@ public class FileController {
 		} else {
 			o = ExcelDto.getFactoringCn(file);
 		}
-		res.setResult(o);
 
 		String type = o.getType();
 		boolean isLoan = "CASH DISBURSEMENT".equals(type);
@@ -364,15 +386,15 @@ public class FileController {
 
 					/* TriNguyen 2018-Sep-04 IFS-1048 */
 					if (!isCN) {
-						Date activatedOn = ca.getActivatedOn();
-						DateTime t = new DateTime(activatedOn);
-						t = t.plusMonths(6).plusDays(-1);
-						activatedOn = t.toDate();
-						if (acceptanceDate.after(activatedOn)) {
+						Date temp = ca.getActivatedOn();
+						DateTime temp1 = new DateTime(temp);
+						temp1 = temp1.plusMonths(6).plusDays(-1);
+						Date t = temp1.toDate();
+						if (acceptanceDate.before(t)) {
 							// Client - New.
 							err = "IVE";
 							errors = ZError.addError(errors, err, allNo);
-							dto.setInvoiceValid(false);
+							res.setInvoiceValid(false);
 						}
 					}
 
@@ -381,7 +403,7 @@ public class FileController {
 						// Client - 100% Verification Required.
 						err = "IVJ";
 						errors = ZError.addError(errors, err, allNo);
-						dto.setInvoiceValid(false);
+						res.setInvoiceValid(false);
 					}
 
 					/* ToanNguyen 2018-Aug-30 IFS-977,1027 */
@@ -400,7 +422,7 @@ public class FileController {
 					// Client - Suspended.
 					err = "IVF";
 					errors = ZError.addError(errors, err, allNo);
-					dto.setInvoiceValid(false);
+					res.setInvoiceValid(false);
 				} else {
 					/* ToanNguyen 2018-Aug-30 IFS-1024 */
 					err = "Client Account is not activated.";
@@ -418,53 +440,29 @@ public class FileController {
 				err = "Currency is not supported.";
 				res = Utils.addError(res, err);
 			}
+
 			// ---------------------------------------------------------------------------------------------
 			// 1. Validate step 1 (with Excel), add Schedule_Of_Offer__c data
-			String rid; // RecordType ID
-			if (isLoan) {
-				RecordTypeDto rt = recordTypeService.getBy("Schedule_Of_Offer__c", "Loan");
-				rid = rt.getSfId();
-				so.setRecordTypeId(rid);
-
-				rt = recordTypeService.getBy("Invoice__c", "Loan");
-				rid = rt.getSfId();
-			}
-			if (isCN) {
-				RecordTypeDto rt = recordTypeService.getBy("Schedule_Of_Offer__c", "Credit Note");
-				rid = rt.getSfId();
-				so.setRecordTypeId(rid);
-			}
-
 			if (isIV) {
-				RecordTypeDto rt = recordTypeService.getBy("Schedule_Of_Offer__c", "Factoring");
-				rid = rt.getSfId();
-				so.setRecordTypeId(rid);
-
-				rt = recordTypeService.getBy("Invoice__c", "Factoring");
-				rid = rt.getSfId();
-
 				/* TriNguyen 2018-Sep-03 IFS-1052 */
 				err = scheduleOfOfferService.acceptanceDate(ca.getSfId(), acceptanceDate, o.getLineItems());
 				if (!err.isEmpty()) {
 					errors = ZError.addError(errors, err, allNo);
-					dto.setInvoiceValid(false);
+					res.setInvoiceValid(false);
 				}
 
-				if (dto.isSuccess()) {
-					if (isCN) {
-						res = validateCreditNote(o, req);
-					} else {
-						res = validateInvoice(o, req);
-					}
+			}
+			if (res.isSuccess()) {
+				if (isCN) {
+					res = validateCreditNote(o, req);
 				} else {
-					res.setError(err);
+					res = validateInvoice(o, req);
 				}
-
+				res.sequence = sequence;
+			} else {
+				// res.setError(err);
 			}
-
-			if (dto.isSuccess()) {
-				createSchedule(o, sequence, acceptanceDate);
-			}
+			res.data = o;
 		} catch (Exception ex) {
 			if (Utils.printStackTrace) {
 				ex.printStackTrace();
@@ -484,9 +482,8 @@ public class FileController {
 	 * @param req
 	 * @return
 	 */
-	private SingleRsp validateInvoice(ExcelDto o, UploadReq req) {
-		SingleRsp res = new SingleRsp();
-		ValidDto dto = new ValidDto();
+	private ValidDto validateInvoice(ExcelDto o, UploadReq req) {
+		ValidDto res = new ValidDto();
 
 		String err = "";
 		HashMap<String, String> errors = new HashMap<String, String>();
@@ -534,15 +531,15 @@ public class FileController {
 				if (i.getItemDate() == null) {
 					// Invalid Invoice Date.
 					err = "IV4";
-					errors = ZError.addError(errors, err, i.getName());
-					dto.setSuccess(false);
+					errors = ZError.addError(errors, err, iv.getName());
+					res.setSuccess(false);
 				} else {
 					// iv.setInvoiceDate(i.getItemDate());
 					if (i.getItemDate().after(req.getAcceptanceDate())) {
 						// Invoice Date cannot be after Schedule Acceptance Date.
 						err = "IV5";
-						errors = ZError.addError(errors, err, i.getName());
-						dto.setSuccess(false);
+						errors = ZError.addError(errors, err, iv.getName());
+						res.setSuccess(false);
 					}
 				}
 
@@ -551,8 +548,8 @@ public class FileController {
 				if (iv.getInvoiceAmount() <= avgInvoiceAmount.getValue()) {
 					// Customer - Invoice Amount more than Client Average Invoice Size.
 					err = "CCD";
-					errors = ZError.addError(errors, err, i.getName());
-					dto.setInvoiceValid(false);
+					errors = ZError.addError(errors, err, iv.getName());
+					res.setInvoiceValid(false);
 				}
 
 				Float period = i.getPeriod().floatValue();
@@ -565,31 +562,31 @@ public class FileController {
 					if (addedPeriod.toDate().after(req.getAcceptanceDate())) {
 						// Invoice - Overdue by XXX days.
 						err = "IV2";
-						errors = ZError.addError(errors, err, i.getName());
-						dto.setInvoiceValid(false);
+						errors = ZError.addError(errors, err, iv.getName());
+						res.setInvoiceValid(false);
 					}
 				}
 
 				err = ZValid.ratioOverdue(arOverdue, arTotal, i.getName());
-				errors = ZError.addError(errors, err, i.getName());
+				errors = ZError.addError(errors, err, iv.getName());
 
 				if (!err.isEmpty()) {
-					dto.setInvoiceValid(false);
+					res.setInvoiceValid(false);
 				}
 
 				err = ZValid.ratioDisputed(arDisputed, arTotal, i.getName());
-				errors = ZError.addError(errors, err, i.getName());
+				errors = ZError.addError(errors, err, iv.getName());
 
 				if (!err.isEmpty()) {
-					dto.setInvoiceValid(false);
+					res.setInvoiceValid(false);
 				}
 
 				/* ToanNguyen 2018-Sep-06 IFS-1045 */
 				err = ZValid.customerAverage(arInvoiceAvg, i.getAmount(), i.getName());
-				errors = ZError.addError(errors, err, i.getName());
+				errors = ZError.addError(errors, err, iv.getName());
 
 				if (!err.isEmpty()) {
-					dto.setInvoiceValid(false);
+					res.setInvoiceValid(false);
 				}
 
 				iv.setPo(i.getPo());
@@ -618,14 +615,14 @@ public class FileController {
 				if (i.getItemDate() == null) {
 					// Invalid Invoice Date.
 					err = "IV4";
-					errors = ZError.addError(errors, err, i.getName());
-					dto.setSuccess(false);
+					errors = ZError.addError(errors, err, iv.getName());
+					res.setSuccess(false);
 				}
 				if (i.getItemDate().after(req.getAcceptanceDate())) {
 					// Invoice Date cannot be after Schedule Acceptance Date.
 					err = "IV5";
-					errors = ZError.addError(errors, err, i.getName());
-					dto.setSuccess(false);
+					errors = ZError.addError(errors, err, iv.getName());
+					res.setSuccess(false);
 				}
 				/* HanhNguyen 2018-Aug-29 IFS-1034 */
 				Date acceptanceDate = (new DateTime(req.getAcceptanceDate())).minusYears(1).toDate();
@@ -633,7 +630,7 @@ public class FileController {
 					// Invoice - Dated 1 year before Schedule Acceptance Date.
 					err = "IV6";
 					errors = ZError.addError(errors, err, iv.getName());
-					dto.setInvoiceValid(false);
+					res.setInvoiceValid(false);
 				}
 
 				iv.setInvoiceAmount(i.getAmount().floatValue());
@@ -642,8 +639,8 @@ public class FileController {
 				if (iv.getInvoiceAmount() >= 50000) {
 					// Verification Required - Per Verification Rule.
 					err = "IV3";
-					errors = ZError.addError(errors, err, i.getName());
-					dto.setInvoiceValid(false);
+					errors = ZError.addError(errors, err, iv.getName());
+					res.setInvoiceValid(false);
 				}
 
 				if (iv.getInvoiceAmount() > 0) {
@@ -652,7 +649,7 @@ public class FileController {
 						// Verification Required - Import Factoring.
 						err = "IV1";
 						errors = ZError.addError(errors, err, iv.getName());
-						dto.setInvoiceValid(false);
+						res.setInvoiceValid(false);
 					}
 
 					/* CongLe 2018-Aug-29 IFS-1032 */
@@ -660,13 +657,13 @@ public class FileController {
 						// Verification Required - SPOT Program.
 						err = "IV7";
 						errors = ZError.addError(errors, err, iv.getName());
-						dto.setInvoiceValid(false);
+						res.setInvoiceValid(false);
 					}
 					if (("Multiply").equals(ca.getProgramName())) {
 						// Verification Required - Multiply Program.
 						err = "IV8";
 						errors = ZError.addError(errors, err, iv.getName());
-						dto.setInvoiceValid(false);
+						res.setInvoiceValid(false);
 					}
 				}
 
@@ -675,7 +672,7 @@ public class FileController {
 					// Verification Required - Small Ticket Factoring Program.
 					err = "IV9";
 					errors = ZError.addError(errors, err, iv.getName());
-					dto.setInvoiceValid(false);
+					res.setInvoiceValid(false);
 				}
 
 				/* ToanNguyen 2018-Sep-04 IFS-1044 */
@@ -683,7 +680,7 @@ public class FileController {
 					// Customer - Invoice Amount more than Client Average Invoice Size.
 					err = "CCD";
 					errors = ZError.addError(errors, err, iv.getName());
-					dto.setInvoiceValid(false);
+					res.setInvoiceValid(false);
 				}
 
 				/* NhatNguyen 2018-Sep-06 IFS-1051 */
@@ -692,7 +689,7 @@ public class FileController {
 					// Client - Per Verification Amount.
 					err = "IVB";
 					errors = ZError.addError(errors, err, iv.getName());
-					dto.setInvoiceValid(false);
+					res.setInvoiceValid(false);
 				}
 
 				Float period = i.getPeriod().floatValue();
@@ -706,7 +703,7 @@ public class FileController {
 						// Invoice - Overdue by XXX days.
 						err = "IV2";
 						errors = ZError.addError(errors, err, iv.getName());
-						dto.setInvoiceValid(false);
+						res.setInvoiceValid(false);
 					}
 				}
 
@@ -715,7 +712,7 @@ public class FileController {
 				errors = ZError.addError(errors, err, iv.getName());
 
 				if (!err.isEmpty()) {
-					dto.setInvoiceValid(false);
+					res.setInvoiceValid(false);
 				}
 
 				/* ToanNguyen 2018-Sep-06 IFS-1045 */
@@ -723,7 +720,7 @@ public class FileController {
 				errors = ZError.addError(errors, err, iv.getName());
 
 				if (!err.isEmpty()) {
-					dto.setInvoiceValid(false);
+					res.setInvoiceValid(false);
 				}
 
 				/* ToanNguyen 2018-Sep-06 IFS-1046 */
@@ -731,7 +728,7 @@ public class FileController {
 				errors = ZError.addError(errors, err, iv.getName());
 
 				if (!err.isEmpty()) {
-					dto.setInvoiceValid(false);
+					res.setInvoiceValid(false);
 				}
 
 				/* ToanNguyen 2018-Sep-11 IFS-1043 */
@@ -739,7 +736,7 @@ public class FileController {
 				errors = ZError.addError(errors, err, iv.getName());
 
 				if (!err.isEmpty()) {
-					dto.setInvoiceValid(false);
+					res.setInvoiceValid(false);
 				}
 
 				iv.setPo(i.getPo());
@@ -748,7 +745,7 @@ public class FileController {
 			}
 		}
 
-		if (dto.isSuccess()) {
+		if (res.isSuccess()) {
 			/* TriNguyen 2018-Sep-01 IFS-1036 */
 			List<ApprovedCustomerLimitDto> lcl = approvedCustomerLimitService.read(liv, clientId);
 			if (isFac) {
@@ -766,7 +763,7 @@ public class FileController {
 
 						if (t1 != -1 || t2 != -1 || t3 != -1) {
 							/* ToanNguyen 2018-Aug-23 IFS-974,1025,1026 */
-							res.setError(Const.HTTP.STATUS_ERROR);
+							res.setSuccess(false);
 						}
 					}
 
@@ -776,9 +773,6 @@ public class FileController {
 				}
 			}
 		}
-
-		dto.setErrors(errors);
-		res.setResult(dto);
 
 		return res;
 	}
@@ -790,9 +784,8 @@ public class FileController {
 	 * @param req
 	 * @return
 	 */
-	private SingleRsp validateCreditNote(ExcelDto o, UploadReq req) {
-		SingleRsp res = new SingleRsp();
-		ValidDto dto = new ValidDto();
+	private ValidDto validateCreditNote(ExcelDto o, UploadReq req) {
+		ValidDto res = new ValidDto();
 
 		String err = "";
 		HashMap<String, String> errors = new HashMap<String, String>();
@@ -801,7 +794,7 @@ public class FileController {
 		ClientAccountDto ca = clientAccountService.read(clientAccountId);
 		List<ClientAccountCustomerDto> lcc = clientAccountCustomerService.getByClientId(clientAccountId);
 
-		CustomDto avgInvoiceAmount = creditNoteService.getAverage(clientAccountId);
+		CustomDto avgInvoiceAmount = invoiceService.getAverage(clientAccountId);
 
 		List<CreditNote> lcn = new ArrayList<>();
 		for (LineItemDto i : o.getLineItems()) {
@@ -823,7 +816,7 @@ public class FileController {
 			cn.setCustomer(Utils.getAccCusIdByName(lcc, i.getName()));
 			cn.setCustomerFromExcel(i.getName());
 			cn.setCustomerBranch(i.getBranch());
-			cn.setName(i.getName());
+			cn.setName(i.getNo());
 
 			/* ToanNguyen 2018-Sep-03 IFS-1054 */
 			cn.setCreatedDate(i.getItemDate());
@@ -831,20 +824,21 @@ public class FileController {
 				// Invalid Credit Note Date.
 				err = "CN4";
 				errors = ZError.addError(errors, err, cn.getName());
-				dto.setSuccess(false);
-			}
-			if (i.getItemDate().after(req.getAcceptanceDate())) {
-				// Credit Note Date cannot be after Schedule Acceptance Date.
-				err = "CN5";
-				errors = ZError.addError(errors, err, cn.getName());
-				dto.setSuccess(false);
-			}
-			Date acceptanceDate = (new DateTime(req.getAcceptanceDate())).minusYears(1).toDate();
-			if (i.getItemDate().before(acceptanceDate)) {
-				// Credit Note - Dated 1 year before Schedule Acceptance Date.
-				err = "CN6";
-				errors = ZError.addError(errors, err, cn.getName());
-				dto.setSuccess(false);
+				res.setSuccess(false);
+			} else {
+				if (i.getItemDate().after(req.getAcceptanceDate())) {
+					// Credit Note Date cannot be after Schedule Acceptance Date.
+					err = "CN5";
+					errors = ZError.addError(errors, err, cn.getName());
+					res.setSuccess(false);
+				}
+				Date acceptanceDate = (new DateTime(req.getAcceptanceDate())).minusYears(1).toDate();
+				if (i.getItemDate().before(acceptanceDate)) {
+					// Credit Note - Dated 1 year before Schedule Acceptance Date.
+					err = "CN6";
+					errors = ZError.addError(errors, err, cn.getName());
+					res.setSuccess(false);
+				}
 			}
 
 			cn.setCreditAmount(i.getAmount().floatValue());
@@ -854,14 +848,14 @@ public class FileController {
 				// Credit Note - Amount more than Client Average Invoice Size.
 				err = "CN7";
 				errors = ZError.addError(errors, err, cn.getName());
-				dto.setCreditValid(false);
+				res.setCreditValid(false);
 			}
 			cn.setAppliedInvoice(i.getInvoiceApplied());
 
 			lcn.add(cn);
 		}
 
-		if (dto.isSuccess()) {
+		if (res.isSuccess()) {
 			List<InvoiceDto> lin = new ArrayList<>();
 			lin = invoiceService.read(o.getLineItems(), clientAccountId);
 
@@ -872,7 +866,7 @@ public class FileController {
 					errors = ZError.addError(errors, err, i.getName());
 					if (!err.isEmpty()) {
 						/* ToanNguyen 2018-Aug-23 IFS-974,1025,1026 */
-						dto.setSuccess(false);
+						res.setSuccess(false);
 					}
 				}
 
@@ -882,21 +876,18 @@ public class FileController {
 					errors = ZError.addError(errors, err, i.getName());
 
 					if (!err.isEmpty()) {
-						dto.setCreditValid(false);
+						res.setCreditValid(false);
 					}
 				} else {
 					// Credit Note - Invoice Number not found.
 					err = "CN1";
 					errors = ZError.addError(errors, err, i.getName());
 					if (!err.isEmpty()) {
-						dto.setCreditValid(false);
+						res.setCreditValid(false);
 					}
 				}
 			}
 		}
-
-		dto.setErrors(errors);
-		res.setResult(dto);
 
 		return res;
 	}
@@ -909,20 +900,22 @@ public class FileController {
 	 * @param acceptanceDate
 	 * @return
 	 */
-	private boolean createSchedule(ExcelDto o, Double sequence, Date acceptanceDate) {
+	private boolean createSchedule(ValidDto dto, Date acceptanceDate) {
 		boolean res = true;
 
 		try {
+			ExcelDto o = dto.data;
 			String type = o.getType();
 			boolean isLoan = "CASH DISBURSEMENT".equals(type);
 			boolean isCN = "CREDIT NOTE".equals(type);
 			boolean isIV = "INVOICE".equals(type);
 			boolean isInvoice = isLoan || isIV;
+			Float sequence = dto.sequence.floatValue();
 
 			ScheduleOfOffer m = new ScheduleOfOffer();
 			m.setDocumentType(type);
 			m.setScheduleNo(o.getScheduleNo());
-			m.setSequence(sequence.floatValue());
+			m.setSequence(sequence);
 			m.setAcceptanceDate(acceptanceDate);
 			m.setOriginalAcceptanceDate(acceptanceDate);
 			m.setFactorCode(o.getFactorCode());
@@ -931,6 +924,9 @@ public class FileController {
 			m.setClientAccount(o.getClientAccount());
 			m.setClientName(o.getClient());
 			m.setScheduleStatus("Draft");
+			m.setPortalStatus("Pending Authorisation");
+			m.setCreatedByPortalUserId(dto.lastModifiedByPortalUserId);
+			m.setInvoiceDataPath(dto.invoiceDataPath);
 
 			m.setScheduleDate(o.getDocumentDate());
 			m.setProcessDate(o.getProcessDate());
@@ -943,14 +939,25 @@ public class FileController {
 				m.setName(o.getScheduleNo());
 			}
 
+			String rid = ""; // RecordType ID
+			if (isLoan) {
+				rid = "Loan";
+			}
+			if (isCN) {
+				rid = "Credit Note";
+			}
+			if (isIV) {
+				rid = "Factoring";
+			}
+			RecordTypeDto rt = recordTypeService.getBy("Schedule_Of_Offer__c", rid);
+			m.setRecordTypeId(rt.getSfId());
+
 			scheduleOfOfferService.create(m);
 
-			List<LineItemDto> l = o.getLineItems();
-
 			if (isCN) {
-				createCreditNote(l);
+				createCreditNote(o, m);
 			} else {
-				createInvoice(l, isInvoice);
+				createInvoice(o, isInvoice, m);
 			}
 		} catch (Exception ex) {
 			if (Utils.printStackTrace) {
@@ -970,23 +977,23 @@ public class FileController {
 	 * @param l
 	 * @return
 	 */
-	private boolean createInvoice(List<LineItemDto> l, boolean isInvoice) {
+	private boolean createInvoice(ExcelDto o, boolean isInvoice, ScheduleOfOffer so) {
 		boolean res = false;
 
 		try {
 			String name = isInvoice ? "Factoring" : "Loan";
 			RecordTypeDto dto = recordTypeService.getBy("Invoice__c", name);
-			List<AccountDto> lac = accountService.getByNames(l);
+			List<AccountDto> lac = accountService.getByNames(o.getLineItems());
 
-			for (LineItemDto i : l) {
+			for (LineItemDto i : o.getLineItems()) {
 				Invoice m = new Invoice();
-				m.setScheduleOfOffer(m.getSfId());
-				m.setDocumentType(m.getDocumentType());
+				m.setScheduleOfOffer(so.getSfId());
+				m.setDocumentType(so.getDocumentType());
 				m.setRecordTypeId(dto.getSfId());
-				m.setClientName("x");
-				m.setClientAccount("x");
-				m.setCurrencyIsoCode("x");
-				m.setClientRemarks("x");
+				m.setClientName(so.getClientName());
+				m.setClientAccount(so.getClientAccount());
+				m.setCurrencyIsoCode(so.getCurrencyIsoCode());
+				m.setClientRemarks(i.getRemarks());
 				m.setInvoiceAmount(0f);
 				m.setStatus("Pending");
 
@@ -1023,26 +1030,25 @@ public class FileController {
 	 * @param l
 	 * @return
 	 */
-	private boolean createCreditNote(List<LineItemDto> l) {
+	private boolean createCreditNote(ExcelDto o, ScheduleOfOffer so) {
 		boolean res = false;
 
-		// List<ClientAccountCustomerDto> lcc =
-		// clientAccountCustomerService.getByClientId(clientAccountId);
+		List<ClientAccountCustomerDto> lcc = clientAccountCustomerService.getByClientId(so.getClientAccount());
 
 		try {
-			for (LineItemDto i : l) {
+			for (LineItemDto i : o.getLineItems()) {
 				CreditNote m = new CreditNote();
-				m.setScheduleOfOffer(m.getSfId());
+				m.setScheduleOfOffer(so.getSfId());
 				// m.setDocumentType("x");
 				// m.setRecordTypeId("x");
-				m.setClient("x");
-				m.setClientAccount("x");
-				m.setCurrencyIsoCode("x");
-				m.setClientRemarks("x");
+				m.setClient(so.getClientName());
+				m.setClientAccount(so.getClientAccount());
+				m.setCurrencyIsoCode(so.getCurrencyIsoCode());
+				m.setClientRemarks(i.getRemarks());
 				m.setCreditAmount(0f);
 				m.setStatus("Accepted");
 
-				// m.setCustomer(Utils.getAccCusIdByName(lcc, i.getName()));
+				m.setCustomer(Utils.getAccCusIdByName(lcc, i.getName()));
 				m.setCustomerFromExcel(i.getName());
 				m.setCustomerBranch(i.getBranch());
 				m.setName(i.getNo());

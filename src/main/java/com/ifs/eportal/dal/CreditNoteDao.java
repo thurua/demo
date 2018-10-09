@@ -17,7 +17,6 @@ import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.common.ZDate;
 import com.ifs.eportal.common.ZFile;
 import com.ifs.eportal.dto.CreditNoteDto;
-import com.ifs.eportal.dto.CustomDto;
 import com.ifs.eportal.dto.SortDto;
 import com.ifs.eportal.filter.CreditNoteFilter;
 import com.ifs.eportal.model.CreditNote;
@@ -362,30 +361,6 @@ public class CreditNoteDao implements Repository<CreditNote, Integer> {
 		}
 
 		return q;
-	}
-
-	public CustomDto getAverage(String clientAccountId) {
-		CustomDto res = new CustomDto();
-		try {
-			String sql = ZFile.read(_path + "getAverage.sql");
-
-			// Execute
-			Query q = _em.createNativeQuery(sql);
-			q.setParameter("clientAccountId", clientAccountId);
-			Object[] i = (Object[]) q.getSingleResult();
-
-			// Convert
-			res = CustomDto.convert(i);
-		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
-				ex.printStackTrace();
-			}
-			if (Utils.writeLog) {
-				_log.log(Level.SEVERE, ex.getMessage(), ex);
-			}
-		}
-
-		return res;
 	}
 
 	// end

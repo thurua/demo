@@ -23,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ifs.eportal.bll.ScheduleOfOfferAttachmentService;
-import com.ifs.eportal.bll.ScheduleOfOfferService;
 import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.dto.AttachmentDto;
 import com.ifs.eportal.dto.PayloadDto;
@@ -47,17 +46,16 @@ public class ScheduleOfOfferAttachmentController {
 
 	private static final Logger _log = Logger.getLogger(ScheduleOfOfferAttachmentController.class.getName());
 
-	private boolean _allowUploadFile;
-
 	@Autowired
 	private ScheduleOfOfferAttachmentService scheduleOfOfferAttachmentService;
-
-	@Autowired
-	private ScheduleOfOfferService scheduleOfOfferService;
 
 	// end
 
 	// region -- Methods --
+
+	public ScheduleOfOfferAttachmentController() {
+		// Utils.allowUpload = true;
+	}
 
 	/**
 	 * Upload for Angular (ScheduleOfOfferAttachment)
@@ -91,12 +89,12 @@ public class ScheduleOfOfferAttachmentController {
 				String extension = originalName.substring(t);
 
 				String url = System.getenv("BUCKETEER_BUCKET_URL");
-				String path = scheduleOfOffer + "/Attachment/";
+				String path = scheduleOfOffer + "/Attachment";
 				String name = UUID.randomUUID().toString() + extension;
-				url += "/" + path + name;
+				url += "/" + path + "/" + name;
 
 				// Upload file to S3
-				if (_allowUploadFile) {
+				if (Utils.allowUpload) {
 					InputStream in = files[i].getInputStream();
 					Utils.upload(in, name, path);
 				}
