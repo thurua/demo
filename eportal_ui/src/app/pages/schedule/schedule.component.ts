@@ -27,6 +27,7 @@ export class ScheduleComponent implements OnInit {
     public minDate = new Date();
     public maxDate = new Date();
     public data = [];
+    public isCollapsed: boolean = false;
     public settings = {
         selectMode: 'single',  //single|multi
         hideHeader: false,
@@ -96,6 +97,7 @@ export class ScheduleComponent implements OnInit {
         this.clientId = user.clientId;
         this.clientName = user.clientName;
         this.searchCA();
+        this.searchClick(1);
 
         let tmpStatus = {
             data: [{
@@ -162,7 +164,7 @@ export class ScheduleComponent implements OnInit {
             sort: [
                 {
                     direction: "DESC",
-                    field: "schedule_date__c"
+                    field: "createdDate"
                 }
             ]
         }

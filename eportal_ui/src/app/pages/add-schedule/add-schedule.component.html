@@ -91,6 +91,7 @@
                 </div>
             </div>
             <div class="card-body" *ngIf="isCheck">
+                <strong>  Terms & Conditions</strong>
                 <p [innerHTML]="message"></p>
                 <input type="checkbox" name="agree" #agree="ngModel" [(ngModel)]="vm.agree" (change)="changeAgree()"> I agree
                 <span [hidden]="checkAgree" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="agree" data-valmsg-for="agree" id="agree_validationMessage" role="alert">

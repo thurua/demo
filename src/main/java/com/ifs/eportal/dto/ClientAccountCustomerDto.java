@@ -22,10 +22,10 @@ public class ClientAccountCustomerDto extends BaseDto {
 	private String customer;
 
 	@JsonProperty(value = "verification")
-	private Float verification;
+	private Double verification;
 
 	@JsonProperty(value = "verificationExceedingInvoiceAmount")
-	private Float verificationExceedingInvoiceAmount;
+	private Double verificationExceedingInvoiceAmount;
 
 	@JsonProperty(value = "fciName")
 	private String fciName;
@@ -69,19 +69,19 @@ public class ClientAccountCustomerDto extends BaseDto {
 		this.customer = customer;
 	}
 
-	public Float getVerification() {
+	public Double getVerification() {
 		return verification;
 	}
 
-	public void setVerification(Float verification) {
+	public void setVerification(Double verification) {
 		this.verification = verification;
 	}
 
-	public Float getVerificationExceedingInvoiceAmount() {
+	public Double getVerificationExceedingInvoiceAmount() {
 		return verificationExceedingInvoiceAmount;
 	}
 
-	public void setVerificationExceedingInvoiceAmount(Float verificationExceedingInvoiceAmount) {
+	public void setVerificationExceedingInvoiceAmount(Double verificationExceedingInvoiceAmount) {
 		this.verificationExceedingInvoiceAmount = verificationExceedingInvoiceAmount;
 	}
 
@@ -129,8 +129,8 @@ public class ClientAccountCustomerDto extends BaseDto {
 		res.setActivationDate((Date) o[3]);
 		res.setStatus((String) o[4]);
 		res.setCustomer((String) o[5]);
-		res.setVerification((Float) o[6]);
-		res.setVerificationExceedingInvoiceAmount((Float) o[7]);
+		res.setVerification((Double) o[6]);
+		res.setVerificationExceedingInvoiceAmount((Double) o[7]);
 		res.setFciName((String) o[8]);
 		res.setCcName((String) o[9]);
 

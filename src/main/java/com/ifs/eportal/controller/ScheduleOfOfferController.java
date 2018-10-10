@@ -19,7 +19,6 @@ import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.dto.PayloadDto;
 import com.ifs.eportal.dto.ScheduleOfOfferDetailDto;
 import com.ifs.eportal.dto.ScheduleOfOfferDto;
-import com.ifs.eportal.model.ScheduleOfOffer;
 import com.ifs.eportal.req.PagingReq;
 import com.ifs.eportal.req.ScheduleOfOfferReq;
 import com.ifs.eportal.rsp.BaseRsp;
@@ -44,50 +43,19 @@ public class ScheduleOfOfferController {
 	// region -- Methods --
 
 	/**
-	 * Create
-	 * 
-	 * @return
-	 */
-	@PostMapping("/create")
-	public ResponseEntity<?> create() {
-		BaseRsp res = new BaseRsp();
-
-		try {
-			ScheduleOfOffer m = new ScheduleOfOffer();
-			m.setDocumentType("x");
-			m.setScheduleNo("x");
-			m.setSequence(1f);
-			m.setAcceptanceDate(null);
-			m.setOriginalAcceptanceDate(null);
-			m.setFactorCode("x");
-			m.setCurrencyIsoCode("x");
-			m.setListType("x");
-			m.setClientAccount("x");
-			m.setClientName("x");
-			m.setScheduleStatus("Draft");
-
-			scheduleOfOfferService.create(m);
-		} catch (Exception ex) {
-			res.setError(ex.getMessage());
-		}
-
-		return new ResponseEntity<>(res, HttpStatus.OK);
-	}
-
-	/**
 	 * Read by
 	 * 
-	 * @param sfId
+	 * @param id
 	 * @return
 	 */
 	@PostMapping("/read")
-	public ResponseEntity<?> read(@RequestBody String sfId) {
+	public ResponseEntity<?> read(@RequestBody Integer id) {
 		SingleRsp res = new SingleRsp();
 
 		try {
 			// Handle
 			ScheduleOfOfferDetailDto t;
-			t = scheduleOfOfferService.read(sfId);
+			t = scheduleOfOfferService.getDetailBy(id);
 
 			res.setResult(t);
 		} catch (Exception ex) {
@@ -109,10 +77,12 @@ public class ScheduleOfOfferController {
 		BaseRsp res = new BaseRsp();
 
 		try {
-			// Get data
 			PayloadDto pl = Utils.getTokenInfor(header);
 			String sfId = pl.getSfId();
-			scheduleOfOfferService.update(sfId, req);
+			req.setAuthorisedBy(sfId);
+
+			// Handle
+			scheduleOfOfferService.update(req);
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}

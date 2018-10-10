@@ -123,11 +123,137 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 	/**
 	 * Get by
 	 * 
+	 * @param id
+	 * @return
+	 */
+	public ScheduleOfOfferDto getBy(String sfId) {
+		ScheduleOfOfferDto res = new ScheduleOfOfferDto();
+
+		try {
+			String sql = _sql + " WHERE a.sfid = :sfId";
+
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("sfId", sfId);
+			Object[] t = (Object[]) q.getSingleResult();
+
+			// Convert
+			res = ScheduleOfOfferDto.convert(t);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * Get by
+	 * 
+	 * @param scheduleNo
+	 * @param clientName
+	 * @return
+	 */
+
+	public ScheduleOfOfferDto getBy(String scheduleNo, String clientName) {
+		ScheduleOfOfferDto res = new ScheduleOfOfferDto();
+
+		try {
+			String sql = _sql;
+			sql += " WHERE a.schedule_no__c = :scheduleNo AND a.client_name__c = :clientName";
+
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("scheduleNo", scheduleNo);
+			q.setParameter("clientName", clientName);
+			Object[] t = (Object[]) q.getSingleResult();
+
+			// Convert
+			res = ScheduleOfOfferDto.convert(t);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * Get detail by
+	 * 
 	 * @param sfId
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public ScheduleOfOfferDetailDto getBy(String sfId) {
+	public ScheduleOfOfferDetailDto getDetailBy(Integer id) {
+		ScheduleOfOfferDetailDto res = new ScheduleOfOfferDetailDto();
+
+		try {
+			String sql = ZFile.read(_path + "detail.sql");
+			sql += " WHERE a.id = :id";
+
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("id", id);
+			Object[] t = (Object[]) q.getSingleResult();
+
+			// Credit note
+			sql = ZFile.read(_path + "detail_credit_note.sql");
+			sql += " WHERE a.external_id__c = :id";
+
+			// Execute
+			q = _em.createNativeQuery(sql);
+			q.setParameter("id", id);
+			List<Object[]> lc = q.getResultList();
+
+			// Invoice
+			sql = ZFile.read(_path + "detail_invoice.sql");
+			sql += " WHERE a.external_id__c = :id";
+
+			// Execute
+			q = _em.createNativeQuery(sql);
+			q.setParameter("id", id);
+			List<Object[]> li = q.getResultList();
+
+			// Attachment
+			sql = ZFile.read(_path + "detail_attachment.sql");
+			sql += " WHERE a.external_id__c = :id AND a.isdeleted = FALSE AND a.isactive__c = TRUE";
+
+			// Execute
+			q = _em.createNativeQuery(sql);
+			q.setParameter("id", id);
+			List<Object[]> la = q.getResultList();
+
+			// Convert
+			res = ScheduleOfOfferDetailDto.convert(t, lc, li, la);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * Get detail by
+	 * 
+	 * @param sfId
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public ScheduleOfOfferDetailDto getDetailBy(String sfId) {
 		ScheduleOfOfferDetailDto res = new ScheduleOfOfferDetailDto();
 
 		try {
@@ -181,40 +307,12 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 	}
 
 	/**
-	 * Get by
+	 * Get acceptance date
 	 * 
-	 * @param scheduleNo
-	 * @param clientName
+	 * @param clientAccount
 	 * @return
 	 */
-
-	public ScheduleOfOfferDto getBy(String scheduleNo, String clientName) {
-		ScheduleOfOfferDto res = new ScheduleOfOfferDto();
-
-		try {
-			String sql = _sql + " WHERE a.schedule_no__c = :scheduleNo AND a.client_name__c = :clientName";
-
-			// Execute
-			Query q = _em.createNativeQuery(sql);
-			q.setParameter("scheduleNo", scheduleNo);
-			q.setParameter("clientName", clientName);
-			Object[] t = (Object[]) q.getSingleResult();
-
-			// Convert
-			res = ScheduleOfOfferDto.convert(t);
-		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
-				ex.printStackTrace();
-			}
-			if (Utils.writeLog) {
-				_log.log(Level.SEVERE, ex.getMessage(), ex);
-			}
-		}
-
-		return res;
-	}
-
-	public Date acceptanceDate(String clientAccount) {
+	public Date getAcceptanceDate(String clientAccount) {
 		Date res = null;
 
 		try {
@@ -273,6 +371,13 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 						orderBy += ",";
 					}
 					orderBy += " a.portal_status__c " + direction;
+				}
+
+				if ("createdDate".equals(field)) {
+					if (!orderBy.isEmpty()) {
+						orderBy += ",";
+					}
+					orderBy += " a.createddate " + direction;
 				}
 			}
 

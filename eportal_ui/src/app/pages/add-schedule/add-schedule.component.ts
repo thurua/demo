@@ -85,13 +85,13 @@ export class AddScheduleComponent implements OnInit {
         this.validate = true;
 
         if (a == "Invoice") {
-            this.message = "Pursuant to the Factoring Agreement which we have made with you, we send you herewith the <b><u>INVOICES</u></b> and we hereby assign to you each of the debts to which those invoices relate.<br/>It is hereby guaranteed that in relation to the said invoices the warranties and undertakings contained in Clause (29) of the factoring Agreement have been complied with and in particular the goods and/or services have been delivered and/or performed prior to the date hereof.";
+            this.message = "Pursuant to the Factoring Agreement which we have made with you, we send you herewith the <b><u>INVOICES</u></b> and we hereby assign to you each of the debts to which those invoices relate.<br/><br/>It is hereby guaranteed that in relation to the said invoices the warranties and undertakings contained in Clause (29) of the factoring Agreement have been complied with and in particular the goods and/or services have been delivered and/or performed prior to the date hereof.";
             this.fileName = "Factoring-INV.xlsx";
             this.validate = false;
             this.isCheck = true;
         }
         else if (a == "Cash Disbursement") {
-            this.message = "Pursuant to the Factoring Agreement which we have made with you, we send you herewith the <b><u>INVOICES</b></u> and we hereby assign to you each of the debts to which those invoices relate.<br/>It is hereby guaranteed that in relation to the said invoices the warranties and undertakings contained in Clause (29) of the factoring Agreement have been complied with and in particular the goods and/or services have been delivered and/or performed prior to the date hereof.";
+            this.message = "Pursuant to the Factoring Agreement which we have made with you, we send you herewith the <b><u>INVOICES</b></u> and we hereby assign to you each of the debts to which those invoices relate.<br/><br/>It is hereby guaranteed that in relation to the said invoices the warranties and undertakings contained in Clause (29) of the factoring Agreement have been complied with and in particular the goods and/or services have been delivered and/or performed prior to the date hereof.";
             this.fileName = "Loan-INV.xlsx";
             this.validate = false;
             this.isCheck = true;

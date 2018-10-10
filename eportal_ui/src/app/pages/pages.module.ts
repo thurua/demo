@@ -8,6 +8,7 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { BsDatepickerModule } from 'ngx-bootstrap';
 import { NgxUploaderModule } from 'ngx-uploader';
+import { CollapseModule } from 'ngx-bootstrap/collapse';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     suppressScrollX: true
@@ -47,7 +48,8 @@ import { InvoicesDetailsComponent } from './invoices-details/invoices-details.co
         Ng2SmartTableModule,
         NgxUploaderModule,
         TabsModule.forRoot(),
-        BsDatepickerModule.forRoot()
+        BsDatepickerModule.forRoot(),
+        CollapseModule.forRoot()
     ],
     declarations: [
         PagesComponent,

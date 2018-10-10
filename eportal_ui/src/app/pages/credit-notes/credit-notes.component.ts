@@ -32,6 +32,7 @@ export class CreditNotesComponent implements OnInit {
     public maxDate = new Date();
     public scheduleNo = "";
     public creditNoteNo = "";
+    public isCollapsed: boolean = false;
 
     public settings = {
         selectMode: 'single',  //single|multi
@@ -91,9 +92,10 @@ export class CreditNotesComponent implements OnInit {
                 type: 'string',
                 filter: false
             },
-            createdDateTime: {
+            createdDate: {
                 title: 'Created Date / Time',
                 type: 'date',
+                valuePrepareFunction: (value) => { return this.utl.formatDate(value, 'dd-MMM-yyyy') },
                 filter: false
             }
         }
@@ -112,8 +114,8 @@ export class CreditNotesComponent implements OnInit {
 
         this.clientId = user.clientId;
         this.clientName = user.clientName;
-        // this.customer = user.accountName;
         this.searchCA();
+        this.searchClick(1);
 
         let tmpStatus = {
             dataS: [{
@@ -189,7 +191,7 @@ export class CreditNotesComponent implements OnInit {
             sort: [
                 {
                     direction: "DESC",
-                    field: ""
+                    field: "createdDate"
                 }
             ]
         }
@@ -205,7 +207,6 @@ export class CreditNotesComponent implements OnInit {
         });
 
     }
-
 
     public setPage(page: number) {
         this.pager = this.getPager(this.total, page, this.pageSize);

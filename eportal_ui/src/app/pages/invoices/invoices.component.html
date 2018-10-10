@@ -1,8 +1,9 @@
 <div class="card header-margin">
-    <div class="card-header">
+    <div class="card-header" (click)="isCollapsed = !isCollapsed">
+        <i class="pull-right fa" [ngClass]="{'fa-chevron-down': isCollapsed, 'fa-chevron-up': !isCollapsed}"></i>
         <strong>Invoices</strong>
     </div>
-    <div class="card-body">
+    <div class="card-body" [collapse]="isCollapsed">
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group row">
@@ -45,66 +46,66 @@
                     </div>
                     <div class="col-md-7">
                         <select [(ngModel)]="status" class="form-control">
-                                  <option *ngFor="let i of lstStatus" value="{{i.code}}">{{i.value}}</option>
-                              </select>
+                            <option *ngFor="let i of lstStatus" value="{{i.code}}">{{i.value}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-5">
+                    </div>
+                    <div class="col-md-7">
+                        <button class="btn btn-primary" type="button" (click)="searchClick(1)">Search</button> &nbsp;
+                        <button class="btn btn-gray" type="button" (click)="resetClick()">Reset</button>
                     </div>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group row">
-                    <div class="col-md-3">
+                    <div class="col-md-5">
                         <strong>Client Account</strong>
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-7">
                         <select name="clientAccount" #clientAccount="ngModel" [(ngModel)]="clientAccountId" class="form-control" (change)="searchCU($event)">
                           <option *ngFor="let i of lstCA" value="{{i.sfId}}" >{{i.clientAccount}}</option>
                       </select>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <div class="col-md-3">
+                    <div class="col-md-5">
                         <strong>Invoice No.</strong>
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-7">
                         <input name="scheduleNo" [(ngModel)]="invoiceNo" class="form-control">
                     </div>
                 </div>
                 <div class="form-group row">
-                    <div class="col-md-3 inputDateTo">
+                    <div class="col-md-5 inputDateTo">
                         <strong>To</strong>
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-7">
                         <input type="text" class="form-control" [minDate]="minDate" [maxDate]="maxDate" bsDatepicker [(bsValue)]="toDate" value="{{ toDate | date:'dd-MMM-yyyy' }}">
                     </div>
                 </div>
                 <div class="form-group row" *ngIf="documentType == 'Invoice'">
-                    <div class="col-md-3">
+                    <div class="col-md-5">
                         <strong>Customer</strong>
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-7">
                         <select [(ngModel)]="customer" class="form-control">
                               <option *ngFor="let i of lstCU" value="{{i.customer}}">{{i.name}}</option>
                           </select>
                     </div>
                 </div>
                 <div class="form-group row" *ngIf="documentType == 'Cash Disbursement'">
-                    <div class="col-md-3">
+                    <div class="col-md-5">
                         <strong>Supplier</strong>
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-md-7">
                         <select name="supplier" [(ngModel)]="supplier" class="form-control">
                                 <option *ngFor="let i of lstSU" value="{{i.supplier}}">{{i.name}}</option>
                             </select>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="form-group row">
-            <div class="col-md-4">
-            </div>
-            <div class="col-md-8">
-                <button class="btn btn-primary" type="button" (click)="searchClick(1)">Search</button> &nbsp;
-                <button class="btn btn-gray" type="button" (click)="resetClick()">Reset</button>
             </div>
         </div>
     </div>

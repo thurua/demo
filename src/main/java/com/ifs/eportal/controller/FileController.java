@@ -419,7 +419,7 @@ public class FileController {
 		}
 
 		// Check schedule no
-		ScheduleOfOfferDto so = scheduleOfOfferService.read(scheduleNo, clientId);
+		ScheduleOfOfferDto so = scheduleOfOfferService.getBy(scheduleNo, clientId);
 		Double sequence = 0d;
 		if (so.getId() > 0) {
 			if (amendSchedule) {
@@ -543,7 +543,7 @@ public class FileController {
 			// 1. Validate step 1 (with Excel), add Schedule_Of_Offer__c data
 			if (isIV) {
 				/* TriNguyen 2018-Sep-03 IFS-1052 */
-				err = scheduleOfOfferService.acceptanceDate(ca.getSfId(), acceptanceDate, o.getLineItems());
+				err = scheduleOfOfferService.validateAcceptance(ca.getSfId(), acceptanceDate, o.getLineItems());
 				if (!err.isEmpty()) {
 					errors = ZError.addError(errors, err, allNo);
 					res.setInvoiceValid(false);
@@ -551,6 +551,7 @@ public class FileController {
 
 			}
 			if (res.isSuccess()) {
+				req.setAcceptanceDate(acceptanceDate);
 				if (isCN) {
 					res = validateCreditNote(o, req, res);
 				} else {
@@ -1112,6 +1113,7 @@ public class FileController {
 					m.setPo(i.getPo());
 					m.setContract(i.getContract());
 					m.setCreatedDate(new Date());
+					m.setExternalId(so.getId().floatValue());
 					invoiceService.create(m);
 					l.add(m);
 				}
@@ -1199,6 +1201,7 @@ public class FileController {
 					m.setCreditAmount(i.getAmount().floatValue());
 					m.setAppliedInvoice(m.getAppliedInvoice());
 					m.setCreatedDate(new Date());
+					m.setExternalId(so.getId().floatValue());
 					creditNoteService.create(m);
 					l.add(m);
 				}

@@ -230,6 +230,13 @@ public class CreditNoteDao implements Repository<CreditNote, Integer> {
 					}
 					orderBy += " a.customer__c " + direction;
 				}
+
+				if ("createdDate".equals(field)) {
+					if (!orderBy.isEmpty()) {
+						orderBy += ",";
+					}
+					orderBy += " a.createddate " + direction;
+				}
 			}
 
 			if (!orderBy.isEmpty()) {

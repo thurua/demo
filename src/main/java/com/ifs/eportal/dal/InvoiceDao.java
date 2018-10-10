@@ -148,7 +148,7 @@ public class InvoiceDao implements Repository<Invoice, Integer> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<InvoiceDto> getBy(List<String> names, String clientAccountId) {
-		_sql = ZFile.read(_path + "detail.sql");
+		_sql = ZFile.read(_path + "_sql.sql");
 		String sql = _sql + " WHERE a.name in :names " + "AND a.client_account__c = :clientAccountId";
 
 		// Execute
@@ -408,6 +408,13 @@ public class InvoiceDao implements Repository<Invoice, Integer> {
 						orderBy += ",";
 					}
 					orderBy += " a.status__c " + direction;
+				}
+
+				if ("createdDate".equals(field)) {
+					if (!orderBy.isEmpty()) {
+						orderBy += ",";
+					}
+					orderBy += " a.createddate " + direction;
 				}
 			}
 

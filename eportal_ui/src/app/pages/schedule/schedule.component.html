@@ -1,8 +1,9 @@
 <div class="card header-margin">
-    <div class="card-header">
+    <div class="card-header" (click)="isCollapsed = !isCollapsed">
+        <i class="pull-right fa" [ngClass]="{'fa-chevron-down': isCollapsed, 'fa-chevron-up': !isCollapsed}"></i>
         <strong>Search Criteria</strong>
     </div>
-    <div class="card-body">
+    <div class="card-body" [collapse]="isCollapsed">
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group row">

@@ -322,7 +322,8 @@ export class ScheduleDetailsComponent implements OnInit {
                     tmpattList.forEach(element => {
                         i++;
                         element.no = i;
-                        element.uploadedOn = this.utl.formatDate(element.uploadedOn, 'dd-MMM-yyyy');
+                        element.uploadedOn = this.utl.formatDate(element.uploadedOn, 'dd-MMM-yyyy HH:mm');
+                        element.fileSize = element.fileSize.toFixed(2) + " KB";
                     });
                     this.attList = tmpattList;
                 }
@@ -365,7 +366,7 @@ export class ScheduleDetailsComponent implements OnInit {
                             i++;
                             element.no = i;
                             element.status = "Accepted";
-                            element.applyCN = element.unappliedReason != null ? "checked" : "";
+                            element.applyCN = element.unappliedReason == null ? "checked" : "";
                             element.amountInvNo = element.creditAmount.toLocaleString() + ' / ' + element.appliedInvoiceNo;
                             element.customerBranch = element.customer + ' / ' + element.customerBranch;
                         });
@@ -458,11 +459,9 @@ export class ScheduleDetailsComponent implements OnInit {
 
     public Authorise() {
         let x = {
-            currencyIsoCode: this.entity.currencyIsoCode,
+
             scheduleNo: this.entity.scheduleNo,
-            factorCode: this.entity.factorCode,
             portalStatus: "Authorise",
-            exchangeRate: this.entity.exchangeRate,
             id: this.entity.id
         }
         this.pro.update(x).subscribe((rsp: any) => {

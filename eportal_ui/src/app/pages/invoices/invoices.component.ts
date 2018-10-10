@@ -35,7 +35,7 @@ export class InvoicesComponent implements OnInit {
     public curentPage = 1;
     public pager: any = {};
     public pagedItems: any[];
-
+    public isCollapsed: boolean = false;
     public minDate = new Date();
 
     public settings = {
@@ -102,9 +102,10 @@ export class InvoicesComponent implements OnInit {
                 type: 'string',
                 filter: false
             },
-            createdDateTime: {
+            createdDate: {
                 title: 'Created Date / Time',
                 type: 'date',
+                valuePrepareFunction: (value) => { return this.utl.formatDate(value, 'dd-MMM-yyyy') },
                 filter: false
             }
         }
@@ -124,6 +125,7 @@ export class InvoicesComponent implements OnInit {
         this.clientName = user.clientName;
         this.searchCA();
         this.searchSU();
+        this.searchClick(1);
 
         let tmpStatus = {
             data: [{
@@ -311,7 +313,7 @@ export class InvoicesComponent implements OnInit {
             sort: [
                 {
                     direction: "DESC",
-                    field: "invoice_date__c"
+                    field: "createdDate"
                 }
             ]
         }
