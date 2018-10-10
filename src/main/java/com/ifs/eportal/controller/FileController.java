@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +46,6 @@ import com.ifs.eportal.bll.InvoiceService;
 import com.ifs.eportal.bll.ReasonService;
 import com.ifs.eportal.bll.RecordTypeService;
 import com.ifs.eportal.bll.ScheduleOfOfferService;
-import com.ifs.eportal.common.Const;
 import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.common.ZError;
 import com.ifs.eportal.common.ZValid;
@@ -181,17 +182,8 @@ public class FileController {
 	public ResponseEntity<?> upload(@RequestHeader HttpHeaders header, @RequestParam("file") MultipartFile file,
 			@RequestParam("req") String req) {
 		SingleRsp res = new SingleRsp();
-		String s = "";
-		String err = "";
+
 		try {
-			PayloadDto pl = Utils.getTokenInfor(header);
-			String sfId = pl.getSfId();
-			List<String> ar = pl.getAccessRights();
-			for (String i : ar) {
-				if ("Schedules - Upload Schedule (Authorisation Not Required)".equals(i)) {
-					s = "Authorised";
-				}
-			}
 
 			// Get data
 			String originalName = file.getOriginalFilename();
@@ -200,14 +192,7 @@ public class FileController {
 
 			// Handle
 			ValidDto dto = validateSchedule(file, o);
-			if (dto.getErrors().size() > 0) {
-				/*
-				 * err = ZError.getError(dto.getErrors()); dto = Utils.addError(dto, err);
-				 */
 
-//				err = ZError.getMessage(errors);
-//                res = Utils.addMessage(res, err);
-			}
 			if (dto.isSuccess()) {
 				// Get extension
 				int t = originalName.lastIndexOf(".") + 1;
@@ -224,15 +209,34 @@ public class FileController {
 					Utils.upload(in, name, path);
 					dto.invoiceDataPath = url;
 				}
-				dto.lastModifiedByPortalUserId = sfId;
-				createSchedule(dto, new Date(), o, s);
-			}
-			if (!dto.isSuccess()) {
-				res.setStatus(Const.HTTP.STATUS_ERROR);
-			}
-			res.setMessage(dto.getMessage());
-			res.setResult(dto.getErrors());
 
+				PayloadDto pl = Utils.getTokenInfor(header);
+				dto.lastModifiedByPortalUserId = pl.getSfId();
+				List<String> ar = pl.getAccessRights();
+
+				// Check right to select portal status
+				String portalStatus = "Pending Authorisation";
+				String right = "Schedules - Upload Schedule (Authorisation Not Required)";
+				Stream<String> t1;
+				t1 = ar.stream().filter(r -> right.equals(r));
+				List<String> t2 = t1.collect(Collectors.toList());
+				if (t2.size() > 0) {
+					portalStatus = "Authorised";
+				}
+
+				createSchedule(dto, new Date(), o, portalStatus);
+			} else {
+				HashMap<String, String> errors = dto.getErrors();
+				if (errors.size() > 0) {
+					String err = ZError.getError(errors);
+					dto = Utils.addResult(dto, err);
+
+					err = ZError.getMessage(errors);
+					// dto = Utils.addResult(dto, err);
+					System.out.println(err);
+				}
+				res.setError(dto.getMessage());
+			}
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}
@@ -997,7 +1001,7 @@ public class FileController {
 	 * @param acceptanceDate
 	 * @return
 	 */
-	private boolean createSchedule(ValidDto dto, Date acceptanceDate, UploadReq req, String s) {
+	private boolean createSchedule(ValidDto dto, Date acceptanceDate, UploadReq req, String portalStatus) {
 		boolean res = true;
 
 		try {
@@ -1022,17 +1026,14 @@ public class FileController {
 			m.setClientAccount(req.getClientAccountId());
 			m.setClientName(req.getClientId());
 			m.setScheduleStatus("Draft");
-			m.setPortalStatus("Pending Authorisation");
+			m.setPortalStatus(portalStatus);
 			m.setCreatedByPortalUserId(dto.lastModifiedByPortalUserId);
 			m.setInvoiceDataPath(dto.invoiceDataPath);
 			m.setScheduleDate(o.getDocumentDate());
 			m.setProcessDate(o.getProcessDate());
 			m.setKeyInByDate(o.getKeyInByDate());
 			m.setCreatedDate(new Date());
-			m.setName(o.getScheduleNo());
-			if ("Authorised".equals(s)) {
-				m.setPortalStatus(s);
-			}
+
 			if (sequence > 0) {
 				String temp = o.getScheduleNo() + "-" + sequence.intValue();
 				m.setName(temp);
@@ -1060,7 +1061,6 @@ public class FileController {
 			} else {
 				createInvoice(o, isInvoice, m, dto);
 			}
-
 		} catch (Exception ex) {
 			if (Utils.printStackTrace) {
 				ex.printStackTrace();

@@ -90,7 +90,7 @@ public class ScheduleOfOfferAttachmentController {
 
 				String url = System.getenv("BUCKETEER_BUCKET_URL");
 				String path = scheduleOfOffer + "/Attachment";
-				String name = UUID.randomUUID().toString() + extension;
+				String name = UUID.randomUUID().toString() + "." + extension;
 				url += "/" + path + "/" + name;
 
 				// Upload file to S3

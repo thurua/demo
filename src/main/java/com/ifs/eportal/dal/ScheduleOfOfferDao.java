@@ -329,7 +329,7 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 			String portalStatus = filter.getPortalStatus();
 			Date fr = filter.getFrCreatedDate();
 			Date to = filter.getToCreatedDate();
-			Utils.toString(filter,true);
+			Utils.toString(filter, true);
 
 			// Where
 			String where = "";
