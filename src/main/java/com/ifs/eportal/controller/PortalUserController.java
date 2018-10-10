@@ -35,7 +35,6 @@ import com.ifs.eportal.req.BaseReq;
 import com.ifs.eportal.req.PagingReq;
 import com.ifs.eportal.req.PasswordReq;
 import com.ifs.eportal.req.PortalUserSignInReq;
-import com.ifs.eportal.req.ProfileReq;
 import com.ifs.eportal.rsp.BaseRsp;
 import com.ifs.eportal.rsp.MultipleRsp;
 import com.ifs.eportal.rsp.SingleRsp;
@@ -81,34 +80,10 @@ public class PortalUserController {
 			Integer id = pl.getId();
 
 			// Handle
-			PortalUserDto o = portalUserService.read(id);
+			PortalUserDto o = portalUserService.getBy(id);
 
 			// Set data;
 			res.setResult(o);
-		} catch (Exception ex) {
-			res.setError(ex.getMessage());
-		}
-
-		return new ResponseEntity<>(res, HttpStatus.OK);
-	}
-
-	/**
-	 * Update profile
-	 * 
-	 * @param header
-	 * @param req
-	 * @return
-	 */
-	@PostMapping("/update-profile")
-	public ResponseEntity<?> update(@RequestHeader HttpHeaders header, @RequestBody ProfileReq req) {
-		BaseRsp res = new BaseRsp();
-
-		try {
-			PayloadDto pl = Utils.getTokenInfor(header);
-			int id = pl.getId();
-			req.setId(id);
-
-			portalUserService.update(req);
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}
@@ -242,7 +217,7 @@ public class PortalUserController {
 			password = RsaService.decrypt(password);
 
 			// Handle
-			PortalUserDto m = portalUserService.read(email);
+			PortalUserDto m = portalUserService.getByUserId(email);
 			if (m.getId() == 0) {
 				res.setError("Email doesn't exist!");
 			} else {
@@ -260,7 +235,7 @@ public class PortalUserController {
 					res.setError("Unauthorized/Invalid email or password!");
 				}
 
-				String uuid = portalUserService.create(m);
+				String uuid = portalUserAccessService.create(m);
 				m.setUuId(uuid);
 
 				List<SimpleGrantedAuthority> z = portalUserService.getRoleBy(m.getId());
@@ -282,11 +257,10 @@ public class PortalUserController {
 
 		try {
 			PayloadDto pl = Utils.getTokenInfor(header);
-			String sfId = pl.getSfId();
 			String uuId = pl.getUuId();
 
 			// Handle
-			PortalUserAccess m = portalUserAccessService.getBy(sfId, uuId);
+			PortalUserAccess m = portalUserAccessService.read(uuId);
 			if (m.getId() > 0) {
 				m.setLogoutOn(new Date());
 				portalUserAccessService.update(m);
@@ -339,16 +313,18 @@ public class PortalUserController {
 	 * @param req
 	 * @return
 	 */
-	@PostMapping("/checkExpired")
+	@PostMapping("/check-expired")
 	public ResponseEntity<?> checkExpired(@RequestBody BaseReq req) {
 		SingleRsp res = new SingleRsp();
 
 		try {
 			// Handle
 			String token = req.getKeyword();
-			String s = portalUserService.checkExpired(token);
+			boolean t = portalUserService.checkExpired(token);
 
-			res.setStatus(s);
+			if (!t) {
+				res.setError("Token is expired");
+			}
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}

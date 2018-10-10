@@ -8,25 +8,25 @@ import com.ifs.eportal.common.Utils;
 
 /**
  * 
- * @author ToanNguyen 2018-Oct-05 (verified)
+ * @author ToanNguyen 2018-Oct-10 (verified)
  *
  */
 public class PortalUserAccessFilter {
 	// region -- Fields --
 
-	@JsonProperty(value = "name")
-	private String name;
+	@JsonProperty(value = "user")
+	private String user;
 
 	// end
 
 	// region -- Get set --
 
-	public String getName() {
-		return name;
+	public String getUser() {
+		return user;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setUser(String user) {
+		this.user = user;
 	}
 
 	// end
@@ -37,7 +37,7 @@ public class PortalUserAccessFilter {
 	 * Initialize
 	 */
 	public PortalUserAccessFilter() {
-		name = "";
+		user = "";
 	}
 
 	/**

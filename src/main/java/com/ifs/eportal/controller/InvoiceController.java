@@ -112,13 +112,13 @@ public class InvoiceController {
 	 * @return
 	 */
 	@PostMapping("/read")
-	public ResponseEntity<?> read(@RequestBody int id) {
+	public ResponseEntity<?> read(@RequestBody String sfId) {
 		SingleRsp res = new SingleRsp();
 
 		try {
 			// Handle
 			InvoiceDto t;
-			t = invoiceService.read(id);
+			t = invoiceService.read(sfId);
 
 			res.setResult(t);
 		} catch (Exception ex) {

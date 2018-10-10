@@ -24,7 +24,7 @@ public class PortalUserServiceTest {
 	@Test
 	public void test01() {
 		PortalUserService bll = new PortalUserService();
-		Object o = bll.read("hoan.nguyen@tanvieta.co");
+		Object o = bll.getByUserId("hoan.nguyen@tanvieta.co");
 		Utils.toString(o);
 	}
 

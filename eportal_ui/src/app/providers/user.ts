@@ -90,6 +90,14 @@ export class UserProvider {
     }
 
     /**
+     * Check expired
+     * @param info
+     */
+    public checkExpired(info: any) {
+        return this.api.post('portal-user/check-expired', info);
+    }
+
+    /**
      * Save authentication
      * @param token
      * @param redirect
@@ -153,13 +161,5 @@ export class UserProvider {
         else {
             this.rou.navigate(['/error-page']);
         }
-    }
-
-    /**
-     * Check Expired
-     * @param info
-     */
-    public checkExpired(info: any) {
-        return this.api.post('portal-user/checkExpired', info);
     }
 }

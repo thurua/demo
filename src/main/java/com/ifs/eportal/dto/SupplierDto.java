@@ -11,6 +11,9 @@ public class SupplierDto extends BaseDto {
 	@JsonProperty(value = "name")
 	private String name;
 
+	@JsonProperty(value = "supplier")
+	private String supplier;
+
 	// end
 
 	// region -- Get set --
@@ -21,6 +24,14 @@ public class SupplierDto extends BaseDto {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getSupplier() {
+		return supplier;
+	}
+
+	public void setSupplier(String supplier) {
+		this.supplier = supplier;
 	}
 
 	// end
@@ -34,6 +45,7 @@ public class SupplierDto extends BaseDto {
 		super();
 
 		name = "";
+		supplier = "";
 	}
 
 	/**
@@ -48,6 +60,7 @@ public class SupplierDto extends BaseDto {
 		res.setId((Integer) o[0]);
 		res.setSfId((String) o[1]);
 		res.setName((String) o[2]);
+		res.setSupplier((String) o[3]);
 
 		return res;
 	}

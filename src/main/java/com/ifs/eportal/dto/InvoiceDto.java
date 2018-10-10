@@ -74,6 +74,12 @@ public class InvoiceDto extends BaseDto {
 	@JsonProperty(value = "supplier")
 	private String supplier;
 
+	@JsonProperty(value = "createdBy")
+	private String createdBy;
+
+	@JsonProperty(value = "createdDate")
+	private Date createdDate;
+
 	// end
 
 	// region -- Get set --
@@ -238,6 +244,22 @@ public class InvoiceDto extends BaseDto {
 		this.supplier = supplier;
 	}
 
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -268,6 +290,8 @@ public class InvoiceDto extends BaseDto {
 		outstandingAmount = null;
 		invoiceAmount = null;
 		supplier = "";
+		createdBy = "";
+		createdDate = null;
 	}
 
 	/**
@@ -299,6 +323,8 @@ public class InvoiceDto extends BaseDto {
 		res.setOutstandingAmount((Double) o[17]);
 		res.setInvoiceAmount((Double) o[18]);
 		res.setSupplier((String) o[19]);
+		res.setCreatedDate((Date) o[20]);
+		res.setCreatedBy((String) o[21]);
 
 		return res;
 	}

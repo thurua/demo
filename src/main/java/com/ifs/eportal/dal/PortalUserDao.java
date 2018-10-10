@@ -22,7 +22,7 @@ import com.ifs.eportal.req.PagingReq;
 
 /**
  * 
- * @author ToanNguyen 2018-Oct-05 (verified)
+ * @author ToanNguyen 2018-Oct-10 (verified)
  *
  */
 @Service(value = "portalUserDao")
@@ -101,10 +101,41 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 			// Execute
 			Query q = _em.createNativeQuery(sql);
 			q.setParameter("id", id);
-			Object[] i = (Object[]) q.getSingleResult();
+			Object[] t = (Object[]) q.getSingleResult();
 
 			// Convert
-			res = PortalUserDto.convert(i);
+			res = PortalUserDto.convert(t);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * Get by
+	 * 
+	 * @param sfId
+	 * @return
+	 */
+	public PortalUserDto getBy(String sfId) {
+		PortalUserDto res = new PortalUserDto();
+
+		try {
+			String sql = _sql + " WHERE a.sfid = :sfId";
+
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("sfId", sfId);
+			Object[] t = (Object[]) q.getSingleResult();
+
+			// Convert
+			res = PortalUserDto.convert(t);
 		} catch (Exception ex) {
 			if (Utils.printStackTrace) {
 				ex.printStackTrace();
@@ -123,19 +154,20 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 	 * @param token
 	 * @return
 	 */
-	public PortalUserDto getBy(Object token) {
+	public PortalUserDto getByToken(String token) {
 		PortalUserDto res = new PortalUserDto();
 
 		try {
-			String sql = _sql + " WHERE a.pass_reminder_expire__c >= now() AND a.pass_reminder_token__c = :token";
+			String sql = _sql;
+			sql += " WHERE a.pass_reminder_token__c = :token AND a.pass_reminder_expire__c >= now()";
 
 			// Execute
 			Query q = _em.createNativeQuery(sql);
 			q.setParameter("token", token);
-			Object[] i = (Object[]) q.getSingleResult();
+			Object[] t = (Object[]) q.getSingleResult();
 
 			// Convert
-			res = PortalUserDto.convert(i);
+			res = PortalUserDto.convert(t);
 		} catch (Exception ex) {
 			if (Utils.printStackTrace) {
 				ex.printStackTrace();
@@ -151,22 +183,23 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 	/**
 	 * Get by
 	 * 
-	 * @param email
+	 * @param userId
 	 * @return
 	 */
-	public PortalUserDto getBy(String email) {
+	public PortalUserDto getByUserId(String userId) {
 		PortalUserDto res = new PortalUserDto();
 
 		try {
-			String sql = _sql + " WHERE a.user_id__c = :email AND a.status__c = 'ACTD'";
+			String sql = _sql;
+			sql += " WHERE a.user_id__c = :userId AND a.status__c = 'ACTD'";
 
 			// Execute
 			Query q = _em.createNativeQuery(sql);
-			q.setParameter("email", email);
-			Object[] i = (Object[]) q.getSingleResult();
+			q.setParameter("userId", userId);
+			Object[] t = (Object[]) q.getSingleResult();
 
 			// Convert
-			res = PortalUserDto.convert(i);
+			res = PortalUserDto.convert(t);
 		} catch (Exception ex) {
 			if (Utils.printStackTrace) {
 				ex.printStackTrace();
@@ -239,7 +272,8 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 			}
 
 			// Execute to count all
-			String sql = ZFile.read(_path + "count.sql");
+			int i = _sql.indexOf("FROM");
+			String sql = "SELECT COUNT(*) " + _sql.substring(i);
 			String limit = "";
 			Query q = createQuery(sql, filter, limit);
 			BigInteger total = (BigInteger) q.getSingleResult();
@@ -252,10 +286,10 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 				limit += " OFFSET " + offset + " LIMIT " + size;
 			}
 			q = createQuery(sql, filter, limit);
-			List<Object[]> l = q.getResultList();
+			List<Object[]> t = q.getResultList();
 
 			// Convert
-			res = PortalUserDto.convert(l);
+			res = PortalUserDto.convert(t);
 		} catch (Exception ex) {
 			if (Utils.printStackTrace) {
 				ex.printStackTrace();
@@ -279,7 +313,7 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 		List<String> res = new ArrayList<String>();
 
 		try {
-			String sql = ZFile.read(_path + "role.sql");
+			String sql = ZFile.read(_path + "getRoleBy.sql");
 			sql += " WHERE a.id = :id";
 
 			// Execute
@@ -303,58 +337,70 @@ public class PortalUserDao implements Repository<PortalUser, Integer> {
 	 * 
 	 * @param sql
 	 * @param o
+	 * @param limit
 	 * @return
 	 */
 	private Query createQuery(String sql, Object o, String limit) {
-		PortalUserFilter filter = PortalUserFilter.convert(o);
-		String email = filter.getEmail();
-		String firstName = filter.getFirstName();
-		String lastName = filter.getLastName();
-		String mobile = filter.getMobile();
+		Query res = null;
 
-		// Where
-		String where = "";
-		if (!email.isEmpty()) {
-			where += " AND a.user_id__c LIKE :email";
-		}
-		if (!firstName.isEmpty()) {
-			where += " AND d.firstname LIKE :firstName";
-		}
-		if (!lastName.isEmpty()) {
-			where += " AND d.lastname LIKE :lastName";
-		}
-		if (!mobile.isEmpty()) {
-			where += " AND d.mobilephone LIKE :mobile";
-		}
+		try {
+			PortalUserFilter filter = PortalUserFilter.convert(o);
+			String email = filter.getEmail();
+			String firstName = filter.getFirstName();
+			String lastName = filter.getLastName();
+			String mobile = filter.getMobile();
 
-		// Replace first
-		if (!where.isEmpty()) {
-			where = where.replaceFirst("AND", "WHERE");
-		}
-
-		Query q = _em.createNativeQuery(sql + where + limit);
-
-		// Set parameter
-		if (!where.isEmpty()) {
-			int i = where.indexOf(":email");
-			if (i > 0) {
-				q.setParameter("email", email);
+			// Where
+			String where = "";
+			if (!email.isEmpty()) {
+				where += " AND a.user_id__c LIKE :email";
 			}
-			i = where.indexOf(":firstName");
-			if (i > 0) {
-				q.setParameter("firstName", firstName);
+			if (!firstName.isEmpty()) {
+				where += " AND d.firstname LIKE :firstName";
 			}
-			i = where.indexOf(":lastName");
-			if (i > 0) {
-				q.setParameter("lastName", lastName);
+			if (!lastName.isEmpty()) {
+				where += " AND d.lastname LIKE :lastName";
 			}
-			i = where.indexOf(":mobile");
-			if (i > 0) {
-				q.setParameter("mobile", mobile);
+			if (!mobile.isEmpty()) {
+				where += " AND d.mobilephone LIKE :mobile";
+			}
+
+			// Replace first
+			if (!where.isEmpty()) {
+				where = where.replaceFirst("AND", "WHERE");
+			}
+
+			res = _em.createNativeQuery(sql + where + limit);
+
+			// Set parameter
+			if (!where.isEmpty()) {
+				int i = where.indexOf(":email");
+				if (i > 0) {
+					res.setParameter("email", email);
+				}
+				i = where.indexOf(":firstName");
+				if (i > 0) {
+					res.setParameter("firstName", firstName);
+				}
+				i = where.indexOf(":lastName");
+				if (i > 0) {
+					res.setParameter("lastName", lastName);
+				}
+				i = where.indexOf(":mobile");
+				if (i > 0) {
+					res.setParameter("mobile", mobile);
+				}
+			}
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
 
-		return q;
+		return res;
 	}
 
 	// end

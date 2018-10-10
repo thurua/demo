@@ -47,7 +47,7 @@ public class CustomAuthenticationProvider {
 		final List<GrantedAuthority> auths = new ArrayList<>();
 		auths.add(new SimpleGrantedAuthority("ROLE_USER"));
 
-		PortalUserDto o = portalUserDao.getBy(name);
+		PortalUserDto o = portalUserDao.getByUserId(name);
 		if (o.getId() == 0) {
 			return null;
 		}

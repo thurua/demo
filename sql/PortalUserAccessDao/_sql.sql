@@ -1,5 +1,3 @@
-SELECT * 
+SELECT 
+	a.id, a.sfid, a.uuid__c, a.user__c, a.login_on__c, a.logout_on__c 
 FROM salesforce.portal_user_access__c a 
-WHERE a.user__c = :user 
-	AND a.uuid__c = :uuid 
-	AND a.logout_on__c IS NULL 

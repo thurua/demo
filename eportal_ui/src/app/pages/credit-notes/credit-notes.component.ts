@@ -179,8 +179,8 @@ export class CreditNotesComponent implements OnInit {
                 clientAccount: this.clientAccountId,
                 customer: this.customerId,
                 status: this.portalStatus,
-                scheduleNo: this.scheduleNo,
-                name: this.creditNoteNo,
+                scheduleNo: "%" + this.scheduleNo + "%",
+                name: "%" + this.creditNoteNo + "%",
                 frCreatedDate: fr,
                 toCreatedDate: to
             },

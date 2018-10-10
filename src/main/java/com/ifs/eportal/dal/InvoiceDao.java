@@ -111,6 +111,37 @@ public class InvoiceDao implements Repository<Invoice, Integer> {
 	}
 
 	/**
+	 * Get by
+	 * 
+	 * @param sfId
+	 * @return
+	 */
+	public InvoiceDto getBy(String sfId) {
+		InvoiceDto res = new InvoiceDto();
+
+		try {
+			String sql = _sql + " WHERE a.sfid = :sfId";
+
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("sfId", sfId);
+			Object[] t = (Object[]) q.getSingleResult();
+
+			// Convert
+			res = InvoiceDto.convert(t);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return res;
+	}
+
+	/**
 	 * 
 	 * @param id
 	 * @return
@@ -446,7 +477,10 @@ public class InvoiceDao implements Repository<Invoice, Integer> {
 			where += " AND a.status__c = :status";
 		}
 		if (!scheduleNo.isEmpty()) {
-			where += " AND a.schedule_of_offer__c = :scheduleNo";
+			where += " AND c.name ILIKE :scheduleNo";
+		}
+		if (!invoiceNo.isEmpty()) {
+			where += " AND a.name ILIKE :invoiceNo";
 		}
 		if (!documentType.isEmpty()) {
 			where += " AND a.document_type__c = :documentType";
@@ -455,10 +489,7 @@ public class InvoiceDao implements Repository<Invoice, Integer> {
 			where += " AND a.customer__c = :customer";
 		}
 		if (!supplier.isEmpty()) {
-			where += " AND a.supplier__c = :supplier";
-		}
-		if (!invoiceNo.isEmpty()) {
-			where += " AND a.supplier__c = :name";
+			where += " AND a.customer__c = :supplier";
 		}
 
 		if (fr != null && to != null) {

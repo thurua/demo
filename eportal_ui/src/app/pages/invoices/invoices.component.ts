@@ -156,10 +156,10 @@ export class InvoicesComponent implements OnInit {
                 code: "",
                 value: "-- Please Select --"
             }, {
-                code: "INV",
+                code: "Invoice",
                 value: "Invoice"
             }, {
-                code: "CAD",
+                code: "Cash Disbursement",
                 value: "Cash Disbursement"
             }]
         }
@@ -167,10 +167,14 @@ export class InvoicesComponent implements OnInit {
     }
 
     public resetClick() {
+        this.clientId = "";
+        this.clientAccountId = "";
         this.status = "";
         this.scheduleNo = "";
-        this.clientAccountId = "";
         this.invoiceNo = "";
+        this.documentType = "";
+        this.customer = "";
+        this.supplier = "";
 
         // Reset Date
         let d = new Date();
@@ -195,7 +199,8 @@ export class InvoicesComponent implements OnInit {
     public searchCA() {
         let x = {
             filter: {
-                client: this.clientId
+                client: this.clientId,
+                status: "Activated"
             },
             page: 1,
             size: 20
@@ -240,6 +245,7 @@ export class InvoicesComponent implements OnInit {
 
                 rsp.result.data.unshift(item);
                 this.lstCU = rsp.result.data;
+
             }
             else {
                 this.lstCU.unshift(item);
@@ -292,11 +298,11 @@ export class InvoicesComponent implements OnInit {
                 client: this.clientId,
                 clientAccount: this.clientAccountId,
                 status: this.status,
-                scheduleNo: this.scheduleNo,
+                scheduleNo: "%" + this.scheduleNo + "%",
+                invoiceNo: "%" + this.invoiceNo + "%",
                 documentType: this.documentType,
                 customer: this.customer,
                 supplier: this.supplier,
-                invoiceNo: this.invoiceNo,
                 frCreatedDate: fr,
                 toCreatedDate: to
             },

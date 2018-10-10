@@ -25,10 +25,10 @@ import com.ifs.eportal.req.PagingReq;
 
 /**
  * 
- * @author ToanNguyen 2018-Oct-05 (verified)
+ * @author ToanNguyen 2018-Oct-10 (verified)
  *
  */
-@Service(value = "_scheduleOfOfferDao")
+@Service(value = "scheduleOfOfferDao")
 public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> {
 	// region -- Implements --
 
@@ -238,7 +238,7 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 	}
 
 	/**
-	 * Search by
+	 * Search
 	 * 
 	 * @param req
 	 * @return
@@ -281,7 +281,8 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 			}
 
 			// Execute to count all
-			String sql = ZFile.read(_path + "count.sql");
+			int i = _sql.indexOf("FROM");
+			String sql = "SELECT COUNT(*) " + _sql.substring(i);
 			String limit = "";
 			Query q = createQuery(sql, filter, limit);
 			BigInteger total = (BigInteger) q.getSingleResult();
@@ -315,79 +316,96 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 	 * 
 	 * @param sql
 	 * @param o
+	 * @param limit
 	 * @return
 	 */
 	private Query createQuery(String sql, Object o, String limit) {
-		ScheduleOfOfferFilter filter = ScheduleOfOfferFilter.convert(o);
-		String clientName = filter.getClient();
-		String clientAccount = filter.getClientAccount();
-		String portalStatus = filter.getPortalStatus();
-		Date fr = filter.getFrCreatedDate();
-		Date to = filter.getToCreatedDate();
+		Query res = null;
 
-		// Where
-		String where = "";
-		if (!clientName.isEmpty()) {
-			where += " AND a.client_name__c = :clientName";
-		}
-		if (!clientAccount.isEmpty()) {
-			where += " AND a.client_account__c = :clientAccount";
-		}
-		if (!portalStatus.isEmpty()) {
-			if ("Accepted".equals(portalStatus)) {
-				where += " AND a.schedule_status__c = 'Submitted'";
+		try {
+			ScheduleOfOfferFilter filter = ScheduleOfOfferFilter.convert(o);
+			String clientName = filter.getClient();
+			String clientAccount = filter.getClientAccount();
+			String portalStatus = filter.getPortalStatus();
+			Date fr = filter.getFrCreatedDate();
+			Date to = filter.getToCreatedDate();
+			Utils.toString(filter,true);
+
+			// Where
+			String where = "";
+			if (!clientName.isEmpty()) {
+				where += " AND a.client_name__c = :clientName";
+			}
+			if (!clientAccount.isEmpty()) {
+				where += " AND a.client_account__c = :clientAccount";
+			}
+			if (!portalStatus.isEmpty()) {
+				if ("Accepted".equals(portalStatus)) {
+					where += " AND a.schedule_status__c = 'Submitted'";
+				} else {
+					where += " AND a.portal_status__c = :portalStatus";
+				}
 			} else {
-				where += " AND a.portal_status__c = :portalStatus";
-			}
-		} else {
-			where += " AND (a.schedule_status__c = 'Submitted' OR a.createdby_portaluserid__c IS NOT NULL)";
-		}
-
-		if (fr != null && to != null) {
-			where += " AND a.createddate BETWEEN :fr AND :to";
-		} else if (fr != null && to == null) {
-			where += " AND :fr <= a.createddate";
-		} else if (fr == null && to != null) {
-			where += " AND a.createddate <= :to";
-		}
-
-		// Replace first
-		if (!where.isEmpty()) {
-			where = where.replaceFirst("AND", "WHERE");
-		}
-
-		Query q = _em.createNativeQuery(sql + where + limit);
-
-		// Set parameter
-		if (!where.isEmpty()) {
-			int i = where.indexOf(":clientName");
-			if (i > 0) {
-				q.setParameter("clientName", clientName);
-			}
-			i = where.indexOf(":clientAccount");
-			if (i > 0) {
-				q.setParameter("clientAccount", clientAccount);
-			}
-			i = where.indexOf(":portalStatus");
-			if (i > 0) {
-				q.setParameter("portalStatus", portalStatus);
+				where += " AND (a.schedule_status__c = 'Submitted' OR a.createdby_portaluserid__c IS NOT NULL)";
 			}
 
 			if (fr != null && to != null) {
-				fr = ZDate.getStartOfDay(fr);
-				q.setParameter("fr", fr);
-				to = ZDate.getEndOfDay(to);
-				q.setParameter("to", to);
+				where += " AND a.createddate BETWEEN :fr AND :to";
 			} else if (fr != null && to == null) {
-				fr = ZDate.getStartOfDay(fr);
-				q.setParameter("fr", fr);
+				where += " AND :fr <= a.createddate";
 			} else if (fr == null && to != null) {
-				to = ZDate.getEndOfDay(to);
-				q.setParameter("to", to);
+				where += " AND a.createddate <= :to";
+			}
+
+			// Replace first
+			if (!where.isEmpty()) {
+				where = where.replaceFirst("AND", "WHERE");
+			}
+
+			res = _em.createNativeQuery(sql + where + limit);
+
+			// Set parameter
+			if (!where.isEmpty()) {
+				int i = where.indexOf(":clientName");
+				if (i > 0) {
+					res.setParameter("clientName", clientName);
+				}
+				i = where.indexOf(":clientAccount");
+				if (i > 0) {
+					res.setParameter("clientAccount", clientAccount);
+				}
+				i = where.indexOf(":portalStatus");
+				if (i > 0) {
+					res.setParameter("portalStatus", portalStatus);
+				}
+
+				if (fr != null && to != null) {
+					fr = ZDate.getStartOfDay(fr);
+					to = ZDate.getEndOfDay(to);
+
+					System.out.println("createQuery -> fr: " + fr);
+					System.out.println("createQuery -> to: " + to);
+
+					res.setParameter("to", to);
+					res.setParameter("fr", fr);
+				} else if (fr != null && to == null) {
+					fr = ZDate.getStartOfDay(fr);
+					res.setParameter("fr", fr);
+				} else if (fr == null && to != null) {
+					to = ZDate.getEndOfDay(to);
+					res.setParameter("to", to);
+				}
+			}
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
 
-		return q;
+		return res;
 	}
 
 	// end

@@ -13,5 +13,5 @@ JOIN salesforce.account d
 	ON a.client_name__c = d.sfid 
 LEFT JOIN salesforce.account e 
 	ON a.customer__c = e.sfid 
-LEFT JOIN salesforce.supplier_list__c f 
+LEFT JOIN salesforce.account f 
 	ON a.supplier__c = f.sfid 

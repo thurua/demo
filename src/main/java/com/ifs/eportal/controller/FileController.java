@@ -529,7 +529,7 @@ public class FileController {
 			}
 
 			/* TienNguyen 2018-Aug-30 IFS-1191 */
-			CurrencyTypeDto t = currencyTypeService.read(o.getDocumentCurrency());
+			CurrencyTypeDto t = currencyTypeService.getByIsoCode(o.getDocumentCurrency());
 			if (t.getId() == 0) {
 				err = "Currency is not supported.";
 				res = Utils.addError(res, err);
@@ -1029,6 +1029,7 @@ public class FileController {
 			m.setProcessDate(o.getProcessDate());
 			m.setKeyInByDate(o.getKeyInByDate());
 			m.setCreatedDate(new Date());
+			m.setName(o.getScheduleNo());
 			if ("Authorised".equals(s)) {
 				m.setPortalStatus(s);
 			}
@@ -1143,7 +1144,8 @@ public class FileController {
 						r.setRecordTypeId(rt.getSfId());
 						r.setReason(key);
 						r.setInvoice(tid);
-
+						// r.setExternalId();
+						r.setCreatedDate(new Date());
 						reasonService.create(r);
 					} catch (Exception ex) {
 						// res.result = "Missing code reason " + key;
@@ -1224,6 +1226,8 @@ public class FileController {
 						r.setRecordTypeId(rt.getSfId());
 						r.setReason(key);
 						r.setCreditNote(tid);
+						// r.setExternalId();
+						r.setCreatedDate(new Date());
 
 						reasonService.create(r);
 					} catch (Exception ex) {

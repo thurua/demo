@@ -10,12 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZFile;
 import com.ifs.eportal.dto.CurrencyTypeDto;
 import com.ifs.eportal.model.CurrencyType;
 
 /**
  * 
- * @author ToanNguyen 2018-Oct-04 (verified)
+ * @author ToanNguyen 2018-Oct-10 (verified)
  *
  */
 @Service(value = "currencyTypeDao")
@@ -61,6 +62,8 @@ public class CurrencyTypeDao implements Repository<CurrencyType, Integer> {
 	@Autowired
 	private EntityManager _em;
 
+	private String _path;
+
 	private String _sql;
 
 	private static final Logger _log = Logger.getLogger(CurrencyTypeDao.class.getName());
@@ -69,28 +72,95 @@ public class CurrencyTypeDao implements Repository<CurrencyType, Integer> {
 
 	// region -- Methods --
 
+	/**
+	 * Initialize
+	 */
 	public CurrencyTypeDao() {
-		_sql = "SELECT \r\n" + "	a.id, a.sfid, a.isocode \r\n" + "FROM salesforce.currencytype a ";
+		_path = ZFile.getPath("/sql/" + CurrencyTypeDao.class.getSimpleName());
+		_sql = ZFile.read(_path + "_sql.sql");
 	}
 
 	/**
-	 * Read by
+	 * Get by
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public CurrencyTypeDto getBy(Integer id) {
+		CurrencyTypeDto res = new CurrencyTypeDto();
+
+		try {
+			String sql = _sql + " WHERE a.id = :id";
+
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("id", id);
+			Object[] t = (Object[]) q.getSingleResult();
+
+			// Convert
+			res = CurrencyTypeDto.convert(t);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * Get by
+	 * 
+	 * @param sfId
+	 * @return
+	 */
+	public CurrencyTypeDto getBy(String sfId) {
+		CurrencyTypeDto res = new CurrencyTypeDto();
+
+		try {
+			String sql = _sql + " WHERE a.sfid = :sfId";
+
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("sfId", sfId);
+			Object[] t = (Object[]) q.getSingleResult();
+
+			// Convert
+			res = CurrencyTypeDto.convert(t);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * Get by
 	 * 
 	 * @param isoCode
 	 * @return
 	 */
-	public CurrencyTypeDto read(String isoCode) {
+	public CurrencyTypeDto getByIsoCode(String isoCode) {
 		CurrencyTypeDto res = new CurrencyTypeDto();
 
 		try {
-			// Execute
 			String sql = _sql + " WHERE a.isocode = :isoCode";
+
+			// Execute
 			Query q = _em.createNativeQuery(sql);
 			q.setParameter("isoCode", isoCode);
-			Object[] i = (Object[]) q.getSingleResult();
+			Object[] t = (Object[]) q.getSingleResult();
 
 			// Convert
-			res = CurrencyTypeDto.convert(i);
+			res = CurrencyTypeDto.convert(t);
 		} catch (Exception ex) {
 			if (Utils.printStackTrace) {
 				ex.printStackTrace();

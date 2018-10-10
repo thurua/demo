@@ -47,6 +47,16 @@ public class InvoiceService {
 	}
 
 	/**
+	 * Read by
+	 * 
+	 * @param sfId
+	 * @return
+	 */
+	public InvoiceDto read(String sfId) {
+		return invoiceDao.getBy(sfId);
+	}
+
+	/**
 	 * 
 	 * @param l
 	 * @param clientAccountId

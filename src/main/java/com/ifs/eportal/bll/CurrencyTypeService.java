@@ -9,7 +9,7 @@ import com.ifs.eportal.dto.CurrencyTypeDto;
 
 /**
  * 
- * @author ToanNguyen 2018-Oct-04 (verified)
+ * @author ToanNguyen 2018-Oct-10 (verified)
  *
  */
 @Service(value = "currencyTypeService")
@@ -25,13 +25,13 @@ public class CurrencyTypeService {
 	// region -- Methods --
 
 	/**
-	 * Read by
+	 * Get by
 	 * 
 	 * @param isoCode
 	 * @return
 	 */
-	public CurrencyTypeDto read(String isoCode) {
-		return currencyTypeDao.read(isoCode);
+	public CurrencyTypeDto getByIsoCode(String isoCode) {
+		return currencyTypeDao.getByIsoCode(isoCode);
 	}
 
 	// end

@@ -1,6 +1,7 @@
 package com.ifs.eportal.dal;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,17 +20,21 @@ import com.ifs.eportal.filter.PortalUserAccessFilter;
 import com.ifs.eportal.model.PortalUserAccess;
 import com.ifs.eportal.req.PagingReq;
 
-@Service(value = "portalUserAccessDao")
+/**
+ * 
+ * @author ToanNguyen 2018-Oct-10 (verified)
+ *
+ */
+@Service(value = "portalUserAccessAccessDao")
 public class PortalUserAccessDao implements Repository<PortalUserAccess, Integer> {
-
 	// region -- Implements --
+
 	/**
 	 * Create
 	 */
 	@Override
 	public void create(PortalUserAccess entity) {
 		_em.persist(entity);
-
 	}
 
 	/**
@@ -82,83 +87,19 @@ public class PortalUserAccessDao implements Repository<PortalUserAccess, Integer
 	}
 
 	/**
-	 * Get by
+	 * Read by
 	 * 
-	 * @param id
+	 * @param uuId
 	 * @return
 	 */
-	public PortalUserAccessDto getBy(Integer id) {
-		PortalUserAccessDto res = new PortalUserAccessDto();
-
-		try {
-			String sql = _sql + " WHERE a.id = :id";
-
-			// Execute
-			Query q = _em.createNativeQuery(sql);
-			q.setParameter("id", id);
-			Object[] i = (Object[]) q.getSingleResult();
-
-			// Convert
-			res = PortalUserAccessDto.convert(i);
-		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
-				ex.printStackTrace();
-			}
-			if (Utils.writeLog) {
-				_log.log(Level.SEVERE, ex.getMessage(), ex);
-			}
-		}
-
-		return res;
-	}
-
-	/**
-	 * Get by
-	 * 
-	 * @param id
-	 * @return
-	 */
-	public PortalUserAccessDto getBy(String sfId) {
-		PortalUserAccessDto res = new PortalUserAccessDto();
-
-		try {
-			String sql = _sql + " WHERE a.sfid = :sfId";
-
-			// Execute
-			Query q = _em.createNativeQuery(sql);
-			q.setParameter("sfId", sfId);
-			Object[] i = (Object[]) q.getSingleResult();
-
-			// Convert
-			res = PortalUserAccessDto.convert(i);
-		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
-				ex.printStackTrace();
-			}
-			if (Utils.writeLog) {
-				_log.log(Level.SEVERE, ex.getMessage(), ex);
-			}
-		}
-
-		return res;
-	}
-
-	/**
-	 * Get by
-	 * 
-	 * @param user
-	 * @param uuid
-	 * @return
-	 */
-	public PortalUserAccess getBy(String user, String uuId) {
+	public PortalUserAccess read(String uuId) {
 		PortalUserAccess res = new PortalUserAccess();
 
 		try {
-			String sql = "FROM PortalUserAccess a WHERE a.user = :user AND a.uuId = :uuId AND a.logoutOn IS NULL";
+			String sql = "FROM PortalUserAccess a WHERE a.uuId = :uuId AND a.logoutOn IS NULL";
 
 			// Execute
 			Query q = _em.createQuery(sql, PortalUserAccess.class);
-			q.setParameter("user", user);
 			q.setParameter("uuId", uuId);
 			res = (PortalUserAccess) q.getSingleResult();
 		} catch (Exception ex) {
@@ -174,59 +115,201 @@ public class PortalUserAccessDao implements Repository<PortalUserAccess, Integer
 	}
 
 	/**
-	 * Search by
+	 * Get by
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public PortalUserAccessDto getBy(Integer id) {
+		PortalUserAccessDto res = new PortalUserAccessDto();
+
+		try {
+			String sql = _sql + " WHERE a.id = :id";
+
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("id", id);
+			Object[] t = (Object[]) q.getSingleResult();
+
+			// Convert
+			res = PortalUserAccessDto.convert(t);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * Get by
+	 * 
+	 * @param sfId
+	 * @return
+	 */
+	public PortalUserAccessDto getBy(String sfId) {
+		PortalUserAccessDto res = new PortalUserAccessDto();
+
+		try {
+			String sql = _sql + " WHERE a.sfid = :sfId";
+
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("sfId", sfId);
+			Object[] t = (Object[]) q.getSingleResult();
+
+			// Convert
+			res = PortalUserAccessDto.convert(t);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * Get by
+	 * 
+	 * @param token
+	 * @return
+	 */
+	public PortalUserAccessDto getByToken(String token) {
+		PortalUserAccessDto res = new PortalUserAccessDto();
+
+		try {
+			String sql = _sql;
+			sql += " WHERE a.uuid__c = :token";
+
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("token", token);
+			Object[] t = (Object[]) q.getSingleResult();
+
+			// Convert
+			res = PortalUserAccessDto.convert(t);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * Get by
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	public PortalUserAccessDto getByUserId(String userId) {
+		PortalUserAccessDto res = new PortalUserAccessDto();
+
+		try {
+			String sql = _sql;
+			sql += " WHERE a.user__c = :userId";
+
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("userId", userId);
+			Object[] t = (Object[]) q.getSingleResult();
+
+			// Convert
+			res = PortalUserAccessDto.convert(t);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * Search
 	 * 
 	 * @param req
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public List<PortalUserAccessDto> search(PagingReq req) {
-		// Get data
-		Object filter = req.getFilter();
-		int page = req.getPage();
-		int size = req.getSize();
-		List<SortDto> sort = req.getSort();
-		int offset = (page - 1) * size;
+		List<PortalUserAccessDto> res = new ArrayList<PortalUserAccessDto>();
 
-		// Order by
-		String orderBy = "";
-		for (SortDto o : sort) {
-			String field = o.getField();
-			String direction = o.getDirection();
+		try {
+			Object filter = req.getFilter();
+			int page = req.getPage();
+			int size = req.getSize();
+			List<SortDto> sort = req.getSort();
+			int offset = (page - 1) * size;
 
-			if ("id".equals(field)) {
-				if (!orderBy.isEmpty()) {
-					orderBy += ",";
+			// Order by
+			String orderBy = "";
+			for (SortDto o : sort) {
+				String field = o.getField();
+				String direction = o.getDirection();
+
+				if ("id".equals(field)) {
+					if (!orderBy.isEmpty()) {
+						orderBy += ",";
+					}
+					orderBy += " a.id " + direction;
 				}
-				orderBy += " a.id " + direction;
+				if ("loginOn".equals(field)) {
+					if (!orderBy.isEmpty()) {
+						orderBy += ",";
+					}
+					orderBy += " a.login_on__c " + direction;
+				}
 			}
 
-			if ("name".equals(field)) {
-				if (!orderBy.isEmpty()) {
-					orderBy += ",";
-				}
-				orderBy += " a.name " + direction;
+			if (!orderBy.isEmpty()) {
+				orderBy = " ORDER BY " + orderBy;
+			}
+
+			// Execute to count all
+			int i = _sql.indexOf("FROM");
+			String sql = "SELECT COUNT(*) " + _sql.substring(i);
+			String limit = "";
+			Query q = createQuery(sql, filter, limit);
+			BigInteger total = (BigInteger) q.getSingleResult();
+			req.setTotal(total.longValue());
+
+			// Execute to search
+			sql = _sql;
+			limit = orderBy;
+			if (req.isPaging()) {
+				limit += " OFFSET " + offset + " LIMIT " + size;
+			}
+			q = createQuery(sql, filter, limit);
+			List<Object[]> t = q.getResultList();
+
+			// Convert
+			res = PortalUserAccessDto.convert(t);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
 
-		if (!orderBy.isEmpty()) {
-			orderBy = " ORDER BY " + orderBy;
-		}
-
-		// Execute to count all
-		String sql = "SELECT \r\n" + "	count(*)\r\n" + "FROM salesforce.portal_user_access__c a ";
-		String limit = "";
-		Query q = createQuery(sql, filter, limit);
-		BigInteger total = (BigInteger) q.getSingleResult();
-		req.setTotal(total.longValue());
-
-		// Execute to search
-		sql = _sql;
-		limit = orderBy + " OFFSET " + offset + " LIMIT " + size;
-		q = createQuery(sql, filter, limit);
-		List<Object[]> l = q.getResultList();
-
-		return PortalUserAccessDto.convert(l);
+		return res;
 	}
 
 	/**
@@ -234,34 +317,46 @@ public class PortalUserAccessDao implements Repository<PortalUserAccess, Integer
 	 * 
 	 * @param sql
 	 * @param o
+	 * @param limit
 	 * @return
 	 */
 	private Query createQuery(String sql, Object o, String limit) {
-		PortalUserAccessFilter filter = PortalUserAccessFilter.convert(o);
-		String name = filter.getName();
+		Query res = null;
 
-		// Where
-		String where = "";
-		if (!name.isEmpty()) {
-			where += " AND a.name = :name";
-		}
+		try {
+			PortalUserAccessFilter filter = PortalUserAccessFilter.convert(o);
+			String user = filter.getUser();
 
-		// Replace first
-		if (!where.isEmpty()) {
-			where = where.replaceFirst("AND", "WHERE");
-		}
+			// Where
+			String where = "";
+			if (!user.isEmpty()) {
+				where += " AND a.user__c = :user";
+			}
 
-		Query q = _em.createNativeQuery(sql + where + limit);
+			// Replace first
+			if (!where.isEmpty()) {
+				where = where.replaceFirst("AND", "WHERE");
+			}
 
-		// Set parameter
-		if (!where.isEmpty()) {
-			int i = where.indexOf(":name");
-			if (i > 0) {
-				q.setParameter("name", name);
+			res = _em.createNativeQuery(sql + where + limit);
+
+			// Set parameter
+			if (!where.isEmpty()) {
+				int i = where.indexOf(":user");
+				if (i > 0) {
+					res.setParameter("user", user);
+				}
+			}
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
 
-		return q;
+		return res;
 	}
 
 	// end

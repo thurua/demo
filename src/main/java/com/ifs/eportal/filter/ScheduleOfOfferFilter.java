@@ -9,7 +9,7 @@ import com.ifs.eportal.common.Utils;
 
 /**
  * 
- * @author ToanNguyen 2018-Oct-05 (verified)
+ * @author ToanNguyen 2018-Oct-10 (verified)
  *
  */
 public class ScheduleOfOfferFilter {
