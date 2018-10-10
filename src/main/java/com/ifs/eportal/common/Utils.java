@@ -482,6 +482,7 @@ public class Utils {
 	 */
 	public static String formatStr(String s) {
 		String res = "";
+
 		s = s.toLowerCase();
 		String[] arr = s.split(" ");
 
@@ -489,6 +490,7 @@ public class Utils {
 			res += x.substring(0, 1).toUpperCase() + x.substring(1, x.length()) + ' ';
 		}
 
+		res = res.trim();
 		return res;
 	}
 

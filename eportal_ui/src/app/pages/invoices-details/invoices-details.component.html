@@ -1,10 +1,5 @@
-<div class="card header-margin container">
+<div class="card header-margin">
     <div class="card-body">
-        <div class="form-group row header">
-            <div class="col-md-4">
-                <strong>Details</strong>
-            </div>
-        </div>
         <div class="row">
             <div class="col-md-6">
                 <div class="row">
@@ -150,7 +145,7 @@
                         <strong>Outstanding Amount</strong>
                     </div>
                     <div class="col-md-7">
-                        <label class="col-form-label">{{data.outstandingAmount}}</label>
+                        <label class="col-form-label">{{data.outstandingAmount | number: '0.2'}}</label>
                     </div>
                 </div>
                 <div class="row">
@@ -164,12 +159,12 @@
             </div>
         </div>
     </div>
-    <div class="card-body" *ngIf="data.status == 'Rejected'">
-        <div class="form-group row header">
-            <div class="col-md-4">
-                <strong>Reasons</strong>
-            </div>
-        </div>
+</div>
+<div class="card header-margin" *ngIf="data.status == 'Rejected'">
+    <div class="card-header">
+        <strong>Reasons</strong>
+    </div>
+    <div class="card-body">
         <div widget class="card border-0 box-shadow header-margin">
             <div class="card-body pt-0 widget-body">
                 <div class="table-responsive">

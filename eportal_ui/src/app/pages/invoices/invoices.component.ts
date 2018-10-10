@@ -105,7 +105,7 @@ export class InvoicesComponent implements OnInit {
             createdDate: {
                 title: 'Created Date / Time',
                 type: 'date',
-                valuePrepareFunction: (value) => { return this.utl.formatDate(value, 'dd-MMM-yyyy') },
+                valuePrepareFunction: (value) => { return this.utl.formatDate(value, 'dd-MMM-yyyy HH:mm:ss') },
                 filter: false
             }
         }
@@ -135,20 +135,20 @@ export class InvoicesComponent implements OnInit {
                 code: "Accepted",
                 value: "Accepted"
             }, {
-                code: "Rejected",
-                value: "Rejected"
-            }, {
-                code: "Unfunded",
-                value: "Unfunded"
-            }, {
                 code: "Disputed",
                 value: "Disputed"
             }, {
                 code: "Reassigned",
                 value: "Reassigned"
             }, {
+                code: "Rejected",
+                value: "Rejected"
+            }, {
                 code: "Reversed",
                 value: "Reversed"
+            }, {
+                code: "Unfunded",
+                value: "Unfunded"
             }]
         }
         this.lstStatus = tmpStatus.data;
@@ -158,11 +158,11 @@ export class InvoicesComponent implements OnInit {
                 code: "",
                 value: "-- Please Select --"
             }, {
-                code: "Invoice",
-                value: "Invoice"
-            }, {
                 code: "Cash Disbursement",
                 value: "Cash Disbursement"
+            }, {
+                code: "Invoice",
+                value: "Invoice"
             }]
         }
         this.lstDocumentType = tmpDocumentType.data;
@@ -205,7 +205,13 @@ export class InvoicesComponent implements OnInit {
                 status: "Activated"
             },
             page: 1,
-            size: 20
+            size: 20,
+            sort: [
+                {
+                    direction: "ASC",
+                    field: "clientAccount"
+                }
+            ]
         }
 
         this.com.searchCA(x).subscribe((rsp: any) => {
@@ -234,7 +240,13 @@ export class InvoicesComponent implements OnInit {
                 clientAccount: event.target.value
             },
             page: 1,
-            size: 20
+            size: 20,
+            sort: [
+                {
+                    direction: "ASC",
+                    field: "name"
+                }
+            ]
         }
 
         this.com.searchCU(x).subscribe((rsp: any) => {
@@ -264,7 +276,13 @@ export class InvoicesComponent implements OnInit {
                 client: this.clientId
             },
             page: 1,
-            size: 20
+            size: 20,
+            sort: [
+                {
+                    direction: "ASC",
+                    field: "name"
+                }
+            ]
         }
 
         this.com.searchSU(x).subscribe((rsp: any) => {

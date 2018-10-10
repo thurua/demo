@@ -59,6 +59,15 @@ public class Reason extends BaseModel {
 	@Column(columnDefinition = "varchar(255)", name = "recordtypeid")
 	private String recordTypeId;
 
+	@Column(columnDefinition = "varchar(10)", name = "type__c")
+	private String type;
+
+	@Column(columnDefinition = "varchar(100)", name = "uuid__c")
+	private String uuId;
+
+	@Column(columnDefinition = "varchar(100)", name = "parent_uuid__c")
+	private String parentUuId;
+
 	// end
 
 	// region -- Get set --
@@ -149,6 +158,30 @@ public class Reason extends BaseModel {
 
 	public void setRecordTypeId(String recordTypeId) {
 		this.recordTypeId = recordTypeId;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getUuId() {
+		return uuId;
+	}
+
+	public void setUuId(String uuId) {
+		this.uuId = uuId;
+	}
+
+	public String getParentUuId() {
+		return parentUuId;
+	}
+
+	public void setParentUuId(String parentUuId) {
+		this.parentUuId = parentUuId;
 	}
 
 	// end

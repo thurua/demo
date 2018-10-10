@@ -50,9 +50,6 @@ public class ScheduleOfOfferAttachment extends BaseModel {
 	@Column(columnDefinition = "bool", name = "isactive__c")
 	private boolean isActive;
 
-	@Column(columnDefinition = "varchar(50)", name = "external_id__c")
-	private String externalId;
-
 	@Column(columnDefinition = "varchar(255)", name = "file_path__c")
 	private String filePath;
 
@@ -61,6 +58,15 @@ public class ScheduleOfOfferAttachment extends BaseModel {
 
 	@Column(columnDefinition = "varchar(18)", name = "schedule_of_offer__c")
 	private String scheduleOfOffer;
+
+	@Column(columnDefinition = "varchar(100)", name = "uuid__c")
+	private String uuId;
+
+	@Column(columnDefinition = "varchar(100)", name = "parent_uuid__c")
+	private String parentUuId;
+
+	@Column(columnDefinition = "float(8)", name = "external_id__c")
+	private Float externalId;
 
 	// end
 
@@ -130,14 +136,6 @@ public class ScheduleOfOfferAttachment extends BaseModel {
 		this.isActive = isActive;
 	}
 
-	public String getExternalId() {
-		return externalId;
-	}
-
-	public void setExternalId(String externalId) {
-		this.externalId = externalId;
-	}
-
 	public String getFilePath() {
 		return filePath;
 	}
@@ -160,6 +158,30 @@ public class ScheduleOfOfferAttachment extends BaseModel {
 
 	public void setScheduleOfOffer(String scheduleOfOffer) {
 		this.scheduleOfOffer = scheduleOfOffer;
+	}
+
+	public String getUuId() {
+		return uuId;
+	}
+
+	public void setUuId(String uuId) {
+		this.uuId = uuId;
+	}
+
+	public String getParentUuId() {
+		return parentUuId;
+	}
+
+	public void setParentUuId(String parentUuId) {
+		this.parentUuId = parentUuId;
+	}
+
+	public Float getExternalId() {
+		return externalId;
+	}
+
+	public void setExternalId(Float externalId) {
+		this.externalId = externalId;
 	}
 
 	// end

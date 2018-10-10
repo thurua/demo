@@ -14,19 +14,19 @@ import com.ifs.eportal.common.Utils;
 public class AttachmentFilter {
 	// region -- Fields --
 
-	@JsonProperty(value = "scheduleOfOffer")
-	private String scheduleOfOffer;
+	@JsonProperty(value = "parentUuId")
+	private String parentUuId;
 
 	// end
 
 	// region -- Get set --
 
-	public String getScheduleOfOffer() {
-		return scheduleOfOffer;
+	public String getParentUuId() {
+		return parentUuId;
 	}
 
-	public void setScheduleOfOffer(String scheduleOfOffer) {
-		this.scheduleOfOffer = scheduleOfOffer;
+	public void setParentUuId(String parentUuId) {
+		this.parentUuId = parentUuId;
 	}
 
 	// end
@@ -37,16 +37,16 @@ public class AttachmentFilter {
 	 * Initialize
 	 */
 	public AttachmentFilter() {
-		scheduleOfOffer = "";
+		parentUuId = "";
 	}
 
 	/**
 	 * Initialize
 	 * 
-	 * @param scheduleOfOffer
+	 * @param parentUuId
 	 */
-	public AttachmentFilter(String scheduleOfOffer) {
-		this.scheduleOfOffer = scheduleOfOffer;
+	public AttachmentFilter(String parentUuId) {
+		this.parentUuId = parentUuId;
 	}
 
 	/**

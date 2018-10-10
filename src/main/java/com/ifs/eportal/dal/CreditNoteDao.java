@@ -98,7 +98,6 @@ public class CreditNoteDao implements Repository<CreditNote, Integer> {
 		CreditNoteDto res = new CreditNoteDto();
 
 		try {
-			_sql = ZFile.read(_path + "detail.sql");
 			String sql = _sql + " WHERE a.id = :id";
 
 			// Execute
@@ -130,8 +129,7 @@ public class CreditNoteDao implements Repository<CreditNote, Integer> {
 		CreditNoteDto res = new CreditNoteDto();
 
 		try {
-			String sql = ZFile.read(_path + "detail.sql");
-			sql += " WHERE a.sfid = :sfId";
+			String sql = _sql + " WHERE a.sfid = :sfId";
 
 			// Execute
 			Query q = _em.createNativeQuery(sql);
@@ -164,7 +162,8 @@ public class CreditNoteDao implements Repository<CreditNote, Integer> {
 		CreditNoteDto res = new CreditNoteDto();
 
 		try {
-			String sql = _sql + " WHERE a.schedule_of_offer__c = :scheduleNo AND a.client_account__c = :clientName";
+			String sql = _sql;
+			sql += " WHERE a.schedule_of_offer__c = :scheduleNo AND a.client_account__c = :clientName";
 
 			// Execute
 			Query q = _em.createNativeQuery(sql);
@@ -244,7 +243,8 @@ public class CreditNoteDao implements Repository<CreditNote, Integer> {
 			}
 
 			// Execute to count all
-			String sql = ZFile.read(_path + "count.sql");
+			int i = _sql.indexOf("FROM");
+			String sql = "SELECT COUNT(*) " + _sql.substring(i);
 			String limit = "";
 			Query q = createQuery(sql, filter, limit);
 			BigInteger total = (BigInteger) q.getSingleResult();
@@ -303,7 +303,7 @@ public class CreditNoteDao implements Repository<CreditNote, Integer> {
 			where += " AND a.status__c = :status";
 		}
 		if (!scheduleNo.isEmpty()) {
-			where += " AND d.schedule_no__c ILIKE :scheduleNo";
+			where += " AND c.schedule_no__c ILIKE :scheduleNo";
 		}
 		if (!creditNoteNo.isEmpty()) {
 			where += " AND a.name ILIKE :creditNoteNo";

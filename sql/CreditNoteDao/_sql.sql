@@ -9,6 +9,6 @@ FROM salesforce.credit_note__c a
 JOIN salesforce.account b
 	ON a.customer__c = b.sfid 
 JOIN salesforce.schedule_of_offer__c c 
-	ON (a.schedule_of_offer__c = c.sfid OR a.external_id__c = c.id) 
+	ON (a.schedule_of_offer__c = c.sfid OR a.parent_uuid__c = c.uuid__c) 
 LEFT JOIN salesforce.client_account__c d 
 	ON a.client_account__c = d.sfid 

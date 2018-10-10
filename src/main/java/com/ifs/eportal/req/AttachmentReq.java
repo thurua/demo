@@ -4,25 +4,25 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * 
- * @author ToanNguyen 2018-Oct-05
+ * @author ToanNguyen 2018-Oct-10
  *
  */
 public class AttachmentReq {
 	// region -- Fields --
 
-	@JsonProperty(value = "scheduleOfOffer")
-	private String scheduleOfOffer;
+	@JsonProperty(value = "parentUuId")
+	private String parentUuId;
 
 	// end
 
 	// region -- Get set --
 
-	public String getScheduleOfOffer() {
-		return scheduleOfOffer;
+	public String getParentUuId() {
+		return parentUuId;
 	}
 
-	public void setScheduleOfOffer(String scheduleOfOffer) {
-		this.scheduleOfOffer = scheduleOfOffer;
+	public void setParentUuId(String parentUuId) {
+		this.parentUuId = parentUuId;
 	}
 
 	// end
@@ -30,7 +30,7 @@ public class AttachmentReq {
 	// region -- Methods --
 
 	public AttachmentReq() {
-		scheduleOfOffer = "";
+		parentUuId = "";
 	}
 
 	// end

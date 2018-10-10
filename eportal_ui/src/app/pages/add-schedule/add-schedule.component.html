@@ -21,9 +21,9 @@
                         <div class="col-md-8">
                             <select class="form-control" name="scheduleType" #scheduleType="ngModel" [(ngModel)]="vm.scheduleType" (change)="hideShow($event.target.value)" required>
                                 <option value="">-- Please Select --</option>
-                                <option value="Invoice">Invoice</option>
                                 <option value="Cash Disbursement">Cash Disbursement</option>
                                 <option value="Credit note">Credit note</option>
+                                <option value="Invoice">Invoice</option>
                             </select>
                             <span [hidden]="scheduleType.valid || (scheduleType.pristine && !f.submitted && validate)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="scheduleType" data-valmsg-for="scheduleType" id="scheduleType_validationMessage"
                                 role="alert">
@@ -66,12 +66,14 @@
                 </div>
             </div>
         </div>
-        <div class=" footer">
-            <div class="card-header">
-                <strong>File Upload</strong>
-            </div>
-            <div class="row">
-                <div class="card-body col-md-6 uploadfile">
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <strong>File Upload</strong>
+        </div>
+        <div class="card-body">
+            <div class="body row">
+                <div class="col-md 6 left ">
                     <div class="form-group row">
                         <div class="col-md-6">
                             <div class="input-group file-upload">
@@ -79,36 +81,50 @@
                                 <input type="text" class="form-control" placeholder="Choose a file..." value="{{(file !=null)? file.name :'' }}">
                                 <i class="fa fa-times delete-file" (click)="removeFile()" *ngIf="file"></i>
                                 <span class="input-group-append upload">
-                                <button class="btn btn-primary" type="button"><i class="fa fa-upload"> </i></button>
-                            </span>
+                                        <button class="btn btn-primary" type="button"><i class="fa fa-upload"> </i></button>
+                                    </span>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="card-body col-md-5">
-                    <a *ngIf="!validate" (click)="download()" class="btn btn-primary download" download>Download Template</a>
-                    <button *ngIf="validate" type="button" (click)="hideShow('Required')" class="btn btn-primary download">Download Template</button>
+                <div class="col-md 6">
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <div class="input-group file-upload">
+                                <a *ngIf="!validate" (click)="download()" class="btn btn-primary download" download>Download Template</a>
+                                <button *ngIf="validate" type="button" (click)="hideShow('Required')" class="btn btn-primary download">Download Template</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="card-body" *ngIf="isCheck">
-                <strong>  Terms & Conditions</strong>
+        </div>
+    </div>
+    <div class="card" *ngIf="isCheck">
+        <div class="card-header">
+            <strong>Terms & Conditions</strong>
+        </div>
+        <div class="card-body">
+            <div class="body">
                 <p [innerHTML]="message"></p>
                 <input type="checkbox" name="agree" #agree="ngModel" [(ngModel)]="vm.agree" (change)="changeAgree()"> I agree
                 <span [hidden]="checkAgree" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="agree" data-valmsg-for="agree" id="agree_validationMessage" role="alert">
-                    <i class="fa fa-exclamation-triangle"></i>&nbsp; Required
-                </span>
+                            <i class="fa fa-exclamation-triangle"></i>&nbsp; Required
+                        </span>
             </div>
-            <div class="card-body col-md-6">
-                <div class="row">
-                    <div class="col-md-6"></div>
-                    <div class="col-md-4">
-                        <button class="btn btn-primary btn-block" type="submit">Proceed</button>
-                    </div>
-                    <div class="col-md-2 cancel">
-                        <button class="btn btn-gray btn-block" type="button" routerLink="../schedule">Cancel</button>
-                    </div>
-                </div>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 1%">
+        <div class="col-md-6 row">
+            <div class="col-md-6"></div>
+            <div class="col-md-4">
+                <button class="btn btn-primary btn-block" type="submit">Proceed</button>
             </div>
+            <div class="col-md-2 cancel">
+                <button class="btn btn-gray btn-block" type="button" routerLink="../schedule">Cancel</button>
+            </div>
+        </div>
+        <div class="col-md-6">
         </div>
     </div>
 </form>

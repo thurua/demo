@@ -53,6 +53,8 @@ export class LoginComponent implements OnInit {
         this.forgotPassModal.show();
         this.vm.email = "";
         this.isShow = false;
+        this.isFEmail = false;
+        this.isFormatEmail = false;
     }
 
     public onSubmit(values: Object): void {
@@ -89,7 +91,20 @@ export class LoginComponent implements OnInit {
     }
 
     public sendEmailVerificationLink() {
-        this.showMsg = false;
+        var EMAIL_REGEXP = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+        if (this.vm.email == "") {
+            this.isFEmail = true;
+            this.isFormatEmail = false;
+            this.isExistingFEmail = false;
+            return;
+        }
+        if (!EMAIL_REGEXP.test(this.vm.email)) {
+            this.isFormatEmail = true;
+            this.isFEmail = false;
+            this.isExistingFEmail = false;
+            return;
+        }
 
         let obj = { keyword: this.vm.email };
         this.pro.updateToken(obj).subscribe((rsp: any) => {
@@ -97,8 +112,10 @@ export class LoginComponent implements OnInit {
                 this.notify.show();
                 this.forgotPassModal.hide();
             } else {
-                this.showMsg = true;
-                this.message = rsp.message;
+                this.isExistingFEmail = true;
+                this.isFormatEmail = false;
+                this.isFEmail = false;
+                this.messageForgot = rsp.message;
             }
         });
     }
@@ -113,5 +130,12 @@ export class LoginComponent implements OnInit {
                 this.rsa.enabled = false;
             }
         }, (err) => { console.log(err); });
+    }
+
+    public cancelClick() {
+        this.forgotPassModal.hide();
+        this.isShow=true;
+        this.showMsg=false;
+        this.vm.email = "";
     }
 }

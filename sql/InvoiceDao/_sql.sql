@@ -8,7 +8,7 @@ FROM salesforce.invoice__c a
 JOIN salesforce.client_account__c b 
 	ON a.client_account__c = b.sfid 
 JOIN salesforce.schedule_of_offer__c c 
-	ON (a.schedule_of_offer__c = c.sfid OR a.external_id__c = c.id) 
+	ON (a.schedule_of_offer__c = c.sfid OR a.parent_uuid__c = c.uuid__c) 
 JOIN salesforce.account d 
 	ON a.client_name__c = d.sfid 
 LEFT JOIN salesforce.account e 

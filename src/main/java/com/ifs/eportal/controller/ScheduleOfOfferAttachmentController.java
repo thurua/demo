@@ -77,7 +77,7 @@ public class ScheduleOfOfferAttachmentController {
 			// Get data
 			PayloadDto pl = Utils.getTokenInfor(header);
 			String sfId = pl.getSfId();
-			String scheduleOfOffer = o.getScheduleOfOffer();
+			String parentUuId = o.getParentUuId();
 
 			for (int i = 0; i < files.length; i++) {
 				String originalName = files[i].getOriginalFilename() + "";
@@ -89,7 +89,7 @@ public class ScheduleOfOfferAttachmentController {
 				String extension = originalName.substring(t);
 
 				String url = System.getenv("BUCKETEER_BUCKET_URL");
-				String path = scheduleOfOffer + "/Attachment";
+				String path = parentUuId + "/Attachment";
 				String name = UUID.randomUUID().toString() + "." + extension;
 				url += "/" + path + "/" + name;
 
@@ -107,18 +107,19 @@ public class ScheduleOfOfferAttachmentController {
 				m.setContentType(type);
 				m.setFilePath(url);
 				m.setFileSize(size);
-				m.setScheduleOfOffer(scheduleOfOffer);
+				m.setParentUuId(parentUuId);
 
 				scheduleOfOfferAttachmentService.create(m);
 			}
 
 			// Load file from DB
-			List<SortDto> sort = new ArrayList<SortDto>();
-			sort.add(new SortDto("uploadedOn", "DESC"));
-			PagingReq pr;
-			pr = new PagingReq(new AttachmentFilter(scheduleOfOffer), sort, false);
-			return search(pr);
-
+			if (files.length > 0) {
+				List<SortDto> sort = new ArrayList<SortDto>();
+				sort.add(new SortDto("uploadedOn", "DESC"));
+				PagingReq pr;
+				pr = new PagingReq(new AttachmentFilter(parentUuId), sort, false);
+				return search(pr);
+			}
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}

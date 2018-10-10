@@ -56,7 +56,13 @@ export class AddScheduleComponent implements OnInit {
                 status: "Activated"
             },
             page: 1,
-            size: 20
+            size: 20,
+            sort: [
+                {
+                    direction: "ASC",
+                    field: "clientAccount"
+                }
+            ]
         }
 
         this.proSchedule.searchCA(x).subscribe((rsp: any) => {

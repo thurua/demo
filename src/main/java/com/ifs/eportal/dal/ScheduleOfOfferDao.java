@@ -130,7 +130,7 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 		ScheduleOfOfferDto res = new ScheduleOfOfferDto();
 
 		try {
-			String sql = _sql + " WHERE a.sfid = :sfId";
+			String sql = _sql + " WHERE a.sfid = :sfId OR a.uuid__c = :sfId";
 
 			// Execute
 			Query q = _em.createNativeQuery(sql);
@@ -258,7 +258,7 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 
 		try {
 			String sql = ZFile.read(_path + "detail.sql");
-			sql += " WHERE a.sfid = :sfId";
+			sql += " WHERE a.sfid = :sfId OR a.uuid__c = :sfId";
 
 			// Execute
 			Query q = _em.createNativeQuery(sql);
@@ -267,7 +267,7 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 
 			// Credit note
 			sql = ZFile.read(_path + "detail_credit_note.sql");
-			sql += " WHERE a.schedule_of_offer__c = :sfId";
+			sql += " WHERE a.schedule_of_offer__c = :sfId OR a.parent_uuid__c = :sfId";
 
 			// Execute
 			q = _em.createNativeQuery(sql);
@@ -276,7 +276,7 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 
 			// Invoice
 			sql = ZFile.read(_path + "detail_invoice.sql");
-			sql += " WHERE a.schedule_of_offer__c = :sfId";
+			sql += " WHERE a.schedule_of_offer__c = :sfId OR a.parent_uuid__c = :sfId";
 
 			// Execute
 			q = _em.createNativeQuery(sql);
@@ -285,7 +285,7 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 
 			// Attachment
 			sql = ZFile.read(_path + "detail_attachment.sql");
-			sql += " WHERE a.schedule_of_offer__c = :sfId AND a.isdeleted = FALSE AND a.isactive__c = TRUE";
+			sql += " WHERE (a.schedule_of_offer__c = :sfId  OR a.parent_uuid__c = :sfId) AND a.isdeleted = FALSE AND a.isactive__c = TRUE";
 
 			// Execute
 			q = _em.createNativeQuery(sql);
@@ -316,7 +316,7 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 		Date res = null;
 
 		try {
-			String sql = ZFile.read(_path + "acceptanceDate.sql");
+			String sql = ZFile.read(_path + "getAcceptanceDate.sql");
 
 			// Execute
 			Query q = _em.createNativeQuery(sql);
@@ -434,6 +434,7 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 			String portalStatus = filter.getPortalStatus();
 			Date fr = filter.getFrCreatedDate();
 			Date to = filter.getToCreatedDate();
+			String documentType = filter.getDocumentType();
 			Utils.toString(filter, true);
 
 			// Where
@@ -460,6 +461,9 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 				where += " AND :fr <= a.createddate";
 			} else if (fr == null && to != null) {
 				where += " AND a.createddate <= :to";
+			}
+			if (!documentType.isEmpty()) {
+				where += " AND a.document_type__c = :documentType";
 			}
 
 			// Replace first
@@ -499,6 +503,10 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 				} else if (fr == null && to != null) {
 					to = ZDate.getEndOfDay(to);
 					res.setParameter("to", to);
+				}
+				i = where.indexOf(":documentType");
+				if (i > 0) {
+					res.setParameter("documentType", documentType);
 				}
 			}
 		} catch (Exception ex) {

@@ -131,11 +131,11 @@ public class ClientAccountCustomerDao implements Repository<ClientAccountCustome
 					orderBy += " a.id " + direction;
 				}
 
-				if ("clientAccount".equals(field)) {
+				if ("name".equals(field)) {
 					if (!orderBy.isEmpty()) {
 						orderBy += ",";
 					}
-					orderBy += " a.client_account__c " + direction;
+					orderBy += " c.name " + direction;
 				}
 			}
 

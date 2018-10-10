@@ -692,11 +692,6 @@ public class FileController {
 				iv.setContract(i.getContract());
 				iv.setSupplierFromExcel(i.getName());
 
-				if (i.getPaymentDate() == null) {
-					err = "Invalid Payment Date.";
-					res = Utils.addError(res, err);
-				}
-
 				liv.add(iv);
 			}
 			// Factoring Invoice
@@ -1035,6 +1030,9 @@ public class FileController {
 			m.setKeyInByDate(o.getKeyInByDate());
 			m.setCreatedDate(new Date());
 
+			String uuId = UUID.randomUUID().toString();
+			m.setUuId(uuId);
+
 			if (sequence > 0) {
 				String temp = o.getScheduleNo() + "-" + sequence.intValue();
 				m.setName(temp);
@@ -1089,6 +1087,15 @@ public class FileController {
 			List<AccountDto> lac = accountService.getByNames(o.getLineItems());
 			List<Invoice> l = new ArrayList<Invoice>();
 
+			HashMap<String, String> lTemp = new HashMap<>();
+			for (String key : t.getErrors().keySet()) {
+				String val = t.getErrors().get(key);
+				String[] arr = val.split(", ");
+				for (String i : arr) {
+					lTemp.put(i, "");
+				}
+			}
+
 			for (LineItemDto i : o.getLineItems()) {
 				if (i.getName() != null && !i.getName().isEmpty()) {
 					Invoice m = new Invoice();
@@ -1102,6 +1109,14 @@ public class FileController {
 					m.setInvoiceAmount(0f);
 					m.setStatus("Pending");
 
+					if (lTemp.get(i.getNo()) != null) {
+						if ("CASH DISBURSEMENT".equals(o.getType())) {
+							m.setStatus("Rejected");
+						} else {
+							m.setStatus("Unfunded");
+						}
+					}
+
 					m.setCustomer(Utils.getAccIdByName(lac, i.getName()));
 					m.setSupplier(Utils.getAccIdByName(lac, i.getName()));
 					m.setCustomerFromExcel(i.getName());
@@ -1113,7 +1128,11 @@ public class FileController {
 					m.setPo(i.getPo());
 					m.setContract(i.getContract());
 					m.setCreatedDate(new Date());
-					m.setExternalId(so.getId().floatValue());
+
+					String uuId = UUID.randomUUID().toString();
+					m.setUuId(uuId);
+					m.setParentUuId(so.getUuId());
+
 					invoiceService.create(m);
 					l.add(m);
 				}
@@ -1146,8 +1165,10 @@ public class FileController {
 						r.setRecordTypeId(rt.getSfId());
 						r.setReason(key);
 						r.setInvoice(tid);
+						r.setReason("INVOICE");
 						// r.setExternalId();
 						r.setCreatedDate(new Date());
+
 						reasonService.create(r);
 					} catch (Exception ex) {
 						// res.result = "Missing code reason " + key;
@@ -1176,10 +1197,19 @@ public class FileController {
 	private boolean createCreditNote(ExcelDto o, ScheduleOfOffer so, ValidDto t) {
 		boolean res = false;
 
-		List<ClientAccountCustomerDto> lcc = clientAccountCustomerService.getByClientId(so.getClientAccount());
-		List<CreditNote> l = new ArrayList<CreditNote>();
-
 		try {
+			List<ClientAccountCustomerDto> lcc = clientAccountCustomerService.getByClientId(so.getClientAccount());
+			List<CreditNote> l = new ArrayList<CreditNote>();
+
+			HashMap<String, String> lTemp = new HashMap<>();
+			for (String key : t.getErrors().keySet()) {
+				String val = t.getErrors().get(key);
+				String[] arr = val.split(", ");
+				for (String i : arr) {
+					lTemp.put(i, "");
+				}
+			}
+
 			for (LineItemDto i : o.getLineItems()) {
 				if (i.getName() != null && !i.getName().isEmpty()) {
 					CreditNote m = new CreditNote();
@@ -1193,6 +1223,10 @@ public class FileController {
 					m.setCreditAmount(0f);
 					m.setStatus("Accepted");
 
+					if (lTemp.get(i.getNo()) != null) {
+						m.setApplyCreditNote(false);
+					}
+
 					m.setCustomer(Utils.getAccCusIdByName(lcc, i.getName()));
 					m.setCustomerFromExcel(i.getName());
 					m.setCustomerBranch(i.getBranch());
@@ -1201,7 +1235,11 @@ public class FileController {
 					m.setCreditAmount(i.getAmount().floatValue());
 					m.setAppliedInvoice(m.getAppliedInvoice());
 					m.setCreatedDate(new Date());
-					m.setExternalId(so.getId().floatValue());
+
+					String uuId = UUID.randomUUID().toString();
+					m.setUuId(uuId);
+					m.setParentUuId(so.getUuId());
+
 					creditNoteService.create(m);
 					l.add(m);
 				}
@@ -1230,6 +1268,7 @@ public class FileController {
 						r.setReason(key);
 						r.setCreditNote(tid);
 						// r.setExternalId();
+						r.setReason("CREDITNOTE");
 						r.setCreatedDate(new Date());
 
 						reasonService.create(r);

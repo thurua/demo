@@ -148,8 +148,8 @@ public class InvoiceDao implements Repository<Invoice, Integer> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<InvoiceDto> getBy(List<String> names, String clientAccountId) {
-		_sql = ZFile.read(_path + "_sql.sql");
-		String sql = _sql + " WHERE a.name in :names " + "AND a.client_account__c = :clientAccountId";
+		String sql = _sql;
+		sql += " WHERE a.name IN :names AND a.client_account__c = :clientAccountId";
 
 		// Execute
 		Query q = _em.createNativeQuery(sql);
@@ -423,7 +423,8 @@ public class InvoiceDao implements Repository<Invoice, Integer> {
 			}
 
 			// Execute to count all
-			String sql = ZFile.read(_path + "count.sql");
+			int i = _sql.indexOf("FROM");
+			String sql = "SELECT COUNT(*) " + _sql.substring(i);
 			String limit = "";
 			Query q = createQuery(sql, filter, limit);
 			BigInteger total = (BigInteger) q.getSingleResult();

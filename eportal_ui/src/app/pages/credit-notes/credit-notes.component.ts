@@ -95,7 +95,7 @@ export class CreditNotesComponent implements OnInit {
             createdDate: {
                 title: 'Created Date / Time',
                 type: 'date',
-                valuePrepareFunction: (value) => { return this.utl.formatDate(value, 'dd-MMM-yyyy') },
+                valuePrepareFunction: (value) => { return this.utl.formatDate(value, 'dd-MMM-yyyy  HH:mm:ss') },
                 filter: false
             }
         }
@@ -125,11 +125,11 @@ export class CreditNotesComponent implements OnInit {
                 code: "Accepted",
                 value: "Accepted"
             }, {
-                code: "Rejected",
-                value: "Rejected"
-            }, {
                 code: "Reassigned",
                 value: "Reassigned"
+            }, {
+                code: "Rejected",
+                value: "Rejected"
             }, {
                 code: "Reversed",
                 value: "Reversed"
@@ -223,8 +223,8 @@ export class CreditNotesComponent implements OnInit {
             size: 20,
             sort: [
                 {
-                    direction: "DESC",
-                    field: "client"
+                    direction: "ASC",
+                    field: "clientAccount"
                 }
             ]
         }
@@ -252,7 +252,13 @@ export class CreditNotesComponent implements OnInit {
                 clientAccount: event.target.value
             },
             page: 1,
-            size: 20
+            size: 20,
+            sort: [
+                {
+                    direction: "ASC",
+                    field: "name"
+                }
+            ]
         }
         this.pro.searchCustomer(x).subscribe((rsp: any) => {
             let itemCM = {

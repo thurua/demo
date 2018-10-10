@@ -294,20 +294,16 @@ export class ScheduleDetailsComponent implements OnInit {
                 this.strFileName = this.strFileName + element.name + "; ";
             });
         }
-
     }
 
     startUpload(): void {
-        let res = localStorage.getItem('CURRENT_TOKEN');
-        let json = JSON.parse(res);
-
         let xx: File[] = [];
         this.files.forEach(i => {
             xx.push(i.nativeFile);
         });
         let o =
         {
-            "scheduleOfOffer": this.sfId
+            "parentUuId": this.sfId
         };
         let s = JSON.stringify(o);
         this.filepro.uploadmulti(xx, s).subscribe((rsp: any) => {
@@ -356,11 +352,11 @@ export class ScheduleDetailsComponent implements OnInit {
         this.pro.getById(sfId).subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 this.entity = rsp.result;
-                if (this.entity.documentType == "Credit Note") {
+                if (this.entity.isCreditNote) {
                     this.checkCd = true;
 
-                    if (this.entity.lstCreditNote != null) {
-                        let tmpCNList = this.entity.lstCreditNote;
+                    if (this.entity.creditNotes != null) {
+                        let tmpCNList = this.entity.creditNotes;
                         let i = 0;
                         tmpCNList.forEach(element => {
                             i++;
@@ -375,8 +371,8 @@ export class ScheduleDetailsComponent implements OnInit {
                 }
                 else {
                     this.checkIv = true;
-                    if (this.entity.lstInvoice != null) {
-                        let tmpIVList = this.entity.lstInvoice;
+                    if (this.entity.invoices != null) {
+                        let tmpIVList = this.entity.invoices;
                         let i = 0;
                         let isRejected = false;
 
@@ -422,8 +418,8 @@ export class ScheduleDetailsComponent implements OnInit {
                         }
                     }
                 }
-                if (this.entity.lstAttachment != null) {
-                    let tmpattList = this.entity.lstAttachment
+                if (this.entity.attachments != null) {
+                    let tmpattList = this.entity.attachments
                     let i = 0;
                     tmpattList.forEach(element => {
                         i++;

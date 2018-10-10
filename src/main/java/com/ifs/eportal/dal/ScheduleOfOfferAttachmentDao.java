@@ -232,12 +232,12 @@ public class ScheduleOfOfferAttachmentDao implements Repository<ScheduleOfOfferA
 	 */
 	private Query createQuery(String sql, Object o, String limit) {
 		AttachmentFilter filter = AttachmentFilter.convert(o);
-		String scheduleOfOffer = filter.getScheduleOfOffer();
+		String parentUuId = filter.getParentUuId();
 
 		// Where
 		String where = "";
-		if (!scheduleOfOffer.isEmpty()) {
-			where += " AND a.schedule_of_offer__c = :scheduleOfOffer AND a.isdeleted = FALSE AND a.isactive__c = TRUE";
+		if (!parentUuId.isEmpty()) {
+			where += " AND a.parent_uuid__c = :parentUuId AND a.isdeleted = FALSE AND a.isactive__c = TRUE";
 		}
 		// Replace first
 		if (!where.isEmpty()) {
@@ -248,10 +248,10 @@ public class ScheduleOfOfferAttachmentDao implements Repository<ScheduleOfOfferA
 
 		// Set parameter
 		if (!where.isEmpty()) {
-			int i = where.indexOf(":scheduleOfOffer");
-			i = where.indexOf(":scheduleOfOffer");
+			int i = where.indexOf(":parentUuId");
+			i = where.indexOf(":parentUuId");
 			if (i > 0) {
-				q.setParameter("scheduleOfOffer", scheduleOfOffer);
+				q.setParameter("parentUuId", parentUuId);
 			}
 		}
 

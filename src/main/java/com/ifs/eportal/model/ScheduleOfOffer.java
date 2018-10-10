@@ -112,6 +112,9 @@ public class ScheduleOfOffer extends BaseModel {
 	@Column(columnDefinition = "varchar(255)", name = "invoice_data_path__c")
 	private String invoiceDataPath;
 
+	@Column(columnDefinition = "varchar(100)", name = "uuid__c")
+	private String uuId;
+
 	// end
 
 	// region -- Get set --
@@ -330,6 +333,14 @@ public class ScheduleOfOffer extends BaseModel {
 
 	public void setInvoiceDataPath(String invoiceDataPath) {
 		this.invoiceDataPath = invoiceDataPath;
+	}
+
+	public String getUuId() {
+		return uuId;
+	}
+
+	public void setUuId(String uuId) {
+		this.uuId = uuId;
 	}
 
 	// end

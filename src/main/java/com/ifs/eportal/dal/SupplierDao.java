@@ -131,11 +131,11 @@ public class SupplierDao implements Repository<Supplier, Integer> {
 					orderBy += " a.id " + direction;
 				}
 
-				if ("client".equals(field)) {
+				if ("name".equals(field)) {
 					if (!orderBy.isEmpty()) {
 						orderBy += ",";
 					}
-					orderBy += " a.client1__c " + direction;
+					orderBy += " b.name " + direction;
 				}
 			}
 

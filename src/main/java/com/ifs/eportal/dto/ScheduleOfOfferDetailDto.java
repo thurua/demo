@@ -50,17 +50,23 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 	@JsonProperty(value = "portalStatus")
 	private String portalStatus;
 
-	@JsonProperty(value = "totalCN")
-	private Double totalCN;
+	@JsonProperty(value = "totalCn")
+	private Double totalCn;
 
-	@JsonProperty(value = "totalAmountCN")
-	private Double totalAmountCN;
+	@JsonProperty(value = "totalAmountCn")
+	private Double totalAmountCn;
 
-	List<SOCreditNoteDto> lstCreditNote;
+	@JsonProperty(value = "isCreditNote")
+	private boolean isCreditNote;
 
-	List<SOInvoiceDto> lstInvoice;
+	@JsonProperty(value = "creditNotes")
+	private List<SOCreditNoteDto> creditNotes;
 
-	List<AttachmentDto> lstAttachment;
+	@JsonProperty(value = "invoices")
+	private List<SOInvoiceDto> invoices;
+
+	@JsonProperty(value = "attachments")
+	private List<AttachmentDto> attachments;
 
 	// end
 
@@ -162,44 +168,52 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 		this.portalStatus = portalStatus;
 	}
 
-	public Double getTotalCN() {
-		return totalCN;
+	public Double getTotalCn() {
+		return totalCn;
 	}
 
-	public void setTotalCN(Double totalCN) {
-		this.totalCN = totalCN;
+	public void setTotalCn(Double totalCn) {
+		this.totalCn = totalCn;
 	}
 
-	public Double getTotalAmountCN() {
-		return totalAmountCN;
+	public Double getTotalAmountCn() {
+		return totalAmountCn;
 	}
 
-	public void setTotalAmountCN(Double totalAmountCN) {
-		this.totalAmountCN = totalAmountCN;
+	public void setTotalAmountCn(Double totalAmountCn) {
+		this.totalAmountCn = totalAmountCn;
 	}
 
-	public List<SOCreditNoteDto> getLstCreditNote() {
-		return lstCreditNote;
+	public boolean isCreditNote() {
+		return isCreditNote;
 	}
 
-	public void setLstCreditNote(List<SOCreditNoteDto> lstCreditNote) {
-		this.lstCreditNote = lstCreditNote;
+	public void setCreditNote(boolean isCreditNote) {
+		this.isCreditNote = isCreditNote;
 	}
 
-	public List<SOInvoiceDto> getLstInvoice() {
-		return lstInvoice;
+	public List<SOCreditNoteDto> getCreditNotes() {
+		return creditNotes;
 	}
 
-	public void setLstInvoice(List<SOInvoiceDto> lstInvoice) {
-		this.lstInvoice = lstInvoice;
+	public void setCreditNotes(List<SOCreditNoteDto> creditNotes) {
+		this.creditNotes = creditNotes;
 	}
 
-	public List<AttachmentDto> getLstAttachment() {
-		return lstAttachment;
+	public List<SOInvoiceDto> getInvoices() {
+		return invoices;
 	}
 
-	public void setLstAttachment(List<AttachmentDto> lstAttachment) {
-		this.lstAttachment = lstAttachment;
+	public void setInvoices(List<SOInvoiceDto> invoices) {
+		this.invoices = invoices;
+	}
+
+	public List<AttachmentDto> getAttachments() {
+		return attachments;
+	}
+
+	public void setAttachments(List<AttachmentDto> attachments) {
+		this.attachments = attachments;
 	}
 
 	// end
@@ -219,12 +233,17 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 		recordType = "";
 		total = 0d;
 		totalAmount = 0d;
-		totalCN = 0d;
-		totalAmountCN = 0d;
 		clientName = "";
 		currencyIsoCode = "";
 		clientAccount = "";
+		documentType = "";
 		portalStatus = "";
+		totalCn = 0d;
+		totalAmountCn = 0d;
+		isCreditNote = false;
+		// creditNotes = new ArrayList<SOCreditNoteDto>();
+		// invoices = new ArrayList<SOInvoiceDto>();
+		// attachments = new ArrayList<AttachmentDto>();
 	}
 
 	/**
@@ -252,11 +271,12 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 		res.setClientAccount((String) o[11]);
 		res.setDocumentType((String) o[12]);
 		res.setPortalStatus((String) o[13]);
-		res.setTotalCN((Double) o[14]);
-		res.setTotalAmountCN((Double) o[15]);
-		res.setLstCreditNote(SOCreditNoteDto.convert(lc));
-		res.setLstInvoice(SOInvoiceDto.convert(li));
-		res.setLstAttachment(AttachmentDto.convert(la));
+		res.setTotalCn((Double) o[14]);
+		res.setTotalAmountCn((Double) o[15]);
+		res.setCreditNote((boolean) o[16]);
+		res.setCreditNotes(SOCreditNoteDto.convert(lc));
+		res.setInvoices(SOInvoiceDto.convert(li));
+		res.setAttachments(AttachmentDto.convert(la));
 
 		return res;
 	}

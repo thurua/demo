@@ -45,17 +45,17 @@ public class ScheduleOfOfferController {
 	/**
 	 * Read by
 	 * 
-	 * @param id
+	 * @param sfId
 	 * @return
 	 */
 	@PostMapping("/read")
-	public ResponseEntity<?> read(@RequestBody Integer id) {
+	public ResponseEntity<?> read(@RequestBody String sfId) {
 		SingleRsp res = new SingleRsp();
 
 		try {
 			// Handle
 			ScheduleOfOfferDetailDto t;
-			t = scheduleOfOfferService.getDetailBy(id);
+			t = scheduleOfOfferService.getDetailBy(sfId);
 
 			res.setResult(t);
 		} catch (Exception ex) {

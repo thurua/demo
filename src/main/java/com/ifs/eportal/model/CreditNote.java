@@ -105,6 +105,12 @@ public class CreditNote extends BaseModel {
 	@Column(columnDefinition = "varchar(255)", name = "reason_code__c")
 	private String reasonCode;
 
+	@Column(columnDefinition = "varchar(100)", name = "uuid__c")
+	private String uuId;
+
+	@Column(columnDefinition = "varchar(100)", name = "parent_uuid__c")
+	private String parentUuId;
+
 	// end
 
 	// region -- Get set --
@@ -315,6 +321,22 @@ public class CreditNote extends BaseModel {
 
 	public void setReasonCode(String reasonCode) {
 		this.reasonCode = reasonCode;
+	}
+
+	public String getUuId() {
+		return uuId;
+	}
+
+	public void setUuId(String uuId) {
+		this.uuId = uuId;
+	}
+
+	public String getParentUuId() {
+		return parentUuId;
+	}
+
+	public void setParentUuId(String parentUuId) {
+		this.parentUuId = parentUuId;
 	}
 
 	// end

@@ -30,6 +30,9 @@ public class ScheduleOfOfferFilter {
 	@JsonProperty(value = "toCreatedDate")
 	private Date toCreatedDate;
 
+	@JsonProperty(value = "documentType")
+	private String documentType;
+
 	// end
 
 	// region -- Get set --
@@ -74,6 +77,14 @@ public class ScheduleOfOfferFilter {
 		this.toCreatedDate = toCreatedDate;
 	}
 
+	public String getDocumentType() {
+		return documentType;
+	}
+
+	public void setDocumentType(String documentType) {
+		this.documentType = documentType;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -87,6 +98,7 @@ public class ScheduleOfOfferFilter {
 		portalStatus = "";
 		frCreatedDate = null;
 		toCreatedDate = null;
+		documentType = "";
 	}
 
 	/**

@@ -16,6 +16,8 @@ export class ScheduleComponent implements OnInit {
     public clientName: string = "";
     public lstCA: any[] = [];
     public lstStatus: any[] = [];
+    public lstDocumentType: any[] = [];
+    public documentType = "";
     public clientAccountId = "";
     public total: number = 0;
     public pageSize = 5;
@@ -48,7 +50,7 @@ export class ScheduleComponent implements OnInit {
                 filter: false,
                 type: 'html',
                 valuePrepareFunction: (cell, row) => {
-                    return `<a href="/#/pages/schedule-details/${row.sfId}">${row.scheduleNo}</a>`
+                    return `<a href="/#/pages/schedule-details/${row.uuId}">${row.scheduleNo}</a>`
                 },
             },
             clientAccount: {
@@ -80,7 +82,7 @@ export class ScheduleComponent implements OnInit {
             createdDate: {
                 title: 'Created Date/Time',
                 type: 'date',
-                valuePrepareFunction: (value) => { return this.utl.formatDate(value, 'dd-MMM-yyyy') },
+                valuePrepareFunction: (value) => { return this.utl.formatDate(value, 'dd-MMM-yyyy HH:mm:ss') },
                 filter: false
             }
         }
@@ -104,18 +106,35 @@ export class ScheduleComponent implements OnInit {
                 code: "",
                 value: "-- Please Select --"
             }, {
-                code: "Pending Authorisation",
-                value: "Pending Authorisation"
+                code: "Accepted",
+                value: "Accepted"
             }, {
                 code: "Authorised",
                 value: "Authorised"
             }, {
-                code: "Accepted",
-                value: "Accepted"
+                code: "Pending Authorisation",
+                value: "Pending Authorisation"
+            }]
+        }
+
+        let tmpDocumentType = {
+            data: [{
+                code: "",
+                value: "-- Please Select --"
+            }, {
+                code: "Cash Disbursement",
+                value: "Cash Disbursement"
+            }, {
+                code: "Credit Note",
+                value: "Credit Note"
+            }, {
+                code: "Invoice",
+                value: "Invoice"
             }]
         }
 
         this.lstStatus = tmpStatus.data;
+        this.lstDocumentType = tmpDocumentType.data;
     }
 
     public searchClick(page: any) {
@@ -156,7 +175,8 @@ export class ScheduleComponent implements OnInit {
                 clientAccount: this.clientAccountId,
                 portalStatus: this.portalStatus,
                 frCreatedDate: fr,
-                toCreatedDate: to
+                toCreatedDate: to,
+                documentType: this.documentType
             },
 
             page: page,
@@ -186,7 +206,13 @@ export class ScheduleComponent implements OnInit {
                 status: "Activated"
             },
             page: 1,
-            size: 20
+            size: 20,
+            sort: [
+                {
+                    direction: "ASC",
+                    field: "clientAccount"
+                }
+            ]
         }
 
         this.pro.searchCA(x).subscribe((rsp: any) => {
