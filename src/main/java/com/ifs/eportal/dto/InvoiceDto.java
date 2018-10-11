@@ -80,6 +80,9 @@ public class InvoiceDto extends BaseDto {
 	@JsonProperty(value = "createdDate")
 	private Date createdDate;
 
+	@JsonProperty(value = "uuId")
+	private String uuId;
+
 	// end
 
 	// region -- Get set --
@@ -260,6 +263,14 @@ public class InvoiceDto extends BaseDto {
 		this.createdDate = createdDate;
 	}
 
+	public String getUuId() {
+		return uuId;
+	}
+
+	public void setUuId(String uuId) {
+		this.uuId = uuId;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -292,6 +303,7 @@ public class InvoiceDto extends BaseDto {
 		supplier = "";
 		createdBy = "";
 		createdDate = null;
+		uuId = "";
 	}
 
 	/**
@@ -325,6 +337,7 @@ public class InvoiceDto extends BaseDto {
 		res.setSupplier((String) o[19]);
 		res.setCreatedDate((Date) o[20]);
 		res.setCreatedBy((String) o[21]);
+		res.setUuId((String) o[22]);
 
 		return res;
 	}

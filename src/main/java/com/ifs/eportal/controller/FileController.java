@@ -648,7 +648,7 @@ public class FileController {
 
 				iv.setInvoiceAmount(i.getAmount().floatValue());
 
-				if (iv.getInvoiceAmount() <= avgInvoiceAmount.getValue()) {
+				if (avgInvoiceAmount.getValue() != null && (iv.getInvoiceAmount() <= avgInvoiceAmount.getValue())) {
 					// Customer - Invoice Amount more than Client Average Invoice Size.
 					err = "CCD";
 					errors = ZError.addError(errors, err, iv.getName());
@@ -945,7 +945,8 @@ public class FileController {
 			cn.setCreditAmount(i.getAmount().floatValue());
 
 			/* ToanNguyen 2018-Sep-04 IFS-1055 */
-			if (cn.getCreditAmount() > avgInvoiceAmount.getValue()) {
+			/* ToanNguyen 2018-Oct-11 */
+			if (avgInvoiceAmount.getValue() != null && (cn.getCreditAmount() > avgInvoiceAmount.getValue())) {
 				// Credit Note - Amount more than Client Average Invoice Size.
 				err = "CN7";
 				errors = ZError.addError(errors, err, cn.getName());
@@ -1098,7 +1099,7 @@ public class FileController {
 				String val = t.getErrors().get(key);
 				String[] arr = val.split(", ");
 				for (String i : arr) {
-					lTemp.put(i, "");
+					lTemp.put(i, key);
 				}
 			}
 
@@ -1115,7 +1116,10 @@ public class FileController {
 					m.setInvoiceAmount(0f);
 					m.setStatus("Pending");
 
-					if (lTemp.get(i.getNo()) != null) {
+					String errCode = lTemp.get(i.getNo());
+					if (errCode != null) {
+						String lastErr = ZError.getError(errCode);
+						m.setReasonCode(lastErr);
 						if ("CASH DISBURSEMENT".equals(o.getType())) {
 							m.setStatus("Rejected");
 						} else {
@@ -1123,9 +1127,13 @@ public class FileController {
 						}
 					}
 
-					m.setCustomer(Utils.getAccIdByName(lac, i.getName()));
-					m.setSupplier(Utils.getAccIdByName(lac, i.getName()));
-					m.setCustomerFromExcel(i.getName());
+					if (isInvoice) {
+						m.setCustomer(Utils.getAccIdByName(lac, i.getName()));
+						m.setCustomerFromExcel(i.getName());
+					} else {
+						m.setSupplier(Utils.getAccIdByName(lac, i.getName()));
+						m.setSupplierFromExcel(i.getName());
+					}
 					m.setCustomerBranch(i.getBranch());
 					m.setName(i.getNo());
 					m.setInvoiceDate(i.getItemDate());
@@ -1212,7 +1220,7 @@ public class FileController {
 				String val = t.getErrors().get(key);
 				String[] arr = val.split(", ");
 				for (String i : arr) {
-					lTemp.put(i, "");
+					lTemp.put(i, key);
 				}
 			}
 
@@ -1229,7 +1237,10 @@ public class FileController {
 					m.setCreditAmount(0f);
 					m.setStatus("Accepted");
 
-					if (lTemp.get(i.getNo()) != null) {
+					String errCode = lTemp.get(i.getNo());
+					if (errCode != null) {
+						String lastErr = ZError.getError(errCode);
+						m.setReasonCode(lastErr);
 						m.setApplyCreditNote(false);
 					}
 
@@ -1239,7 +1250,7 @@ public class FileController {
 					m.setName(i.getNo());
 					m.setCreditNoteDate(i.getItemDate());
 					m.setCreditAmount(i.getAmount().floatValue());
-					m.setAppliedInvoice(m.getAppliedInvoice());
+					m.setAppliedInvoice(i.getInvoiceApplied());
 					m.setCreatedDate(new Date());
 
 					String uuId = UUID.randomUUID().toString();

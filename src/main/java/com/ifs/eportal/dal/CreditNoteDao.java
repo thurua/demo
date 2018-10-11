@@ -129,7 +129,7 @@ public class CreditNoteDao implements Repository<CreditNote, Integer> {
 		CreditNoteDto res = new CreditNoteDto();
 
 		try {
-			String sql = _sql + " WHERE a.sfid = :sfId";
+			String sql = _sql + " WHERE a.sfid = :sfId OR a.uuid__c = :sfId";
 
 			// Execute
 			Query q = _em.createNativeQuery(sql);

@@ -54,6 +54,26 @@ public class ZError {
 
 		return res;
 	}
+	
+	/**
+	 * Get error message from error code
+	 * 
+	 * @param key
+	 * @return
+	 */
+	public static String getError(String key) {
+		String res = "";
+		
+		HashMap<String, String> m = scheduleOfferError();
+		res = m.get(key);
+		
+		if(res == null) {
+			m = invoiceCreditError();
+			res = m.get(key);
+		}
+		
+		return res;
+	}
 
 	/**
 	 * 

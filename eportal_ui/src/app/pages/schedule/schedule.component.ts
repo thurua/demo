@@ -71,8 +71,19 @@ export class ScheduleComponent implements OnInit {
             },
             portalStatus: {
                 title: 'Status',
-                type: 'string',
-                filter: false
+                type: 'html',
+                filter: false,
+                valuePrepareFunction: (value) => {
+                    let css='color-pend';
+                    if (value == 'Authorised') {
+                        css='color-auth';
+                    }
+                    if (value == 'Accepted') {
+                        css='color-acce';
+                    }
+
+                    return `<span class="${css}">${value}</span>`;
+                }
             },
             createdBy: {
                 title: 'Created By',
@@ -201,7 +212,7 @@ export class ScheduleComponent implements OnInit {
 
         setTimeout(function () {
             document.getElementById('preloader').style.display = 'none';
-        },500);
+        }, 500);
     }
 
     public searchCA() {
@@ -241,7 +252,7 @@ export class ScheduleComponent implements OnInit {
 
         setTimeout(function () {
             document.getElementById('preloader').style.display = 'none';
-        },500);
+        }, 500);
     }
 
     public setPage(page: number) {

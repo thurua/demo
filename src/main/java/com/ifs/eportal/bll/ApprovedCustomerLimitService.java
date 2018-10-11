@@ -50,8 +50,12 @@ public class ApprovedCustomerLimitService {
 				break;
 			}
 		}
-
-		return approvedCustomerLimitDao.getBy(customersId, clientId);
+		
+		if (customersId.size() != 0) {
+			return approvedCustomerLimitDao.getBy(customersId, clientId);
+		} else {
+			return new ArrayList<ApprovedCustomerLimitDto>();
+		}
 	}
 
 	// end

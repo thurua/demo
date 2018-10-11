@@ -70,6 +70,10 @@ public class CreditNoteDto extends BaseDto {
 
 	@JsonProperty(value = "createdBy")
 	private String createdBy;
+
+	@JsonProperty(value = "uuId")
+	private String uuId;
+
 	// end
 
 	// region -- Get set --
@@ -226,6 +230,14 @@ public class CreditNoteDto extends BaseDto {
 		this.createdBy = createdBy;
 	}
 
+	public String getUuId() {
+		return uuId;
+	}
+
+	public void setUuId(String uuId) {
+		this.uuId = uuId;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -255,6 +267,7 @@ public class CreditNoteDto extends BaseDto {
 		clientAccountNo = "";
 		createdDate = null;
 		createdBy = "";
+		uuId = "";
 
 	}
 
@@ -289,6 +302,7 @@ public class CreditNoteDto extends BaseDto {
 		res.setClientAccountNo((String) o[18]);
 		res.setCreatedDate((Date) o[19]);
 		res.setCreatedBy((String) o[20]);
+		res.setUuId((String) o[21]);
 
 		return res;
 	}

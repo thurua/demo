@@ -70,7 +70,7 @@ export class ScheduleDetailsComponent implements OnInit {
                     return `<a href="/#/pages/credit-notes-details/${row.sfId}">${row.no}</a>`
                 },
             },
-            customer: {
+            customerBranch: {
                 title: 'Customer / Branch',
                 type: 'string',
                 filter: false

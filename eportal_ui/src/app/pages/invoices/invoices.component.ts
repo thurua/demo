@@ -59,7 +59,7 @@ export class InvoicesComponent implements OnInit {
                 type: 'html',
                 valuePrepareFunction: (cell, row) => {
 
-                    return `<a href="/#/pages/invoices-details/${row.sfId}">${row.name}</a>`
+                    return `<a href="/#/pages/invoices-details/${row.uuId}">${row.name}</a>`
                 },
             },
             scheduleOfOffer: {

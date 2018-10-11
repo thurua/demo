@@ -120,7 +120,7 @@ public class InvoiceDao implements Repository<Invoice, Integer> {
 		InvoiceDto res = new InvoiceDto();
 
 		try {
-			String sql = _sql + " WHERE a.sfid = :sfId";
+			String sql = _sql + " WHERE a.sfid = :sfId OR a.uuid__c = :sfId";
 
 			// Execute
 			Query q = _em.createNativeQuery(sql);

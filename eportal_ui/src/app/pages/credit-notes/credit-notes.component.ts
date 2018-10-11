@@ -54,7 +54,7 @@ export class CreditNotesComponent implements OnInit {
                 filter: false,
                 type: 'html',
                 valuePrepareFunction: (cell, row) => {
-                    return `<a href="/#/pages/credit-notes-details/${row.sfId}">${row.name}</a>`
+                    return `<a href="/#/pages/credit-notes-details/${row.uuId}">${row.name}</a>`
                 },
             },
             scheduleNo: {
