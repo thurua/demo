@@ -156,7 +156,7 @@ public class ZValid {
 					} else {
 						if (isInvoiceFactoring) {
 							Boolean t3 = i.getVerificationExceedingInvoiceAmount() == null;
-							if (amount > i.getVerificationExceedingInvoiceAmount() || t3) {
+							if (t3 || amount > i.getVerificationExceedingInvoiceAmount()) {
 								/* NhatNguyen 2018-Sep-03 IFS-1042 */
 								// Customer - Per Verification Amount.
 								res = "CCB";
@@ -169,7 +169,7 @@ public class ZValid {
 								res += ",CC9";
 							}
 
-							if (i.getVerification() == 100) {
+							if (i.getVerification() != null && i.getVerification() == 100) {
 								/* TriNguyen 2018-Aug-31 IFS-1041 */
 								// Customer - 100% Verification Required.
 								res += ",CCA";

@@ -18,7 +18,7 @@ public class ValidDto {
 
 	public String message;
 
-	public String lastModifiedByPortalUserId;
+	public String portalUserId;
 
 	public String invoiceDataPath;
 

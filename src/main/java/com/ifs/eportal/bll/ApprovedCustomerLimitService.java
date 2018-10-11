@@ -50,7 +50,7 @@ public class ApprovedCustomerLimitService {
 				break;
 			}
 		}
-		
+
 		if (customersId.size() != 0) {
 			return approvedCustomerLimitDao.getBy(customersId, clientId);
 		} else {

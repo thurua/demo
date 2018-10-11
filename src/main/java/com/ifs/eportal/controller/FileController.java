@@ -211,7 +211,7 @@ public class FileController {
 				}
 
 				PayloadDto pl = Utils.getTokenInfor(header);
-				dto.lastModifiedByPortalUserId = pl.getSfId();
+				dto.portalUserId = pl.getSfId();
 				List<String> ar = pl.getAccessRights();
 
 				// Check right to select portal status
@@ -1029,7 +1029,7 @@ public class FileController {
 			m.setClientName(req.getClientId());
 			m.setScheduleStatus("Draft");
 			m.setPortalStatus(portalStatus);
-			m.setCreatedByPortalUserId(dto.lastModifiedByPortalUserId);
+			m.setCreatedByPortalUserId(dto.portalUserId);
 			m.setInvoiceDataPath(dto.invoiceDataPath);
 			m.setScheduleDate(o.getDocumentDate());
 			m.setProcessDate(o.getProcessDate());
@@ -1115,6 +1115,7 @@ public class FileController {
 					m.setClientRemarks(i.getRemarks());
 					m.setInvoiceAmount(0f);
 					m.setStatus("Pending");
+					m.setCreatedByPortalUserId(so.getCreatedByPortalUserId());
 
 					String errCode = lTemp.get(i.getNo());
 					if (errCode != null) {
@@ -1236,6 +1237,7 @@ public class FileController {
 					m.setClientRemarks(i.getRemarks());
 					m.setCreditAmount(0f);
 					m.setStatus("Accepted");
+					// m.setCreatedByPortalUserId(so.getCreatedByPortalUserId());
 
 					String errCode = lTemp.get(i.getNo());
 					if (errCode != null) {

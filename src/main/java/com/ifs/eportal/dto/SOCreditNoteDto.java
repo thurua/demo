@@ -44,6 +44,9 @@ public class SOCreditNoteDto extends BaseDto {
 	@JsonProperty(value = "unappliedReason")
 	private String unappliedReason;
 
+	@JsonProperty(value = "currencyIsoCode")
+	private String currencyIsoCode;
+
 	// end
 
 	// region -- Get set --
@@ -128,6 +131,14 @@ public class SOCreditNoteDto extends BaseDto {
 		this.unappliedReason = unappliedReason;
 	}
 
+	public String getCurrencyIsoCode() {
+		return currencyIsoCode;
+	}
+
+	public void setCurrencyIsoCode(String currencyIsoCode) {
+		this.currencyIsoCode = currencyIsoCode;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -148,6 +159,7 @@ public class SOCreditNoteDto extends BaseDto {
 		status = "";
 		applyCN = null;
 		unappliedReason = "";
+		currencyIsoCode = "";
 	}
 
 	/**
@@ -172,6 +184,7 @@ public class SOCreditNoteDto extends BaseDto {
 		res.setStatus((String) o[9]);
 		res.setApplyCN((Boolean) o[10]);
 		res.setUnappliedReason((String) o[11]);
+		res.setCurrencyIsoCode((String) o[12]);
 
 		return res;
 	}

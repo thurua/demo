@@ -373,8 +373,15 @@ export class ScheduleDetailsComponent implements OnInit {
                             i++;
                             element.no = i;
                             element.status = "Accepted";
-                            element.applyCN = element.unappliedReason == null ? "checked" : "";
-                            element.amountInvNo = element.creditAmount.toLocaleString() + ' / ' + element.appliedInvoiceNo;
+                            //element.applyCN = element.unappliedReason == null || element.appliedInvoiceNo == null ? "checked" : "";
+                            element.applyCN = element.appliedInvoiceNo == null ? "" : "checked";
+                            let cnAmount = element.creditAmount == null ? '' : Intl.NumberFormat('en-US', { style: 'currency', currency: element.currencyIsoCode }).format(element.creditAmount);
+                            let appInvNo = element.appliedInvoiceNo == null ? '' : element.appliedInvoiceNo;
+                            element.amountInvNo = cnAmount + ' / ' + appInvNo;
+                            if (element.creditAmount == null || element.appliedInvoiceNo == null) {
+                                let re = / \/ /gi;
+                                element.amountInvNo = element.amountInvNo.replace(re, '');
+                            }
                             element.customerBranch = element.customer + ' / ' + element.customerBranch;
                         });
                         this.cnList = tmpCNList;
@@ -398,7 +405,7 @@ export class ScheduleDetailsComponent implements OnInit {
                             let po = element.po == null ? '' : element.po;
                             let contract = element.contract == null ? '' : element.contract;
                             element.po = po + ' / ' + contract;
-                            if (element.po != null || element.contract != null) {
+                            if (element.po == null || element.contract == null) {
                                 let re = / \/ /gi;
 
                                 element.po = element.po.replace(re, '');

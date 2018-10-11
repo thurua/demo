@@ -1,6 +1,5 @@
 package com.ifs.eportal.bll;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -8,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.dal.ScheduleOfOfferAttachmentDao;
 import com.ifs.eportal.dto.AttachmentDto;
 import com.ifs.eportal.model.ScheduleOfOfferAttachment;
@@ -38,7 +36,7 @@ public class ScheduleOfOfferAttachmentService {
 	 * @param m
 	 */
 	public void create(ScheduleOfOfferAttachment m) {
-		Date now = Utils.getTime(Calendar.HOUR, 24);
+		Date now = new Date();
 
 		m.setActive(true);
 		m.setDeleted(false);
