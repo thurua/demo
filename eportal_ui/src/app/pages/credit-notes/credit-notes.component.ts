@@ -15,7 +15,7 @@ export class CreditNotesComponent implements OnInit {
     public accountName: string = "";
     public clientId: string = "";
     public clientName: string = "";
-    public pageSize = 5;
+    public pageSize = 10;
     public curentPage = 1;
     public total: number = 0;
     public lstCustomer: any[] = [];

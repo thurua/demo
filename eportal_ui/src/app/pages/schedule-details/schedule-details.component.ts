@@ -8,6 +8,7 @@ import { Utils } from 'app/utilities/utils';
 import { ModalDirective } from 'ngx-bootstrap';
 import { UploadOutput, UploadInput, UploadFile, humanizeBytes, UploaderOptions } from 'ngx-uploader';
 import { DomSanitizer } from '@angular/platform-browser';
+import { saveAs } from "file-saver";
 
 const URL = 'http://localhost:8080/api/upload';
 
@@ -223,7 +224,7 @@ export class ScheduleDetailsComponent implements OnInit {
             add: false,
             edit: false,
             delete: true,
-            custom: [],
+            custom: [{ name: 'onDownloadAction', title: '<i class="fa fa-download pad-down-icon"></i>' }],
             position: 'right'
         },
         handle: {
@@ -352,6 +353,16 @@ export class ScheduleDetailsComponent implements OnInit {
         this.pro.getById(sfId).subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 this.entity = rsp.result;
+                if (this.entity.exchangeRate) {
+                    this.entity.exchangeRate = Intl.NumberFormat('en-US').format(this.entity.exchangeRate);
+                }
+                if (this.entity.totalAmount) {
+                    this.entity.totalAmount = Intl.NumberFormat('en-US').format(this.entity.totalAmount);
+                }
+                if (this.entity.totalAmountCn) {
+                    this.entity.totalAmountCn = this.entity.totalAmountCn.toFixed(2);
+                }
+
                 if (this.entity.isCreditNote) {
                     this.checkCd = true;
 
@@ -437,11 +448,7 @@ export class ScheduleDetailsComponent implements OnInit {
     }
     public UpdateSchedule() {
         let x = {
-            //currencyIsoCode: this.entity.currencyIsoCode,
             scheduleNo: this.entity.scheduleNo,
-            //factorCode: this.entity.factorCode,
-            //recordTypeId:this.entity.recordTypeId,
-            //exchangeRate: this.entity.exchangeRate,
             id: this.entity.id
         }
         this.pro.update(x).subscribe((rsp: any) => {
@@ -457,14 +464,14 @@ export class ScheduleDetailsComponent implements OnInit {
         let x = {
 
             scheduleNo: this.entity.scheduleNo,
-            portalStatus: "Authorise",
+            portalStatus: "Authorised",
             id: this.entity.id
         }
         this.pro.update(x).subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
-                this.entity.portalStatus = "Authorise";
+                this.entity.portalStatus = "Authorised";
                 this.title = 'Confirmation';
-                this.msgInfo = 'Updated Successful!';
+                this.msgInfo = 'Schedule is uploaded successfully!';
                 this.infoModal.show();
             }
         }, (err) => {
@@ -495,6 +502,17 @@ export class ScheduleDetailsComponent implements OnInit {
         } else {
             event.confirm.reject();
         }
+    }
 
+    public onDownload(e) {
+        let x = {
+            "path": e.data.path,
+            "file": e.data.file,
+            "aws": true
+        };
+        this.filepro.download(x)
+            .subscribe(blob => {
+                saveAs(blob, e.data.name);
+            });
     }
 }

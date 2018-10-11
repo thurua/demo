@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ifs.eportal.bll.ScheduleOfOfferAttachmentService;
 import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZFile;
 import com.ifs.eportal.dto.AttachmentDto;
 import com.ifs.eportal.dto.PayloadDto;
 import com.ifs.eportal.dto.SortDto;
@@ -88,15 +89,16 @@ public class ScheduleOfOfferAttachmentController {
 				int t = originalName.lastIndexOf(".") + 1;
 				String extension = originalName.substring(t);
 
-				String url = System.getenv("BUCKETEER_BUCKET_URL");
+				// Create name
 				String path = parentUuId + "/Attachment";
-				String name = UUID.randomUUID().toString() + "." + extension;
-				url += "/" + path + "/" + name;
+				String uuId = UUID.randomUUID().toString();
+				String name = uuId + "." + extension;
 
 				// Upload file to S3
+				String url = "";
 				if (Utils.allowUpload) {
 					InputStream in = files[i].getInputStream();
-					Utils.upload(in, name, path);
+					url = ZFile.upload(in, name, path);
 				}
 
 				ScheduleOfOfferAttachment m = new ScheduleOfOfferAttachment();
@@ -107,6 +109,7 @@ public class ScheduleOfOfferAttachmentController {
 				m.setContentType(type);
 				m.setFilePath(url);
 				m.setFileSize(size);
+				m.setUuId(uuId);
 				m.setParentUuId(parentUuId);
 
 				scheduleOfOfferAttachmentService.create(m);

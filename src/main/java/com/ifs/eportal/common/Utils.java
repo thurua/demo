@@ -1,7 +1,5 @@
 package com.ifs.eportal.common;
 
-import java.io.File;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
@@ -29,15 +27,6 @@ import javax.xml.bind.DatatypeConverter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
 import com.ifs.eportal.dto.AccountDto;
 import com.ifs.eportal.dto.ClientAccountCustomerDto;
 import com.ifs.eportal.dto.LineItemDto;
@@ -58,16 +47,6 @@ public class Utils {
 	public static boolean writeLog = false;
 
 	public static boolean allowUpload = false;
-
-	private static String _name = "";
-
-	private static String _key = "";
-
-	private static String _secret = "";
-
-	private static String _region = "";
-
-	private static String _folder = "";
 
 	private static String _uploadHash = "";
 
@@ -115,6 +94,23 @@ public class Utils {
 		}
 
 		return res;
+	}
+
+	/**
+	 * Reset time, just get date only.
+	 * 
+	 * @param d date need to reset time
+	 * @return
+	 */
+	public static Date getDateWithoutTimeUsingCalendar(Date d) {
+		Calendar res = Calendar.getInstance();
+		res.setTime(d);
+		res.set(Calendar.HOUR_OF_DAY, 0);
+		res.set(Calendar.MINUTE, 0);
+		res.set(Calendar.SECOND, 0);
+		res.set(Calendar.MILLISECOND, 0);
+
+		return res.getTime();
 	}
 
 	/**
@@ -263,105 +259,6 @@ public class Utils {
 			}
 
 			num--;
-		}
-
-		return res;
-	}
-
-	/**
-	 * Download file to S3
-	 * 
-	 * @param pathFile Full path file name
-	 * @return
-	 */
-	public static S3Object download(String pathFile) {
-		S3Object res = null;
-		System.out.println("Preparing download...");
-
-		try {
-			setup();
-
-			// Authentication
-			BasicAWSCredentials a = new BasicAWSCredentials(_key, _secret);
-			AWSStaticCredentialsProvider b = new AWSStaticCredentialsProvider(a);
-			AmazonS3ClientBuilder c = AmazonS3ClientBuilder.standard().withCredentials(b);
-			AmazonS3 d = c.withRegion(_region).build();
-
-			// Downloading
-			GetObjectRequest rangeObjectRequest = new GetObjectRequest(_name, pathFile);
-			res = d.getObject(rangeObjectRequest);
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-		}
-
-		return res;
-	}
-
-	/**
-	 * Upload file to S3
-	 * 
-	 * @param pathFile Full path file name
-	 * @param name     File name with extension
-	 * @param sub      Sub-folder
-	 * @return
-	 */
-	public static String upload(String pathFile, String name, String sub) {
-		String res = "";
-		System.out.println("Preparing upload...");
-
-		try {
-			setup();
-
-			// Authentication
-			BasicAWSCredentials a = new BasicAWSCredentials(_key, _secret);
-			AWSStaticCredentialsProvider b = new AWSStaticCredentialsProvider(a);
-			AmazonS3ClientBuilder c = AmazonS3ClientBuilder.standard().withCredentials(b);
-			AmazonS3 d = c.withRegion(_region).build();
-
-			// Uploading
-			res = ("public".equals(_folder) ? "public/" : "") + sub + "/" + name;
-			File x = new File(pathFile);
-			PutObjectRequest y = new PutObjectRequest(_name, res, x);
-			y = y.withCannedAcl(CannedAccessControlList.Private);
-			d.putObject(y);
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			res = "";
-		}
-
-		return res;
-	}
-
-	/**
-	 * 
-	 * @param in   File input stream
-	 * @param name File name with extension
-	 * @param sub  Sub-folder
-	 * @return
-	 */
-	public static String upload(InputStream in, String name, String sub) {
-		String res = "";
-		System.out.println("Preparing upload...");
-
-		try {
-			setup();
-
-			// Authentication
-			BasicAWSCredentials a = new BasicAWSCredentials(_key, _secret);
-			AWSStaticCredentialsProvider b = new AWSStaticCredentialsProvider(a);
-			AmazonS3ClientBuilder c = AmazonS3ClientBuilder.standard().withCredentials(b);
-			AmazonS3 d = c.withRegion(_region).build();
-
-			// Uploading
-			res = ("public".equals(_folder) ? "public/" : "") + sub + "/" + name;
-
-			ObjectMetadata met = new ObjectMetadata();
-			PutObjectRequest y = new PutObjectRequest(_name, res, in, met);
-			y = y.withCannedAcl(CannedAccessControlList.Private);
-			d.putObject(y);
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			res = "";
 		}
 
 		return res;
@@ -695,31 +592,12 @@ public class Utils {
 		return res;
 	}
 
-	/**
-	 * Get environment variable
-	 */
-	private static void setup() {
-		_name = System.getenv("BUCKETEER_BUCKET_NAME");
-		_key = System.getenv("BUCKETEER_AWS_ACCESS_KEY_ID");
-		_secret = System.getenv("BUCKETEER_AWS_SECRET_ACCESS_KEY");
-		_region = System.getenv("BUCKETEER_AWS_REGION");
-		_folder = System.getenv("BUCKETEER_BUCKET_FOLDER");
-	}
-
-	/**
-	 * Get environment variable
-	 */
-	private static void getEnv() {
-		_uploadHash = System.getenv("UPLOAD_HASH");
-		_uploadKey = System.getenv("UPLOAD_KEY");
-	}
-
 	/* ToanNguyen 2018-Sep-05 */
 	public static HashMap<String, String> toMapInvoice(List<Invoice> l) {
 		HashMap<String, String> res = new HashMap<String, String>();
 
 		for (Invoice i : l) {
-			res.put(i.getName(), i.getSfId());
+			res.put(i.getName(), i.getUuId());
 		}
 
 		return res;
@@ -730,10 +608,19 @@ public class Utils {
 		HashMap<String, String> res = new HashMap<String, String>();
 
 		for (CreditNote i : l) {
-			res.put(i.getName(), i.getSfId());
+			res.put(i.getName(), i.getUuId());
 		}
 
 		return res;
 	}
+
+	/**
+	 * Get environment variable
+	 */
+	private static void getEnv() {
+		_uploadHash = System.getenv("UPLOAD_HASH");
+		_uploadKey = System.getenv("UPLOAD_KEY");
+	}
+
 	// end
 }

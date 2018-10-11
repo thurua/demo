@@ -127,7 +127,7 @@ public class ScheduleOfOfferService {
 			m.setScheduleNo(scheduleNo);
 			m.setPortalStatus(portalStatus);
 
-			if ("Authorise".equals(portalStatus)) {
+			if ("Authorised".equals(portalStatus)) {
 				m.setAuthorisedDate(new Date());
 				m.setAuthorisedBy(authorisedBy);
 			}

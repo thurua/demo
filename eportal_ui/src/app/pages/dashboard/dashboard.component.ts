@@ -9,5 +9,11 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 export class DashboardComponent implements OnInit {
     constructor() { }
 
-    ngOnInit() { }
+    ngOnInit() { 
+        document.getElementById('preloader').style.display = 'block';
+    }
+
+    ngAfterViewInit() {
+        document.getElementById('preloader').style.display = 'none';
+    }
 }

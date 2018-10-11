@@ -3,7 +3,7 @@ SELECT
 	a.client_remarks__c, a.credit_amount__c, a.customer__c, a.schedule_of_offer__c, 
 	a.client_account__c, a.name, a.credit_note_date__c, a.status__c, 
 	c.schedule_no__c, b.name account_ame, a.applied_invoice__c, 
-	a.ops_remarks__c, a.outstanding_amount__c, d.name client_account, 
+	a.ops_remarks__c, a.outstanding_amount__c, d.name client_account, a.createddate, 
 	CASE WHEN (a.status__c = 'Submitted' AND a.createdbyid IS NULL) THEN 'IFS OPS' ELSE b.name END created_by 
 FROM salesforce.credit_note__c a 
 JOIN salesforce.account b

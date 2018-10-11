@@ -73,7 +73,7 @@ export class ResetPasswordComponent implements OnInit {
     }
 
     ngAfterViewInit() {
-        document.getElementById('preloader').classList.add('hide');
+        document.getElementById('preloader').style.display = 'none';
     }
 
     public toggleShow(para?: string) {

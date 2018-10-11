@@ -52,15 +52,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-5">
-                        <strong>Currency</strong>
-                    </div>
-                    <div class="col-md-7">
-                        <label class="col-form-label">{{data.currencyIsoCode}}</label>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-5">
-                        <strong>Credit Peiod (Days)</strong>
+                        <strong>Credit Period (Days)</strong>
                     </div>
                     <div class="col-md-7">
                         <label class="col-form-label">{{data.creditPeriod}}</label>
@@ -134,10 +126,10 @@
                 </div>
                 <div class="row">
                     <div class="col-md-5">
-                        <strong>Credit Amount</strong>
+                        <strong>Invoive Amount</strong>
                     </div>
                     <div class="col-md-7">
-                        <label class="col-form-label">{{data.creditAmount}}</label>
+                        <label class="col-form-label">{{data.currencyIsoCode}} {{data.invoiceAmount | number: '0.2'}}</label>
                     </div>
                 </div>
                 <div class="row">
@@ -145,7 +137,7 @@
                         <strong>Outstanding Amount</strong>
                     </div>
                     <div class="col-md-7">
-                        <label class="col-form-label">{{data.outstandingAmount | number: '0.2'}}</label>
+                        <label class="col-form-label">{{data.currencyIsoCode}} {{data.outstandingAmount | number: '0.2'}}</label>
                     </div>
                 </div>
                 <div class="row">

@@ -56,7 +56,7 @@ export class PagesComponent implements OnInit {
     }
 
     ngAfterViewInit() {
-        document.getElementById('preloader').classList.add('hide');
+        document.getElementById('preloader').style.display = 'none';
     }
 
 

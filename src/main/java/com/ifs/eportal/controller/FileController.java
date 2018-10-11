@@ -48,6 +48,7 @@ import com.ifs.eportal.bll.RecordTypeService;
 import com.ifs.eportal.bll.ScheduleOfOfferService;
 import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.common.ZError;
+import com.ifs.eportal.common.ZFile;
 import com.ifs.eportal.common.ZValid;
 import com.ifs.eportal.dto.AccountDto;
 import com.ifs.eportal.dto.ApprovedCustomerLimitDto;
@@ -147,7 +148,7 @@ public class FileController {
 
 			// Handle
 			if (aws) {
-				S3Object s3 = Utils.download(p);
+				S3Object s3 = ZFile.download(p);
 				len = s3.getObjectMetadata().getInstanceLength();
 				res = new InputStreamResource(s3.getObjectContent());
 			} else {
@@ -198,16 +199,15 @@ public class FileController {
 				int t = originalName.lastIndexOf(".") + 1;
 				String extension = originalName.substring(t);
 
-				String url = System.getenv("BUCKETEER_BUCKET_URL");
+				// Create name
 				String path = "InvoiceData";
-				String name = UUID.randomUUID().toString() + "." + extension;
-				url += "/" + path + "/" + name;
+				String uuId = UUID.randomUUID().toString();
+				String name = uuId + "." + extension;
 
 				// Upload file to S3
 				if (Utils.allowUpload) {
 					InputStream in = file.getInputStream();
-					Utils.upload(in, name, path);
-					dto.invoiceDataPath = url;
+					dto.invoiceDataPath = ZFile.upload(in, name, path);
 				}
 
 				PayloadDto pl = Utils.getTokenInfor(header);
@@ -288,11 +288,13 @@ public class FileController {
 				int t = originalName.lastIndexOf(".") + 1;
 				String extension = originalName.substring(t);
 
+				// Create name
 				String path = "InvoiceData";
-				String name = UUID.randomUUID().toString() + "." + extension;
+				String uuId = UUID.randomUUID().toString();
+				String name = uuId + "." + extension;
 
 				InputStream in = file.getInputStream();
-				Utils.upload(in, name, path);
+				ZFile.upload(in, name, path);
 			}
 
 			ObjectMapper mapper = new ObjectMapper();
@@ -400,6 +402,8 @@ public class FileController {
 		String clientId = req.getClientId();
 		String scheduleNo = req.getScheduleNo().trim();
 		Date acceptanceDate = new Date();
+		// Get date only
+		acceptanceDate = Utils.getDateWithoutTimeUsingCalendar(acceptanceDate);
 		Boolean amendSchedule = req.getAmendSchedule();
 		String clientAccountId = req.getClientAccountId();
 		String scheduleType = req.getScheduleType();
@@ -770,7 +774,8 @@ public class FileController {
 				}
 
 				/* ToanNguyen 2018-Sep-04 IFS-1044 */
-				if (iv.getInvoiceAmount() > avgInvoiceAmount.getValue()) {
+				/* DuongNguyen 2018-Otc-11 */
+				if (avgInvoiceAmount.getValue() != null && (iv.getInvoiceAmount() > avgInvoiceAmount.getValue())) {
 					// Customer - Invoice Amount more than Client Average Invoice Size.
 					err = "CCD";
 					errors = ZError.addError(errors, err, iv.getName());
@@ -840,9 +845,9 @@ public class FileController {
 		}
 
 		if (res.isSuccess()) {
-			/* TriNguyen 2018-Sep-01 IFS-1036 */
-			List<ApprovedCustomerLimitDto> lcl = approvedCustomerLimitService.read(liv, clientId);
 			if (isFac) {
+				/* TriNguyen 2018-Sep-01 IFS-1036 */
+				List<ApprovedCustomerLimitDto> lcl = approvedCustomerLimitService.read(liv, clientId);
 				for (Invoice i : liv) {
 					if (lcc.size() > 0) {
 						err = ZValid.customer(lcc, i.getCustomerFromExcel(), i.getInvoiceAmount(), true,
@@ -1028,6 +1033,7 @@ public class FileController {
 			m.setScheduleDate(o.getDocumentDate());
 			m.setProcessDate(o.getProcessDate());
 			m.setKeyInByDate(o.getKeyInByDate());
+			m.setEportalSo(true);
 			m.setCreatedDate(new Date());
 
 			String uuId = UUID.randomUUID().toString();
@@ -1152,22 +1158,22 @@ public class FileController {
 				}
 				m1 = Utils.toMapInvoice(l);
 			}
-			List<String> listId = new ArrayList<String>();
 			for (String key : t.getErrors().keySet()) {
 				String val = t.getErrors().get(key);
 				String[] arr = val.split(", ");
 
 				for (String i : arr) {
 					String tid = m1.get(i); // get invoice or credit ID
-					listId.add(tid);
 					try {
 						Reason r = new Reason();
 						r.setRecordTypeId(rt.getSfId());
 						r.setReason(key);
-						r.setInvoice(tid);
-						r.setReason("INVOICE");
-						// r.setExternalId();
+						r.setType("IN");
 						r.setCreatedDate(new Date());
+
+						String uuId = UUID.randomUUID().toString();
+						r.setUuId(uuId);
+						r.setParentUuId(tid);
 
 						reasonService.create(r);
 					} catch (Exception ex) {
@@ -1254,22 +1260,23 @@ public class FileController {
 				rt = recordTypeService.getBy("Reason__c", "System Unapplied");
 				m1 = Utils.toMapCredit(l);
 			}
-			List<String> listId = new ArrayList<String>();
 			for (String key : t.getErrors().keySet()) {
 				String val = t.getErrors().get(key);
 				String[] arr = val.split(", ");
 
 				for (String i : arr) {
 					String tid = m1.get(i); // get invoice or credit ID
-					listId.add(tid);
 					try {
 						Reason r = new Reason();
 						r.setRecordTypeId(rt.getSfId());
 						r.setReason(key);
 						r.setCreditNote(tid);
-						// r.setExternalId();
-						r.setReason("CREDITNOTE");
+						r.setType("CN");
 						r.setCreatedDate(new Date());
+
+						String uuId = UUID.randomUUID().toString();
+						r.setUuId(uuId);
+						r.setParentUuId(tid);
 
 						reasonService.create(r);
 					} catch (Exception ex) {

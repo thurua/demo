@@ -20,7 +20,7 @@
                         </div>
                         <div class="col-md-8">
                             <select class="form-control" name="scheduleType" #scheduleType="ngModel" [(ngModel)]="vm.scheduleType" (change)="hideShow($event.target.value)" required>
-                                <option value="">-- Please Select --</option>
+                                <option value="">-- Please Select --</option>      
                                 <option value="Cash Disbursement">Cash Disbursement</option>
                                 <option value="Credit note">Credit note</option>
                                 <option value="Invoice">Invoice</option>
@@ -36,7 +36,11 @@
                             <strong>Amend Schedule</strong>
                         </div>
                         <div class="col-md-8">
-                            <input type="checkbox" name="amendSchedule" #amendSchedule="ngModel" [(ngModel)]="vm.amendSchedule">
+                            <!-- <input class="chk" type="checkbox" name="amendSchedule" #amendSchedule="ngModel" [(ngModel)]="vm.amendSchedule"> -->
+                            <div class="custom-checkbox">
+                                <input type="checkbox" class="custom-control-input checkbox-primary" id="checkboxPrimary" checked name="amendSchedule" #amendSchedule="ngModel" [(ngModel)]="vm.amendSchedule">
+                                <label class="custom-control-label" for="checkboxPrimary"> </label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -55,12 +59,19 @@
                             </span>
                         </div>
                     </div>
+                    <div class="form-group row"><br/>
+                    </div>
                     <div class="form-group row">
                         <div class="col-md-4">
                             <strong>Amend Schedule No.</strong>
                         </div>
                         <div class="col-md-8">
-                            <input class="form-control none-border" name="scheduleNo" #scheduleNo="ngModel" [(ngModel)]="vm.scheduleNo" />
+                            <input class="form-control none-border" name="scheduleNo" #scheduleNo="ngModel" [(ngModel)]="vm.scheduleNo" required="{{vm.amendSchedule}}" />
+                            <span [hidden]="scheduleNo.valid || (scheduleNo.pristine && !f.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="scheduleNo" data-valmsg-for="scheduleNo" id="scheduleNo_validationMessage" role="alert">
+                                    <span *ngIf="scheduleNo.errors?.required">
+                                        <i class="fa fa-exclamation-triangle"></i> Required!
+                                    </span>
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -107,10 +118,14 @@
         <div class="card-body">
             <div class="body">
                 <p [innerHTML]="message"></p>
-                <input type="checkbox" name="agree" #agree="ngModel" [(ngModel)]="vm.agree" (change)="changeAgree()"> I agree
+                <div class="custom-checkbox">
+                    <input type="checkbox" class="custom-control-input checkbox-primary" id="agree" checked name="agree" #agree="ngModel" [(ngModel)]="vm.agree" (change)="changeAgree()">
+                    <label class="custom-control-label" for="agree"> </label> I agree
+                </div>
+                <!-- <input type="checkbox" name="agree" #agree="ngModel" [(ngModel)]="vm.agree" (change)="changeAgree()"> I agree -->
                 <span [hidden]="checkAgree" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="agree" data-valmsg-for="agree" id="agree_validationMessage" role="alert">
-                            <i class="fa fa-exclamation-triangle"></i>&nbsp; Required
-                        </span>
+                    <i class="fa fa-exclamation-triangle"></i>&nbsp; Required
+                </span>
             </div>
         </div>
     </div>
@@ -142,12 +157,12 @@
                 <div class="form-group row">
                     <div class="col-md-12">
                         <i [hidden]="!isSuccess" class="fa fa-check-circle-o icon-check-square"></i>
-                        <i [hidden]="!isError" class="fa fa-exclamation-triangle"></i>
+                        <!-- <i [hidden]="!isError" class="fa fa-exclamation-triangle"></i> -->
                     </div>
                 </div>
                 <div class="form-group row">
-                    <div class="col-md-12 text-bold">
-                        <span>{{msg}}</span>
+                    <div class="col-md-12">
+                        <p style="text-align: left; padding-left: 18%;" [innerHTML]="msg"></p>
                     </div>
                 </div>
             </div>
@@ -155,7 +170,7 @@
                 <div class="col-md-1">
                 </div>
                 <div class="col-md-10">
-                    <button *ngIf="isError" type="button" class="btn btn-success btn-block text-bold" (click)="infoModal.hide()">OK</button>
+                    <button *ngIf="isError" type="button" class="btn btn-warning btn-block text-bold" (click)="infoModal.hide()">OK</button>
                     <button *ngIf="isSuccess" type="button" class="btn btn-success btn-block text-bold" routerLink="/pages/schedule">OK</button>
                 </div>
                 <div class="col-md-1">

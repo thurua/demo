@@ -18,7 +18,7 @@ export class NotFoundComponent implements OnInit {
     ngOnInit() { }
 
     ngAfterViewInit() {
-        document.getElementById('preloader').classList.add('hide');
+        document.getElementById('preloader').style.display = 'none';
     }
 
     public searchResult(): void {

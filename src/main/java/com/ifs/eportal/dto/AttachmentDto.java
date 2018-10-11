@@ -32,6 +32,24 @@ public class AttachmentDto extends BaseDto {
 	@JsonProperty(value = "owner")
 	private String owner;
 
+	@JsonProperty(value = "uuId")
+	private String uuId;
+
+	@JsonProperty(value = "parentUuId")
+	private String parentUuId;
+
+	@JsonProperty(value = "extension")
+	private String extension;
+
+	@JsonProperty(value = "filePath")
+	private String filePath;
+
+	@JsonProperty(value = "path")
+	private String path;
+
+	@JsonProperty(value = "file")
+	private String file;
+
 	// end
 
 	// region -- Get set --
@@ -84,6 +102,57 @@ public class AttachmentDto extends BaseDto {
 		this.owner = owner;
 	}
 
+	public String getUuId() {
+		return uuId;
+	}
+
+	public void setUuId(String uuId) {
+		this.uuId = uuId;
+	}
+
+	public String getParentUuId() {
+		return parentUuId;
+	}
+
+	public void setParentUuId(String parentUuId) {
+		this.parentUuId = parentUuId;
+	}
+
+	public String getExtension() {
+		return extension;
+	}
+
+	public void setExtension(String extension) {
+		this.extension = extension;
+	}
+
+	public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+
+	public String getPath() {
+		String res = System.getenv("BUCKETEER_BUCKET_URL") + "/";
+		res = filePath.replace(res, "");
+		res = res.replace("/" + uuId + "." + extension, "");
+		return res;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+	public String getFile() {
+		return uuId + "." + extension;
+	}
+
+	public void setFile(String file) {
+		this.file = file;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -100,6 +169,12 @@ public class AttachmentDto extends BaseDto {
 		uploadedOn = null;
 		rowNumber = 0;
 		owner = "";
+		uuId = "";
+		parentUuId = "";
+		extension = "";
+		filePath = "";
+		path = "";
+		file = "";
 	}
 
 	/**
@@ -120,6 +195,10 @@ public class AttachmentDto extends BaseDto {
 		res.setUploadedOn((Date) o[5]);
 		res.setRowNumber((Integer) o[6]);
 		res.setOwner((String) o[7]);
+		res.setUuId((String) o[8]);
+		res.setParentUuId((String) o[9]);
+		res.setExtension((String) o[10]);
+		res.setFilePath((String) o[11]);
 
 		return res;
 	}

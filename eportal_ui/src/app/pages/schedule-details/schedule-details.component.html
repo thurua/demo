@@ -49,7 +49,7 @@
                         <strong>Schedule Date</strong>
                     </div>
                     <div class="col-md-8">
-                        <label class="col-form-label">{{entity.scheduleDate}}</label>
+                        <label class="col-form-label">{{entity.scheduleDate | date: 'dd-MMM-yyyy'}}</label>
                     </div>
                 </div>
             </div>
@@ -82,18 +82,18 @@
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-md-4">
-                                        <strong>Total No. of {{(entity.documentType == "Credit Note") ? "Credit Notes":'Invoice' }}</strong>
+                                        <strong>Total No. of {{(entity.isCreditNote) ? "Credit Notes":'Invoice' }}</strong>
                                     </div>
                                     <div class="col-md-8">
-                                        <label class="col-form-label">{{(entity.documentType == "Credit Note") ? entity.totalCN :entity.total}}</label>
+                                        <label class="col-form-label">{{(entity.isCreditNote) ? entity.totalCn :entity.total}}</label>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-md-4">
-                                        <strong>Total Amount of  {{(entity.documentType == "Credit Note") ? "Credit Notes":'Invoice' }}</strong>
+                                        <strong>Total Amount of  {{(entity.isCreditNote) ? "Credit Notes":'Invoice' }}</strong>
                                     </div>
                                     <div class="col-md-8">
-                                        <label class="col-form-label"> {{(entity.documentType == "Credit Note") ? entity.totalAmountCN :entity.totalAmount}}</label>
+                                        <label class="col-form-label"> {{(entity.isCreditNote) ? entity.totalAmountCn :entity.totalAmount}}</label>
                                     </div>
                                 </div>
                             </div>
@@ -114,7 +114,7 @@
                                         <label class="col-form-label">{{entity.exchangeRate}}</label>
                                     </div>
                                 </div>
-                                <div class="form-group row">
+                                <div class="form-group row" [hidden]="entity.documentType=='Cash Disbursement'">
                                     <div class="col-md-4">
                                         <strong>Factor Code</strong>
                                     </div>
@@ -226,7 +226,7 @@
                             <div widget class="card border-0 box-shadow">
                                 <div class="card-body pt-0 widget-body">
                                     <div class="table-responsive">
-                                        <ng2-smart-table class="table table-hover" [settings]="settingsAtt" [source]="attList" (deleteConfirm)="onDelete($event)"></ng2-smart-table>
+                                        <ng2-smart-table class="table table-hover" [settings]="settingsAtt" [source]="attList" (deleteConfirm)="onDelete($event)" (custom)="onDownload($event)"></ng2-smart-table>
                                     </div>
                                 </div>
                             </div>

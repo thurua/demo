@@ -12,7 +12,7 @@ public class CustomDto {
 	private String code;
 
 	@JsonProperty(value = "value")
-	private double value;
+	private Double value;
 
 	// end
 
@@ -25,11 +25,11 @@ public class CustomDto {
 		this.code = code;
 	}
 
-	public double getValue() {
+	public Double getValue() {
 		return value;
 	}
 
-	public void setValue(double value) {
+	public void setValue(Double value) {
 		this.value = value;
 	}
 
@@ -55,7 +55,7 @@ public class CustomDto {
 		CustomDto res = new CustomDto();
 
 		res.setCode((String) o[0]);
-		res.setValue((double) o[1]);
+		res.setValue((Double) o[1]);
 
 		return res;
 	}

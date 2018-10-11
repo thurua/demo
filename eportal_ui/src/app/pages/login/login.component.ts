@@ -64,13 +64,12 @@ export class LoginComponent implements OnInit {
     }
 
     ngAfterViewInit() {
-        document.getElementById('preloader').classList.add('hide');
+        document.getElementById('preloader').style.display = 'none';
     }
 
     public signIn() {
         this.loader = true;
         this.showMsg = false;
-        document.getElementById('preloader').classList.add('show');
         let obj = {
             email: this.vm.userName,
             password: this.vm.password

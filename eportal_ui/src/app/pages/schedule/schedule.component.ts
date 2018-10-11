@@ -20,7 +20,7 @@ export class ScheduleComponent implements OnInit {
     public documentType = "";
     public clientAccountId = "";
     public total: number = 0;
-    public pageSize = 5;
+    public pageSize = 10;
     public curentPage = 1;
     public pager: any = {};
     public pagedItems: any[];
@@ -167,6 +167,7 @@ export class ScheduleComponent implements OnInit {
     }
 
     public search(page: any) {
+        document.getElementById('preloader').style.display = 'block';
         let fr = this.fromDate == null ? null : this.fromDate.toISOString();
         let to = this.toDate == null ? null : this.toDate.toISOString();
         let x = {
@@ -197,9 +198,14 @@ export class ScheduleComponent implements OnInit {
         }, (err) => {
             console.log(err);
         });
+
+        setTimeout(function () {
+            document.getElementById('preloader').style.display = 'none';
+        },500);
     }
 
     public searchCA() {
+        document.getElementById('preloader').style.display = 'block';
         let x = {
             filter: {
                 client: this.clientId,
@@ -232,6 +238,10 @@ export class ScheduleComponent implements OnInit {
         }, (err) => {
             console.log(err);
         });
+
+        setTimeout(function () {
+            document.getElementById('preloader').style.display = 'none';
+        },500);
     }
 
     public setPage(page: number) {

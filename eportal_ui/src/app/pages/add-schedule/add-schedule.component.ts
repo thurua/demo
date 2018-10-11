@@ -4,6 +4,7 @@ import { HTTP } from '../../utilities/utility';
 import { FileUploader } from 'ng2-file-upload';
 import { ModalDirective } from 'ngx-bootstrap';
 import { saveAs } from "file-saver";
+import { and } from '@angular/router/src/utils/collection';
 
 const URL = 'http://localhost:8080/api/upload';
 
@@ -15,6 +16,7 @@ const URL = 'http://localhost:8080/api/upload';
 })
 export class AddScheduleComponent implements OnInit {
     public clientId: string = "";
+    public test: any[] = [];
     public clientName: string = "";
     public lstCA: any[] = [];
     public uploader: FileUploader = new FileUploader({ url: URL, itemAlias: 'photo' });
@@ -50,6 +52,8 @@ export class AddScheduleComponent implements OnInit {
         this.apiUrl = "../../../assets/excel/";
     }
     public searchCA() {
+        document.getElementById('preloader').style.display = 'block';
+
         let x = {
             filter: {
                 client: this.clientId,
@@ -81,6 +85,10 @@ export class AddScheduleComponent implements OnInit {
         }, (err) => {
             console.log(err);
         });
+
+        setTimeout(function () {
+            document.getElementById('preloader').style.display = 'none';
+        },500);
     }
 
     public fileChanged(e) {
@@ -132,6 +140,16 @@ export class AddScheduleComponent implements OnInit {
             this.pro.upload(this.file, s).subscribe((rsp: any) => {
                 if (rsp.body != undefined) {
                     let o = JSON.parse(rsp.body);
+
+                    this.test = o.message.split(".");
+                    for (let index = 0; index < this.test.length; index++) {
+                        const element = this.test[index];                      
+                        if(element[0] == " "){
+                            this.test[index-1] = this.test[index-1] + ". " + element;
+                            this.test.splice(index,1);     
+                        }
+                    }
+
                     if (o.status === HTTP.STATUS_SUCCESS) {
                         this.isSuccess = true;
                         this.title = "Confirmation";
@@ -140,8 +158,14 @@ export class AddScheduleComponent implements OnInit {
                     else {
                         this.isError = true;
                         this.title = "Validation Errors";
-                        // this.msg = "Follingwing validation errors are found in the uploaded excel. Please rectify and reupload the file.";
-                        this.msg = o.message;
+                        let str = "";
+                        let count = 0;
+
+                        for (var i = 0; i < this.test.length - 1; i++) {
+                            count++;
+                            str += count + ". " + this.test[i] + "." + "<br/>";
+                        }
+                        this.msg = str;
                     }
                     this.infoModal.show();
                 }

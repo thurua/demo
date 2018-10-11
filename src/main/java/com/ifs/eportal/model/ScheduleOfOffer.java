@@ -115,6 +115,9 @@ public class ScheduleOfOffer extends BaseModel {
 	@Column(columnDefinition = "varchar(100)", name = "uuid__c")
 	private String uuId;
 
+	@Column(columnDefinition = "bool", name = "is_eportal_so__c")
+	private boolean isEportalSo;
+
 	// end
 
 	// region -- Get set --
@@ -341,6 +344,14 @@ public class ScheduleOfOffer extends BaseModel {
 
 	public void setUuId(String uuId) {
 		this.uuId = uuId;
+	}
+
+	public boolean isEportalSo() {
+		return isEportalSo;
+	}
+
+	public void setEportalSo(boolean isEportalSo) {
+		this.isEportalSo = isEportalSo;
 	}
 
 	// end
