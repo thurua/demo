@@ -20,11 +20,8 @@ public class ReasonDto extends BaseDto {
 	@JsonProperty(value = "reason")
 	private String reason;
 
-	@JsonProperty(value = "date")
-	private Date date;
-
-	@JsonProperty(value = "amount")
-	private Double amount;
+	@JsonProperty(value = "recordType")
+	private String recordType;
 
 	// end
 
@@ -45,21 +42,13 @@ public class ReasonDto extends BaseDto {
 	public void setReason(String reason) {
 		this.reason = reason;
 	}
-
-	public Date getDate() {
-		return date;
+	
+	public String getRecordType() {
+		return recordType;
 	}
 
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
-	public Double getAmount() {
-		return amount;
-	}
-
-	public void setAmount(Double amount) {
-		this.amount = amount;
+	public void setRecordType(String recordType) {
+		this.recordType = recordType;
 	}
 
 	// end
@@ -74,9 +63,7 @@ public class ReasonDto extends BaseDto {
 
 		name = "";
 		reason = "";
-		date = null;
-		amount = null;
-
+		recordType = "";
 	}
 
 	/**
@@ -89,8 +76,7 @@ public class ReasonDto extends BaseDto {
 		ReasonDto res = new ReasonDto();
 
 		res.setReason((String) o[0]);
-		res.setDate((Date) o[1]);
-		res.setAmount((Double) o[2]);
+		res.setRecordType((String) o[1]);
 
 		return res;
 	}

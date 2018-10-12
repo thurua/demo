@@ -552,8 +552,25 @@ public class FileController {
 					errors = ZError.addError(errors, err, allNo);
 					res.setInvoiceValid(false);
 				}
-
 			}
+
+			List<CustomDto> l = new ArrayList<>();
+			if (isCN) {
+				l = creditNoteService.getListBy(o.getLineItems(), clientId, amendSchedule);
+			} else {
+				l = invoiceService.getListBy(o.getLineItems(), clientId, amendSchedule);
+			}
+			err = ZValid.duplicate(o.getType(), l);
+			if (err != "") {
+				res = Utils.addError(res, err);
+			}
+
+			/* TriNguyen 2018-Sep-07 IFS-1154,1155 */
+			err = ZValid.duplicate(o.getLineItems(), isCN);
+			if (err != "") {
+				res = Utils.addError(res, err);
+			}
+
 			if (res.isSuccess()) {
 				req.setAcceptanceDate(acceptanceDate);
 				if (isCN) {
@@ -853,18 +870,29 @@ public class FileController {
 						err = ZValid.customer(lcc, i.getCustomerFromExcel(), i.getInvoiceAmount(), true,
 								o.getFactorCode(), req.getAcceptanceDate(), ca);
 						errors = ZError.addError(errors, err, i.getName());
-					}
-					if (!err.isEmpty()) {
-						List<String> arr = Arrays.asList(err.split(","));
-						int t1 = arr.indexOf("CC9");
-						int t2 = arr.indexOf("CCA");
-						int t3 = arr.indexOf("CCB");
+						
+						if (!err.isEmpty()) {
+							List<String> arr = Arrays.asList(err.split(","));
+							int t1 = arr.indexOf("CC9");
+							int t2 = arr.indexOf("CCA");
+							int t3 = arr.indexOf("CCB");
 
-						if (t1 != -1 || t2 != -1 || t3 != -1) {
-							/* ToanNguyen 2018-Aug-23 IFS-974,1025,1026 */
-							res.setSuccess(false);
+							if (t1 > -1 || t2 > -1 || t3 > -1) {
+								/* ToanNguyen 2018-Aug-23 IFS-1040,1041,1042 */
+								res.setInvoiceValid(false);
+							} else {
+								/* ToanNguyen 2018-Aug-23 IFS-974,1025,1026 */
+								res.setSuccess(false);
+							}
 						}
 					}
+					else {
+                        //ToanNguyen 2018-Aug-23 IFS-1025
+                        // Customer Name is not found in Client Account.
+                        err = "CC1";
+                        errors = ZError.addError(errors, err, i.getName());
+                        res.setSuccess(false);
+                    }
 
 					/* TriNguyen 2018-Sep-01 IFS-1036,1037,1038,1039 */
 					err = ZValid.acl(i, lcl, ca.getFactoringType(), arTotalAmount);
@@ -1012,7 +1040,6 @@ public class FileController {
 			boolean isLoan = "CASH DISBURSEMENT".equals(type);
 			boolean isCN = "CREDIT NOTE".equals(type);
 			boolean isIV = "INVOICE".equals(type);
-			boolean isInvoice = isLoan || isIV;
 			Float sequence = dto.sequence.floatValue();
 			type = Utils.formatStr(type);
 
@@ -1065,7 +1092,7 @@ public class FileController {
 			if (isCN) {
 				createCreditNote(o, m, dto);
 			} else {
-				createInvoice(o, isInvoice, m, dto);
+				createInvoice(o, isIV, m, dto);
 			}
 		} catch (Exception ex) {
 			if (Utils.printStackTrace) {

@@ -112,6 +112,18 @@ public class InvoiceService {
 	/**
 	 * 
 	 * @param l
+	 * @param accountId
+	 * @param amendSchedule
+	 * @return
+	 */
+	public List<CustomDto> getListBy(List<LineItemDto> l, String accountId, boolean amendSchedule) {
+		List<String> names = Utils.getNames(l);
+		return invoiceDao.getListBy(names, accountId, amendSchedule);
+	}
+
+	/**
+	 * 
+	 * @param l
 	 * @param clientAccountId
 	 * @return
 	 */

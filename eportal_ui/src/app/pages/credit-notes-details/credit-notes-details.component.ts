@@ -13,8 +13,8 @@ import { HTTP } from '../../utilities/const';
 export class CreditNotesDetailsComponent implements OnInit {
     public dataReason = [];
     public data = {
-        customerFromExcel: "",
         clientAccount: "",
+        clientAccountNo: "",
         name: "",
         customer: "",
         currencyIsoCode: "",
@@ -77,6 +77,8 @@ export class CreditNotesDetailsComponent implements OnInit {
     }
 
     public seachById() {
+        document.getElementById('preloader').style.display = 'block';
+
         let id = 0;
         this.act.params.subscribe((params: Params) => {
             id = params["_id"];
@@ -92,6 +94,10 @@ export class CreditNotesDetailsComponent implements OnInit {
                 let msg = rsp.message;
             }
         });
+
+        setTimeout(function () {
+            document.getElementById('preloader').style.display = 'none';
+        }, 500); 
     }
 
     public getReasonBySfId(sfId: String) {

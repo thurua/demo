@@ -56,6 +56,9 @@ public class SOInvoiceDto extends BaseDto {
 	@JsonProperty(value = "currencyIsoCode")
 	private String currencyIsoCode;
 
+	@JsonProperty(value = "uuId")
+	private String uuId;
+
 	// end
 
 	// region -- Get set --
@@ -172,6 +175,14 @@ public class SOInvoiceDto extends BaseDto {
 		this.currencyIsoCode = currencyIsoCode;
 	}
 
+	public String getUuId() {
+		return uuId;
+	}
+
+	public void setUuId(String uuId) {
+		this.uuId = uuId;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -196,6 +207,7 @@ public class SOInvoiceDto extends BaseDto {
 		supplierFromExcel = "";
 		rejectReason = "";
 		currencyIsoCode = "";
+		uuId = "";
 	}
 
 	/**
@@ -224,6 +236,7 @@ public class SOInvoiceDto extends BaseDto {
 		res.setSupplierFromExcel((String) o[13]);
 		res.setRejectReason((String) o[14]);
 		res.setCurrencyIsoCode((String) o[15]);
+		res.setUuId((String) o[16]);
 
 		return res;
 	}

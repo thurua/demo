@@ -74,12 +74,12 @@ export class ScheduleComponent implements OnInit {
                 type: 'html',
                 filter: false,
                 valuePrepareFunction: (value) => {
-                    let css='color-pend';
+                    let css = 'color-pend';
                     if (value == 'Authorised') {
-                        css='color-auth';
+                        css = 'color-auth';
                     }
                     if (value == 'Accepted') {
-                        css='color-acce';
+                        css = 'color-acce';
                     }
 
                     return `<span class="${css}">${value}</span>`;
@@ -156,6 +156,7 @@ export class ScheduleComponent implements OnInit {
     public resetClick() {
         this.portalStatus = "";
         this.clientAccountId = "";
+        this.documentType = "";
         this.data = [];
 
         // Reset Date

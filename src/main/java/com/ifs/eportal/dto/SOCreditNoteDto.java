@@ -47,6 +47,9 @@ public class SOCreditNoteDto extends BaseDto {
 	@JsonProperty(value = "currencyIsoCode")
 	private String currencyIsoCode;
 
+	@JsonProperty(value = "uuId")
+	private String uuId;
+
 	// end
 
 	// region -- Get set --
@@ -139,6 +142,14 @@ public class SOCreditNoteDto extends BaseDto {
 		this.currencyIsoCode = currencyIsoCode;
 	}
 
+	public String getUuId() {
+		return uuId;
+	}
+
+	public void setUuId(String uuId) {
+		this.uuId = uuId;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -160,6 +171,7 @@ public class SOCreditNoteDto extends BaseDto {
 		applyCN = null;
 		unappliedReason = "";
 		currencyIsoCode = "";
+		uuId = "";
 	}
 
 	/**
@@ -185,6 +197,7 @@ public class SOCreditNoteDto extends BaseDto {
 		res.setApplyCN((Boolean) o[10]);
 		res.setUnappliedReason((String) o[11]);
 		res.setCurrencyIsoCode((String) o[12]);
+		res.setUuId((String) o[13]);
 
 		return res;
 	}

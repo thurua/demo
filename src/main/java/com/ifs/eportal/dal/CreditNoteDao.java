@@ -17,6 +17,7 @@ import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.common.ZDate;
 import com.ifs.eportal.common.ZFile;
 import com.ifs.eportal.dto.CreditNoteDto;
+import com.ifs.eportal.dto.CustomDto;
 import com.ifs.eportal.dto.SortDto;
 import com.ifs.eportal.filter.CreditNoteFilter;
 import com.ifs.eportal.model.CreditNote;
@@ -173,6 +174,46 @@ public class CreditNoteDao implements Repository<CreditNote, Integer> {
 
 			// Convert
 			res = CreditNoteDto.convert(t);
+		} catch (Exception ex) {
+			if (Utils.printStackTrace) {
+				ex.printStackTrace();
+			}
+			if (Utils.writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * Select credit note number exist in db.
+	 * 
+	 * @param names
+	 * @param accountId
+	 * @param amendSchedule
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<CustomDto> getListBy(List<String> names, String accountId, boolean amendSchedule) {
+		List<CustomDto> res = new ArrayList<CustomDto>();
+
+		try {
+			String sql = "SELECT a.name as code, '1' as value FROM salesforce.credit_note__c a "
+					+ "WHERE a.name IN :names AND a.client__c = :accountId ";
+			if (amendSchedule) {
+				sql += "AND a.status__c != 'Rejected' AND a.status__c != 'Reversed' ";
+			}
+			sql += "GROUP BY a.name";
+
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("names", names);
+			q.setParameter("accountId", accountId);
+			List<Object[]> l = q.getResultList();
+
+			// Convert
+			res = CustomDto.convert(l);
 		} catch (Exception ex) {
 			if (Utils.printStackTrace) {
 				ex.printStackTrace();

@@ -74,14 +74,6 @@
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-md-4">
-                                        <strong>Currency</strong>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <label class="col-form-label">{{entity.currencyIsoCode}}</label>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col-md-4">
                                         <strong>Total No. of {{(entity.isCreditNote) ? "Credit Notes":'Invoice' }}</strong>
                                     </div>
                                     <div class="col-md-8">
@@ -93,7 +85,7 @@
                                         <strong>Total Amount of  {{(entity.isCreditNote) ? "Credit Notes":'Invoice' }}</strong>
                                     </div>
                                     <div class="col-md-8">
-                                        <label class="col-form-label"> {{(entity.isCreditNote) ? entity.totalAmountCn :entity.totalAmount}}</label>
+                                        <label class="col-form-label"> {{entity.currencyIsoCode}} {{(entity.isCreditNote) ? entity.totalAmountCn :entity.totalAmount | number: '0.2'}}</label>
                                     </div>
                                 </div>
                             </div>
@@ -111,7 +103,7 @@
                                         <strong>Exchange Rate</strong>
                                     </div>
                                     <div class="col-md-8">
-                                        <label class="col-form-label">{{entity.exchangeRate}}</label>
+                                        <label class="col-form-label">{{entity.exchangeRate | number: '0.2'}}</label>
                                     </div>
                                 </div>
                                 <div class="form-group row" [hidden]="entity.documentType=='Cash Disbursement'">
@@ -183,11 +175,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body col-md-6">
+                <div class="card-body col-md-6" *ngIf="entity.portalStatus=='Pending Authorisation'">
                     <div class="row">
                         <div class="col-md-6"></div>
                         <div class="col-md-4">
-                            <button class="btn btn-primary btn-block" type="button" (click)="authorsiedModal.show();">Authorsied</button>
+                            <button class="btn btn-primary btn-block" type="button" (click)="authorsiedModal.show();">Authorsie</button>
                         </div>
                         <div class="col-md-2">
                         </div>
@@ -339,7 +331,7 @@
                 <div class="col-md-1">
                 </div>
                 <div class="col-md-10">
-                    <button type="button" class="btn btn-success btn-block text-bold" (click)="infoModal.hide()">OK</button>
+                    <button type="button" class="btn btn-success btn-block text-bold" routerLink="/pages/schedule">OK</button>
                 </div>
                 <div class="col-md-1">
                 </div>

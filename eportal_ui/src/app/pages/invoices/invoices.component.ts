@@ -85,6 +85,7 @@ export class InvoicesComponent implements OnInit {
             invoiceDate: {
                 title: 'Invoice Date',
                 type: 'date',
+                valuePrepareFunction: (value) => { return this.utl.formatDate(value, 'dd-MMM-yyyy') },
                 filter: false
             },
             invoiceAmount: {
@@ -310,6 +311,7 @@ export class InvoicesComponent implements OnInit {
     }
 
     public search(page: any) {
+        document.getElementById('preloader').style.display = 'block';
         let fr = this.fromDate == null ? null : this.fromDate.toISOString();
         let to = this.toDate == null ? null : this.toDate.toISOString();
 
@@ -338,13 +340,29 @@ export class InvoicesComponent implements OnInit {
 
         this.inv.search(x).subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
-                this.data = rsp.result.data;
+                let tmpdata = rsp.result.data;
+                if (tmpdata != null) {
+                    var option = {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    };
+                    var formatter = new Intl.NumberFormat("en-US", option);
+                    tmpdata.forEach(element => {
+                        //element.invoiceAmount = Intl.NumberFormat('en-US', { style: 'currency', currency: element.currencyIsoCode }).format(element.invoiceAmount);
+                        element.invoiceAmount = element.currencyIsoCode + " " + formatter.format(element.invoiceAmount);
+                    });
+                }
+                this.data = tmpdata;
                 this.total = rsp.result.total;
                 this.setPage(page);
             }
         }, (err) => {
             console.log(err);
         });
+
+        setTimeout(function () {
+            document.getElementById('preloader').style.display = 'none';
+        }, 500);
     }
 
     public setPage(page: number) {

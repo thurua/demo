@@ -125,11 +125,10 @@ public class ScheduleOfOfferService {
 			res = "Id does not exist";
 		} else {
 			m.setScheduleNo(scheduleNo);
-			m.setPortalStatus(portalStatus);
-
 			if ("Authorised".equals(portalStatus)) {
 				m.setAuthorisedDate(new Date());
 				m.setAuthorisedBy(authorisedBy);
+				m.setPortalStatus(portalStatus);
 			}
 
 			scheduleOfOfferDao.update(m);

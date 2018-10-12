@@ -68,6 +68,8 @@ export class LoginComponent implements OnInit {
     }
 
     public signIn() {
+        document.getElementById('preloader').style.display = 'block';
+
         this.loader = true;
         this.showMsg = false;
         let obj = {
@@ -87,6 +89,10 @@ export class LoginComponent implements OnInit {
             }
             this.loader = false;
         }, err => console.log(err));
+
+        setTimeout(function () {
+            document.getElementById('preloader').style.display = 'none';
+        }, 500); 
     }
 
     public sendEmailVerificationLink() {
@@ -105,6 +111,8 @@ export class LoginComponent implements OnInit {
             return;
         }
 
+        document.getElementById('preloader').style.display = 'block';
+
         let obj = { keyword: this.vm.email };
         this.pro.updateToken(obj).subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
@@ -117,6 +125,10 @@ export class LoginComponent implements OnInit {
                 this.messageForgot = rsp.message;
             }
         });
+
+        setTimeout(function () {
+            document.getElementById('preloader').style.display = 'none';
+        }, 500); 
     }
 
     private getConfig() {

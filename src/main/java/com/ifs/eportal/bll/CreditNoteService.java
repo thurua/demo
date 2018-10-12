@@ -6,8 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.dal.CreditNoteDao;
 import com.ifs.eportal.dto.CreditNoteDto;
+import com.ifs.eportal.dto.CustomDto;
+import com.ifs.eportal.dto.LineItemDto;
 import com.ifs.eportal.model.CreditNote;
 import com.ifs.eportal.req.PagingReq;
 
@@ -84,6 +87,18 @@ public class CreditNoteService {
 	public CreditNoteDto read(String sfId) {
 		CreditNoteDto res = _creditNoteDao.getBy(sfId);
 		return res;
+	}
+
+	/**
+	 * 
+	 * @param l
+	 * @param accountId
+	 * @param amendSchedule
+	 * @return
+	 */
+	public List<CustomDto> getListBy(List<LineItemDto> l, String accountId, boolean amendSchedule) {
+		List<String> names = Utils.getNames(l);
+		return _creditNoteDao.getListBy(names, accountId, amendSchedule);
 	}
 
 	/**

@@ -1,10 +1,9 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild, EventEmitter } from '@angular/core';
 import { CommonProvider, FileProvider, ScheduleProvider } from '../../providers/provider';
 import { HTTP } from '../../utilities/utility';
 import { FileUploader } from 'ng2-file-upload';
 import { ModalDirective } from 'ngx-bootstrap';
 import { saveAs } from "file-saver";
-import { and } from '@angular/router/src/utils/collection';
 
 const URL = 'http://localhost:8080/api/upload';
 
@@ -34,13 +33,15 @@ export class AddScheduleComponent implements OnInit {
     public isSuccess = false;
     public isError = false;
     public checkAgree = true;
+    public checkFile = true;
     public apiUrl = '';
 
     @ViewChild("infoModal") public infoModal: ModalDirective;
 
     constructor(
         private proSchedule: ScheduleProvider,
-        private pro: FileProvider) { }
+        private pro: FileProvider,
+    ) { }
 
     ngOnInit() {
         let user = JSON.parse(localStorage.getItem("CURRENT_TOKEN"));
@@ -88,11 +89,17 @@ export class AddScheduleComponent implements OnInit {
 
         setTimeout(function () {
             document.getElementById('preloader').style.display = 'none';
-        },500);
+        }, 500);
     }
 
     public fileChanged(e) {
         this.file = e.target.files[0];
+        if (this.file != null) {
+            this.checkFile = true;
+        }
+        else {
+            this.checkFile = false;
+        }
     }
 
     public hideShow(a: any) {
@@ -122,10 +129,17 @@ export class AddScheduleComponent implements OnInit {
     }
 
     public uploadDocument() {
+        document.getElementById('preloader').style.display = 'block';
         var acceptanceDate = new Date(this.vm.date);
         this.isSuccess = false;
         this.isError = false;
-        if (this.vm.agree == true) {
+        if (this.file != null) {
+            this.checkFile = true;
+        }
+        else {
+            this.checkFile = false;
+        }
+        if (this.vm.agree == true && this.checkFile == true) {
             let o =
             {
                 "clientId": this.clientId,
@@ -135,7 +149,7 @@ export class AddScheduleComponent implements OnInit {
                 "clientAccountId": this.vm.clientAccountId,
                 "scheduleType": this.vm.scheduleType
             };
-            //console.log(o);
+
             let s = JSON.stringify(o);
             this.pro.upload(this.file, s).subscribe((rsp: any) => {
                 if (rsp.body != undefined) {
@@ -143,10 +157,10 @@ export class AddScheduleComponent implements OnInit {
 
                     this.test = o.message.split(".");
                     for (let index = 0; index < this.test.length; index++) {
-                        const element = this.test[index];                      
-                        if(element[0] == " "){
-                            this.test[index-1] = this.test[index-1] + ". " + element;
-                            this.test.splice(index,1);     
+                        const element = this.test[index];
+                        if (element[0] == " ") {
+                            this.test[index - 1] = this.test[index - 1] + ". " + element;
+                            this.test.splice(index, 1);
                         }
                     }
 
@@ -174,6 +188,10 @@ export class AddScheduleComponent implements OnInit {
         else {
             this.checkAgree = false;
         }
+
+        setTimeout(function () {
+            document.getElementById('preloader').style.display = 'none';
+        }, 500);
     }
 
     public changeAgree() {
@@ -197,5 +215,9 @@ export class AddScheduleComponent implements OnInit {
                 saveAs(blob, this.fileName);
                 this.loader = false;
             });
+    }
+
+    removeFile(id: string): void {
+        this.file = [];
     }
 }

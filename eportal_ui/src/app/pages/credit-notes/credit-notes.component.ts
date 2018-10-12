@@ -74,7 +74,8 @@ export class CreditNotesComponent implements OnInit {
             },
             creditNoteDate: {
                 title: 'Credit Note Date',
-                type: 'string',
+                type: 'date',
+                valuePrepareFunction: (value) => { return this.utl.formatDate(value, 'dd-MMM-yyyy') },
                 filter: false
             },
             creditAmount: {
@@ -95,7 +96,7 @@ export class CreditNotesComponent implements OnInit {
             createdDate: {
                 title: 'Created Date / Time',
                 type: 'date',
-                valuePrepareFunction: (value) => { return this.utl.formatDate(value, 'dd-MMM-yyyy  HH:mm:ss') },
+                valuePrepareFunction: (value) => { return this.utl.formatDate(value, 'dd-MMM-yyyy HH:mm:ss') },
                 filter: false
             }
         }
@@ -172,6 +173,8 @@ export class CreditNotesComponent implements OnInit {
     }
 
     public search(page: any) {
+        document.getElementById('preloader').style.display = 'block';
+
         let fr = this.fromDate == null ? null : this.fromDate.toISOString();
         let to = this.toDate == null ? null : this.toDate.toISOString();
 
@@ -199,6 +202,17 @@ export class CreditNotesComponent implements OnInit {
         this.pro.search(x).subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 this.data = rsp.result.data;
+                if (this.data != null) {
+                    var option = {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    };
+                    var formatter = new Intl.NumberFormat("en-US", option);
+                    this.data.forEach(element => {
+                        //element.creditAmount = Intl.NumberFormat('en-US', { style: 'currency', currency: element.currencyIsoCode }).format(element.creditAmount);
+                        element.creditAmount = element.currencyIsoCode + " " + formatter.format(element.creditAmount);
+                    });
+                }
                 this.total = rsp.result.total;
                 this.setPage(page);
             }
@@ -206,6 +220,9 @@ export class CreditNotesComponent implements OnInit {
             console.log(err);
         });
 
+        setTimeout(function () {
+            document.getElementById('preloader').style.display = 'none';
+        }, 500);
     }
 
     public setPage(page: number) {

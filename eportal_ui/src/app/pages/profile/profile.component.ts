@@ -49,6 +49,8 @@ export class ProfileComponent implements OnInit {
     }
 
     private view() {
+        document.getElementById('preloader').style.display = 'block';
+
         this.pro.read().subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 this.vm = rsp.result;
@@ -57,9 +59,14 @@ export class ProfileComponent implements OnInit {
         }, (err) => {
             console.log(err);
         });
+
+        setTimeout(function () {
+            document.getElementById('preloader').style.display = 'none';
+        }, 500); 
     }
 
     public changPassword(valid: boolean) {
+        document.getElementById('preloader').style.display = 'block';
         if (!valid) {
             return;
         }
@@ -85,7 +92,9 @@ export class ProfileComponent implements OnInit {
         }, (err) => {
             console.log(err);
         });
-
+        setTimeout(function () {
+            document.getElementById('preloader').style.display = 'none';
+        }, 500); 
         this.changePasswordModal.hide();
         this.infoModal.show();
         this.resetPasswordPopup();
@@ -100,5 +109,8 @@ export class ProfileComponent implements OnInit {
     public closeChangePasswordPopup() {
         this.resetPasswordPopup();
         this.changePasswordModal.hide();
+        setTimeout(function () {
+            document.getElementById('preloader').style.display = 'none';
+        }, 500); 
     }
 }

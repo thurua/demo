@@ -67,7 +67,7 @@ export class ScheduleDetailsComponent implements OnInit {
                 filter: false,
                 type: 'html',
                 valuePrepareFunction: (cell, row) => {
-                    return `<a href="/#/pages/credit-notes-details/${row.sfId}">${row.no}</a>`
+                    return `<a href="/#/pages/credit-notes-details/${row.uuId}">${row.no}</a>`
                 },
             },
             customerBranch: {
@@ -130,7 +130,7 @@ export class ScheduleDetailsComponent implements OnInit {
                 filter: false,
                 type: 'html',
                 valuePrepareFunction: (cell, row) => {
-                    return `<a href="/#/pages/invoices-details/${row.sfId}">${row.no}</a>`
+                    return `<a href="/#/pages/invoices-details/${row.uuId}">${row.no}</a>`
                 },
             },
             customerexcel: {
@@ -298,6 +298,7 @@ export class ScheduleDetailsComponent implements OnInit {
     }
 
     startUpload(): void {
+        document.getElementById('preloader').style.display = 'block';
         let xx: File[] = [];
         this.files.forEach(i => {
             xx.push(i.nativeFile);
@@ -331,8 +332,9 @@ export class ScheduleDetailsComponent implements OnInit {
 
             }
         }, err => console.log(err));
-
-
+        setTimeout(function () {
+            document.getElementById('preloader').style.display = 'none';
+        }, 500);
     }
 
     cancelUpload(id: string): void {
@@ -350,18 +352,11 @@ export class ScheduleDetailsComponent implements OnInit {
     }
 
     public getDetail(sfId) {
+        document.getElementById('preloader').style.display = 'block';
+
         this.pro.getById(sfId).subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 this.entity = rsp.result;
-                if (this.entity.exchangeRate) {
-                    this.entity.exchangeRate = Intl.NumberFormat('en-US').format(this.entity.exchangeRate);
-                }
-                if (this.entity.totalAmount) {
-                    this.entity.totalAmount = Intl.NumberFormat('en-US').format(this.entity.totalAmount);
-                }
-                if (this.entity.totalAmountCn) {
-                    this.entity.totalAmountCn = this.entity.totalAmountCn.toFixed(2);
-                }
 
                 if (this.entity.isCreditNote) {
                     this.checkCd = true;
@@ -369,16 +364,22 @@ export class ScheduleDetailsComponent implements OnInit {
                     if (this.entity.creditNotes != null) {
                         let tmpCNList = this.entity.creditNotes;
                         let i = 0;
+                        var option = {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        };
+                        var formatter = new Intl.NumberFormat("en-US", option);
                         tmpCNList.forEach(element => {
                             i++;
                             element.no = i;
                             element.status = "Accepted";
                             //element.applyCN = element.unappliedReason == null || element.appliedInvoiceNo == null ? "checked" : "";
                             element.applyCN = element.appliedInvoiceNo == null ? "" : "checked";
-                            let cnAmount = element.creditAmount == null ? '' : Intl.NumberFormat('en-US', { style: 'currency', currency: element.currencyIsoCode }).format(element.creditAmount);
+                            //let cnAmount = element.creditAmount == null ? '' : Intl.NumberFormat('en-US', { style: 'currency', currency: element.currencyIsoCode }).format(element.creditAmount);
+                            let cnAmount = element.creditAmount == null ? '' : element.creditAmount = element.currencyIsoCode + " " + formatter.format(element.creditAmount);
                             let appInvNo = element.appliedInvoiceNo == null ? '' : element.appliedInvoiceNo;
                             element.amountInvNo = cnAmount + ' / ' + appInvNo;
-                            if (element.creditAmount == null || element.appliedInvoiceNo == null) {
+                            if (cnAmount == '' || appInvNo == '') {
                                 let re = / \/ /gi;
                                 element.amountInvNo = element.amountInvNo.replace(re, '');
                             }
@@ -393,21 +394,25 @@ export class ScheduleDetailsComponent implements OnInit {
                         let tmpIVList = this.entity.invoices;
                         let i = 0;
                         let isRejected = false;
-
+                        var option = {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        };
+                        var formatter = new Intl.NumberFormat("en-US", option);
                         tmpIVList.forEach(element => {
                             i++;
                             element.no = i;
                             element.customerexcel = element.customerFromExcel;
                             element.supplierExcel = element.supplierExcel;
-                            element.invoiceAmount = Intl.NumberFormat('en-US', { style: 'currency', currency: element.currencyIsoCode }).format(element.invoiceAmount);
+                            //element.invoiceAmount = Intl.NumberFormat('en-US', { style: 'currency', currency: element.currencyIsoCode }).format(element.invoiceAmount);
+                            element.invoiceAmount = element.currencyIsoCode + " " + formatter.format(element.invoiceAmount);
                             element.customerBranch = element.customer + ' / ' + element.customerBranch;
                             element.creditDate = this.utl.formatDate(element.invoiceDate, 'dd-MMM-yyyy') + ' / ' + element.creditPeriod;
                             let po = element.po == null ? '' : element.po;
                             let contract = element.contract == null ? '' : element.contract;
                             element.po = po + ' / ' + contract;
-                            if (element.po == null || element.contract == null) {
+                            if (po == '' || contract == '') {
                                 let re = / \/ /gi;
-
                                 element.po = element.po.replace(re, '');
                             }
                             if ((this.entity.portalStatus == 'Pending Authorisation' || this.entity.portalStatus == 'Authorised') && element.status == 'Unfunded') {
@@ -452,8 +457,13 @@ export class ScheduleDetailsComponent implements OnInit {
         }, (err) => {
             console.log(err);
         });
+
+        setTimeout(function () {
+            document.getElementById('preloader').style.display = 'none';
+        }, 500);
     }
     public UpdateSchedule() {
+        document.getElementById('preloader').style.display = 'block';
         let x = {
             scheduleNo: this.entity.scheduleNo,
             id: this.entity.id
@@ -465,6 +475,10 @@ export class ScheduleDetailsComponent implements OnInit {
         }, (err) => {
             console.log(err);
         });
+
+        setTimeout(function () {
+            document.getElementById('preloader').style.display = 'none';
+        }, 500);
     }
 
     public Authorise() {
@@ -478,7 +492,7 @@ export class ScheduleDetailsComponent implements OnInit {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 this.entity.portalStatus = "Authorised";
                 this.title = 'Confirmation';
-                this.msgInfo = 'Schedule is uploaded successfully!';
+                this.msgInfo = 'Schedule is updated successfully!';
                 this.infoModal.show();
             }
         }, (err) => {

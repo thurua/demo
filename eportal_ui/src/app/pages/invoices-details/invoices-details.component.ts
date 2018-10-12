@@ -35,18 +35,13 @@ export class InvoicesDetailsComponent implements OnInit {
                 type: 'string',
                 filter: false,
             },
+            recordType: {
+                title: 'Record Type',
+                type: 'string',
+                filter: false
+            },
             reason: {
                 title: 'Reason',
-                type: 'string',
-                filter: false
-            },
-            date: {
-                title: 'Date',
-                type: 'string',
-                filter: false
-            },
-            amount: {
-                title: 'Amount',
                 type: 'string',
                 filter: false
             }
@@ -63,6 +58,8 @@ export class InvoicesDetailsComponent implements OnInit {
     }
 
     public seachById() {
+        document.getElementById('preloader').style.display = 'block';
+
         let id = 0;
         this.act.params.subscribe((params: Params) => {
             id = params["_id"];
@@ -76,6 +73,10 @@ export class InvoicesDetailsComponent implements OnInit {
                 let msg = rsp.message;
             }
         });
+
+        setTimeout(function () {
+            document.getElementById('preloader').style.display = 'none';
+        }, 500); 
     }
 
     public getReasonBySfId(sfId: String) {

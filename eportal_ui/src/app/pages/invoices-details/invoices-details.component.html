@@ -113,7 +113,7 @@
                         <strong>Invoice Date</strong>
                     </div>
                     <div class="col-md-7">
-                        <label class="col-form-label">{{data.invoiceDate}}</label>
+                        <label class="col-form-label">{{data.invoiceDate | date: 'dd-MMM-yyyy'}}</label>
                     </div>
                 </div>
                 <div class="row" *ngIf="data.documentType == 'Invoice'">

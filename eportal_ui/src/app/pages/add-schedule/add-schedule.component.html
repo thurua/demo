@@ -89,12 +89,15 @@
                         <div class="col-md-6">
                             <div class="input-group file-upload">
                                 <input type="file" name="ImportExcel" title="Select File" id="importData" accept=".xls,.xlsx" ng2FileSelect [uploader]="uploader" (change)="fileChanged($event)" class="file-upload-btn" />
-                                <input type="text" class="form-control" placeholder="Choose a file..." value="{{(file !=null)? file.name :'' }}">
+                                <input type="text" class="form-control" placeholder="Choose a file..." value="{{(file !=null)? file.name :'' }}" />
                                 <i class="fa fa-times delete-file" (click)="removeFile()" *ngIf="file"></i>
                                 <span class="input-group-append upload">
                                         <button class="btn btn-primary" type="button"><i class="fa fa-upload"> </i></button>
                                     </span>
                             </div>
+                            <span [hidden]="checkFile" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error" data-for="file" data-valmsg-for="file" id="file_validationMessage" role="alert">
+                                    <i class="fa fa-exclamation-triangle"></i>&nbsp; Required
+                                </span>
                         </div>
                     </div>
                 </div>

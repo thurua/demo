@@ -7,7 +7,7 @@
                         <strong>Client</strong>
                     </div>
                     <div class="col-md-8">
-                        <label class="col-form-label">{{data.customerFromExcel}}</label>
+                        <label class="col-form-label">{{data.clientAccount}}</label>
                     </div>
                 </div>
                 <div class="row">
@@ -15,7 +15,7 @@
                         <strong>Client Account</strong>
                     </div>
                     <div class="col-md-8">
-                        <label class="col-form-label">{{data.clientAccount}}</label>
+                        <label class="col-form-label">{{data.clientAccountNo}}</label>
                     </div>
                 </div>
                 <div class="row">
@@ -89,7 +89,7 @@
                         <strong>Credit Note Date</strong>
                     </div>
                     <div class="col-md-7">
-                        <label class="col-form-label">{{data.creditNoteDate}}</label>
+                        <label class="col-form-label">{{data.creditNoteDate | date: 'dd-MMM-yyyy'}}</label>
                     </div>
                 </div>
                 <div class="row">
@@ -105,7 +105,7 @@
                         <strong>Credit Amount</strong>
                     </div>
                     <div class="col-md-7">
-                        <label class="col-form-label">{{data.currencyIsoCode}} {{data.creditAmount}}</label>
+                        <label class="col-form-label">{{data.currencyIsoCode}} {{data.creditAmount | number: '0.2'}}</label>
                     </div>
                 </div>
                 <div class="row">
@@ -113,7 +113,7 @@
                         <strong>Outstanding Amount</strong>
                     </div>
                     <div class="col-md-7">
-                        <label class="col-form-label">{{data.currencyIsoCode}} {{data.outstandingAmount}}</label>
+                        <label class="col-form-label">{{data.currencyIsoCode}} {{data.outstandingAmount | number: '0.2'}}</label>
                     </div>
                 </div>
             </div>

@@ -1,6 +1,7 @@
 package com.ifs.eportal.common;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -10,6 +11,7 @@ import com.ifs.eportal.dto.ClientAccountCustomerDto;
 import com.ifs.eportal.dto.ClientAccountDto;
 import com.ifs.eportal.dto.CustomDto;
 import com.ifs.eportal.dto.InvoiceDto;
+import com.ifs.eportal.dto.LineItemDto;
 import com.ifs.eportal.model.CreditNote;
 import com.ifs.eportal.model.Invoice;
 
@@ -31,7 +33,7 @@ public class ZValid {
 		String res = "";
 
 		// Find customer in curr sumary
-		double amountCurr = 0;
+		Double amountCurr = 0d;
 		for (CustomDto i : curr) {
 			if (name.trim().equals(i.getCode())) {
 				amountCurr = i.getValue();
@@ -39,14 +41,14 @@ public class ZValid {
 		}
 
 		// Find customer in total sumary
-		double amountTotal = 0;
+		Double amountTotal = 0d;
 		for (CustomDto i : total) {
 			if (name.trim().equals(i.getCode())) {
 				amountTotal = i.getValue();
 			}
 		}
 
-		if (amountTotal > 0) {
+		if (amountCurr != null && amountTotal != null && amountTotal > 0) {
 			double t = amountCurr / amountTotal;
 			if (t > 0.5) {
 				// Customer - Slow Payment.
@@ -68,7 +70,7 @@ public class ZValid {
 		String res = "";
 
 		// Find customer in curr sumary
-		double amountCurr = 0;
+		Double amountCurr = 0d;
 		for (CustomDto i : curr) {
 			if (name.trim().equals(i.getCode())) {
 				amountCurr = i.getValue();
@@ -76,14 +78,14 @@ public class ZValid {
 		}
 
 		// Find customer in total sumary
-		double amountTotal = 0;
+		Double amountTotal = 0d;
 		for (CustomDto i : total) {
 			if (name.trim().equals(i.getCode())) {
 				amountTotal = i.getValue();
 			}
 		}
 
-		if (amountTotal > 0) {
+		if (amountCurr != null && amountTotal != null && amountTotal > 0) {
 			double t = amountCurr / amountTotal;
 			if (t > 0.2) {
 				// Customer - Outstanding Invoices are disputed.
@@ -105,13 +107,13 @@ public class ZValid {
 		String res = "";
 
 		// Find customer in curr sumary
-		double amountCurr = 0;
+		Double amountCurr = 0d;
 		for (CustomDto i : curr) {
 			if (name.trim().equals(i.getCode())) {
 				amountCurr = i.getValue();
 			}
 		}
-		if (amount > amountCurr) {
+		if (amountCurr != null && amount > amountCurr) {
 			// Customer - Invoice Amount more than Customer Average Invoice Size.
 			res = "CCC";
 		}
@@ -133,14 +135,14 @@ public class ZValid {
 	public static String customer(List<ClientAccountCustomerDto> lcc, String name, double amount,
 			Boolean isInvoiceFactoring, String factor, Date d, ClientAccountDto ca) {
 		String res = "";
-		// Boolean found = false;
+		Boolean found = false;
 		name = name.trim();
 		for (ClientAccountCustomerDto i : lcc) {
 			if (!name.equals(i.getCcName())) {
 				continue;
 			}
 
-			// found = true;
+			found = true;
 			res = "";
 
 			if (i.getStatus().equals("Activated")) {
@@ -148,7 +150,7 @@ public class ZValid {
 				Boolean t2 = (factor.equals(i.getFciName()) && ca.getAccountType().equals("Export"));
 				DateTime activationDate = new DateTime(i.getActivationDate());
 				if (t1 || t2 || ca.getAccountType().equals("Domestic")) {
-					if (d.after(activationDate.toDate())) {
+					if (d.before(activationDate.toDate())) {
 						/* ToanNguyen 2018-Aug-23 IFS-974 */
 						// Schedule Acceptance Date cannot be before client account customer activation
 						// date.
@@ -163,7 +165,7 @@ public class ZValid {
 							}
 
 							Date t = activationDate.plusMonths(6).minusDays(1).toDate();
-							if (d.after(t)) {
+							if (d.before(t)) {
 								/* TriNguyen 2018-Aug-31 IFS-1040 */
 								// Customer - New.
 								res += ",CC9";
@@ -192,10 +194,11 @@ public class ZValid {
 			}
 		}
 		/* Comment by NhatNguyen 2018-Oct-01 IFS-1247 */
-		/*
-		 * if(!found) { //ToanNguyen 2018-Aug-31 IFS-1025 // Customer Name is not found
-		 * in Client Account. res = 'CC1'; }
-		 */
+
+		if (!found) { // ToanNguyen 2018-Aug-31 IFS-1025
+			// Customer Name is not found in Client Account.
+			res = "CC1";
+		}
 
 		return res;
 	}
@@ -211,7 +214,7 @@ public class ZValid {
 		String res = "";
 
 		// Find customer in credit sumary
-		double amountCredit = 0;
+		Double amountCredit = 0d;
 		for (CustomDto i : credit) {
 			if (name.trim().equals(i.getCode())) {
 				amountCredit = i.getValue();
@@ -219,14 +222,14 @@ public class ZValid {
 		}
 
 		// Find customer in invoice sumary
-		double amountInvoice = 0;
+		Double amountInvoice = 0d;
 		for (CustomDto i : invoice) {
 			if (name.trim().equals(i.getCode())) {
 				amountInvoice = i.getValue();
 			}
 		}
 
-		if (amountInvoice > 0) {
+		if (amountCredit != null && amountInvoice != null && amountInvoice > 0) {
 			double t = amountCredit / amountInvoice;
 			if (t > 0.2) {
 				// Customer - High % of Invoice offset by Credit Note in past 12 months.
@@ -292,7 +295,7 @@ public class ZValid {
 				for (ApprovedCustomerLimitDto acl : lcl) {
 					if (acl.getCustomer().equals(o.getCustomer())) {
 						Date t = (new DateTime(o.getInvoiceDate())).plusDays(o.getCreditPeriod().intValue()).toDate();
-						if (acl.getValidTo().after(t)) {
+						if (acl.getValidTo().before(t)) {
 							/* TriNguyen 2018-Aug-30 IFS-1037 */
 							// Customer - Invoice Credit Period exceed Approved CL Credit Period.
 							res = "CC8";
@@ -352,6 +355,74 @@ public class ZValid {
 		}
 
 		return err;
+	}
+
+	/**
+	 * 
+	 * @param l
+	 * @param isCN
+	 * @return
+	 */
+	public static String duplicate(List<LineItemDto> l, boolean isCN) {
+		String res = "";
+
+		HashMap<String, Boolean> existingNames = new HashMap<String, Boolean>();
+
+		for (LineItemDto i : l) {
+			if (i.getNo() != null && !i.getNo().isEmpty()) {
+				continue;
+			}
+
+			String name = i.getNo().trim();
+			Boolean t = existingNames.get(name);
+
+			if (t == null) {
+				existingNames.put(name, false);
+			} else if (!t) {
+				existingNames.put(name, true);
+				res += name + ", ";
+			}
+		}
+
+		if (res.length() > 1) {
+			res = res.substring(0, res.length() - 2);
+			String s = "";
+
+			if (isCN) {
+				/* IFS-1154 */
+				s = "Duplicate Credit Note Number found in Excel.";
+			} else {
+				/* IFS-1155 */
+				s = "Duplicate Invoice Number found in Excel.";
+			}
+			res = s + " Inv/CN No. [" + res + "]";
+		}
+
+		return res;
+	}
+
+	public static String duplicate(String type, List<CustomDto> t) {
+		String res = "";
+
+		for (Integer i = 0; i < t.size(); i++) {
+			res += t.get(i).getCode() + ", ";
+		}
+
+		if (res.length() > 1) {
+			res = res.substring(0, res.length() - 2);
+
+			String s = "";
+			if ("CASH DISBURSEMENT".equals(type)) {
+				s = "Duplicate Invoice Number found for this Supplier.";
+			} else if ("CREDIT NOTE".equals(type)) {
+				s = "Duplicate Credit Note Number found.";
+			} else { // o.type == 'INVOICE'
+				s = "Duplicate Invoice Number found.";
+			}
+			res = s + " Inv/CN No. [" + res + "]\n";
+		}
+
+		return res;
 	}
 
 	// end
