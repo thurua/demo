@@ -19,8 +19,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ifs.eportal.common.Const;
-import com.ifs.eportal.common.RsaService;
 import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZConfig;
+import com.ifs.eportal.common.ZHash;
+import com.ifs.eportal.common.ZRsa;
 import com.ifs.eportal.dal.PasswordChangeHistoryDao;
 import com.ifs.eportal.dal.PortalUserDao;
 import com.ifs.eportal.dto.PortalUserDto;
@@ -137,14 +139,20 @@ public class PortalUserService implements UserDetailsService {
 		String newPassword = req.getNewPassword();
 
 		// Decrypt
-		oldPassword = RsaService.decrypt(oldPassword);
-		newPassword = RsaService.decrypt(newPassword);
+		oldPassword = ZRsa.decrypt(oldPassword);
+		newPassword = ZRsa.decrypt(newPassword);
 
+		String mode = "";
 		// Convert token to id
 		if (isReset) {
 			PortalUserDto o = portalUserDao.getByToken(email);
 			id = o.getId();
 			res.setResult(o);
+
+			mode = "A";
+
+		} else {
+			mode = "U";
 		}
 
 		// Handle
@@ -153,7 +161,7 @@ public class PortalUserService implements UserDetailsService {
 			res.setError("Id does not exist");
 		} else {
 			boolean ok = true;
-			String mode = "";
+
 			String t = bCryptPasswordEncoder.encode(newPassword);
 
 			if (!isReset) {
@@ -162,7 +170,7 @@ public class PortalUserService implements UserDetailsService {
 
 			if (ok) {
 				m.setPassword(t);
-				t = Utils.hash(t, Const.Authentication.TOKEN_KEY1);
+				t = ZHash.hash(t, Const.Authentication.TOKEN_KEY1);
 				m.setPasswordHash(t);
 
 				if (isReset) {
@@ -171,11 +179,7 @@ public class PortalUserService implements UserDetailsService {
 					m.setStatus("ACTD");
 					m.setActivatedOn(new Date());
 
-					mode = "A";
-				} else {
-					mode = "U";
 				}
-
 				portalUserDao.update(m);
 			} else {
 				res.setError("Old password is incorrect");
@@ -212,7 +216,7 @@ public class PortalUserService implements UserDetailsService {
 			} else {
 				// Generate password reminder token
 				String t = bCryptPasswordEncoder.encode(userId);
-				String token = 'U' + Utils.hash(t, Const.Authentication.TOKEN_KEY2);
+				String token = 'U' + ZHash.hash(t, Const.Authentication.TOKEN_KEY2);
 
 				// Get password reminder token expire time
 				Date expire = Utils.getTime(Calendar.HOUR, 24);
@@ -232,10 +236,10 @@ public class PortalUserService implements UserDetailsService {
 				}
 			}
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}

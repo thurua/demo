@@ -56,13 +56,13 @@ public class PortalUserAccessService {
 	}
 
 	/**
-	 * Read by
+	 * Update logout on
 	 * 
 	 * @param uuId
 	 * @return
 	 */
-	public PortalUserAccess read(String uuId) {
-		PortalUserAccess res = portalUserAccessDao.read(uuId);
+	public int updateLogoutOn(String uuId) {
+		int res = portalUserAccessDao.updateLogoutOn(uuId);
 		return res;
 	}
 

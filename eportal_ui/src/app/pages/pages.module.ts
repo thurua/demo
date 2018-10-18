@@ -36,6 +36,10 @@ import { CreditNotesComponent } from './credit-notes/credit-notes.component';
 import { InvoicesComponent } from './invoices/invoices.component';
 import { CreditNotesDetailsComponent } from './credit-notes-details/credit-notes-details.component';
 import { InvoicesDetailsComponent } from './invoices-details/invoices-details.component';
+import { ClientAccountComponent } from './client-account/client-account.component';
+import { ClientAccountFactoringDetailsComponent } from './client-account-factoring-details/client-account-factoring-details.component';
+import { ClientAccountLctrDetailsComponent } from './client-account-lctr-details/client-account-lctr-details.component';
+import { ClientAccountLoanDetailsComponent } from './client-account-loan-details/client-account-loan-details.component';
 
 @NgModule({
     imports: [
@@ -71,7 +75,11 @@ import { InvoicesDetailsComponent } from './invoices-details/invoices-details.co
         CreditNotesComponent,
         InvoicesComponent,
         CreditNotesDetailsComponent,
-        InvoicesDetailsComponent
+        InvoicesDetailsComponent,
+        ClientAccountFactoringDetailsComponent,
+        ClientAccountLctrDetailsComponent,
+        ClientAccountComponent,
+        ClientAccountLoanDetailsComponent
     ],
     providers: [
         {

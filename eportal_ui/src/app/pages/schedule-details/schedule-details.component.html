@@ -116,7 +116,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row" *ngIf="entity.portalStatus=='Pending Authorisation' && checkAuhorise== true">
                             <div class="col-md-2">
                                 <button class="btn btn-gray btn-block" type="button" routerLink="../../schedule">Cancel</button>
                             </div>
@@ -147,7 +147,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body col-md-6" *ngIf="entity.portalStatus=='Pending Authorisation'">
+                <div class="card-body col-md-6" *ngIf="entity.portalStatus=='Pending Authorisation' && checkAuhorise == true">
                     <div class="row">
                         <div class="col-md-6"></div>
                         <div class="col-md-4">
@@ -190,15 +190,29 @@
                 <div class="row">
                     <div class="card-body col-md-6">
                         <div class="form-group row">
-                            <div class="col-md-6">
+                            <div class="col-md-8">
                                 <div class="input-group file-upload">
                                     <input type="file" ngFileSelect [options]="options" (uploadOutput)="onUploadOutput($event)" [uploadInput]="uploadInput" accept=".pdf,.tiff,.jpeg,.gif,.png" multiple class="file-upload-btn">
-                                    <input type="text" class="form-control" placeholder="Choose file..." value="{{(file !=null)? strFileName :'' }}">
-                                    <i class="fa fa-times delete-file" (click)="removeAllFiles()" *ngIf="file"></i>
+                                    <input type="text" class="form-control" placeholder="Choose file...">
+                                    <!-- <i class="fa fa-times delete-file" (click)="removeAllFiles()" *ngIf="file"></i> -->
                                     <span class="input-group-append upload">
                                                 <button class="btn btn-primary" type="button"><i class="fa fa-upload"> </i></button>
                                     </span>
                                 </div>
+                                <ul class="k-upload-files k-reset">
+                                    <li class="k-file k-file-success" *ngFor="let i of files">
+                                        <div>
+                                            <span class="k-icon k-i-jpg"></span>
+                                            <i class="fa fa-times delete-file k-upload-action k-button" (click)="removeFile(i.fileIndex)" style="float: right;display: block;margin-top: 12px;"></i>
+                                            <a>
+                                                {{i.name}}
+                                        </a>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+
                             </div>
                         </div>
 

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
+import { HTTP } from 'app/utilities';
+import { UserProvider } from 'app/providers';
 import { ModalDirective } from 'ngx-bootstrap';
-import { UserProvider } from 'app/providers/user';
-import { HTTP } from '../../utilities/utility';
 
 @Component({
     selector: 'app-profile',
@@ -62,7 +62,7 @@ export class ProfileComponent implements OnInit {
 
         setTimeout(function () {
             document.getElementById('preloader').style.display = 'none';
-        }, 500); 
+        }, 500);
     }
 
     public changPassword(valid: boolean) {
@@ -94,7 +94,7 @@ export class ProfileComponent implements OnInit {
         });
         setTimeout(function () {
             document.getElementById('preloader').style.display = 'none';
-        }, 500); 
+        }, 500);
         this.changePasswordModal.hide();
         this.infoModal.show();
         this.resetPasswordPopup();
@@ -111,6 +111,6 @@ export class ProfileComponent implements OnInit {
         this.changePasswordModal.hide();
         setTimeout(function () {
             document.getElementById('preloader').style.display = 'none';
-        }, 500); 
+        }, 500);
     }
 }

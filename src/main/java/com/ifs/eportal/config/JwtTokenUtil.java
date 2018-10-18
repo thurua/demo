@@ -10,10 +10,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import com.ifs.eportal.common.Const;
+import com.ifs.eportal.common.ZConfig;
 import com.ifs.eportal.dto.PayloadDto;
 import com.ifs.eportal.dto.PortalUserDto;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -45,9 +47,18 @@ public class JwtTokenUtil implements Serializable {
 		claims.put("scopes", authorities);
 		claims.put(Const.Authentication.PAYLOAD_NAME, PayloadDto.convert(m));
 
-		return Jwts.builder().setClaims(claims).setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + Const.Authentication.TOKEN_TIME * 1000))
-				.signWith(SignatureAlgorithm.HS256, Const.Authentication.SIGNING_KEY).compact();
+		long t = System.currentTimeMillis();
+		Date iat = new Date(t);
+		Date exp = new Date(t + ZConfig._jwtTime);
+		System.out.println("iat " + iat);
+		System.out.println("exp " + exp);
+
+		JwtBuilder jb;
+		jb = Jwts.builder().setClaims(claims).setIssuedAt(iat).setExpiration(exp);
+		jb = jb.signWith(SignatureAlgorithm.HS256, ZConfig._jwtSigning);
+
+		String res = jb.compact();
+		return res;
 	}
 
 	public Boolean validateToken(String token, UserDetails userDetails) {
@@ -56,10 +67,10 @@ public class JwtTokenUtil implements Serializable {
 	}
 
 	private Claims getAllClaimsFromToken(String token) {
-		return Jwts.parser().setSigningKey(Const.Authentication.SIGNING_KEY).parseClaimsJws(token).getBody();
+		return Jwts.parser().setSigningKey(ZConfig._jwtSigning).parseClaimsJws(token).getBody();
 	}
 
-	private Boolean isTokenExpired(String token) {
+	public Boolean isTokenExpired(String token) {
 		final Date expiration = getExpirationDateFromToken(token);
 		return expiration.before(new Date());
 	}

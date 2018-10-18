@@ -5,7 +5,7 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZConfig;
 
 /**
  * 
@@ -32,6 +32,9 @@ public class ScheduleOfOfferFilter {
 
 	@JsonProperty(value = "documentType")
 	private String documentType;
+
+	@JsonProperty(value = "name")
+	private String name;
 
 	// end
 
@@ -85,6 +88,14 @@ public class ScheduleOfOfferFilter {
 		this.documentType = documentType;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -99,6 +110,7 @@ public class ScheduleOfOfferFilter {
 		frCreatedDate = null;
 		toCreatedDate = null;
 		documentType = "";
+		name = "";
 	}
 
 	/**
@@ -120,7 +132,7 @@ public class ScheduleOfOfferFilter {
 				e.printStackTrace();
 			}
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
 		}

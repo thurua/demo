@@ -1,10 +1,10 @@
 import { Component, ViewEncapsulation, ViewChild, OnInit } from '@angular/core';
+import { HTTP } from 'app/utilities';
+import { UserProvider } from 'app/providers';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { CustomValidators } from 'ng2-validation';
-import { UserProvider } from '../../providers/provider';
 import { ModalDirective } from 'ngx-bootstrap';
-import { HTTP } from '../../utilities/utility';
 
 @Component({
     selector: 'app-login',
@@ -52,9 +52,9 @@ export class ResetPasswordComponent implements OnInit {
             this.token = params["token"];
             let mode = this.token.substring(0, 1);
 
-            if (mode == 'S' || mode == 'R') {
+            if (mode === 'S' || mode === 'R') {
                 this.title = 'Password Setup';
-            } else if (mode == 'A') {
+            } else if (mode === 'A' || mode === 'U') {
                 this.title = 'Reset Password';
             }
         });

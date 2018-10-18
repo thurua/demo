@@ -1,6 +1,6 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild, EventEmitter } from '@angular/core';
-import { CommonProvider, FileProvider, ScheduleProvider } from '../../providers/provider';
-import { HTTP } from '../../utilities/utility';
+import { Component, OnInit, ViewEncapsulation, ViewChild, ElementRef } from '@angular/core';
+import { FileProvider, ScheduleProvider, CommonProvider } from 'app/providers';
+import { HTTP, Token } from 'app/utilities';
 import { FileUploader } from 'ng2-file-upload';
 import { ModalDirective } from 'ngx-bootstrap';
 import { saveAs } from "file-saver";
@@ -14,6 +14,7 @@ const URL = 'http://localhost:8080/api/upload';
     encapsulation: ViewEncapsulation.None
 })
 export class AddScheduleComponent implements OnInit {
+
     public clientId: string = "";
     public test: any[] = [];
     public clientName: string = "";
@@ -35,18 +36,22 @@ export class AddScheduleComponent implements OnInit {
     public checkAgree = true;
     public checkFile = true;
     public apiUrl = '';
+    public isShow = true;
 
     @ViewChild("infoModal") public infoModal: ModalDirective;
+    @ViewChild('myInput') myInputVariable: ElementRef;
 
     constructor(
         private proSchedule: ScheduleProvider,
         private pro: FileProvider,
+        private proCommon:CommonProvider
     ) { }
 
     ngOnInit() {
-        let user = JSON.parse(localStorage.getItem("CURRENT_TOKEN"));
+        let user = Token.getUser();
         this.clientId = user.clientId;
         this.clientName = user.clientName;
+
         this.vm.clientAccountId = "";
         this.searchCA();
         this.hideShow("");
@@ -70,7 +75,7 @@ export class AddScheduleComponent implements OnInit {
             ]
         }
 
-        this.proSchedule.searchCA(x).subscribe((rsp: any) => {
+        this.proCommon.searchCA(x).subscribe((rsp: any) => {
             let item = {
                 sfId: "",
                 clientAccount: "-- Please select --"
@@ -91,9 +96,10 @@ export class AddScheduleComponent implements OnInit {
             document.getElementById('preloader').style.display = 'none';
         }, 500);
     }
-
     public fileChanged(e) {
         this.file = e.target.files[0];
+        this.isShow = false;
+
         if (this.file != null) {
             this.checkFile = true;
         }
@@ -107,19 +113,19 @@ export class AddScheduleComponent implements OnInit {
 
         if (a == "Invoice") {
             this.message = "Pursuant to the Factoring Agreement which we have made with you, we send you herewith the <b><u>INVOICES</u></b> and we hereby assign to you each of the debts to which those invoices relate.<br/><br/>It is hereby guaranteed that in relation to the said invoices the warranties and undertakings contained in Clause (29) of the factoring Agreement have been complied with and in particular the goods and/or services have been delivered and/or performed prior to the date hereof.";
-            this.fileName = "Factoring-INV.xlsx";
+            this.fileName = "Factoring-INV-0.4.xlsm";
             this.validate = false;
             this.isCheck = true;
         }
         else if (a == "Cash Disbursement") {
             this.message = "Pursuant to the Factoring Agreement which we have made with you, we send you herewith the <b><u>INVOICES</b></u> and we hereby assign to you each of the debts to which those invoices relate.<br/><br/>It is hereby guaranteed that in relation to the said invoices the warranties and undertakings contained in Clause (29) of the factoring Agreement have been complied with and in particular the goods and/or services have been delivered and/or performed prior to the date hereof.";
-            this.fileName = "Loan-INV.xlsx";
+            this.fileName = "Loan-INV-0.5.xlsm";
             this.validate = false;
             this.isCheck = true;
         }
         else if (a == "Credit note") {
             this.message = "In accordance with the Factoring Agreement we have made with you, we send you herewith a <b><u>COPY OF THE ORIGINAL CREDIT NOTES</b></u> relating to the customers listed above.";
-            this.fileName = "Factoring-CN.xlsx";
+            this.fileName = "Factoring-CN-0.5.xlsm";
             this.validate = false;
             this.isCheck = true;
         }
@@ -128,8 +134,11 @@ export class AddScheduleComponent implements OnInit {
         };
     }
 
-    public uploadDocument() {
-        document.getElementById('preloader').style.display = 'block';
+    public uploadDocument(valid: boolean) {
+        if (!valid) {
+            return;
+        }
+
         var acceptanceDate = new Date(this.vm.date);
         this.isSuccess = false;
         this.isError = false;
@@ -140,6 +149,8 @@ export class AddScheduleComponent implements OnInit {
             this.checkFile = false;
         }
         if (this.vm.agree == true && this.checkFile == true) {
+            document.getElementById('preloader').style.display = 'block';
+
             let o =
             {
                 "clientId": this.clientId,
@@ -155,10 +166,11 @@ export class AddScheduleComponent implements OnInit {
                 if (rsp.body != undefined) {
                     let o = JSON.parse(rsp.body);
 
-                    this.test = o.message.split(".");
+                    this.test = o.message.split(".\n");
+
                     for (let index = 0; index < this.test.length; index++) {
                         const element = this.test[index];
-                        if (element[0] == " ") {
+                        if (element[0] === " ") {
                             this.test[index - 1] = this.test[index - 1] + ". " + element;
                             this.test.splice(index, 1);
                         }
@@ -175,9 +187,16 @@ export class AddScheduleComponent implements OnInit {
                         let str = "";
                         let count = 0;
 
-                        for (var i = 0; i < this.test.length - 1; i++) {
+                        for (var i = 0; i < this.test.length; i++) {
                             count++;
-                            str += count + ". " + this.test[i] + "." + "<br/>";
+                            if (this.test[i].length > 0) {
+                                if (i == this.test.length - 1) {
+                                    str += count + ". " + this.test[i] + "<br/>";
+                                }
+                                else {
+                                    str += count + ". " + this.test[i] + "." + "<br/>";
+                                }
+                            }
                         }
                         this.msg = str;
                     }
@@ -217,7 +236,9 @@ export class AddScheduleComponent implements OnInit {
             });
     }
 
-    removeFile(id: string): void {
+    removeFile(): void {
         this.file = [];
+        this.myInputVariable.nativeElement.value = "";
+        this.isShow = true;
     }
 }

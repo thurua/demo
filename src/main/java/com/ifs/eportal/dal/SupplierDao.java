@@ -12,7 +12,7 @@ import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZConfig;
 import com.ifs.eportal.common.ZFile;
 import com.ifs.eportal.dto.SortDto;
 import com.ifs.eportal.dto.SupplierDto;
@@ -68,11 +68,11 @@ public class SupplierDao implements Repository<Supplier, Integer> {
 	@Autowired
 	private EntityManager _em;
 
-	private String _sql;
-
 	private String _path;
 
-	private static final Logger _log = Logger.getLogger(ClientAccountDao.class.getName());
+	private String _sql;
+
+	private static final Logger _log = Logger.getLogger(SupplierDao.class.getName());
 
 	// end
 
@@ -88,20 +88,32 @@ public class SupplierDao implements Repository<Supplier, Integer> {
 
 	@SuppressWarnings("unchecked")
 	public List<SupplierDto> getByClientId(String clientId) {
-		String sql = _sql + " WHERE a.client1__c = :clientId";
+		List<SupplierDto> res = new ArrayList<SupplierDto>();
 
-		// Execute
-		Query q = _em.createNativeQuery(sql);
-		q.setParameter("clientId", clientId);
-		List<Object[]> l = q.getResultList();
+		try {
+			String sql = _sql + " WHERE a.client1__c = :clientId";
 
-		// Convert
-		List<SupplierDto> res = SupplierDto.convert(l);
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("clientId", clientId);
+			List<Object[]> l = q.getResultList();
+
+			// Convert
+			res = SupplierDto.convert(l);
+		} catch (Exception ex) {
+			if (ZConfig._printTrace) {
+				ex.printStackTrace();
+			}
+			if (ZConfig._writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
 		return res;
 	}
 
 	/**
-	 * Search by
+	 * Search
 	 * 
 	 * @param req
 	 * @return
@@ -111,7 +123,6 @@ public class SupplierDao implements Repository<Supplier, Integer> {
 		List<SupplierDto> res = new ArrayList<SupplierDto>();
 
 		try {
-			// Get data
 			Object filter = req.getFilter();
 			int page = req.getPage();
 			int size = req.getSize();
@@ -144,7 +155,8 @@ public class SupplierDao implements Repository<Supplier, Integer> {
 			}
 
 			// Execute to count all
-			String sql = ZFile.read(_path + "count.sql");
+			int i = _sql.indexOf("FROM");
+			String sql = "SELECT COUNT(*) " + _sql.substring(i);
 			String limit = "";
 			Query q = createQuery(sql, filter, limit);
 			BigInteger total = (BigInteger) q.getSingleResult();
@@ -157,15 +169,15 @@ public class SupplierDao implements Repository<Supplier, Integer> {
 				limit += " OFFSET " + offset + " LIMIT " + size;
 			}
 			q = createQuery(sql, filter, limit);
-			List<Object[]> l = q.getResultList();
+			List<Object[]> t = q.getResultList();
 
 			// Convert
-			res = SupplierDto.convert(l);
+			res = SupplierDto.convert(t);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -178,34 +190,46 @@ public class SupplierDao implements Repository<Supplier, Integer> {
 	 * 
 	 * @param sql
 	 * @param o
+	 * @param limit
 	 * @return
 	 */
 	private Query createQuery(String sql, Object o, String limit) {
-		SupplierFilter filter = SupplierFilter.convert(o);
-		String client = filter.getClient();
+		Query res = null;
 
-		// Where
-		String where = "";
-		// if (!client.isEmpty()) {
-		where += " AND a.client1__c = :client ";
-		// }
+		try {
+			SupplierFilter filter = SupplierFilter.convert(o);
+			String client = filter.getClient();
 
-		// Replace first
-		if (!where.isEmpty()) {
-			where = where.replaceFirst("AND", "WHERE");
-		}
+			// Where
+			String where = "";
+			// if (!client.isEmpty()) {
+			where += " AND a.client1__c = :client ";
+			// }
 
-		Query q = _em.createNativeQuery(sql + where + limit);
+			// Replace first
+			if (!where.isEmpty()) {
+				where = where.replaceFirst("AND", "WHERE");
+			}
 
-		// Set parameter
-		if (!where.isEmpty()) {
-			int i = where.indexOf(":client");
-			if (i > 0) {
-				q.setParameter("client", client);
+			res = _em.createNativeQuery(sql + where + limit);
+
+			// Set parameter
+			if (!where.isEmpty()) {
+				int i = where.indexOf(":client");
+				if (i > 0) {
+					res.setParameter("client", client);
+				}
+			}
+		} catch (Exception ex) {
+			if (ZConfig._printTrace) {
+				ex.printStackTrace();
+			}
+			if (ZConfig._writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
 
-		return q;
+		return res;
 	}
 
 	// end

@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
+import { HTTP, Rsa } from 'app/utilities';
+import { UserProvider, } from 'app/providers';
 import { Router } from '@angular/router';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { CustomValidators } from 'ng2-validation';
-import { UserProvider, } from '../../providers/provider';
-import { HTTP, RsaService } from '../../utilities/utility';
 import { ModalDirective } from 'ngx-bootstrap';
 
 @Component({
@@ -34,7 +34,7 @@ export class LoginComponent implements OnInit {
     @ViewChild('forgotPassModal') public forgotPassModal: ModalDirective;
     @ViewChild('notify') public notify: ModalDirective;
 
-    constructor(router: Router, fb: FormBuilder, private pro: UserProvider, private rsa: RsaService) {
+    constructor(router: Router, fb: FormBuilder, private pro: UserProvider, private rsa: Rsa) {
         this.router = router;
         this.form = fb.group({
             'email': ['', Validators.compose([Validators.required, CustomValidators.email])],
@@ -80,9 +80,7 @@ export class LoginComponent implements OnInit {
         this.pro.signIn(obj).subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 this.message = "";
-                this.pro.saveAuth(rsp.result); // save JWT
-                this.router.navigate(['pages/dashboard']);
-
+                this.pro.saveAuth(rsp.result);
             } else {
                 this.showMsg = true;
                 this.message = rsp.message;
@@ -92,7 +90,7 @@ export class LoginComponent implements OnInit {
 
         setTimeout(function () {
             document.getElementById('preloader').style.display = 'none';
-        }, 500); 
+        }, 500);
     }
 
     public sendEmailVerificationLink() {
@@ -128,7 +126,7 @@ export class LoginComponent implements OnInit {
 
         setTimeout(function () {
             document.getElementById('preloader').style.display = 'none';
-        }, 500); 
+        }, 500);
     }
 
     private getConfig() {
@@ -145,8 +143,10 @@ export class LoginComponent implements OnInit {
 
     public cancelClick() {
         this.forgotPassModal.hide();
-        this.isShow=true;
-        this.showMsg=false;
+        this.isShow = true;
+        this.showMsg = false;
         this.vm.email = "";
+        this.vm.userName = "";
+        this.vm.password = "";
     }
 }

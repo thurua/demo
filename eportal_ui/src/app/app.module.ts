@@ -17,11 +17,13 @@ import {
     ScheduleProvider,
     CreditNoteProvider,
     InvoiceProvider,
-    ReasonProvider
-} from './providers/provider';
+    ReasonProvider,
+    ClientAccountProvider,
+    ClientAccountCustomerProvider
+} from './providers';
 
 // Import utilities
-import { RsaService, Utils } from './utilities/utility';
+import { Rsa, Utils } from './utilities';
 
 @NgModule({
     declarations: [
@@ -40,12 +42,14 @@ import { RsaService, Utils } from './utilities/utility';
         UserProvider,
         FileProvider,
         CommonProvider,
-        RsaService,
+        Rsa,
         ScheduleProvider,
         CreditNoteProvider,
         Utils,
         InvoiceProvider,
-        ReasonProvider
+        ReasonProvider,
+        ClientAccountProvider,
+        ClientAccountCustomerProvider
     ],
     bootstrap: [AppComponent]
 })

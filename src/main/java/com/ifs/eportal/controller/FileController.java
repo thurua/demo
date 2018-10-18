@@ -38,6 +38,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ifs.eportal.bll.AccountService;
 import com.ifs.eportal.bll.ApprovedCustomerLimitService;
+import com.ifs.eportal.bll.BranchService;
 import com.ifs.eportal.bll.ClientAccountCustomerService;
 import com.ifs.eportal.bll.ClientAccountService;
 import com.ifs.eportal.bll.CreditNoteService;
@@ -47,8 +48,12 @@ import com.ifs.eportal.bll.ReasonService;
 import com.ifs.eportal.bll.RecordTypeService;
 import com.ifs.eportal.bll.ScheduleOfOfferService;
 import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZConfig;
+import com.ifs.eportal.common.ZDate;
 import com.ifs.eportal.common.ZError;
 import com.ifs.eportal.common.ZFile;
+import com.ifs.eportal.common.ZHash;
+import com.ifs.eportal.common.ZToken;
 import com.ifs.eportal.common.ZValid;
 import com.ifs.eportal.dto.AccountDto;
 import com.ifs.eportal.dto.ApprovedCustomerLimitDto;
@@ -113,6 +118,9 @@ public class FileController {
 	@Autowired
 	private ReasonService reasonService;
 
+	@Autowired
+	private BranchService branchService;
+
 	// end
 
 	// region -- Methods --
@@ -121,7 +129,7 @@ public class FileController {
 	 * Initialize
 	 */
 	public FileController() {
-		// Utils.allowUpload = true;
+		// ZConfig._allowUpload = true;
 	}
 
 	/**
@@ -159,10 +167,10 @@ public class FileController {
 			}
 
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -185,7 +193,6 @@ public class FileController {
 		SingleRsp res = new SingleRsp();
 
 		try {
-
 			// Get data
 			String originalName = file.getOriginalFilename();
 			ObjectMapper mapper = new ObjectMapper();
@@ -205,12 +212,12 @@ public class FileController {
 				String name = uuId + "." + extension;
 
 				// Upload file to S3
-				if (Utils.allowUpload) {
+				if (ZConfig._allowUpload) {
 					InputStream in = file.getInputStream();
 					dto.invoiceDataPath = ZFile.upload(in, name, path);
 				}
 
-				PayloadDto pl = Utils.getTokenInfor(header);
+				PayloadDto pl = ZToken.getUser(header);
 				dto.portalUserId = pl.getSfId();
 				List<String> ar = pl.getAccessRights();
 
@@ -258,32 +265,25 @@ public class FileController {
 		String res = "";
 
 		try {
-			if (!Utils.checkAuth(auth)) {
+			SingleRsp rsp = new SingleRsp();
+			String[] arr = auth.split("!!");
+			auth = arr[0];
+			String req = arr[1];
+
+			if (!ZHash.checkAuth(auth)) {
 				return "error=invalid-auth";
 			}
 
-			// Get data
+			// // Get data
 			String originalName = file.getOriginalFilename();
-			// UploadReq o = new UploadReq();
+			ObjectMapper mapper = new ObjectMapper();
+			UploadReq o = mapper.readValue(req, UploadReq.class);
 
 			// Handle
-			// ValidDto dto = validateSchedule(file, o);
+			ValidDto dto = validateSchedule(file, o);
+			rsp.setResult(dto.data);
 
-			ExcelDto o = new ExcelDto();
-			SingleRsp rsp = new SingleRsp();
-
-			// Handle
-			if (originalName.contains("Factoring-INV")) {
-				o = ExcelDto.getFactoringIv(file);
-			} else if (originalName.contains("Loan-INV")) {
-				o = ExcelDto.getLoanIv(file);
-			} else {
-				o = ExcelDto.getFactoringCn(file);
-			}
-			rsp.setResult(o);
-
-			// Upload file to S3
-			if (Utils.allowUpload) {
+			if (dto.isSuccess()) {
 				// Get extension
 				int t = originalName.lastIndexOf(".") + 1;
 				String extension = originalName.substring(t);
@@ -293,17 +293,30 @@ public class FileController {
 				String uuId = UUID.randomUUID().toString();
 				String name = uuId + "." + extension;
 
-				InputStream in = file.getInputStream();
-				ZFile.upload(in, name, path);
+				// Upload file to S3
+				if (ZConfig._allowUpload) {
+					InputStream in = file.getInputStream();
+					dto.invoiceDataPath = ZFile.upload(in, name, path);
+				}
+			} else {
+				HashMap<String, String> errors = dto.getErrors();
+				if (errors.size() > 0) {
+					String err = ZError.getError(errors);
+					dto = Utils.addResult(dto, err);
+
+					err = ZError.getMessage(errors);
+					// dto = Utils.addResult(dto, err);
+					System.out.println(err);
+				}
+				rsp.setError(dto.getMessage());
 			}
 
-			ObjectMapper mapper = new ObjectMapper();
 			res = mapper.writeValueAsString(rsp);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -338,7 +351,7 @@ public class FileController {
 			RestTemplate rest = new RestTemplate();
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-			headers.add("Auth", Utils.getAuth());
+			headers.add("Auth", ZHash.getAuth());
 
 			LinkedMultiValueMap<String, String> mapFile = new LinkedMultiValueMap<>();
 			mapFile.add("Content-disposition", "form-data; name=file; filename=" + file.getOriginalFilename());
@@ -356,10 +369,10 @@ public class FileController {
 
 			res.setResult(o);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -401,9 +414,7 @@ public class FileController {
 		// Get params
 		String clientId = req.getClientId();
 		String scheduleNo = req.getScheduleNo().trim();
-		Date acceptanceDate = new Date();
-		// Get date only
-		acceptanceDate = Utils.getDateWithoutTimeUsingCalendar(acceptanceDate);
+		Date acceptanceDate = ZDate.today();
 		Boolean amendSchedule = req.getAmendSchedule();
 		String clientAccountId = req.getClientAccountId();
 		String scheduleType = req.getScheduleType();
@@ -584,10 +595,10 @@ public class FileController {
 			}
 			res.data = o;
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -620,6 +631,9 @@ public class FileController {
 		List<CustomDto> arDisputed = invoiceService.getDisputedOutstanding(o.getLineItems(), clientAccountId);
 		List<CustomDto> arOverdue = invoiceService.getOverdueOutstanding(o.getLineItems(), clientAccountId);
 		List<CustomDto> arInvoiceAvg = invoiceService.getInvoiceAvg(o.getLineItems(), clientAccountId);
+		List<CustomDto> arOverdueSup = invoiceService.getOverdueOutstandingSup(o.getLineItems(), clientAccountId);
+		List<CustomDto> arInvoiceAvgSup = invoiceService.getInvoiceAvgSup(o.getLineItems(), clientAccountId);
+		List<CustomDto> arTotalSup = invoiceService.getTotalOutstandingSup(o.getLineItems(), clientAccountId);
 		List<CustomDto> arInvoice = invoiceService.getInvoiceSumary(o.getLineItems(), clientAccountId,
 				req.getAcceptanceDate());
 		List<CustomDto> arTotalAmount = invoiceService.getTotalOutstandingAmount(o.getLineItems(), clientAccountId);
@@ -666,8 +680,8 @@ public class FileController {
 				iv.setInvoiceAmount(i.getAmount().floatValue());
 
 				if (avgInvoiceAmount.getValue() != null && (iv.getInvoiceAmount() <= avgInvoiceAmount.getValue())) {
-					// Customer - Invoice Amount more than Client Average Invoice Size.
-					err = "CCD";
+					// Supplier - Invoice Amount more than Client Average Invoice Size.
+					err = "LO2";
 					errors = ZError.addError(errors, err, iv.getName());
 					res.setInvoiceValid(false);
 				}
@@ -687,7 +701,8 @@ public class FileController {
 					}
 				}
 
-				err = ZValid.ratioOverdue(arOverdue, arTotal, i.getName());
+				/* CongLee 2018-Oct-12 IFS-1389 */
+				err = ZValid.ratioOverdueSup(arOverdueSup, arTotalSup, i.getName());
 				errors = ZError.addError(errors, err, iv.getName());
 
 				if (!err.isEmpty()) {
@@ -701,8 +716,8 @@ public class FileController {
 					res.setInvoiceValid(false);
 				}
 
-				/* ToanNguyen 2018-Sep-06 IFS-1045 */
-				err = ZValid.customerAverage(arInvoiceAvg, i.getAmount(), i.getName());
+				/* CongLee 2018-Oct-12 IFS-1389 */
+				err = ZValid.suplierAverage(arInvoiceAvgSup, i.getAmount(), i.getName());
 				errors = ZError.addError(errors, err, iv.getName());
 
 				if (!err.isEmpty()) {
@@ -865,12 +880,14 @@ public class FileController {
 			if (isFac) {
 				/* TriNguyen 2018-Sep-01 IFS-1036 */
 				List<ApprovedCustomerLimitDto> lcl = approvedCustomerLimitService.read(liv, clientId);
+				List<HashMap<String, String>> lbr = branchService.getBy(o.getLineItems());
+
 				for (Invoice i : liv) {
 					if (lcc.size() > 0) {
 						err = ZValid.customer(lcc, i.getCustomerFromExcel(), i.getInvoiceAmount(), true,
-								o.getFactorCode(), req.getAcceptanceDate(), ca);
+								o.getFactorCode(), req.getAcceptanceDate(), ca, i.getCustomerBranch(), lbr.get(0));
 						errors = ZError.addError(errors, err, i.getName());
-						
+
 						if (!err.isEmpty()) {
 							List<String> arr = Arrays.asList(err.split(","));
 							int t1 = arr.indexOf("CC9");
@@ -885,14 +902,13 @@ public class FileController {
 								res.setSuccess(false);
 							}
 						}
+					} else {
+						// ToanNguyen 2018-Aug-23 IFS-1025
+						// Customer Name is not found in Client Account.
+						err = "CC1";
+						errors = ZError.addError(errors, err, i.getName());
+						res.setSuccess(false);
 					}
-					else {
-                        //ToanNguyen 2018-Aug-23 IFS-1025
-                        // Customer Name is not found in Client Account.
-                        err = "CC1";
-                        errors = ZError.addError(errors, err, i.getName());
-                        res.setSuccess(false);
-                    }
 
 					/* TriNguyen 2018-Sep-01 IFS-1036,1037,1038,1039 */
 					err = ZValid.acl(i, lcl, ca.getFactoringType(), arTotalAmount);
@@ -988,11 +1004,12 @@ public class FileController {
 		if (res.isSuccess()) {
 			List<InvoiceDto> lin = new ArrayList<>();
 			lin = invoiceService.read(o.getLineItems(), clientAccountId);
+			List<HashMap<String, String>> lbr = branchService.getBy(o.getLineItems());
 
 			for (CreditNote i : lcn) {
 				if (lcc.size() > 0) {
 					err = ZValid.customer(lcc, i.getCustomerFromExcel(), 0, false, o.getFactorCode(),
-							req.getAcceptanceDate(), ca);
+							req.getAcceptanceDate(), ca, i.getCustomerBranch(), lbr.get(0));
 					errors = ZError.addError(errors, err, i.getName());
 					if (!err.isEmpty()) {
 						/* ToanNguyen 2018-Aug-23 IFS-974,1025,1026 */
@@ -1095,10 +1112,10 @@ public class FileController {
 				createInvoice(o, isIV, m, dto);
 			}
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -1120,6 +1137,7 @@ public class FileController {
 			RecordTypeDto dto = recordTypeService.getBy("Invoice__c", name);
 			List<AccountDto> lac = accountService.getByNames(o.getLineItems());
 			List<Invoice> l = new ArrayList<Invoice>();
+			List<HashMap<String, String>> lbr = branchService.getBy(o.getLineItems());
 
 			HashMap<String, String> lTemp = new HashMap<>();
 			for (String key : t.getErrors().keySet()) {
@@ -1158,10 +1176,24 @@ public class FileController {
 					if (isInvoice) {
 						m.setCustomer(Utils.getAccIdByName(lac, i.getName()));
 						m.setCustomerFromExcel(i.getName());
+
+						String branchs = lbr.get(1).get(i.getName());
+						if (branchs != null) {
+							String[] temp = branchs.split(",");
+							for (String item : temp) {
+								String[] temp2 = item.split("--.--");
+								if (i.getBranch().equals(temp2[1])) {
+									m.setCustomerBranchCode(temp2[0]);
+									continue;
+								}
+							}
+						}
 					} else {
 						m.setSupplier(Utils.getAccIdByName(lac, i.getName()));
 						m.setSupplierFromExcel(i.getName());
+						m.setPaymentDate(i.getPaymentDate());
 					}
+
 					m.setCustomerBranch(i.getBranch());
 					m.setName(i.getNo());
 					m.setInvoiceDate(i.getItemDate());
@@ -1219,10 +1251,10 @@ public class FileController {
 			}
 			res = true;
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -1242,6 +1274,7 @@ public class FileController {
 		try {
 			List<ClientAccountCustomerDto> lcc = clientAccountCustomerService.getByClientId(so.getClientAccount());
 			List<CreditNote> l = new ArrayList<CreditNote>();
+			List<HashMap<String, String>> lbr = branchService.getBy(o.getLineItems());
 
 			HashMap<String, String> lTemp = new HashMap<>();
 			for (String key : t.getErrors().keySet()) {
@@ -1266,13 +1299,19 @@ public class FileController {
 					m.setStatus("Accepted");
 					// m.setCreatedByPortalUserId(so.getCreatedByPortalUserId());
 
-					String errCode = lTemp.get(i.getNo());
-					if (errCode != null) {
-						String lastErr = ZError.getError(errCode);
-						m.setReasonCode(lastErr);
-						m.setApplyCreditNote(false);
+					String branchs = lbr.get(1).get(i.getName());
+					if (branchs != null) {
+						String[] temp = branchs.split(",");
+						for (String item : temp) {
+							String[] temp2 = item.split("--.--");
+							if (i.getBranch().equals(temp2[1])) {
+								m.setCustomerBranchCode(temp2[0]);
+								continue;
+							}
+						}
 					}
 
+					m.setApplyCreditNote(true);
 					m.setCustomer(Utils.getAccCusIdByName(lcc, i.getName()));
 					m.setCustomerFromExcel(i.getName());
 					m.setCustomerBranch(i.getBranch());
@@ -1281,6 +1320,13 @@ public class FileController {
 					m.setCreditAmount(i.getAmount().floatValue());
 					m.setAppliedInvoice(i.getInvoiceApplied());
 					m.setCreatedDate(new Date());
+
+					String errCode = lTemp.get(i.getNo());
+					if (errCode != null) {
+						String lastErr = ZError.getError(errCode);
+						m.setReasonCode(lastErr);
+						m.setApplyCreditNote(false);
+					}
 
 					String uuId = UUID.randomUUID().toString();
 					m.setUuId(uuId);
@@ -1327,10 +1373,10 @@ public class FileController {
 
 			res = true;
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}

@@ -2,6 +2,8 @@ package com.ifs.eportal.dal;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -9,6 +11,7 @@ import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ifs.eportal.common.ZConfig;
 import com.ifs.eportal.dto.PortalRoleDto;
 import com.ifs.eportal.dto.SortDto;
 import com.ifs.eportal.filter.PortalRoleFilter;
@@ -65,6 +68,8 @@ public class PortalRoleDao implements Repository<PortalRole, Integer> {
 
 	private String _sql;
 
+	private static final Logger _log = Logger.getLogger(PortalRoleDao.class.getName());
+
 	// end
 
 	// region -- Methods --
@@ -83,15 +88,27 @@ public class PortalRoleDao implements Repository<PortalRole, Integer> {
 	 * @return
 	 */
 	public PortalRoleDto getBy(Integer id) {
-		String sql = _sql + " WHERE a.id = :id";
+		PortalRoleDto res = new PortalRoleDto();
 
-		// Execute
-		Query q = _em.createNativeQuery(sql);
-		q.setParameter("id", id);
-		Object[] i = (Object[]) q.getSingleResult();
+		try {
+			String sql = _sql + " WHERE a.id = :id";
 
-		// Convert
-		PortalRoleDto res = PortalRoleDto.convert(i);
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("id", id);
+			Object[] i = (Object[]) q.getSingleResult();
+
+			// Convert
+			res = PortalRoleDto.convert(i);
+		} catch (Exception ex) {
+			if (ZConfig._printTrace) {
+				ex.printStackTrace();
+			}
+			if (ZConfig._writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
 		return res;
 	}
 

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZConfig;
 import com.ifs.eportal.common.ZDate;
 import com.ifs.eportal.common.ZFile;
 import com.ifs.eportal.dto.ScheduleOfOfferDetailDto;
@@ -109,10 +110,10 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 			// Convert
 			res = ScheduleOfOfferDto.convert(t);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -140,10 +141,10 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 			// Convert
 			res = ScheduleOfOfferDto.convert(t);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -175,10 +176,10 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 			// Convert
 			res = ScheduleOfOfferDto.convert(t);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -235,10 +236,10 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 			// Convert
 			res = ScheduleOfOfferDetailDto.convert(t, lc, li, la);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -295,10 +296,10 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 			// Convert
 			res = ScheduleOfOfferDetailDto.convert(t, lc, li, la);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -324,10 +325,10 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 			res = (Date) q.getSingleResult();
 
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -405,10 +406,10 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 			// Convert
 			res = ScheduleOfOfferDto.convert(t);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -435,6 +436,7 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 			Date fr = filter.getFrCreatedDate();
 			Date to = filter.getToCreatedDate();
 			String documentType = filter.getDocumentType();
+			String name = filter.getName();
 			Utils.toString(filter, true);
 
 			// Where
@@ -464,6 +466,9 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 			}
 			if (!documentType.isEmpty()) {
 				where += " AND a.document_type__c = :documentType";
+			}
+			if (!name.isEmpty()) {
+				where += " AND a.name ILIKE :name";
 			}
 
 			// Replace first
@@ -508,12 +513,16 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 				if (i > 0) {
 					res.setParameter("documentType", documentType);
 				}
+				i = where.indexOf(":name");
+				if (i > 0) {
+					res.setParameter("name", name);
+				}
 			}
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}

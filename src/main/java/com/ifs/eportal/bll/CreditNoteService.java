@@ -97,7 +97,7 @@ public class CreditNoteService {
 	 * @return
 	 */
 	public List<CustomDto> getListBy(List<LineItemDto> l, String accountId, boolean amendSchedule) {
-		List<String> names = Utils.getNames(l);
+		List<String> names = Utils.getNo(l);
 		return _creditNoteDao.getListBy(names, accountId, amendSchedule);
 	}
 

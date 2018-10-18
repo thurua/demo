@@ -86,26 +86,6 @@
                         <input type="text" class="form-control" [minDate]="minDate" [maxDate]="maxDate" bsDatepicker [(bsValue)]="toDate" value="{{ toDate | date:'dd-MMM-yyyy' }}">
                     </div>
                 </div>
-                <div class="form-group row" *ngIf="documentType == 'Invoice'">
-                    <div class="col-md-5">
-                        <strong>Customer</strong>
-                    </div>
-                    <div class="col-md-7">
-                        <select [(ngModel)]="customer" class="form-control">
-                              <option *ngFor="let i of lstCU" value="{{i.customer}}">{{i.name}}</option>
-                          </select>
-                    </div>
-                </div>
-                <div class="form-group row" *ngIf="documentType == 'Cash Disbursement'">
-                    <div class="col-md-5">
-                        <strong>Supplier</strong>
-                    </div>
-                    <div class="col-md-7">
-                        <select name="supplier" [(ngModel)]="supplier" class="form-control">
-                                <option *ngFor="let i of lstSU" value="{{i.supplier}}">{{i.name}}</option>
-                            </select>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -121,8 +101,8 @@
         </div>
     </div>
     <div _ngcontent-c32="" _nghost-c34="" class="ng-star-inserted" style="padding: 1.25rem;" [hidden]="data.length==0">
-        <nav _ngcontent-c34="" class="ng2-smart-pagination-nav ng-star-inserted">
-            <ul _ngcontent-c34="" class="ng2-smart-pagination pagination">
+        <nav _ngcontent-c34="" class="ng2-smart-pagination-nav ng-star-inserted row">
+            <ul _ngcontent-c34="" class="ng2-smart-pagination pagination col-md-6">
                 <li _ngcontent-c34="" [ngClass]="{'disabled': pager.currentPage === 1}" class="ng2-smart-page-item page-item disabled"><a _ngcontent-c34="" aria-label="First" class="ng2-smart-page-link page-link" (click)="searchClick(1)"><span _ngcontent-c34="" aria-hidden="true">«</span><span _ngcontent-c34="" class="sr-only">First</span></a></li>
                 <li [ngClass]="{disabled:pager.currentPage === 1}" _ngcontent-c34="" class="ng2-smart-page-item page-item"><a _ngcontent-c34="" aria-label="Prev" class="ng2-smart-page-link page-link page-link-prev" (click)="searchClick(pager.currentPage - 1)"><span _ngcontent-c34="" aria-hidden="true">&lt;</span><span _ngcontent-c34="" class="sr-only">Prev</span></a></li>
                 <li _ngcontent-c34="" *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage === page}" class="ng2-smart-page-item page-item ng-star-inserted" (click)="searchClick(page)">
@@ -131,6 +111,9 @@
                 <li _ngcontent-c34="" [ngClass]="{disabled:pager.currentPage === pager.totalPages}" class="ng2-smart-page-item page-item"><a _ngcontent-c34="" aria-label="Next" class="ng2-smart-page-link page-link page-link-next" (click)="searchClick(pager.currentPage + 1)"><span _ngcontent-c34="" aria-hidden="true">&gt;</span><span _ngcontent-c34="" class="sr-only">Next</span></a></li>
                 <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}" _ngcontent-c34="" class="ng2-smart-page-item page-item"><a _ngcontent-c34="" aria-label="Last" class="ng2-smart-page-link page-link" (click)="searchClick(pager.totalPages)"><span _ngcontent-c34="" aria-hidden="true">»</span><span _ngcontent-c34="" class="sr-only">Last</span></a></li>
             </ul>
+            <span class="col-md-6 text-right text-italic">
+                {{total}} items
+            </span>
         </nav>
     </div>
 </div>

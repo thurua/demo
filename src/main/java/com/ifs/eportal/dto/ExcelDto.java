@@ -16,7 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZConfig;
+import com.ifs.eportal.common.ZFile;
 
 /**
  * 
@@ -199,10 +200,10 @@ public class ExcelDto {
 			ObjectMapper mapper = new ObjectMapper();
 			res = mapper.readValue(s, ExcelDto.class);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				System.out.println(ex.getMessage());
 			}
 		}
@@ -220,12 +221,12 @@ public class ExcelDto {
 		ExcelDto note = new ExcelDto();
 
 		try {
-			String FILE_NAME = "Factoring-CN-0.4.xlsx";
 			Workbook workbook;
-
 			if (file == null) {
-				FileInputStream excelFile = new FileInputStream(new File(FILE_NAME));
-				workbook = new XSSFWorkbook(excelFile);
+				String path = ZFile.getPath("document/excel");
+				String fileName = path + "Factoring-CN-0.5.xlsm";
+				FileInputStream fis = new FileInputStream(new File(fileName));
+				workbook = new XSSFWorkbook(fis);
 			} else {
 				workbook = new XSSFWorkbook(file.getInputStream());
 			}
@@ -303,7 +304,7 @@ public class ExcelDto {
 			int count = 0;
 			int index = 1;
 
-			while (iterator.hasNext() && count < 10) {
+			while (iterator.hasNext() && count < 11) {
 				count += 1;
 				iterator.next();
 			}
@@ -385,10 +386,10 @@ public class ExcelDto {
 
 			workbook.close();
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				System.out.println(ex.getMessage());
 			}
 		}
@@ -406,12 +407,12 @@ public class ExcelDto {
 		ExcelDto note = new ExcelDto();
 
 		try {
-			String FILE_NAME = "Factoring-INV-0.3.xlsx";
 			Workbook workbook;
-
 			if (file == null) {
-				FileInputStream excelFile = new FileInputStream(new File(FILE_NAME));
-				workbook = new XSSFWorkbook(excelFile);
+				String path = ZFile.getPath("document/excel");
+				String fileName = path + "Factoring-INV-0.4.xlsm";
+				FileInputStream fis = new FileInputStream(new File(fileName));
+				workbook = new XSSFWorkbook(fis);
 			} else {
 				workbook = new XSSFWorkbook(file.getInputStream());
 			}
@@ -489,7 +490,7 @@ public class ExcelDto {
 			int count = 0;
 			int index = 1;
 
-			while (iterator.hasNext() && count < 10) {
+			while (iterator.hasNext() && count < 11) {
 				count += 1;
 				iterator.next();
 			}
@@ -585,10 +586,10 @@ public class ExcelDto {
 
 			workbook.close();
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				System.out.println(ex.getMessage());
 			}
 		}
@@ -606,12 +607,12 @@ public class ExcelDto {
 		ExcelDto note = new ExcelDto();
 
 		try {
-			String FILE_NAME = "Loan-INV-0.4.xlsx";
 			Workbook workbook;
-
 			if (file == null) {
-				FileInputStream excelFile = new FileInputStream(new File(FILE_NAME));
-				workbook = new XSSFWorkbook(excelFile);
+				String path = ZFile.getPath("document/excel");
+				String fileName = path + "Loan-INV-0.5.xlsm";
+				FileInputStream fis = new FileInputStream(new File(fileName));
+				workbook = new XSSFWorkbook(fis);
 			} else {
 				workbook = new XSSFWorkbook(file.getInputStream());
 			}
@@ -689,7 +690,7 @@ public class ExcelDto {
 			int count = 0;
 			int index = 1;
 
-			while (iterator.hasNext() && count < 10) {
+			while (iterator.hasNext() && count < 11) {
 				count += 1;
 				iterator.next();
 			}
@@ -785,10 +786,10 @@ public class ExcelDto {
 
 			workbook.close();
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				System.out.println(ex.getMessage());
 			}
 		}

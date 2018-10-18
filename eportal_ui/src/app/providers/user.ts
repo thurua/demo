@@ -1,23 +1,23 @@
 import { Injectable } from '@angular/core';
+import { HTTP, Utils, Token, Rsa } from 'app/utilities';
+import { ApiProvider } from 'app/providers';
 import { Router } from '@angular/router';
-import { ApiProvider } from './api';
-import { RsaService } from './../utilities/utility';
+import { interval } from 'rxjs';
 
 @Injectable()
 export class UserProvider {
-    public timerLogout;
-    public subscriptionLogout;
+    private timerRefresh;
+    private timerSignOut;
 
     constructor(private api: ApiProvider,
         private rou: Router,
-        private rsa: RsaService) { }
+        private rsa: Rsa) { }
 
     /**
      * Read
      */
     public read() {
-        let x = {};
-        return this.api.post('portal-user/read', x);
+        return this.api.post("portal-user/read", {});
     }
 
     /**
@@ -25,7 +25,7 @@ export class UserProvider {
      * @param info
      */
     public updateProfile(info: any) {
-        return this.api.post('portal-user/update-profile', info);
+        return this.api.post("portal-user/update-profile", info);
     }
 
     /**
@@ -33,9 +33,9 @@ export class UserProvider {
      * @param info
      */
     public updatePassword(info: any) {
-        //info.oldpassword = this.rsa.encrypt(info.oldpassword); // encrypt password
-        //info.newpassword = this.rsa.encrypt(info.newpassword); // encrypt password
-        return this.api.post('portal-user/update-password', info);
+        info.oldpassword = this.rsa.encrypt(info.oldpassword); // encrypt password
+        info.newpassword = this.rsa.encrypt(info.newpassword); // encrypt password
+        return this.api.post("portal-user/update-password", info);
     }
 
     /**
@@ -43,7 +43,7 @@ export class UserProvider {
      * @param info
      */
     public resetPassword(info: any) {
-        return this.api.post('portal-user/reset-password', info);
+        return this.api.post("portal-user/reset-password", info, false);
     }
 
     /**
@@ -51,7 +51,7 @@ export class UserProvider {
      * @param info
      */
     public updateToken(info: any) {
-        return this.api.post('portal-user/update-token', info);
+        return this.api.post("portal-user/update-token", info, false);
     }
 
     /**
@@ -59,7 +59,7 @@ export class UserProvider {
      * @param info
      */
     public search(info: any) {
-        return this.api.post('portal-user/search', info);
+        return this.api.post("portal-user/search", info);
     }
 
     /**
@@ -68,25 +68,42 @@ export class UserProvider {
      */
     public signIn(info: any) {
         info.password = this.rsa.encrypt(info.password); // encrypt password
-        return this.api.post('portal-user/sign-in', info);
+        return this.api.post("portal-user/sign-in", info, false, false);
+    }
+
+    /**
+    * Refresh token
+    */
+    public refreshToken() {
+        let t = this.api.post("portal-user/refresh-token", {}, true, false);
+        t.subscribe((rsp: any) => {
+            if (rsp.status === HTTP.STATUS_SUCCESS) {
+                Token.signOut = true;
+                Token.setToken(rsp.result);
+            }
+            else {
+                Utils.log(rsp.message);
+            }
+        }, err => Utils.log(err));
     }
 
     /**
      * Sign out
      */
     public signOut() {
-        this.api.get('portal-user/sign-out').subscribe((rsp: any) => {
-        }, err => console.log(err));
-
-        localStorage.removeItem('CURRENT_TOKEN');
-        this.rou.navigate(['/']);
+        let t = this.api.post("portal-user/sign-out", {}, true, false);
+        t.subscribe(() => {
+            Token.signOut = false;
+            Token.removeToken();
+            this.rou.navigate(["/"]);
+        }, err => Utils.log(err));
     }
 
     /**
      * Get configuration
      */
     public getConfig() {
-        return this.api.get('portal-user/get-config');
+        return this.api.get("portal-user/get-config", false, false);
     }
 
     /**
@@ -94,7 +111,7 @@ export class UserProvider {
      * @param info
      */
     public checkExpired(info: any) {
-        return this.api.post('portal-user/check-expired', info);
+        return this.api.post("portal-user/check-expired", info, false);
     }
 
     /**
@@ -103,63 +120,29 @@ export class UserProvider {
      * @param redirect
      */
     public saveAuth(token: string, redirect: boolean = true) {
-        let t = this.api.saveToken(token);
-        //this.timerLogout = Observable.interval(this.api.milliseconds);
+        Token.setToken(token);
 
-        /*this.subscriptionLogout = this.timerLogout.subscribe(x => {
-            let now = new Date();
-            if (now > this.api.nextRun && this.api.allowLogout) {
+        this.timerSignOut = setInterval(() => {
+            Utils.log("Run this.timerSignOut");
+
+            let t = Token.runSignOut.getTime() - Token.lastAccess.getTime();
+            if (t < Token.intSignOut) {
+                Utils.log("Call this.refreshToken()");
+                this.refreshToken();
+            }
+            else {
+                Utils.log("Call this.signOut()");
+
+                if (this.timerSignOut) {
+                    clearInterval(this.timerSignOut);
+                }
+
                 this.signOut();
             }
-        });*/
+        }, Token.intSignOut);
 
         if (redirect) {
-            //this.rou.navigate(['/dashboard']);
-            //this.checkRedirect(t.user.accessrights);
-        }
-    }
-
-    /**
-     * Check access rights
-     * @param right
-     */
-    public checkAccessRights(right: String): boolean {
-        let res: any = JSON.parse(localStorage.getItem('CURRENT_TOKEN'));
-        if (res == null) {
-            return false;
-        }
-
-        if (right === '/dashboard') {
-            right = 'Dashboard';
-        }
-
-        let ok = res.accessRights.find(x => x === right);
-        return ok != undefined && ok != '';
-    }
-
-    /**
-     * Check redirection
-     */
-    public checkRedirection() {
-        let user = JSON.parse(localStorage.getItem('CURRENT_TOKEN'));
-        if (user != null) {
-            this.checkRedirect(user.accessRights);
-        }
-    }
-
-    /**
-     * Check redirect
-     * @param ar Access rights
-     */
-    private checkRedirect(ar: any) {
-        let dashboard = ar.find(myObj => myObj == 'Dashboard');
-        let report = ar.find(myObj => myObj == 'Report');
-
-        if (dashboard != undefined) {
-            this.rou.navigate(['/dashboard']);
-        }
-        else {
-            this.rou.navigate(['/error-page']);
+            this.rou.navigate(["/pages/dashboard"]);
         }
     }
 }

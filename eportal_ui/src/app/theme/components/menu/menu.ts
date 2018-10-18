@@ -6,9 +6,9 @@ export const verticalMenuItems = [
      new Menu(20, 'Invoices', '/pages/invoices', null, 'shield', null, false, 0),
      new Menu(30, 'Credit Notes', 'pages/credit-notes', null, 'tag', null, false, 0),
     //  new Menu(40, 'Cash Disbursements', '/pages/blank', null, 'money', null, false, 0),
-     new Menu(50, 'Client Accounts', '/pages/blank', null, 'cogs', null, true, 0),
-     new Menu(50, 'Summary', '/pages/blank', null, 'briefcase', null, false, 50),
-     new Menu(60, 'Details', '/pages/blank', null, 'newspaper-o', null, false, 50),
+     new Menu(50, 'Client Accounts', null, null, 'cogs', null, true, 0),
+     new Menu(50, 'Summary', '/pages/client-account', null, 'briefcase', null, false, 50),
+     new Menu(60, 'Details', '/pages/factoring-details', null, 'newspaper-o', null, false, 50),
      new Menu(70, 'Help', '/pages/blank', null, 'chain', null, false, 0),
 
     // new Menu(142, 'Level 3', null, null, 'folder-open-o', null, true, 141),

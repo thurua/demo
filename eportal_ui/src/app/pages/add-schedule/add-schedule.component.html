@@ -1,4 +1,4 @@
-<form name="form" #f="ngForm" (ngSubmit)="f.form.valid && uploadDocument()" class="full-width">
+<form name="form" #f="ngForm" (ngSubmit)="uploadDocument(f.form.valid)" class="full-width">
     <div class="card header-margin">
         <div class="card-header">
             <strong>Details</strong>
@@ -20,7 +20,7 @@
                         </div>
                         <div class="col-md-8">
                             <select class="form-control" name="scheduleType" #scheduleType="ngModel" [(ngModel)]="vm.scheduleType" (change)="hideShow($event.target.value)" required>
-                                <option value="">-- Please Select --</option>      
+                                <option value="">-- Please Select --</option>
                                 <option value="Cash Disbursement">Cash Disbursement</option>
                                 <option value="Credit note">Credit note</option>
                                 <option value="Invoice">Invoice</option>
@@ -88,9 +88,9 @@
                     <div class="form-group row">
                         <div class="col-md-6">
                             <div class="input-group file-upload">
-                                <input type="file" name="ImportExcel" title="Select File" id="importData" accept=".xls,.xlsx" ng2FileSelect [uploader]="uploader" (change)="fileChanged($event)" class="file-upload-btn" />
+                                <input type="file" name="myInput" #myInput title="Select File" id="importData" accept=".xls,.xlsx,.xlsm" ng2FileSelect [uploader]="uploader" (change)="fileChanged($event)" class="file-upload-btn" />
                                 <input type="text" class="form-control" placeholder="Choose a file..." value="{{(file !=null)? file.name :'' }}" />
-                                <i class="fa fa-times delete-file" (click)="removeFile()" *ngIf="file"></i>
+                                <i class="fa fa-times delete-file" (click)="removeFile()" [hidden]="isShow"></i>
                                 <span class="input-group-append upload">
                                         <button class="btn btn-primary" type="button"><i class="fa fa-upload"> </i></button>
                                     </span>
@@ -165,7 +165,7 @@
                 </div>
                 <div class="form-group row">
                     <div class="col-md-12">
-                        <p style="text-align: left; padding-left: 18%;" [innerHTML]="msg"></p>
+                        <p style="text-align: left; padding-left: 7%;" [innerHTML]="msg"></p>
                     </div>
                 </div>
             </div>

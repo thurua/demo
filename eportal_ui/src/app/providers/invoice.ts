@@ -30,15 +30,6 @@ export class InvoiceProvider {
         return this.api.post('invoice/update-schedule-details', info);
     }
 
-
-    /**
-     * Search Client Account
-     * @param info
-     */
-    public searchCA(info: any) {
-        return this.api.post('common/search-client-account', info);
-    }
-
     /**
      * Search Customer
      * @param info

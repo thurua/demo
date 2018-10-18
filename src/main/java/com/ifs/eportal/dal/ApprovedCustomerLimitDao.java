@@ -12,7 +12,7 @@ import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZConfig;
 import com.ifs.eportal.common.ZFile;
 import com.ifs.eportal.dto.ApprovedCustomerLimitDto;
 import com.ifs.eportal.dto.SortDto;
@@ -102,10 +102,10 @@ public class ApprovedCustomerLimitDao implements Repository<ApprovedCustomerLimi
 			// Convert
 			res = ApprovedCustomerLimitDto.convert(i);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -137,10 +137,10 @@ public class ApprovedCustomerLimitDao implements Repository<ApprovedCustomerLimi
 			// Convert
 			res = ApprovedCustomerLimitDto.convert(i);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -168,10 +168,10 @@ public class ApprovedCustomerLimitDao implements Repository<ApprovedCustomerLimi
 			// Convert
 			res = ApprovedCustomerLimitDto.convert(i);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -223,7 +223,8 @@ public class ApprovedCustomerLimitDao implements Repository<ApprovedCustomerLimi
 			}
 
 			// Execute to count all
-			String sql = ZFile.read(_path + "count.sql");
+			int i = _sql.indexOf("FROM");
+			String sql = "SELECT COUNT(*) " + _sql.substring(i);
 			String limit = "";
 			Query q = createQuery(sql, filter, limit);
 			BigInteger total = (BigInteger) q.getSingleResult();
@@ -241,10 +242,10 @@ public class ApprovedCustomerLimitDao implements Repository<ApprovedCustomerLimi
 			// Convert
 			res = ApprovedCustomerLimitDto.convert(l);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -260,27 +261,38 @@ public class ApprovedCustomerLimitDao implements Repository<ApprovedCustomerLimi
 	 * @return
 	 */
 	private Query createQuery(String sql, Object o, String limit) {
-		AccountFilter filter = AccountFilter.convert(o);
-		String name = filter.getName();
+		Query q = null;
 
-		// Where
-		String where = "";
-		if (!name.isEmpty()) {
-			where += " AND a.name = :name";
-		}
-		// Replace first
-		if (!where.isEmpty()) {
-			where = where.replaceFirst("AND", "WHERE");
-		}
+		try {
+			AccountFilter filter = AccountFilter.convert(o);
+			String name = filter.getName();
 
-		Query q = _em.createNativeQuery(sql + where + limit);
+			// Where
+			String where = "";
+			if (!name.isEmpty()) {
+				where += " AND a.name = :name";
+			}
+			// Replace first
+			if (!where.isEmpty()) {
+				where = where.replaceFirst("AND", "WHERE");
+			}
 
-		// Set parameter
-		if (!where.isEmpty()) {
-			int i = where.indexOf(":name");
-			i = where.indexOf(":name");
-			if (i > 0) {
-				q.setParameter("name", name);
+			q = _em.createNativeQuery(sql + where + limit);
+
+			// Set parameter
+			if (!where.isEmpty()) {
+				int i = where.indexOf(":name");
+				i = where.indexOf(":name");
+				if (i > 0) {
+					q.setParameter("name", name);
+				}
+			}
+		} catch (Exception ex) {
+			if (ZConfig._printTrace) {
+				ex.printStackTrace();
+			}
+			if (ZConfig._writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
 

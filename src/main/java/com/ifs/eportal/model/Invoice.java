@@ -118,6 +118,18 @@ public class Invoice extends BaseModel {
 	@Column(columnDefinition = "varchar(100)", name = "parent_uuid__c")
 	private String parentUuId;
 
+	@Column(columnDefinition = "float(8)", name = "total_applied_c_n_amount__c")
+	private Float totalAppliedCnAmount;
+
+	@Column(columnDefinition = "float(8)", name = "reassigned_amount__c")
+	private Float reassignedAmount;
+
+	@Column(columnDefinition = "float(8)", name = "reversed_amount__c")
+	private Float reversedAmount;
+
+	@Column(columnDefinition = "varchar(18)", name = "customer_branch_code__c")
+	private String customerBranchCode;
+
 	// end
 
 	// region -- Get set --
@@ -360,6 +372,38 @@ public class Invoice extends BaseModel {
 
 	public void setParentUuId(String parentUuId) {
 		this.parentUuId = parentUuId;
+	}
+
+	public Float getTotalAppliedCnAmount() {
+		return totalAppliedCnAmount;
+	}
+
+	public void setTotalAppliedCnAmount(Float totalAppliedCnAmount) {
+		this.totalAppliedCnAmount = totalAppliedCnAmount;
+	}
+
+	public Float getReassignedAmount() {
+		return reassignedAmount;
+	}
+
+	public void setReassignedAmount(Float reassignedAmount) {
+		this.reassignedAmount = reassignedAmount;
+	}
+
+	public Float getReversedAmount() {
+		return reversedAmount;
+	}
+
+	public void setReversedAmount(Float reversedAmount) {
+		this.reversedAmount = reversedAmount;
+	}
+
+	public String getCustomerBranchCode() {
+		return customerBranchCode;
+	}
+
+	public void setCustomerBranchCode(String customerBranchCode) {
+		this.customerBranchCode = customerBranchCode;
 	}
 
 	// end

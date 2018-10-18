@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { HTTP } from 'app/utilities';
+import { FileProvider, CommonProvider } from 'app/providers';
 import { FileUploader } from 'ng2-file-upload';
-import { FileProvider, CommonProvider } from '../../providers/provider';
-import { HTTP } from '../../utilities/utility';
 
 const URL = 'http://localhost:8080/api/upload';
 

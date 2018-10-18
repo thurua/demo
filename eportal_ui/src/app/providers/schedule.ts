@@ -6,9 +6,9 @@ export class ScheduleProvider {
 
     constructor(private api: ApiProvider) { }
 
-    public getApiUrl(){
+    public getApiUrl() {
         return this.api.apiUrl;
-     }
+    }
 
     /**
      * Search by
@@ -34,14 +34,6 @@ export class ScheduleProvider {
         return this.api.post('schedule-of-offer/update-schedule-details', info);
     }
 
-
-    /**
-     * Search Client Account
-     * @param info
-     */
-    public searchCA(info: any) {
-        return this.api.post('common/search-client-account', info);
-    }
     /**
      * Get by Idt
      * @param info

@@ -1,0 +1,424 @@
+<div class="card header-margin">
+    <div class="card-body">
+        <tabset class="nav-justified">
+            <tab heading="Factoring" style="padding: 0">
+                <div class="card header-margin" style="margin-top: 0">
+                    <div class="card-header">
+                        <strong>Status Details</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Client Account</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.clientAccount}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Letter of Offer Signed Date</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.letterOfOfferSignedDate | date: 'dd-MMM-yyyy'}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Account Activation Date</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.accountActivationDate | date: 'dd-MMM-yyyy'}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Account Closed Date</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.accountClosedDate | date: 'dd-MMM-yyyy'}}</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Status</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.status}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Availability Period (Months)</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.availabilityPeriodMonths}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Account Maturity Date</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.accountMaturityDate | date: 'dd-MMM-yyyy'}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Account Termination Date</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.accountTerminationDate | date: 'dd-MMM-yyyy'}}</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card header-margin" style="margin-top: 0">
+                    <div class="card-header">
+                        <strong>Account Details</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Currency</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.currencyisocode}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Investment Limit</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.investmentLimit}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Advance Ratio </strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.advancedRatio}}</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Product Type Description</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.productTypeDescription}}</label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>FCI Factor (For Import Factoring Only)</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.fciName}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Reassignment / Settlement Period (Days)</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.reassignmentPeriod}}</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card header-margin" style="margin-top: 0">
+                    <div class="card-header">
+                        <strong>Interest Rate</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Interest Rate / Spread 1 % </strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.interestRateSpread1}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Interest Rate / Spread 2 %</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.interestRateSpread2}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Rate Type</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.rateType}}</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Interest Rate Source 1</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.interestRateSource1}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Interest Rate Source 2</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.interestRateSource2}}</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card header-margin" style="margin-top: 0">
+                    <div class="card-header">
+                        <strong>Factoring Charge</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Factoring Charge Rate 1st Tier</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.factoringChargeRate1stTier}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Factoring Charge Rate 2nd Tier</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.factoringChargeRate2ndTier}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Factoring Charge Rate 3rd Tier</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.factoringChargeRate3rdTier}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Min. Factoring Charge per Month</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.minFactoringChargePerMonth}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Handling Charge per Invoice</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.handlingChargePerInvoice}}</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>1st Tier Up to Factored Volume</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.tierUpToFactoredVolume1st}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>2ndTier Up to Factored Volume</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.tierUpToFactoredVolume2nd}}</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card header-margin" style="margin-top: 0">
+                    <div class="card-header">
+                        <strong>Additional Factoring Charge on Overdue Invoice</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Factoring Charge Rate/Spread</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.factoringChargeRateSpread}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Rate Type</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.addFacRateType}}</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Factoring Charge Source</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.factoringChargeSource}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Overdue Grace Period (Days)</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.overdueGracePeriodDays}}</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card header-margin" style="margin-top: 0">
+                    <div class="card-header">
+                        <strong>Other Fees / Charges</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Facility Fee (% of the Investment Limit)</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.facilityFeeInvestmentLimit}}</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Facility Fee Amount</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="col-form-label">{{data.facilityFee | number: '0.2'}}</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card header-margin" style="margin-top: 0">
+                    <div class="card-header">
+                        <strong>Funding Details</strong>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <strong>Auto Request</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input checkbox-primary" id="checkboxPrimary" [checked]="data.autoRequest">
+                                            <label class="custom-control-label" for="checkboxPrimary"> </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card header-margin" style="margin-top: 0">
+                    <div class="card-header">
+                        <strong>Funding Account Details</strong>
+                    </div>
+                    <div class="card-body">
+                        <div widget class="card border-0 box-shadow header-margin">
+                            <div class="card-body pt-0 widget-body">
+                                <div class="table-responsive">
+                                    <ng2-smart-table class="table table-hover" [settings]="settings" [source]="dataFu"></ng2-smart-table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group row" style="margin-top: 1%">
+                    <div class="col-md-4">
+                    </div>
+                    <div class="col-md-8">
+                        <button class="btn btn-primary" type="button">Cancel</button> &nbsp;
+                        <button class="btn btn-primary" type="button">Save</button>
+                    </div>
+                </div>
+            </tab>
+            <tab heading="Client Account Customer">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <strong>Client</strong>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="col-form-label">{{clientName}}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div widget class="card border-0 box-shadow header-margin">
+                    <div class="card-body pt-0 widget-body">
+                        <div class="table-responsive">
+                            <ng2-smart-table class="table table-hover" [settings]="settings3" [source]="dataClientAccountCustomer"></ng2-smart-table>
+                        </div>
+                    </div>
+                </div>
+                <div _ngcontent-c32="" _nghost-c34="" class="ng-star-inserted" style="padding: 1.25rem;" [hidden]="dataClientAccountCustomer.length==0">
+                    <nav _ngcontent-c34="" class="ng2-smart-pagination-nav ng-star-inserted row">
+                        <ul _ngcontent-c34="" class="ng2-smart-pagination pagination col-md-6">
+                            <li _ngcontent-c34="" [ngClass]="{'disabled': pager.currentPage === 1}" class="ng2-smart-page-item page-item disabled"><a _ngcontent-c34="" aria-label="First" class="ng2-smart-page-link page-link" (click)="searchClick(1)"><span _ngcontent-c34="" aria-hidden="true">«</span><span _ngcontent-c34="" class="sr-only">First</span></a></li>
+                            <li [ngClass]="{disabled:pager.currentPage === 1}" _ngcontent-c34="" class="ng2-smart-page-item page-item"><a _ngcontent-c34="" aria-label="Prev" class="ng2-smart-page-link page-link page-link-prev" (click)="searchClick(pager.currentPage - 1)"><span _ngcontent-c34="" aria-hidden="true">&lt;</span><span _ngcontent-c34="" class="sr-only">Prev</span></a></li>
+                            <li _ngcontent-c34="" *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage === page}" class="ng2-smart-page-item page-item ng-star-inserted" (click)="searchClick(page)">
+                                <span _ngcontent-c34="" class="ng2-smart-page-link page-link ng-star-inserted">{{page}}<span _ngcontent-c34="" class="sr-only">(current)</span></span>
+                            </li>
+                            <li _ngcontent-c34="" [ngClass]="{disabled:pager.currentPage === pager.totalPages}" class="ng2-smart-page-item page-item"><a _ngcontent-c34="" aria-label="Next" class="ng2-smart-page-link page-link page-link-next" (click)="searchClick(pager.currentPage + 1)"><span _ngcontent-c34="" aria-hidden="true">&gt;</span><span _ngcontent-c34="" class="sr-only">Next</span></a></li>
+                            <li [ngClass]="{disabled:pager.currentPage === pager.totalPages}" _ngcontent-c34="" class="ng2-smart-page-item page-item"><a _ngcontent-c34="" aria-label="Last" class="ng2-smart-page-link page-link" (click)="searchClick(pager.totalPages)"><span _ngcontent-c34="" aria-hidden="true">»</span><span _ngcontent-c34="" class="sr-only">Last</span></a></li>
+                        </ul>
+                        <span class="col-md-6 text-right text-italic">
+                            {{total}} items
+                        </span>
+                    </nav>
+                </div>
+            </tab>
+        </tabset>
+    </div>
+</div>

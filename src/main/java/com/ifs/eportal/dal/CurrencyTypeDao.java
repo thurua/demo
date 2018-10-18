@@ -9,7 +9,7 @@ import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZConfig;
 import com.ifs.eportal.common.ZFile;
 import com.ifs.eportal.dto.CurrencyTypeDto;
 import com.ifs.eportal.model.CurrencyType;
@@ -100,10 +100,10 @@ public class CurrencyTypeDao implements Repository<CurrencyType, Integer> {
 			// Convert
 			res = CurrencyTypeDto.convert(t);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -131,10 +131,10 @@ public class CurrencyTypeDao implements Repository<CurrencyType, Integer> {
 			// Convert
 			res = CurrencyTypeDto.convert(t);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -162,10 +162,10 @@ public class CurrencyTypeDao implements Repository<CurrencyType, Integer> {
 			// Convert
 			res = CurrencyTypeDto.convert(t);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}

@@ -9,7 +9,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
-import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZConfig;
+import com.ifs.eportal.common.ZNum;
 
 @SpringBootApplication
 @Configuration
@@ -27,13 +28,24 @@ public class IfsApplication extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
 		String t = System.getenv("PRINT_STACK_TRACE");
-		Utils.printStackTrace = t != null && "Y".equals(t);
+		ZConfig._printTrace = t != null && "Y".equals(t);
 
 		t = System.getenv("WRITE_LOG");
-		Utils.writeLog = t != null && "Y".equals(t);
+		ZConfig._writeLog = t != null && "Y".equals(t);
 
 		t = System.getenv("BUCKETEER_ALLOW_UPLOAD");
-		Utils.allowUpload = t != null && "Y".equals(t);
+		ZConfig._allowUpload = t != null && "Y".equals(t);
+
+		t = System.getenv("JWT_TIME"); // minute
+		float m = ZNum.toFloat(t);
+		if (m < .5f) {
+			m = .5f;
+		}
+		// m = .5f;
+		ZConfig._jwtTime = (int) (m * 60 * 1000); // convert to millisecond
+
+		t = System.getenv("JWT_SIGNING");
+		ZConfig._jwtSigning = t;
 
 		SpringApplication.run(IfsApplication.class, args);
 	}

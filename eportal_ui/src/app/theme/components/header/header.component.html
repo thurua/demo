@@ -5,7 +5,8 @@
                 <!-- <span class="start">start</span><span class="ng">IFS</span> -->
                 <img style="width: 82%;" src="../../../assets/img/app/logo.jpg" />
             </a>
-            <span class="navbar-text menu-icon transition ml-3 mr-3" [ngClass]="{'open': settings.theme.showMenu}" (click)="settings.theme.showMenu = !settings.theme.showMenu">
+            <span class="navbar-text menu-icon transition ml-3 mr-3" [ngClass]="{'open': settings.theme.showMenu}"
+                (click)="settings.theme.showMenu = !settings.theme.showMenu">
                 <div class="line"></div>
                 <div class="line"></div>
                 <div class="line"></div>
@@ -16,7 +17,7 @@
                     <app-user-menu></app-user-menu>
                 </span>
                 <span class="pl-2 pr-2">
-                    <a routerLink="/login">
+                    <a (click)="signOut()">
                         <i class="fa fa-sign-out" aria-hidden="true"></i>
                     </a>
                 </span>

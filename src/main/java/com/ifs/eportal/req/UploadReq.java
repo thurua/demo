@@ -15,6 +15,9 @@ public class UploadReq {
 	@JsonProperty(value = "clientId")
 	private String clientId;
 
+	@JsonProperty(value = "contentId")
+	private String contentId;
+
 	@JsonProperty(value = "scheduleNo")
 	private String scheduleNo;
 
@@ -40,6 +43,14 @@ public class UploadReq {
 
 	public void setClientId(String clientId) {
 		this.clientId = clientId;
+	}
+
+	public String getContentId() {
+		return contentId;
+	}
+
+	public void setContentId(String contentId) {
+		this.contentId = contentId;
 	}
 
 	public String getScheduleNo() {
@@ -88,6 +99,7 @@ public class UploadReq {
 
 	public UploadReq() {
 		clientId = "";
+		contentId = "";
 		scheduleNo = "";
 		acceptanceDate = null;
 		clientAccountId = "";

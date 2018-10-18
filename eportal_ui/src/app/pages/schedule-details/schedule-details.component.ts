@@ -1,10 +1,8 @@
 import { Component, OnInit, ViewEncapsulation, ViewChild, EventEmitter } from '@angular/core';
-import { ScheduleProvider } from '../../providers/schedule';
+import { HTTP, Utils, Token } from 'app/utilities';
+import { ScheduleProvider, FileProvider } from 'app/providers';
 import { ActivatedRoute, Params } from '@angular/router';
-import { HTTP } from '../../utilities/const';
 import { FileUploader } from 'ng2-file-upload';
-import { FileProvider } from '../../providers/file';
-import { Utils } from 'app/utilities/utils';
 import { ModalDirective } from 'ngx-bootstrap';
 import { UploadOutput, UploadInput, UploadFile, humanizeBytes, UploaderOptions } from 'ngx-uploader';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -32,6 +30,7 @@ export class ScheduleDetailsComponent implements OnInit {
     public checkIv = false;
     public checkCd = false;
     public checkAtt = false;
+    public checkAuhorise = false;
     public entity: any = {};
     public file: any;
     public pageSize = 5;
@@ -83,7 +82,7 @@ export class ScheduleDetailsComponent implements OnInit {
             creditDate: {
                 title: 'CN Date',
                 type: 'date',
-                valuePrepareFunction: (value) => { return this.utl.formatDate(value, 'dd-MMM-yyyy') },
+                valuePrepareFunction: (value) => { return Utils.format(value, 'dd-MMM-yyyy') },
                 filter: false
             },
             amountInvNo: {
@@ -173,6 +172,12 @@ export class ScheduleDetailsComponent implements OnInit {
                 type: 'string',
                 filter: false
             },
+            paymentDate: {
+                title: 'Payment Date',
+                type: 'date',
+                valuePrepareFunction: (value) => { return Utils.format(value, 'dd-MMM-yyyy') },
+                filter: false
+            },
             status: {
                 title: 'Status',
                 type: 'string',
@@ -231,7 +236,7 @@ export class ScheduleDetailsComponent implements OnInit {
             editable: false
         },
         delete: {
-            deleteButtonContent: '<i  class="fa fa-trash"></i>',
+            deleteButtonContent: '<i class="fa fa-trash"></i>',
             confirmDelete: true,
         },
     };
@@ -240,11 +245,9 @@ export class ScheduleDetailsComponent implements OnInit {
     @ViewChild('uploadModal') public uploadModal: ModalDirective;
     @ViewChild('infoModal') public infoModal: ModalDirective;
 
-    constructor(
-        private act: ActivatedRoute,
+    constructor(private act: ActivatedRoute,
         private pro: ScheduleProvider,
         private filepro: FileProvider,
-        private utl: Utils,
         private _sanitizer: DomSanitizer) {
         this.options = { concurrency: 1, maxUploads: 10 };
         this.files = []; // local uploading files array
@@ -257,6 +260,14 @@ export class ScheduleDetailsComponent implements OnInit {
             this.sfId = params["_id"];
             this.files = [];
             this.getDetail(this.sfId);
+
+            let user = Token.getUser();
+            if (user.accessRights.indexOf("Schedules - Authorise Uploaded Schedule") > 0) {
+                this.checkAuhorise = true;
+            }
+            else {
+                this.checkAuhorise = false;
+            }
         });
     }
 
@@ -320,7 +331,7 @@ export class ScheduleDetailsComponent implements OnInit {
                     tmpattList.forEach(element => {
                         i++;
                         element.no = i;
-                        element.uploadedOn = this.utl.formatDate(element.uploadedOn, 'dd-MMM-yyyy HH:mm');
+                        element.uploadedOn = Utils.format(element.uploadedOn, 'dd-MMM-yyyy HH:mm');
                         element.fileSize = element.fileSize.toFixed(2) + " KB";
                     });
                     this.attList = tmpattList;
@@ -341,8 +352,17 @@ export class ScheduleDetailsComponent implements OnInit {
         this.uploadInput.emit({ type: 'cancel', id: id });
     }
 
-    removeFile(id: string): void {
-        this.uploadInput.emit({ type: 'remove', id: id });
+    removeFile(index): void {
+        let i = 0;
+        this.files.forEach((element) => {
+            if (element.fileIndex == index) {
+                this.files.splice(index, 1);
+            }
+        });
+        this.files.forEach((element) => {
+            element.fileIndex = i;
+            i++;
+        });
     }
 
     removeAllFiles(): void {
@@ -374,7 +394,7 @@ export class ScheduleDetailsComponent implements OnInit {
                             element.no = i;
                             element.status = "Accepted";
                             //element.applyCN = element.unappliedReason == null || element.appliedInvoiceNo == null ? "checked" : "";
-                            element.applyCN = element.appliedInvoiceNo == null ? "" : "checked";
+                            element.applyCN = element.applyCN ? "checked" : "";
                             //let cnAmount = element.creditAmount == null ? '' : Intl.NumberFormat('en-US', { style: 'currency', currency: element.currencyIsoCode }).format(element.creditAmount);
                             let cnAmount = element.creditAmount == null ? '' : element.creditAmount = element.currencyIsoCode + " " + formatter.format(element.creditAmount);
                             let appInvNo = element.appliedInvoiceNo == null ? '' : element.appliedInvoiceNo;
@@ -407,7 +427,7 @@ export class ScheduleDetailsComponent implements OnInit {
                             //element.invoiceAmount = Intl.NumberFormat('en-US', { style: 'currency', currency: element.currencyIsoCode }).format(element.invoiceAmount);
                             element.invoiceAmount = element.currencyIsoCode + " " + formatter.format(element.invoiceAmount);
                             element.customerBranch = element.customer + ' / ' + element.customerBranch;
-                            element.creditDate = this.utl.formatDate(element.invoiceDate, 'dd-MMM-yyyy') + ' / ' + element.creditPeriod;
+                            element.creditDate = Utils.format(element.invoiceDate, 'dd-MMM-yyyy') + ' / ' + element.creditPeriod;
                             let po = element.po == null ? '' : element.po;
                             let contract = element.contract == null ? '' : element.contract;
                             element.po = po + ' / ' + contract;
@@ -434,6 +454,7 @@ export class ScheduleDetailsComponent implements OnInit {
                         if (this.entity.documentType == "Invoice") {
                             delete this.settingsIv.columns.supplier;
                             delete this.settingsIv.columns.supplierFromExcel;
+                            delete this.settingsIv.columns.paymentDate;
                         }
                         else {
                             delete this.settingsIv.columns.customerBranch;
@@ -447,7 +468,7 @@ export class ScheduleDetailsComponent implements OnInit {
                     tmpattList.forEach(element => {
                         i++;
                         element.no = i;
-                        element.uploadedOn = this.utl.formatDate(element.uploadedOn, 'dd-MMM-yyyy HH:mm');
+                        element.uploadedOn = Utils.format(element.uploadedOn, 'dd-MMM-yyyy HH:mm');
                         element.fileSize = element.fileSize.toFixed(2) + " KB";
                     });
                     this.attList = tmpattList;
@@ -503,16 +524,22 @@ export class ScheduleDetailsComponent implements OnInit {
     onDelete(event) {
         if (window.confirm('Are you sure, you want to delete?')) {
             let id = event.data.id;
-            let user = JSON.parse(localStorage.getItem("CURRENT_TOKEN"));
+            let user = Token.getUser();
             let i = 0;
             this.attList.forEach((element, index) => {
-                if (element.id == id && element.uploadedBy == user.sfId) {
-                    this.attList.splice(index, 1);
-                    this.filepro.delete(id).subscribe((rsp: any) => {
-                        if (rsp.status === HTTP.STATUS_SUCCESS) {
+                if (element.id == id) {
+                    if (element.uploadedBy == user.sfId) {
+                        this.attList.splice(index, 1);
+                        this.filepro.delete(id).subscribe((rsp: any) => {
+                            if (rsp.status === HTTP.STATUS_SUCCESS) {
 
-                        }
-                    }, err => console.log(err));
+                            }
+                        }, err => console.log(err));
+                    }
+                    else {
+                        this.mesErr = "Only owner is allowed to delete the file";
+                        this.uploadModal.show();
+                    }
                 }
             });
             this.attList.forEach((element) => {

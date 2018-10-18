@@ -1,7 +1,10 @@
 package com.ifs.eportal.dal;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -9,6 +12,7 @@ import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ifs.eportal.common.ZConfig;
 import com.ifs.eportal.common.ZFile;
 import com.ifs.eportal.dto.ReasonDto;
 import com.ifs.eportal.dto.SortDto;
@@ -68,6 +72,8 @@ public class ReasonDao implements Repository<Reason, Integer> {
 
 	private String _path;
 
+	private static final Logger _log = Logger.getLogger(ReasonDao.class.getName());
+
 	// end
 
 	// region -- Methods --
@@ -87,16 +93,28 @@ public class ReasonDao implements Repository<Reason, Integer> {
 	 * @return
 	 */
 	public ReasonDto getBy(Integer id) {
-		_sql = ZFile.read(_path + "_sql.sql");
-		String sql = _sql + " WHERE a.id = :id";
+		ReasonDto res = new ReasonDto();
 
-		// Execute
-		Query q = _em.createNativeQuery(sql);
-		q.setParameter("id", id);
-		Object[] i = (Object[]) q.getSingleResult();
+		try {
+			_sql = ZFile.read(_path + "_sql.sql");
+			String sql = _sql + " WHERE a.id = :id";
 
-		// Convert
-		ReasonDto res = ReasonDto.convert(i);
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("id", id);
+			Object[] i = (Object[]) q.getSingleResult();
+
+			// Convert
+			res = ReasonDto.convert(i);
+		} catch (Exception ex) {
+			if (ZConfig._printTrace) {
+				ex.printStackTrace();
+			}
+			if (ZConfig._writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
 		return res;
 	}
 
@@ -108,17 +126,29 @@ public class ReasonDao implements Repository<Reason, Integer> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<ReasonDto> getBy(String sfId) {
-		_sql = ZFile.read(_path + "_sql.sql");
-		String sql = _sql + " WHERE a.invoice__c = :sfId OR a.credit_note__c = :sfId";
+		List<ReasonDto> res = new ArrayList<ReasonDto>();
 
-		// Execute
-		Query q = _em.createNativeQuery(sql);
-		q.setParameter("sfId", sfId);
+		try {
+			_sql = ZFile.read(_path + "_sql.sql");
+			String sql = _sql + " WHERE a.invoice__c = :sfId OR a.credit_note__c = :sfId";
 
-		List<Object[]> l = q.getResultList();
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("sfId", sfId);
 
-		// Convert
-		List<ReasonDto> res = ReasonDto.convert(l);
+			List<Object[]> l = q.getResultList();
+
+			// Convert
+			res = ReasonDto.convert(l);
+		} catch (Exception ex) {
+			if (ZConfig._printTrace) {
+				ex.printStackTrace();
+			}
+			if (ZConfig._writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
 		return res;
 	}
 
@@ -186,27 +216,38 @@ public class ReasonDao implements Repository<Reason, Integer> {
 	 * @return
 	 */
 	private Query createQuery(String sql, Object o, String limit) {
-		ReasonFilter filter = ReasonFilter.convert(o);
-		String name = filter.getName();
+		Query q = null;
 
-		// Where
-		String where = "";
-		if (!name.isEmpty()) {
-			where += " AND a.name = :name";
-		}
+		try {
+			ReasonFilter filter = ReasonFilter.convert(o);
+			String name = filter.getName();
 
-		// Replace first
-		if (!where.isEmpty()) {
-			where = where.replaceFirst("AND", "WHERE");
-		}
+			// Where
+			String where = "";
+			if (!name.isEmpty()) {
+				where += " AND a.name = :name";
+			}
 
-		Query q = _em.createNativeQuery(sql + where + limit);
+			// Replace first
+			if (!where.isEmpty()) {
+				where = where.replaceFirst("AND", "WHERE");
+			}
 
-		// Set parameter
-		if (!where.isEmpty()) {
-			int i = where.indexOf(":name");
-			if (i > 0) {
-				q.setParameter("name", name);
+			q = _em.createNativeQuery(sql + where + limit);
+
+			// Set parameter
+			if (!where.isEmpty()) {
+				int i = where.indexOf(":name");
+				if (i > 0) {
+					q.setParameter("name", name);
+				}
+			}
+		} catch (Exception ex) {
+			if (ZConfig._printTrace) {
+				ex.printStackTrace();
+			}
+			if (ZConfig._writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
 

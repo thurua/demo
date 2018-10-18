@@ -1,0 +1,239 @@
+<tabset class="nav-justified">
+    <tab heading="Factoring">
+        <div class="card header-margin">
+            <div class="card-header" (click)="isCollapsed = !isCollapsed">
+                <i class="pull-right fa" [ngClass]="{'fa-chevron-down': isCollapsed, 'fa-chevron-up': !isCollapsed}"></i>
+                <strong>Search Criteria</strong>
+            </div>
+            <div class="card-body" [collapse]="isCollapsed">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <strong>Client</strong>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="col-form-label">{{clientName}}</label>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <strong>Status</strong>
+                            </div>
+                            <div class="col-md-8">
+                                <select name="statusCA" #statusCA="ngModel" [(ngModel)]="statusFactoring" class="form-control">
+                                            <option *ngFor="let i of lstStatus" value="{{i.code}}">{{i.value}}</option>
+                                        </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                            </div>
+                            <div class="col-md-8">
+                                <button class="btn btn-primary" type="button" (click)="searchClick(1, 'Factoring')">Search</button> &nbsp;
+                                <button class="btn btn-gray" type="button" (click)="resetClick('Factoring')">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <strong>Client Account</strong>
+                            </div>
+                            <div class="col-md-8">
+                                <select name="clientAccount" #clientAccount="ngModel" [(ngModel)]="clientAccountIdFactoring" class="form-control">
+                                    <option *ngFor="let i of lstCA" value="{{i.sfId}}">{{i.clientAccount}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card header-margin">
+            <div class="card-body">
+                <div widget class="card border-0 box-shadow header-margin">
+                    <div class="card-body pt-0 widget-body">
+                        <div class="table-responsive">
+                            <ng2-smart-table class="table table-hover" [settings]="settingFactoring" [source]="dataFactoring"></ng2-smart-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div _ngcontent-c32="" _nghost-c34="" class="ng-star-inserted" style="padding: 1.25rem;" [hidden]="dataFactoring.length==0">
+                <nav _ngcontent-c34="" class="ng2-smart-pagination-nav ng-star-inserted row">
+                    <ul _ngcontent-c34="" class="ng2-smart-pagination pagination col-md-6">
+                        <li _ngcontent-c34="" [ngClass]="{'disabled': pagerFactoring.currentPage === 1}" class="ng2-smart-page-item page-item disabled"><a _ngcontent-c34="" aria-label="First" class="ng2-smart-page-link page-link" (click)="searchClick(1, 'Factoring')"><span _ngcontent-c34="" aria-hidden="true">«</span><span _ngcontent-c34="" class="sr-only">First</span></a></li>
+                        <li [ngClass]="{disabled:pagerFactoring.currentPage === 1}" _ngcontent-c34="" class="ng2-smart-page-item page-item"><a _ngcontent-c34="" aria-label="Prev" class="ng2-smart-page-link page-link page-link-prev" (click)="searchClick(pagerFactoring.currentPage - 1, 'Factoring')"><span _ngcontent-c34="" aria-hidden="true">&lt;</span><span _ngcontent-c34="" class="sr-only">Prev</span></a></li>
+                        <li _ngcontent-c34="" *ngFor="let page of pagerFactoring.pages" [ngClass]="{active:pagerFactoring.currentPage === page}" class="ng2-smart-page-item page-item ng-star-inserted" (click)="searchClick(page, 'Factoring')">
+                            <span _ngcontent-c34="" class="ng2-smart-page-link page-link ng-star-inserted">{{page}}<span _ngcontent-c34="" class="sr-only">(current)</span></span>
+                        </li>
+                        <li _ngcontent-c34="" [ngClass]="{disabled:pagerFactoring.currentPage === pagerFactoring.totalPages}" class="ng2-smart-page-item page-item"><a _ngcontent-c34="" aria-label="Next" class="ng2-smart-page-link page-link page-link-next" (click)="searchClick(pagerFactoring.currentPage + 1, 'Factoring')"><span _ngcontent-c34="" aria-hidden="true">&gt;</span><span _ngcontent-c34="" class="sr-only">Next</span></a></li>
+                        <li [ngClass]="{disabled:pagerFactoring.currentPage === pagerFactoring.totalPages}" _ngcontent-c34="" class="ng2-smart-page-item page-item"><a _ngcontent-c34="" aria-label="Last" class="ng2-smart-page-link page-link" (click)="searchClick(pagerFactoring.totalPages, 'Factoring')"><span _ngcontent-c34="" aria-hidden="true">»</span><span _ngcontent-c34="" class="sr-only">Last</span></a></li>
+                    </ul>
+                    <span class="col-md-6 text-right text-italic">
+                                {{totalFactoring}} items
+                            </span>
+                </nav>
+            </div>
+        </div>
+    </tab>
+    <tab heading="Loan">
+        <div class="card header-margin">
+            <div class="card-header" (click)="isCollapsed = !isCollapsed">
+                <i class="pull-right fa" [ngClass]="{'fa-chevron-down': isCollapsed, 'fa-chevron-up': !isCollapsed}"></i>
+                <strong>Search Criteria</strong>
+            </div>
+            <div class="card-body" [collapse]="isCollapsed">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <strong>Client</strong>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="col-form-label">{{clientName}}</label>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <strong>Status</strong>
+                            </div>
+                            <div class="col-md-8">
+                                <select name="statusCA" #statusCA="ngModel" [(ngModel)]="statusLoan" class="form-control">
+                                    <option *ngFor="let i of lstStatus" value="{{i.code}}">{{i.value}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                            </div>
+                            <div class="col-md-8">
+                                <button class="btn btn-primary" type="button" (click)="searchClick(1, 'Loan')">Search</button> &nbsp;
+                                <button class="btn btn-gray" type="button" (click)="resetClick('Loan')">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <strong>Client Account</strong>
+                            </div>
+                            <div class="col-md-8">
+                                <select name="clientAccount" #clientAccount="ngModel" [(ngModel)]="clientAccountIdLoan" class="form-control">
+                                    <option *ngFor="let i of lstCA" value="{{i.sfId}}">{{i.clientAccount}}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card header-margin">
+            <div class="card-body">
+                <div widget class="card border-0 box-shadow header-margin">
+                    <div class="card-body pt-0 widget-body">
+                        <div class="table-responsive">
+                            <ng2-smart-table class="table table-hover" [settings]="settingLoan" [source]="dataLoan"></ng2-smart-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div _ngcontent-c32="" _nghost-c34="" class="ng-star-inserted" style="padding: 1.25rem;" [hidden]="dataLoan.length==0">
+                <nav _ngcontent-c34="" class="ng2-smart-pagination-nav ng-star-inserted row">
+                    <ul _ngcontent-c34="" class="ng2-smart-pagination pagination col-md-6">
+                        <li _ngcontent-c34="" [ngClass]="{'disabled': pagerLoan.currentPage === 1}" class="ng2-smart-page-item page-item disabled"><a _ngcontent-c34="" aria-label="First" class="ng2-smart-page-link page-link" (click)="searchClick(1, 'Loan')"><span _ngcontent-c34="" aria-hidden="true">«</span><span _ngcontent-c34="" class="sr-only">First</span></a></li>
+                        <li [ngClass]="{disabled:pagerLoan.currentPage === 1}" _ngcontent-c34="" class="ng2-smart-page-item page-item"><a _ngcontent-c34="" aria-label="Prev" class="ng2-smart-page-link page-link page-link-prev" (click)="searchClick(pagerLoan.currentPage - 1, 'Loan')"><span _ngcontent-c34="" aria-hidden="true">&lt;</span><span _ngcontent-c34="" class="sr-only">Prev</span></a></li>
+                        <li _ngcontent-c34="" *ngFor="let page of pagerLoan.pages" [ngClass]="{active:pagerLoan.currentPage === page}" class="ng2-smart-page-item page-item ng-star-inserted" (click)="searchClick(page, 'Loan')">
+                            <span _ngcontent-c34="" class="ng2-smart-page-link page-link ng-star-inserted">{{page}}<span _ngcontent-c34="" class="sr-only">(current)</span></span>
+                        </li>
+                        <li _ngcontent-c34="" [ngClass]="{disabled:pagerLoan.currentPage === pagerLoan.totalPages}" class="ng2-smart-page-item page-item"><a _ngcontent-c34="" aria-label="Next" class="ng2-smart-page-link page-link page-link-next" (click)="searchClick(pagerLoan.currentPage + 1, 'Loan')"><span _ngcontent-c34="" aria-hidden="true">&gt;</span><span _ngcontent-c34="" class="sr-only">Next</span></a></li>
+                        <li [ngClass]="{disabled:pagerLoan.currentPage === pagerLoan.totalPages}" _ngcontent-c34="" class="ng2-smart-page-item page-item"><a _ngcontent-c34="" aria-label="Last" class="ng2-smart-page-link page-link" (click)="searchClick(pagerLoan.totalPages, 'Loan')"><span _ngcontent-c34="" aria-hidden="true">»</span><span _ngcontent-c34="" class="sr-only">Last</span></a></li>
+                    </ul>
+                    <span class="col-md-6 text-right text-italic">
+                        {{totalLoan}} items
+                    </span>
+                </nav>
+            </div>
+        </div>
+    </tab>
+    <tab heading="LCTR">
+        <div class="card header-margin">
+            <div class="card-header" (click)="isCollapsed = !isCollapsed">
+                <i class="pull-right fa" [ngClass]="{'fa-chevron-down': isCollapsed, 'fa-chevron-up': !isCollapsed}"></i>
+                <strong>Search Criteria</strong>
+            </div>
+            <div class="card-body" [collapse]="isCollapsed">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <strong>Client</strong>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="col-form-label">{{clientName}}</label>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <strong>Status</strong>
+                            </div>
+                            <div class="col-md-8">
+                                <select name="statusCA" #statusCA="ngModel" [(ngModel)]="statusLCTR" class="form-control">
+                                                    <option *ngFor="let i of lstStatus" value="{{i.code}}">{{i.value}}</option>
+                                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                            </div>
+                            <div class="col-md-8">
+                                <button class="btn btn-primary" type="button" (click)="searchClick(1, 'LC/TR')">Search</button> &nbsp;
+                                <button class="btn btn-gray" type="button" (click)="resetClick('LC/TR')">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <strong>Client Account</strong>
+                            </div>
+                            <div class="col-md-8">
+                                <select name="clientAccount" #clientAccount="ngModel" [(ngModel)]="clientAccountIdLCTR" class="form-control">
+                                            <option *ngFor="let i of lstCA" value="{{i.sfId}}">{{i.clientAccount}}</option>
+                                        </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card header-margin">
+            <div class="card-body">
+                <div widget class="card border-0 box-shadow header-margin">
+                    <div class="card-body pt-0 widget-body">
+                        <div class="table-responsive">
+                            <ng2-smart-table class="table table-hover" [settings]="settingLCTR" [source]="dataLCTR"></ng2-smart-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div _ngcontent-c32="" _nghost-c34="" class="ng-star-inserted" style="padding: 1.25rem;" [hidden]="dataLCTR.length==0">
+                <nav _ngcontent-c34="" class="ng2-smart-pagination-nav ng-star-inserted row">
+                    <ul _ngcontent-c34="" class="ng2-smart-pagination pagination col-md-6">
+                        <li _ngcontent-c34="" [ngClass]="{'disabled': pagerLCTR.currentPage === 1}" class="ng2-smart-page-item page-item disabled"><a _ngcontent-c34="" aria-label="First" class="ng2-smart-page-link page-link" (click)="searchClick(1, 'LC/TR')"><span _ngcontent-c34="" aria-hidden="true">«</span><span _ngcontent-c34="" class="sr-only">First</span></a></li>
+                        <li [ngClass]="{disabled:pagerLCTR.currentPage === 1}" _ngcontent-c34="" class="ng2-smart-page-item page-item"><a _ngcontent-c34="" aria-label="Prev" class="ng2-smart-page-link page-link page-link-prev" (click)="searchClick(pagerLCTR.currentPage - 1, 'Factoring')"><span _ngcontent-c34="" aria-hidden="true">&lt;</span><span _ngcontent-c34="" class="sr-only">Prev</span></a></li>
+                        <li _ngcontent-c34="" *ngFor="let page of pagerLCTR.pages" [ngClass]="{active:pagerLCTR.currentPage === page}" class="ng2-smart-page-item page-item ng-star-inserted" (click)="searchClick(page, 'LC/TR')">
+                            <span _ngcontent-c34="" class="ng2-smart-page-link page-link ng-star-inserted">{{page}}<span _ngcontent-c34="" class="sr-only">(current)</span></span>
+                        </li>
+                        <li _ngcontent-c34="" [ngClass]="{disabled:pagerLCTR.currentPage === pagerLCTR.totalPages}" class="ng2-smart-page-item page-item"><a _ngcontent-c34="" aria-label="Next" class="ng2-smart-page-link page-link page-link-next" (click)="searchClick(pagerLCTR.currentPage + 1, 'LC/TR')"><span _ngcontent-c34="" aria-hidden="true">&gt;</span><span _ngcontent-c34="" class="sr-only">Next</span></a></li>
+                        <li [ngClass]="{disabled:pagerLCTR.currentPage === pagerLCTR.totalPages}" _ngcontent-c34="" class="ng2-smart-page-item page-item"><a _ngcontent-c34="" aria-label="Last" class="ng2-smart-page-link page-link" (click)="searchClick(pagerLCTR.totalPages, 'LC/TR')"><span _ngcontent-c34="" aria-hidden="true">»</span><span _ngcontent-c34="" class="sr-only">Last</span></a></li>
+                    </ul>
+                    <span class="col-md-6 text-right text-italic">
+                                        {{totalLCTR}} items
+                                    </span>
+                </nav>
+            </div>
+        </div>
+    </tab>
+</tabset>

@@ -1,8 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { InvoiceProvider } from '../../providers/invoice';
-import { ReasonProvider } from '../../providers/reason';
+import { HTTP } from 'app/utilities';
+import { InvoiceProvider, ReasonProvider } from 'app/providers';
 import { ActivatedRoute, Params } from '@angular/router';
-import { HTTP } from '../../utilities/const';
 
 @Component({
     selector: 'app-invoices-details',
@@ -13,7 +12,7 @@ import { HTTP } from '../../utilities/const';
 export class InvoicesDetailsComponent implements OnInit {
     public dataReason = [];
     public loader = true; // check Reason Section Show
-    public data  : any = {};
+    public data: any = {};
 
     public settings = {
         selectMode: 'single',  //single|multi
@@ -76,7 +75,7 @@ export class InvoicesDetailsComponent implements OnInit {
 
         setTimeout(function () {
             document.getElementById('preloader').style.display = 'none';
-        }, 500); 
+        }, 500);
     }
 
     public getReasonBySfId(sfId: String) {

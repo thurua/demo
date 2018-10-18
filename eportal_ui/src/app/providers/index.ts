@@ -6,6 +6,8 @@ import { ScheduleProvider } from './schedule';
 import { CreditNoteProvider } from './credit-notes';
 import { InvoiceProvider } from './invoice';
 import { ReasonProvider } from './reason';
+import { ClientAccountProvider } from './client-account';
+import { ClientAccountCustomerProvider } from './client-account-customer';
 
 export {
     ApiProvider,
@@ -15,5 +17,7 @@ export {
     ScheduleProvider,
     CreditNoteProvider,
     InvoiceProvider,
-    ReasonProvider
+    ReasonProvider,
+    ClientAccountProvider,
+    ClientAccountCustomerProvider
 };

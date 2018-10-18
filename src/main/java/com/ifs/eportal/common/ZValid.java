@@ -1,5 +1,6 @@
 package com.ifs.eportal.common;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +54,43 @@ public class ZValid {
 			if (t > 0.5) {
 				// Customer - Slow Payment.
 				res = "IVC";
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * 
+	 * @param curr
+	 * @param total
+	 * @param name
+	 * @return
+	 */
+	public static String ratioOverdueSup(List<CustomDto> curr, List<CustomDto> total, String name) {
+		String res = "";
+
+		// Find Supplier in curr sumary
+		Double amountCurr = 0d;
+		for (CustomDto i : curr) {
+			if (name.trim().equals(i.getCode())) {
+				amountCurr = i.getValue();
+			}
+		}
+
+		// Find Supplier in total sumary
+		Double amountTotal = 0d;
+		for (CustomDto i : total) {
+			if (name.trim().equals(i.getCode())) {
+				amountTotal = i.getValue();
+			}
+		}
+
+		if (amountCurr != null && amountTotal != null && amountTotal > 0) {
+			double t = amountCurr / amountTotal;
+			if (t > 0.5) {
+				// Supplier - Slow Payment.
+				res = "LO3";
 			}
 		}
 
@@ -123,6 +161,31 @@ public class ZValid {
 
 	/**
 	 * 
+	 * @param curr
+	 * @param amount
+	 * @param name
+	 * @return
+	 */
+	public static String suplierAverage(List<CustomDto> curr, double amount, String name) {
+		String res = "";
+
+		// Find Supplier in curr sumary
+		Double amountCurr = 0d;
+		for (CustomDto i : curr) {
+			if (name.trim().equals(i.getCode())) {
+				amountCurr = i.getValue();
+			}
+		}
+		if (amountCurr != null && amount > amountCurr) {
+			// Supplier - Invoice Amount more than Customer Average Invoice Size.
+			res = "LO1";
+		}
+
+		return res;
+	}
+
+	/**
+	 * 
 	 * @param lcc
 	 * @param name
 	 * @param amount
@@ -133,7 +196,8 @@ public class ZValid {
 	 * @return
 	 */
 	public static String customer(List<ClientAccountCustomerDto> lcc, String name, double amount,
-			Boolean isInvoiceFactoring, String factor, Date d, ClientAccountDto ca) {
+			Boolean isInvoiceFactoring, String factor, Date d, ClientAccountDto ca, String branch,
+			HashMap<String, String> lbr) {
 		String res = "";
 		Boolean found = false;
 		name = name.trim();
@@ -146,37 +210,52 @@ public class ZValid {
 			res = "";
 
 			if (i.getStatus().equals("Activated")) {
-				Boolean t1 = (factor.equals(ca.getFciName()) && ca.getAccountType().equals("Import"));
-				Boolean t2 = (factor.equals(i.getFciName()) && ca.getAccountType().equals("Export"));
-				DateTime activationDate = new DateTime(i.getActivationDate());
-				if (t1 || t2 || ca.getAccountType().equals("Domestic")) {
-					if (d.before(activationDate.toDate())) {
-						/* ToanNguyen 2018-Aug-23 IFS-974 */
-						// Schedule Acceptance Date cannot be before client account customer activation
-						// date.
-						res = "CC2";
-					} else {
-						if (isInvoiceFactoring) {
-							Boolean t3 = i.getVerificationExceedingInvoiceAmount() == null;
-							if (t3 || amount > i.getVerificationExceedingInvoiceAmount()) {
-								/* NhatNguyen 2018-Sep-03 IFS-1042 */
-								// Customer - Per Verification Amount.
-								res = "CCB";
-							}
+				String branchs = lbr.get(name);
+				if (branchs != null) {
+					String[] temp = branchs.split(",");
+					boolean temp2 = Arrays.stream(temp).anyMatch(branch::equals);
+					if (temp2) {
+						Boolean t1 = (factor.equals(ca.getFciName()) && ca.getAccountType().equals("Import"));
+						Boolean t2 = (factor.equals(i.getFciName()) && ca.getAccountType().equals("Export"));
+						DateTime activationDate = new DateTime(i.getActivationDate());
+						if (t1 || t2 || ca.getAccountType().equals("Domestic")) {
+							if (d.before(activationDate.toDate())) {
+								/* ToanNguyen 2018-Aug-23 IFS-974 */
+								// Schedule Acceptance Date cannot be before client account customer activation
+								// date.
+								res = "CC2";
+							} else {
+								if (isInvoiceFactoring) {
+									Boolean t3 = i.getVerificationExceedingInvoiceAmount() == null;
+									if (t3 || amount > i.getVerificationExceedingInvoiceAmount()) {
+										/* NhatNguyen 2018-Sep-03 IFS-1042 */
+										// Customer - Per Verification Amount.
+										res = "CCB";
+									}
 
-							Date t = activationDate.plusMonths(6).minusDays(1).toDate();
-							if (d.before(t)) {
-								/* TriNguyen 2018-Aug-31 IFS-1040 */
-								// Customer - New.
-								res += ",CC9";
-							}
+									Date t = activationDate.plusMonths(6).minusDays(1).toDate();
+									if (d.before(t)) {
+										/* TriNguyen 2018-Aug-31 IFS-1040 */
+										// Customer - New.
+										res += ",CC9";
+									}
 
-							if (i.getVerification() != null && i.getVerification() == 100) {
-								/* TriNguyen 2018-Aug-31 IFS-1041 */
-								// Customer - 100% Verification Required.
-								res += ",CCA";
+									if (i.getVerification() != null && i.getVerification() == 100) {
+										/* TriNguyen 2018-Aug-31 IFS-1041 */
+										// Customer - 100% Verification Required.
+										res += ",CCA";
+									}
+								}
 							}
+						} else {
+							/* ToanNguyen 2018-Aug-31 IFS-1026 */
+							// Customer Branch and/or Factor Code is not found in Client Account.
+							res = "CC3";
 						}
+					} else {
+						/* ToanNguyen 2018-Aug-31 IFS-1026 */
+						// Customer Branch and/or Factor Code is not found in Client Account.
+						res = "CC3";
 					}
 				} else {
 					/* ToanNguyen 2018-Aug-31 IFS-1026 */

@@ -1,4 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Utils, Token } from 'app/utilities';
+import { UserProvider, } from 'app/providers';
 
 @Component({
     selector: 'app-user-menu',
@@ -8,12 +10,19 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 })
 
 export class UserMenuComponent implements OnInit {
-    public name = '';
-    constructor() { }
+    public name = "";
+
+    constructor(private pro: UserProvider) { }
 
     ngOnInit() {
-        let user = JSON.parse(localStorage.getItem("CURRENT_TOKEN"));
-        let firstName = user.firstName == null ? '' : user.firstName + ' ';
-        this.name = user.salutation + ' ' + firstName + user.lastName;
+        let user = Token.getUser();
+        let salutation = user.salutation == null ? "" : user.salutation;
+        let firstName = user.firstName == null ? "" : user.firstName;
+        let lastName = user.lastName == null ? "" : user.lastName;
+        this.name = salutation + " " + firstName + lastName;
+    }
+
+    public signOut() {
+        this.pro.signOut();
     }
 }

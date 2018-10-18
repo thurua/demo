@@ -13,6 +13,7 @@ import com.ifs.eportal.req.PagingReq;
 @Service(value = "clientAccountCustomerService")
 @Transactional
 public class ClientAccountCustomerService {
+
 	// region -- Fields --
 
 	@Autowired
@@ -42,5 +43,16 @@ public class ClientAccountCustomerService {
 		return clientAccountCustomerDao.search(req);
 	}
 
+	/**
+	 * Read by ClientAccountCustomer
+	 * 
+	 * @param sfId
+	 * @return
+	 */
+	public List<ClientAccountCustomerDto> read(String sfId) {
+		return clientAccountCustomerDao.getBy(sfId);
+	}
+
 	// end
+
 }

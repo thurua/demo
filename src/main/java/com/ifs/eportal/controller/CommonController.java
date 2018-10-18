@@ -26,8 +26,8 @@ import com.ifs.eportal.bll.ClientAccountCustomerService;
 import com.ifs.eportal.bll.ClientAccountService;
 import com.ifs.eportal.bll.CodeService;
 import com.ifs.eportal.bll.SupplierService;
-import com.ifs.eportal.common.RsaService;
-import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZConfig;
+import com.ifs.eportal.common.ZRsa;
 import com.ifs.eportal.dto.AccountDto;
 import com.ifs.eportal.dto.ClientAccountCustomerDto;
 import com.ifs.eportal.dto.ClientAccountDto;
@@ -90,10 +90,10 @@ public class CommonController {
 			data.put("data", l);
 			res.setResult(data);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -121,10 +121,10 @@ public class CommonController {
 			data.put("data", l);
 			res.setResult(data);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -152,10 +152,10 @@ public class CommonController {
 			data.put("data", l);
 			res.setResult(data);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -183,10 +183,10 @@ public class CommonController {
 			data.put("data", l);
 			res.setResult(data);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -218,10 +218,10 @@ public class CommonController {
 			data.put("data", l);
 			res.setResult(data);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -246,7 +246,7 @@ public class CommonController {
 			String password = System.getenv("SF_PASSWORD");
 
 			// Decrypt
-			password = RsaService.decrypt(password);
+			password = ZRsa.decrypt(password);
 
 			RestTemplate rest = new RestTemplate();
 			HttpHeaders headers = new HttpHeaders();

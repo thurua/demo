@@ -12,7 +12,7 @@ import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZConfig;
 import com.ifs.eportal.common.ZFile;
 import com.ifs.eportal.dto.AccountDto;
 import com.ifs.eportal.dto.SortDto;
@@ -103,10 +103,10 @@ public class AccountDao implements Repository<Account, Integer> {
 			// Convert
 			res = AccountDto.convert(i);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -122,15 +122,27 @@ public class AccountDao implements Repository<Account, Integer> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<AccountDto> getByNames(List<String> names) {
-		String sql = _sql + " WHERE a.name in :names";
+		List<AccountDto> res = new ArrayList<AccountDto>();
 
-		// Execute
-		Query q = _em.createNativeQuery(sql);
-		q.setParameter("names", names);
-		List<Object[]> l = q.getResultList();
+		try {
+			String sql = _sql + " WHERE a.name in :names";
 
-		// Convert
-		List<AccountDto> res = AccountDto.convert(l);
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("names", names);
+			List<Object[]> l = q.getResultList();
+
+			// Convert
+			res = AccountDto.convert(l);
+		} catch (Exception ex) {
+			if (ZConfig._printTrace) {
+				ex.printStackTrace();
+			}
+			if (ZConfig._writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
 		return res;
 	}
 
@@ -154,10 +166,10 @@ public class AccountDao implements Repository<Account, Integer> {
 			// Convert
 			res = AccountDto.convert(i);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -209,7 +221,8 @@ public class AccountDao implements Repository<Account, Integer> {
 			}
 
 			// Execute to count all
-			String sql = ZFile.read(_path + "count.sql");
+			int i = _sql.indexOf("FROM");
+			String sql = "SELECT COUNT(*) " + _sql.substring(i);
 			String limit = "";
 			Query q = createQuery(sql, filter, limit);
 			BigInteger total = (BigInteger) q.getSingleResult();
@@ -227,10 +240,10 @@ public class AccountDao implements Repository<Account, Integer> {
 			// Convert
 			res = AccountDto.convert(l);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -246,27 +259,38 @@ public class AccountDao implements Repository<Account, Integer> {
 	 * @return
 	 */
 	private Query createQuery(String sql, Object o, String limit) {
-		AccountFilter filter = AccountFilter.convert(o);
-		String name = filter.getName();
+		Query q = null;
 
-		// Where
-		String where = "";
-		if (!name.isEmpty()) {
-			where += " AND a.name = :name";
-		}
-		// Replace first
-		if (!where.isEmpty()) {
-			where = where.replaceFirst("AND", "WHERE");
-		}
+		try {
+			AccountFilter filter = AccountFilter.convert(o);
+			String name = filter.getName();
 
-		Query q = _em.createNativeQuery(sql + where + limit);
+			// Where
+			String where = "";
+			if (!name.isEmpty()) {
+				where += " AND a.name = :name";
+			}
+			// Replace first
+			if (!where.isEmpty()) {
+				where = where.replaceFirst("AND", "WHERE");
+			}
 
-		// Set parameter
-		if (!where.isEmpty()) {
-			int i = where.indexOf(":name");
-			i = where.indexOf(":name");
-			if (i > 0) {
-				q.setParameter("name", name);
+			q = _em.createNativeQuery(sql + where + limit);
+
+			// Set parameter
+			if (!where.isEmpty()) {
+				int i = where.indexOf(":name");
+				i = where.indexOf(":name");
+				if (i > 0) {
+					q.setParameter("name", name);
+				}
+			}
+		} catch (Exception ex) {
+			if (ZConfig._printTrace) {
+				ex.printStackTrace();
+			}
+			if (ZConfig._writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
 

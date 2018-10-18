@@ -1,8 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { HTTP, Utils } from '../../utilities/utility';
-import { ScheduleProvider } from '../../providers/schedule';
-import { InvoiceProvider } from '../../providers/invoice';
-import { CommonProvider } from '../../providers/common';
+import { HTTP, Utils, Token } from 'app/utilities';
+import { ScheduleProvider, InvoiceProvider, CommonProvider } from 'app/providers';
 
 @Component({
     selector: 'app-invoices',
@@ -17,8 +15,6 @@ export class InvoicesComponent implements OnInit {
     public status: string = "";
     public scheduleNo: string = "";
     public documentType: string = "";
-    public customer: string = "";
-    public supplier: string = "";
     public invoiceNo: string = "";
     public clientId: string = "";
     public fromDate = new Date();
@@ -85,7 +81,7 @@ export class InvoicesComponent implements OnInit {
             invoiceDate: {
                 title: 'Invoice Date',
                 type: 'date',
-                valuePrepareFunction: (value) => { return this.utl.formatDate(value, 'dd-MMM-yyyy') },
+                valuePrepareFunction: (value) => { return Utils.format(value, 'dd-MMM-yyyy') },
                 filter: false
             },
             invoiceAmount: {
@@ -106,24 +102,23 @@ export class InvoicesComponent implements OnInit {
             createdDate: {
                 title: 'Created Date / Time',
                 type: 'date',
-                valuePrepareFunction: (value) => { return this.utl.formatDate(value, 'dd-MMM-yyyy HH:mm:ss') },
+                valuePrepareFunction: (value) => { return Utils.format(value, 'dd-MMM-yyyy HH:mm:ss') },
                 filter: false
             }
         }
     };
 
-    constructor(
-        private pro: ScheduleProvider,
-        private utl: Utils,
-        private inv: InvoiceProvider,
+    constructor(private inv: InvoiceProvider,
         private com: CommonProvider) { }
 
     ngOnInit() {
-        this.fromDate = this.utl.addMonths(this.fromDate, -6);
-        this.minDate = this.utl.addMonths(this.minDate, -12);
-        let user = JSON.parse(localStorage.getItem("CURRENT_TOKEN"));
+        this.fromDate = Utils.addMonths(this.fromDate, -6);
+        this.minDate = Utils.addMonths(this.minDate, -12);
+
+        let user = Token.getUser();
         this.clientId = user.clientId;
         this.clientName = user.clientName;
+
         this.searchCA();
         this.searchSU();
         this.searchClick(1);
@@ -176,21 +171,19 @@ export class InvoicesComponent implements OnInit {
         this.scheduleNo = "";
         this.invoiceNo = "";
         this.documentType = "";
-        this.customer = "";
-        this.supplier = "";
 
         // Reset Date
         let d = new Date();
-        let d1 = this.utl.formatDate(this.utl.addMonths(d, -6), 'dd-MMM-yyyy');
-        let d2 = this.utl.formatDate(this.fromDate, 'dd-MMM-yyyy');
+        let d1 = Utils.format(Utils.addMonths(d, -6), 'dd-MMM-yyyy');
+        let d2 = Utils.format(this.fromDate, 'dd-MMM-yyyy');
         if (d1 != d2) {
             d = new Date();
-            this.fromDate = this.utl.addMonths(d, -6);
+            this.fromDate = Utils.addMonths(d, -6);
         }
 
         d = new Date();
-        d1 = this.utl.formatDate(d, 'dd-MMM-yyyy');
-        d2 = this.utl.formatDate(this.toDate, 'dd-MMM-yyyy');
+        d1 = Utils.format(d, 'dd-MMM-yyyy');
+        d2 = Utils.format(this.toDate, 'dd-MMM-yyyy');
 
         if (d1 != d2) {
             d = new Date();
@@ -323,8 +316,8 @@ export class InvoicesComponent implements OnInit {
                 scheduleNo: "%" + this.scheduleNo + "%",
                 invoiceNo: "%" + this.invoiceNo + "%",
                 documentType: this.documentType,
-                customer: this.customer,
-                supplier: this.supplier,
+                customer: "",
+                supplier: "",
                 frCreatedDate: fr,
                 toCreatedDate: to
             },

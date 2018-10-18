@@ -12,7 +12,7 @@ import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZConfig;
 import com.ifs.eportal.common.ZFile;
 import com.ifs.eportal.dto.AttachmentDto;
 import com.ifs.eportal.dto.SortDto;
@@ -103,10 +103,10 @@ public class ScheduleOfOfferAttachmentDao implements Repository<ScheduleOfOfferA
 			// Convert
 			res = AttachmentDto.convert(i);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -134,10 +134,10 @@ public class ScheduleOfOfferAttachmentDao implements Repository<ScheduleOfOfferA
 			// Convert
 			res = AttachmentDto.convert(i);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -213,10 +213,10 @@ public class ScheduleOfOfferAttachmentDao implements Repository<ScheduleOfOfferA
 			// Convert
 			res = AttachmentDto.convert(l);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -232,27 +232,38 @@ public class ScheduleOfOfferAttachmentDao implements Repository<ScheduleOfOfferA
 	 * @return
 	 */
 	private Query createQuery(String sql, Object o, String limit) {
-		AttachmentFilter filter = AttachmentFilter.convert(o);
-		String parentUuId = filter.getParentUuId();
+		Query q = null;
 
-		// Where
-		String where = "";
-		if (!parentUuId.isEmpty()) {
-			where += " AND a.parent_uuid__c = :parentUuId AND a.isdeleted = FALSE AND a.isactive__c = TRUE";
-		}
-		// Replace first
-		if (!where.isEmpty()) {
-			where = where.replaceFirst("AND", "WHERE");
-		}
+		try {
+			AttachmentFilter filter = AttachmentFilter.convert(o);
+			String parentUuId = filter.getParentUuId();
 
-		Query q = _em.createNativeQuery(sql + where + limit);
+			// Where
+			String where = "";
+			if (!parentUuId.isEmpty()) {
+				where += " AND a.parent_uuid__c = :parentUuId AND a.isdeleted = FALSE AND a.isactive__c = TRUE";
+			}
+			// Replace first
+			if (!where.isEmpty()) {
+				where = where.replaceFirst("AND", "WHERE");
+			}
 
-		// Set parameter
-		if (!where.isEmpty()) {
-			int i = where.indexOf(":parentUuId");
-			i = where.indexOf(":parentUuId");
-			if (i > 0) {
-				q.setParameter("parentUuId", parentUuId);
+			q = _em.createNativeQuery(sql + where + limit);
+
+			// Set parameter
+			if (!where.isEmpty()) {
+				int i = where.indexOf(":parentUuId");
+				i = where.indexOf(":parentUuId");
+				if (i > 0) {
+					q.setParameter("parentUuId", parentUuId);
+				}
+			}
+		} catch (Exception ex) {
+			if (ZConfig._printTrace) {
+				ex.printStackTrace();
+			}
+			if (ZConfig._writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
 

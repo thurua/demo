@@ -30,15 +30,7 @@ export class CreditNoteProvider {
         return this.api.post('schedule-of-offer/update-schedule-details', info);
     }
 
-
     /**
-     * Search Client Account
-     * @param info
-     */
-    public searchCA(info: any) {
-        return this.api.post('common/search-client-account', info);
-    }
-/**
      * Search Customer
      * @param info
      */

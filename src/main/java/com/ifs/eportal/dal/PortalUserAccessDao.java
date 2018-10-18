@@ -12,7 +12,7 @@ import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZConfig;
 import com.ifs.eportal.common.ZFile;
 import com.ifs.eportal.dto.PortalUserAccessDto;
 import com.ifs.eportal.dto.SortDto;
@@ -87,26 +87,26 @@ public class PortalUserAccessDao implements Repository<PortalUserAccess, Integer
 	}
 
 	/**
-	 * Read by
+	 * Update logout on
 	 * 
 	 * @param uuId
 	 * @return
 	 */
-	public PortalUserAccess read(String uuId) {
-		PortalUserAccess res = new PortalUserAccess();
+	public int updateLogoutOn(String uuId) {
+		int res = 0;
 
 		try {
-			String sql = "FROM PortalUserAccess a WHERE a.uuId = :uuId AND a.logoutOn IS NULL";
+			String sql = ZFile.read(_path + "update_logout_on__c.sql");
 
 			// Execute
-			Query q = _em.createQuery(sql, PortalUserAccess.class);
+			Query q = _em.createNativeQuery(sql);
 			q.setParameter("uuId", uuId);
-			res = (PortalUserAccess) q.getSingleResult();
+			res = q.executeUpdate();
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -134,10 +134,10 @@ public class PortalUserAccessDao implements Repository<PortalUserAccess, Integer
 			// Convert
 			res = PortalUserAccessDto.convert(t);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -165,10 +165,10 @@ public class PortalUserAccessDao implements Repository<PortalUserAccess, Integer
 			// Convert
 			res = PortalUserAccessDto.convert(t);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -197,10 +197,10 @@ public class PortalUserAccessDao implements Repository<PortalUserAccess, Integer
 			// Convert
 			res = PortalUserAccessDto.convert(t);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -229,10 +229,10 @@ public class PortalUserAccessDao implements Repository<PortalUserAccess, Integer
 			// Convert
 			res = PortalUserAccessDto.convert(t);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -301,10 +301,10 @@ public class PortalUserAccessDao implements Repository<PortalUserAccess, Integer
 			// Convert
 			res = PortalUserAccessDto.convert(t);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -348,10 +348,10 @@ public class PortalUserAccessDao implements Repository<PortalUserAccess, Integer
 				}
 			}
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}

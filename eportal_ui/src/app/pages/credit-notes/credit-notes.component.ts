@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { HTTP } from '../../utilities/utility';
-import { CreditNoteProvider } from '../../providers/credit-notes';
-import { Utils } from 'app/utilities/utils';
+import { HTTP, Utils, Token } from 'app/utilities';
+import { CommonProvider, CreditNoteProvider } from 'app/providers';
 
 @Component({
     selector: 'app-credit-notes',
@@ -75,7 +74,7 @@ export class CreditNotesComponent implements OnInit {
             creditNoteDate: {
                 title: 'Credit Note Date',
                 type: 'date',
-                valuePrepareFunction: (value) => { return this.utl.formatDate(value, 'dd-MMM-yyyy') },
+                valuePrepareFunction: (value) => { return Utils.format(value, 'dd-MMM-yyyy') },
                 filter: false
             },
             creditAmount: {
@@ -96,25 +95,23 @@ export class CreditNotesComponent implements OnInit {
             createdDate: {
                 title: 'Created Date / Time',
                 type: 'date',
-                valuePrepareFunction: (value) => { return this.utl.formatDate(value, 'dd-MMM-yyyy HH:mm:ss') },
+                valuePrepareFunction: (value) => { return Utils.format(value, 'dd-MMM-yyyy HH:mm:ss') },
                 filter: false
             }
         }
     };
 
-    constructor(
-        private pro: CreditNoteProvider,
-        private utl: Utils) {
-    }
+    constructor(private pro: CreditNoteProvider,
+        private proCommon: CommonProvider) { }
 
     ngOnInit() {
-        this.fromDate = this.utl.addMonths(this.fromDate, -6);
-        this.minDate = this.utl.addMonths(this.minDate, -12);
+        this.fromDate = Utils.addMonths(this.fromDate, -6);
+        this.minDate = Utils.addMonths(this.minDate, -12);
 
-        let user = JSON.parse(localStorage.getItem("CURRENT_TOKEN"));
-
+        let user = Token.getUser();
         this.clientId = user.clientId;
         this.clientName = user.clientName;
+
         this.searchCA();
         this.searchClick(1);
 
@@ -149,16 +146,16 @@ export class CreditNotesComponent implements OnInit {
 
         // Reset Date
         let d = new Date();
-        let d1 = this.utl.formatDate(this.utl.addMonths(d, -6), 'dd-MMM-yyyy');
-        let d2 = this.utl.formatDate(this.fromDate, 'dd-MMM-yyyy');
+        let d1 = Utils.format(Utils.addMonths(d, -6), 'dd-MMM-yyyy');
+        let d2 = Utils.format(this.fromDate, 'dd-MMM-yyyy');
         if (d1 != d2) {
             d = new Date();
-            this.fromDate = this.utl.addMonths(d, -6);
+            this.fromDate = Utils.addMonths(d, -6);
         }
 
         d = new Date();
-        d1 = this.utl.formatDate(d, 'dd-MMM-yyyy');
-        d2 = this.utl.formatDate(this.toDate, 'dd-MMM-yyyy');
+        d1 = Utils.format(d, 'dd-MMM-yyyy');
+        d2 = Utils.format(this.toDate, 'dd-MMM-yyyy');
 
         if (d1 != d2) {
             d = new Date();
@@ -246,7 +243,7 @@ export class CreditNotesComponent implements OnInit {
             ]
         }
 
-        this.pro.searchCA(x).subscribe((rsp: any) => {
+        this.proCommon.searchCA(x).subscribe((rsp: any) => {
             let itemCA = {
                 sfid: "",
                 clientAccount: "-- Please select --"

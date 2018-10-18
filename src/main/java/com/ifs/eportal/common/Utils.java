@@ -2,12 +2,6 @@ package com.ifs.eportal.common;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -15,103 +9,25 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import javax.xml.bind.DatatypeConverter;
-
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import com.ifs.eportal.dto.AccountDto;
 import com.ifs.eportal.dto.ClientAccountCustomerDto;
 import com.ifs.eportal.dto.LineItemDto;
-import com.ifs.eportal.dto.PayloadDto;
 import com.ifs.eportal.dto.ValidDto;
 import com.ifs.eportal.model.CreditNote;
 import com.ifs.eportal.model.Invoice;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
-
 public class Utils {
 	// region -- Fields --
-
-	public static boolean printStackTrace = false;
-
-	public static boolean writeLog = false;
-
-	public static boolean allowUpload = false;
-
-	private static String _uploadHash = "";
-
-	private static String _uploadKey = "";
 
 	// end
 
 	// region -- Methods --
-
-	/**
-	 * Date format
-	 * 
-	 * @param d String date and time
-	 * @return
-	 */
-	public static Date dateFormat(String d) {
-		Date res = null;
-		SimpleDateFormat f = new SimpleDateFormat(Const.DateTime.FULL);
-
-		try {
-			res = f.parse(d);
-
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-
-		return res;
-	}
-
-	/**
-	 * Date format
-	 * 
-	 * @param d      Date and time
-	 * @param format Format date e.g: dd/MM/yyyy
-	 * @return
-	 */
-	public static String dateFormat(Date d, String format) {
-		String res = "";
-
-		try {
-			SimpleDateFormat sm = new SimpleDateFormat(format);
-			res = sm.format(d);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return res;
-	}
-
-	/**
-	 * Reset time, just get date only.
-	 * 
-	 * @param d date need to reset time
-	 * @return
-	 */
-	public static Date getDateWithoutTimeUsingCalendar(Date d) {
-		Calendar res = Calendar.getInstance();
-		res.setTime(d);
-		res.set(Calendar.HOUR_OF_DAY, 0);
-		res.set(Calendar.MINUTE, 0);
-		res.set(Calendar.SECOND, 0);
-		res.set(Calendar.MILLISECOND, 0);
-
-		return res.getTime();
-	}
 
 	/**
 	 * Get authorities
@@ -125,24 +41,6 @@ public class Utils {
 		}
 
 		return Collections.emptyList();
-	}
-
-	/**
-	 * Get token information
-	 * 
-	 * @param header
-	 * @return
-	 */
-	public static PayloadDto getTokenInfor(HttpHeaders header) {
-		String token = header.get(Const.Authentication.HEADER_STRING).get(0);
-		token = token.replace(Const.Authentication.TOKEN_PREFIX, "");
-
-		JwtParser x = Jwts.parser().setSigningKey(Const.Authentication.SIGNING_KEY);
-		Claims y = x.parseClaimsJws(token).getBody();
-		Object z = y.get(Const.Authentication.PAYLOAD_NAME);
-
-		PayloadDto res = PayloadDto.convert(z);
-		return res;
 	}
 
 	/**
@@ -161,10 +59,10 @@ public class Utils {
 			c.add(type, n);
 			res = c.getTime();
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				System.out.println(ex.getMessage());
 			}
 		}
@@ -187,161 +85,6 @@ public class Utils {
 		}
 
 		return true;
-	}
-
-	/**
-	 * Get token
-	 * 
-	 * @param l length
-	 * @return
-	 */
-	public static String getToken(int l) {
-		String chars = "0123456789";
-		Random random = new Random();
-		StringBuilder token = new StringBuilder(l);
-
-		for (int i = 0; i < l; i++) {
-			token.append(chars.charAt(random.nextInt(chars.length())));
-		}
-
-		return token.toString();
-	}
-
-	/**
-	 * Get token with 6 digits
-	 * 
-	 * @return
-	 */
-	public static String getToken() {
-		int n = Const.Authentication.TOKEN_NUMBER;
-		int max = (int) Math.pow(10, n) - 1;
-
-		Random t = new Random();
-		int s = t.nextInt(max);
-
-		char[] zeros = new char[n];
-		Arrays.fill(zeros, '0');
-		String format = String.valueOf(zeros);
-		DecimalFormat df = new DecimalFormat(format);
-		String res = df.format(s);
-
-		return res;
-	}
-
-	/**
-	 * Get token
-	 * 
-	 * @param s   String data
-	 * @param num Number of digits will get
-	 * @return
-	 */
-	public static String getToken(String s, int num) {
-		String res = "";
-
-		s = Const.Authentication.TOKEN_KEY1 + s + Const.Authentication.TOKEN_KEY2;
-		String hash = generateSHA256(s);
-		String[] arr = hash.split(Const.SpecialString.Minus);
-
-		if (num > 8 || num < 1) {
-			num = 8;
-		}
-
-		for (String i : arr) {
-			if (num == 0) {
-				break;
-			}
-
-			eachHash: for (char item : i.toCharArray()) {
-				if (Character.isDigit(item)) {
-					res += item;
-					break eachHash;
-				}
-			}
-
-			num--;
-		}
-
-		return res;
-	}
-
-	/**
-	 * Check authentication
-	 * 
-	 * @param auth Authentication key
-	 * @return
-	 */
-	public static boolean checkAuth(String auth) {
-		try {
-			if (auth == null || auth.isEmpty()) {
-				return false;
-			}
-
-			getEnv();
-
-			String[] arr = auth.split(":");
-
-			if (!arr[0].equals(_uploadKey)) {
-				return false;
-			}
-
-			if (System.currentTimeMillis() - Long.parseLong(arr[1]) > 600000) {
-				return false;
-			}
-
-			String t = hash(arr[0] + ":" + arr[1], _uploadHash);
-			if (t.equals(arr[2])) {
-				return true;
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-
-		return false;
-	}
-
-	/**
-	 * Get authentication
-	 * 
-	 * @return
-	 */
-	public static String getAuth() {
-		getEnv();
-
-		String s = _uploadKey + ':' + System.currentTimeMillis();
-		String t = hash(s, _uploadHash);
-
-		String res = s + ':' + t;
-		return res;
-	}
-
-	/**
-	 * Hash
-	 * 
-	 * @param value
-	 * @param key
-	 * @return
-	 */
-	public static String hash(String value, String key) {
-		String res = "";
-
-		try {
-			String s = "HmacSHA512";
-			byte[] b = key.getBytes("UTF-8");
-			SecretKeySpec k = new SecretKeySpec(b, s);
-
-			Mac mac = Mac.getInstance(s);
-			mac.init(k);
-
-			b = value.getBytes("UTF-8");
-			b = mac.doFinal(b);
-
-			res = DatatypeConverter.printHexBinary(b);
-			res = res.toUpperCase();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-
-		return res;
 	}
 
 	/**
@@ -498,39 +241,6 @@ public class Utils {
 	}
 
 	/**
-	 * Generate SHA-256
-	 * 
-	 * @param s String data
-	 * @return
-	 */
-	private static String generateSHA256(String s) {
-		String res = "";
-
-		try {
-			MessageDigest digest = MessageDigest.getInstance("SHA-256");
-			byte[] encodedhash = digest.digest(s.getBytes(StandardCharsets.UTF_8));
-			StringBuffer hexString = new StringBuffer();
-
-			for (int i = 0; i < encodedhash.length; i++) {
-				String hex = Integer.toHexString(0xff & encodedhash[i]);
-				if (hex.length() == 1) {
-					hexString.append('0');
-				}
-				hexString.append(hex);
-				if (i % 4 == 3) {
-					hexString.append(Const.SpecialChar.Minus);
-				}
-			}
-
-			res = hexString.toString();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
-
-		return res;
-	}
-
-	/**
 	 * Use for supplier
 	 * 
 	 * @param l
@@ -592,6 +302,18 @@ public class Utils {
 		return res;
 	}
 
+	public static List<String> getNo(List<LineItemDto> l) {
+		List<String> res = new ArrayList<>();
+
+		for (LineItemDto i : l) {
+			if (i.getName() != null && !i.getName().isEmpty()) {
+				res.add(i.getNo().trim());
+			}
+		}
+
+		return res;
+	}
+
 	/* ToanNguyen 2018-Sep-05 */
 	public static HashMap<String, String> toMapInvoice(List<Invoice> l) {
 		HashMap<String, String> res = new HashMap<String, String>();
@@ -612,14 +334,6 @@ public class Utils {
 		}
 
 		return res;
-	}
-
-	/**
-	 * Get environment variable
-	 */
-	private static void getEnv() {
-		_uploadHash = System.getenv("UPLOAD_HASH");
-		_uploadKey = System.getenv("UPLOAD_KEY");
 	}
 
 	// end

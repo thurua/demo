@@ -10,34 +10,50 @@
             <div class="card border-0 box-shadow rounded-0" *ngIf="isShow">
                 <div class="card-body text-center pb-1">
                     <section class="format-sec">
-                        <form class="sign-in" name="form">
-                            <div class=row>
-                                <div class="col-md-1"></div>
-                                <div class="col-md-10 form-group input">
-                                    <label class="login" for="login">Login</label>
-                                    <input id="userName" name="login" required type="text" #userName="ngModel" [(ngModel)]="vm.userName" class="form-control" maxlength="64">
+                        <form class="sign-in" name="form" novalidate #f="ngForm" (ngSubmit)="f.form.valid && signIn()">
+                            <div class="form-group">
+                                <div class=row>
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-10 form-group">
+                                        <label class="login" for="login">User ID</label>
+                                        <input id="userName" name="userName" type="text" #userName="ngModel" [(ngModel)]="vm.userName" required email pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$" class="form-control">
+                                        <span [hidden]="userName.valid || (userName.pristine && !f.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error pull-left" data-for="userName" data-valmsg-for="userName" id="userName_validationMessage" role="alert">
+                                            <span *ngIf="userName.errors?.required">
+                                                <i class="fa fa-exclamation-triangle"></i> Required!
+                                            </span>
+                                        <span *ngIf="userName.errors?.pattern">
+                                                <i class="fa fa-exclamation-triangle"></i>Invalid email format!
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div class="col-md-1"></div>
                                 </div>
-                                <div class="col-md-1"></div>
-                            </div>
-                            <div class=row>
-                                <div class="col-md-1"></div>
-                                <div class="col-md-10 form-group input">
-                                    <label class="password" for="password">Password</label>
-                                    <input id="password" name="password" type="password" #password="ngModel" [(ngModel)]="vm.password" class="form-control" maxlength="64">
+                                <div class=row>
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-10 form-group input">
+                                        <label class="password" for="password">Password</label>
+                                        <input id="password" name="password" type="password" #password="ngModel" [(ngModel)]="vm.password" required pattern="((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8})" maxlength="8" class="form-control" placeholder="">
+                                        <span [hidden]="password.valid || (password.pristine && !f.submitted)" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error pull-left" data-for="password" data-valmsg-for="password" id="password_validationMessage" role="alert">
+                                            <span *ngIf="password.errors?.required">
+                                                <i class="fa fa-exclamation-triangle"></i> Required!
+                                            </span>
+                                        <span *ngIf="password.errors?.pattern">
+                                                <i class="fa fa-exclamation-triangle"></i> Password must be 8 characters and include numbers, uppercase and lowercase.
+                                                Letters and one special character
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div class="col-md-1"></div>
                                 </div>
-                                <div class="col-md-1"></div>
-                            </div>
-                            <br>
-                            <div class="fomat-pw row">
-                                <div class="col-md-1"></div>
-                                <div class="col-md-5">
-                                    <label *ngIf="showMsg">
-                                        <span style="cursor: pointer; color:red">{{message}}</span> 
-                                    </label>
+                                <div class=row>
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-10 form-group">
+                                        <span *ngIf="showMsg" class="k-widget k-tooltip k-tooltip-validation k-invalid-msg field-validation-error pull-left">
+                                            <i class="fa fa-exclamation-triangle"></i>{{message}}
+                                        </span>
+                                    </div>
+                                    <div class="col-md-1"></div>
                                 </div>
-                                <div class="col-md-5">
-                                </div>
-                                <div class="col-md-1"></div>
                             </div>
                             <div class="fomat-pw row">
                                 <div class="col-md-1"></div>
@@ -47,7 +63,7 @@
                                     </label>
                                 </div>
                                 <div class="col-md-5">
-                                    <button type="button" (click)="signIn()" class="signin btn">Sign In</button>
+                                    <button type="submit" class="signin btn">Sign In</button>
                                 </div>
                                 <div class="col-md-1"></div>
                             </div>

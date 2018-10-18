@@ -1,8 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { CreditNoteProvider } from '../../providers/credit-notes';
-import { ReasonProvider } from '../../providers/reason';
+import { HTTP } from 'app/utilities';
+import { CreditNoteProvider, ReasonProvider } from 'app/providers'
 import { ActivatedRoute, Params } from '@angular/router';
-import { HTTP } from '../../utilities/const';
 
 @Component({
     selector: 'app-credit-notes-details',
@@ -97,7 +96,7 @@ export class CreditNotesDetailsComponent implements OnInit {
 
         setTimeout(function () {
             document.getElementById('preloader').style.display = 'none';
-        }, 500); 
+        }, 500);
     }
 
     public getReasonBySfId(sfId: String) {

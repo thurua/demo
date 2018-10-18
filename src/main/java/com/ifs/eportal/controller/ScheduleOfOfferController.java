@@ -15,8 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ifs.eportal.bll.ScheduleOfOfferService;
-import com.ifs.eportal.common.Utils;
-import com.ifs.eportal.dto.PayloadDto;
+import com.ifs.eportal.common.ZToken;
 import com.ifs.eportal.dto.ScheduleOfOfferDetailDto;
 import com.ifs.eportal.dto.ScheduleOfOfferDto;
 import com.ifs.eportal.req.PagingReq;
@@ -77,8 +76,7 @@ public class ScheduleOfOfferController {
 		BaseRsp res = new BaseRsp();
 
 		try {
-			PayloadDto pl = Utils.getTokenInfor(header);
-			String sfId = pl.getSfId();
+			String sfId = ZToken.getSfId(header);
 			req.setAuthorisedBy(sfId);
 
 			// Handle

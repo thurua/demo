@@ -1,6 +1,5 @@
 package com.ifs.eportal.controller;
 
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,12 +24,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ifs.eportal.bll.PortalUserAccessService;
 import com.ifs.eportal.bll.PortalUserService;
 import com.ifs.eportal.common.Const;
-import com.ifs.eportal.common.RsaService;
-import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZHash;
+import com.ifs.eportal.common.ZRsa;
+import com.ifs.eportal.common.ZToken;
 import com.ifs.eportal.config.JwtTokenUtil;
 import com.ifs.eportal.dto.PayloadDto;
 import com.ifs.eportal.dto.PortalUserDto;
-import com.ifs.eportal.model.PortalUserAccess;
 import com.ifs.eportal.req.BaseReq;
 import com.ifs.eportal.req.PagingReq;
 import com.ifs.eportal.req.PasswordReq;
@@ -76,8 +75,7 @@ public class PortalUserController {
 		SingleRsp res = new SingleRsp();
 
 		try {
-			PayloadDto pl = Utils.getTokenInfor(header);
-			Integer id = pl.getId();
+			Integer id = ZToken.getId(header);
 
 			// Handle
 			PortalUserDto o = portalUserService.getBy(id);
@@ -103,8 +101,7 @@ public class PortalUserController {
 		SingleRsp res = new SingleRsp();
 
 		try {
-			PayloadDto pl = Utils.getTokenInfor(header);
-			int id = pl.getId();
+			Integer id = ZToken.getId(header);
 			req.setId(id);
 
 			// Handle
@@ -129,7 +126,13 @@ public class PortalUserController {
 
 		try {
 			// Handle
-			res = portalUserService.update(req, true);
+			String token = req.getEmail().substring(0, 1);
+			if (token.equals("U")) {
+				res = portalUserService.update(req, false);
+			} else {
+				res = portalUserService.update(req, true);
+			}
+
 			if (Const.HTTP.STATUS_SUCCESS.equals(res.getStatus())) {
 				PortalUserDto m = (PortalUserDto) res.getResult();
 
@@ -214,7 +217,7 @@ public class PortalUserController {
 			String password = req.getPassword();
 
 			// Decrypt
-			password = RsaService.decrypt(password);
+			password = ZRsa.decrypt(password);
 
 			// Handle
 			PortalUserDto m = portalUserService.getByUserId(email);
@@ -230,7 +233,7 @@ public class PortalUserController {
 				password = m.getPassword();
 				String passwordHash = m.getPasswordHash();
 
-				String t = Utils.hash(password, Const.Authentication.TOKEN_KEY1);
+				String t = ZHash.hash(password, Const.Authentication.TOKEN_KEY1);
 				if (!t.equals(passwordHash)) {
 					res.setError("Unauthorized/Invalid email or password!");
 				}
@@ -251,20 +254,58 @@ public class PortalUserController {
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 
+	/**
+	 * Refresh token
+	 * 
+	 * @param header
+	 * @return
+	 */
+	@PostMapping("/refresh-token")
+	public ResponseEntity<?> refreshToken(@RequestHeader HttpHeaders header) {
+		SingleRsp res = new SingleRsp();
+
+		try {
+			boolean ok = ZToken.isExpired(header);
+			if (ok) {
+				res.setError("Token is expired");
+			} else {
+				PayloadDto user = ZToken.getUser(header);
+				String userId = user.getUserId();
+				String uuId = user.getUuId();
+				PortalUserDto m = portalUserService.getByUserId(userId);
+
+				// Handle
+				portalUserAccessService.updateLogoutOn(uuId);
+
+				String uuid = portalUserAccessService.create(m);
+				m.setUuId(uuid);
+
+				List<SimpleGrantedAuthority> z = portalUserService.getRoleBy(m.getId());
+				String t = jwtTokenUtil.doGenerateToken(m, z);
+				res.setResult(t);
+			}
+		} catch (Exception ex) {
+			res.setError(ex.getMessage());
+		}
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
+	/**
+	 * Sign out
+	 * 
+	 * @param header
+	 * @return
+	 */
 	@PostMapping("/sign-out")
 	public ResponseEntity<?> signOut(@RequestHeader HttpHeaders header) {
 		SingleRsp res = new SingleRsp();
 
 		try {
-			PayloadDto pl = Utils.getTokenInfor(header);
-			String uuId = pl.getUuId();
+			String uuId = ZToken.getUuId(header);
 
 			// Handle
-			PortalUserAccess m = portalUserAccessService.read(uuId);
-			if (m.getId() > 0) {
-				m.setLogoutOn(new Date());
-				portalUserAccessService.update(m);
-			}
+			portalUserAccessService.updateLogoutOn(uuId);
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}

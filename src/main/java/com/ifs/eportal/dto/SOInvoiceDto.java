@@ -59,6 +59,9 @@ public class SOInvoiceDto extends BaseDto {
 	@JsonProperty(value = "uuId")
 	private String uuId;
 
+	@JsonProperty(value = "paymentDate")
+	private Date paymentDate;
+
 	// end
 
 	// region -- Get set --
@@ -183,6 +186,14 @@ public class SOInvoiceDto extends BaseDto {
 		this.uuId = uuId;
 	}
 
+	public Date getPaymentDate() {
+		return paymentDate;
+	}
+
+	public void setPaymentDate(Date paymentDate) {
+		this.paymentDate = paymentDate;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -208,6 +219,7 @@ public class SOInvoiceDto extends BaseDto {
 		rejectReason = "";
 		currencyIsoCode = "";
 		uuId = "";
+		paymentDate = null;
 	}
 
 	/**
@@ -237,6 +249,7 @@ public class SOInvoiceDto extends BaseDto {
 		res.setRejectReason((String) o[14]);
 		res.setCurrencyIsoCode((String) o[15]);
 		res.setUuId((String) o[16]);
+		res.setPaymentDate((Date) o[17]);
 
 		return res;
 	}

@@ -1,7 +1,6 @@
 package com.ifs.eportal.dto;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -42,7 +41,7 @@ public class ReasonDto extends BaseDto {
 	public void setReason(String reason) {
 		this.reason = reason;
 	}
-	
+
 	public String getRecordType() {
 		return recordType;
 	}

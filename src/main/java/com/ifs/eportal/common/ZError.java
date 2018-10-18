@@ -190,6 +190,11 @@ public class ZError {
 		/* TriNguyen 2018-Sep-12 IFS-1050 */
 		m.put("IVJ", "Client - 100% Verification Required.");
 
+		/* CongLee 2018-Oct-12 IFS-1389 */
+		m.put("LO1", "Supplier- Invoice Amount more than Supplier Average Invoice Size.");
+		m.put("LO2", "Supplier - Invoice Amount more than Client Average Invoice Size.");
+		m.put("LO3", "Supplier- Slow Payment.");
+
 		return m;
 	}
 

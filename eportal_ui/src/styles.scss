@@ -165,6 +165,18 @@ body {
     text-align: center;
 }
 
+.text-right {
+    text-align: right;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-italic {
+    font-style: italic;
+}
+
 
 /* Kendo validate */
 
@@ -453,4 +465,8 @@ span.k-tooltip {
     40% {
         opacity: 1;
     }
+}
+
+.nav-tabs .nav-link {
+    font-weight: bold;
 }

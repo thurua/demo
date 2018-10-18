@@ -25,17 +25,15 @@ import javax.crypto.Cipher;
 
 import org.apache.commons.codec.binary.Base64;
 
-import com.ifs.eportal.dal.AccountDao;
-
 /**
  * 
- * @author ToanNguyen 2018-Oct-05 (verified)
+ * @author ToanNguyen 2018-Oct-16 (verified)
  *
  */
-public class RsaService {
+public class ZRsa {
 	// region -- Fields --
 
-	private static final Logger _log = Logger.getLogger(AccountDao.class.getName());
+	private static final Logger _log = Logger.getLogger(ZRsa.class.getName());
 
 	// end
 
@@ -225,10 +223,10 @@ public class RsaService {
 				res = encrypt(s, k);
 			}
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -253,10 +251,10 @@ public class RsaService {
 				res = decrypt(s, k);
 			}
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}

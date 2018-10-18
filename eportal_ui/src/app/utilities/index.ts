@@ -1,10 +1,12 @@
 import { Const, HTTP } from './const';
-import { RsaService } from './rsa';
+import { Rsa } from './rsa';
 import { Utils } from './utils';
+import { Token } from './token';
 
 export {
     Const,
     HTTP,
-    RsaService,
-    Utils
+    Rsa,
+    Utils,
+    Token
 };

@@ -14,9 +14,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class InvoiceDto extends BaseDto {
 	// region -- Fields --
 
-	@JsonProperty(value = "sfId")
-	private String sfId;
-
 	@JsonProperty(value = "customerBranch")
 	private String customerBranch;
 
@@ -83,17 +80,17 @@ public class InvoiceDto extends BaseDto {
 	@JsonProperty(value = "uuId")
 	private String uuId;
 
+	@JsonProperty(value = "totalAppliedCnAmount")
+	private String totalAppliedCnAmount;
+
+	@JsonProperty(value = "reassignedAmount")
+	private String reassignedAmount;
+
+	@JsonProperty(value = "reversedAmount")
+	private String reversedAmount;
 	// end
 
 	// region -- Get set --
-
-	public String getSfId() {
-		return sfId;
-	}
-
-	public void setSfId(String sfId) {
-		this.sfId = sfId;
-	}
 
 	public String getCustomerBranch() {
 		return customerBranch;
@@ -271,6 +268,30 @@ public class InvoiceDto extends BaseDto {
 		this.uuId = uuId;
 	}
 
+	public String getTotalAppliedCnAmount() {
+		return totalAppliedCnAmount;
+	}
+
+	public void setTotalAppliedCnAmount(String totalAppliedCnAmount) {
+		this.totalAppliedCnAmount = totalAppliedCnAmount;
+	}
+
+	public String getReassignedAmount() {
+		return reassignedAmount;
+	}
+
+	public void setReassignedAmount(String reassignedAmount) {
+		this.reassignedAmount = reassignedAmount;
+	}
+
+	public String getReversedAmount() {
+		return reversedAmount;
+	}
+
+	public void setReversedAmount(String reversedAmount) {
+		this.reversedAmount = reversedAmount;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -281,7 +302,6 @@ public class InvoiceDto extends BaseDto {
 	public InvoiceDto() {
 		super();
 
-		sfId = "";
 		customerBranch = "";
 		customerFromExcel = "";
 		currencyIsoCode = "";

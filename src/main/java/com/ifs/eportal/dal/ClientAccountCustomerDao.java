@@ -12,7 +12,7 @@ import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZConfig;
 import com.ifs.eportal.common.ZFile;
 import com.ifs.eportal.dto.ClientAccountCustomerDto;
 import com.ifs.eportal.dto.SortDto;
@@ -88,15 +88,61 @@ public class ClientAccountCustomerDao implements Repository<ClientAccountCustome
 
 	@SuppressWarnings("unchecked")
 	public List<ClientAccountCustomerDto> getByClientId(String clientId) {
-		String sql = _sql + " WHERE a.client_account__c = :clientId";
+		List<ClientAccountCustomerDto> res = new ArrayList<ClientAccountCustomerDto>();
 
-		// Execute
-		Query q = _em.createNativeQuery(sql);
-		q.setParameter("clientId", clientId);
-		List<Object[]> l = q.getResultList();
+		try {
+			String sql = _sql + " WHERE a.client_account__c = :clientId";
 
-		// Convert
-		List<ClientAccountCustomerDto> res = ClientAccountCustomerDto.convert(l);
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("clientId", clientId);
+			List<Object[]> l = q.getResultList();
+
+			// Convert
+			res = ClientAccountCustomerDto.convert(l);
+		} catch (Exception ex) {
+			if (ZConfig._printTrace) {
+				ex.printStackTrace();
+			}
+			if (ZConfig._writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * Get by ClientAccountCustomer
+	 * 
+	 * @param sfId
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<ClientAccountCustomerDto> getBy(String sfId) {
+		List<ClientAccountCustomerDto> res = new ArrayList<ClientAccountCustomerDto>();
+
+		try {
+			_sql = ZFile.read(_path + "_sql.sql");
+			String sql = _sql + " WHERE a.client_account__c =:sfId";
+
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("sfId", sfId);
+
+			List<Object[]> l = q.getResultList();
+
+			// Convert
+			res = ClientAccountCustomerDto.convert(l);
+		} catch (Exception ex) {
+			if (ZConfig._printTrace) {
+				ex.printStackTrace();
+			}
+			if (ZConfig._writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
 		return res;
 	}
 
@@ -144,7 +190,8 @@ public class ClientAccountCustomerDao implements Repository<ClientAccountCustome
 			}
 
 			// Execute to count all
-			String sql = ZFile.read(_path + "count.sql");
+			int i = _sql.indexOf("FROM");
+			String sql = "SELECT COUNT(*) " + _sql.substring(i);
 			String limit = "";
 			Query q = createQuery(sql, filter, limit);
 			BigInteger total = (BigInteger) q.getSingleResult();
@@ -162,10 +209,10 @@ public class ClientAccountCustomerDao implements Repository<ClientAccountCustome
 			// Convert
 			res = ClientAccountCustomerDto.convert(l);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -181,27 +228,38 @@ public class ClientAccountCustomerDao implements Repository<ClientAccountCustome
 	 * @return
 	 */
 	private Query createQuery(String sql, Object o, String limit) {
-		ClientAccountCustomerFilter filter = ClientAccountCustomerFilter.convert(o);
-		String clientAccount = filter.getClientAccount();
+		Query q = null;
 
-		// Where
-		String where = "";
-		// if (!client.isEmpty()) {
-		where += " AND a.client_account__c = :clientAccount ";
-		// }
+		try {
+			ClientAccountCustomerFilter filter = ClientAccountCustomerFilter.convert(o);
+			String clientAccount = filter.getClientAccount();
 
-		// Replace first
-		if (!where.isEmpty()) {
-			where = where.replaceFirst("AND", "WHERE");
-		}
+			// Where
+			String where = "";
+			// if (!client.isEmpty()) {
+			where += " AND a.client_account__c = :clientAccount ";
+			// }
 
-		Query q = _em.createNativeQuery(sql + where + limit);
+			// Replace first
+			if (!where.isEmpty()) {
+				where = where.replaceFirst("AND", "WHERE");
+			}
 
-		// Set parameter
-		if (!where.isEmpty()) {
-			int i = where.indexOf(":clientAccount");
-			if (i > 0) {
-				q.setParameter("clientAccount", clientAccount);
+			q = _em.createNativeQuery(sql + where + limit);
+
+			// Set parameter
+			if (!where.isEmpty()) {
+				int i = where.indexOf(":clientAccount");
+				if (i > 0) {
+					q.setParameter("clientAccount", clientAccount);
+				}
+			}
+		} catch (Exception ex) {
+			if (ZConfig._printTrace) {
+				ex.printStackTrace();
+			}
+			if (ZConfig._writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
 

@@ -4,11 +4,9 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.joda.time.DateTime;
-
 /**
  * 
- * @author ToanNguyen 2018-Oct-03
+ * @author ToanNguyen 2018-Oct-16 (verified)
  *
  */
 public class ZDate {
@@ -19,23 +17,34 @@ public class ZDate {
 	// region -- Methods --
 
 	/**
+	 * Get date only
+	 * 
+	 * @return
+	 */
+	public static Date today() {
+		Date res = new Date();
+		return removeTime(res);
+	}
+
+	/**
+	 * Get date and time
+	 * 
+	 * @return
+	 */
+	public static Date now() {
+		Date res = new Date();
+		return res;
+	}
+
+	/**
 	 * Get start of day
 	 * 
 	 * @param d
 	 * @return
 	 */
 	public static Timestamp getStartOfDay(Date d) {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(d);
-
-		int year = cal.get(Calendar.YEAR);
-		int month = cal.get(Calendar.MONTH);
-		int day = cal.get(Calendar.DATE);
-
-		cal.set(year, month, day, 0, 0, 0);
-		Date t = cal.getTime();
+		Date t = removeTime(d);
 		Timestamp res = new Timestamp(t.getTime());
-
 		return res;
 	}
 
@@ -46,40 +55,49 @@ public class ZDate {
 	 * @return
 	 */
 	public static Timestamp getEndOfDay(Date d) {
+		Calendar cal = removeTime(d, -1);
+		cal.add(Calendar.DAY_OF_YEAR, 1);
+
+		Date t = cal.getTime();
+		Timestamp res = new Timestamp(t.getTime());
+		return res;
+	}
+
+	/**
+	 * Remove time
+	 * 
+	 * @param d Date and time
+	 * @return
+	 */
+	public static Date removeTime(Date d) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(d);
 
-		int year = cal.get(Calendar.YEAR);
-		int month = cal.get(Calendar.MONTH);
-		int day = cal.get(Calendar.DATE);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
 
-		cal.set(year, month, day, 23, 59, 59);
-		Date t = cal.getTime();
-		Timestamp res = new Timestamp(t.getTime());
-
-		return res;
+		return cal.getTime();
 	}
 
 	/**
-	 * Get start of day
+	 * Remove time
 	 * 
-	 * @param d
+	 * @param d  Date and time
+	 * @param ms Millisecond
 	 * @return
 	 */
-	public static DateTime getStartOfDay(DateTime d) {
-		DateTime res = d.withTimeAtStartOfDay();
-		return res;
-	}
+	private static Calendar removeTime(Date d, int ms) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(d);
 
-	/**
-	 * Get end of day
-	 * 
-	 * @param d
-	 * @return
-	 */
-	public static DateTime getEndOfDay(DateTime d) {
-		DateTime res = d.plusDays(1).withTimeAtStartOfDay();
-		return res;
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, ms);
+
+		return cal;
 	}
 
 	// end

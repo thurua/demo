@@ -1,4 +1,6 @@
 import { Component, OnInit, ViewEncapsulation, HostListener } from '@angular/core';
+import { Utils } from 'app/utilities';
+import { UserProvider, } from 'app/providers';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { AppSettings } from '../../../app.settings';
 import { Settings } from '../../../app.settings.model';
@@ -26,7 +28,7 @@ export class HeaderComponent implements OnInit {
     public settings: Settings;
     public menuItems: Array<any>;
 
-    constructor(public appSettings: AppSettings, public menuService: MenuService) {
+    constructor(public appSettings: AppSettings, public menuService: MenuService, private pro: UserProvider) {
         this.settings = this.appSettings.settings;
         this.menuItems = this.menuService.getHorizontalMenuItems();
     }
@@ -59,5 +61,9 @@ export class HeaderComponent implements OnInit {
         else {
             this.showHorizontalMenu = true;
         }
+    }
+
+    public signOut() {
+        this.pro.signOut();
     }
 }

@@ -19,7 +19,7 @@ import com.amazonaws.services.s3.model.S3Object;
 
 /**
  * 
- * @author ToanNguyen 2018-Oct-10 (verified)
+ * @author ToanNguyen 2018-Oct-16 (verified)
  *
  */
 public class ZFile {
@@ -68,10 +68,10 @@ public class ZFile {
 			res = sb.toString();
 			br.close();
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -112,10 +112,10 @@ public class ZFile {
 			GetObjectRequest rangeObjectRequest = new GetObjectRequest(_name, pathFile);
 			res = d.getObject(rangeObjectRequest);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -153,10 +153,10 @@ public class ZFile {
 
 			res = _url + "/" + path;
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -193,10 +193,10 @@ public class ZFile {
 
 			res = _url + "/" + path;
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}

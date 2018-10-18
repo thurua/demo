@@ -25,10 +25,69 @@
     margin-left: 40%;
 }
 
-.nav-tabs .nav-link {
-    font-weight: bold;
-}
-
 .pad-down-icon {
     padding-right: 10%;
+}
+
+
+/* upload file */
+
+ul,
+menu,
+dir {
+    display: block;
+    list-style-type: disc;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    padding-inline-start: 40px;
+}
+
+.k-upload-files {
+    line-height: 2.66;
+    border-style: solid;
+    border-width: 1px 0 0;
+    padding-bottom: 5px;
+    border-color: #bbdceb;
+}
+
+html .k-upload {
+    position: relative;
+}
+
+.k-reset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    text-decoration: none;
+    font-size: 100%;
+    list-style: none;
+}
+
+.k-file {
+    border-style: solid;
+    border-width: 0px 1px 1px 1px;
+    padding: .65em .17em .65em 1em;
+    background-color: #fff;
+    border-color: #bbdceb;
+}
+
+.k-dropzone,
+.k-file {
+    position: relative;
+}
+
+.k-file .k-icon {
+    position: relative;
+    color: #003f59;
+    text-indent: -99999px;
+}
+
+.k-file .k-upload-action {
+    background: 0 0;
+    border-width: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
 }

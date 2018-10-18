@@ -1,8 +1,7 @@
 export const environment = {
-    production: true
-};
+    production: true,
+    showLog: false,
 
-export const config = {
-    apiUrl: '/',
-    imgUrl: '/assets/img/'
-}
+    apiUrl: "/",
+    imgUrl: "/assets/img/"
+};

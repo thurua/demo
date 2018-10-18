@@ -33,6 +33,9 @@ public class ClientAccountCustomerDto extends BaseDto {
 	@JsonProperty(value = "ccName")
 	private String ccName;
 
+	@JsonProperty(value = "clientAccount")
+	private String clientAccount;
+
 	// end
 
 	// region -- Get set --
@@ -101,6 +104,14 @@ public class ClientAccountCustomerDto extends BaseDto {
 		this.ccName = ccName;
 	}
 
+	public String getClientAccount() {
+		return clientAccount;
+	}
+
+	public void setClientAccount(String clientAccount) {
+		this.clientAccount = clientAccount;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -125,14 +136,15 @@ public class ClientAccountCustomerDto extends BaseDto {
 
 		res.setId((Integer) o[0]);
 		res.setSfId((String) o[1]);
-		res.setName((String) o[2]);
+		res.setName((String) o[2]); // customer
 		res.setActivationDate((Date) o[3]);
 		res.setStatus((String) o[4]);
 		res.setCustomer((String) o[5]);
 		res.setVerification((Double) o[6]);
 		res.setVerificationExceedingInvoiceAmount((Double) o[7]);
 		res.setFciName((String) o[8]);
-		res.setCcName((String) o[9]);
+		res.setCcName((String) o[9]); // customer
+		res.setClientAccount((String) o[10]); // Client Account No
 
 		return res;
 	}

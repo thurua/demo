@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 declare var JSEncrypt: any;
 
 /**
- * RSA service
+ * @author ToanNguyen 2018-Oct-18 (verified)
  */
 @Injectable()
-export class RsaService {
+export class Rsa {
     public privateKey: string;
     public publicKey: string;
     public enabled: boolean;

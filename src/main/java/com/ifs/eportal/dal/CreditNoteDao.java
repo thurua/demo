@@ -13,7 +13,7 @@ import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZConfig;
 import com.ifs.eportal.common.ZDate;
 import com.ifs.eportal.common.ZFile;
 import com.ifs.eportal.dto.CreditNoteDto;
@@ -109,10 +109,10 @@ public class CreditNoteDao implements Repository<CreditNote, Integer> {
 			// Convert
 			res = CreditNoteDto.convert(t);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -140,10 +140,10 @@ public class CreditNoteDao implements Repository<CreditNote, Integer> {
 			// Convert
 			res = CreditNoteDto.convert(t);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -175,10 +175,10 @@ public class CreditNoteDao implements Repository<CreditNote, Integer> {
 			// Convert
 			res = CreditNoteDto.convert(t);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -199,7 +199,7 @@ public class CreditNoteDao implements Repository<CreditNote, Integer> {
 		List<CustomDto> res = new ArrayList<CustomDto>();
 
 		try {
-			String sql = "SELECT a.name as code, '1' as value FROM salesforce.credit_note__c a "
+			String sql = "SELECT a.name as code, NULL as value FROM salesforce.credit_note__c a "
 					+ "WHERE a.name IN :names AND a.client__c = :accountId ";
 			if (amendSchedule) {
 				sql += "AND a.status__c != 'Rejected' AND a.status__c != 'Reversed' ";
@@ -215,10 +215,10 @@ public class CreditNoteDao implements Repository<CreditNote, Integer> {
 			// Convert
 			res = CustomDto.convert(l);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -303,10 +303,10 @@ public class CreditNoteDao implements Repository<CreditNote, Integer> {
 			// Convert
 			res = CreditNoteDto.convert(t);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -322,89 +322,100 @@ public class CreditNoteDao implements Repository<CreditNote, Integer> {
 	 * @return
 	 */
 	private Query createQuery(String sql, Object o, String limit) {
-		CreditNoteFilter filter = CreditNoteFilter.convert(o);
-		String clientName = filter.getClient();
-		String clientAccount = filter.getClientAccount();
-		String status = filter.getStatus();
-		String scheduleNo = filter.getScheduleNo();
-		String creditNoteNo = filter.getName();
-		String customer = filter.getCustomer();
-		Date fr = filter.getFrCreatedDate();
-		Date to = filter.getToCreatedDate();
+		Query q = null;
 
-		// Where
-		String where = "";
-		if (!clientName.isEmpty()) {
-			where += " AND a.client__c = :clientName";
-		}
-		if (!clientAccount.isEmpty()) {
-			where += " AND a.client_account__c = :clientAccount";
-		}
-		if (!status.isEmpty()) {
-			where += " AND a.status__c = :status";
-		}
-		if (!scheduleNo.isEmpty()) {
-			where += " AND c.schedule_no__c ILIKE :scheduleNo";
-		}
-		if (!creditNoteNo.isEmpty()) {
-			where += " AND a.name ILIKE :creditNoteNo";
-		}
-		if (!customer.isEmpty()) {
-			where += " AND b.name = :customer";
-		}
-		if (fr != null && to != null) {
-			where += " AND a.createddate BETWEEN :fr AND :to";
-		} else if (fr != null && to == null) {
-			where += " AND :fr <= a.createddate";
-		} else if (fr == null && to != null) {
-			where += " AND a.createddate <= :to";
-		}
+		try {
+			CreditNoteFilter filter = CreditNoteFilter.convert(o);
+			String clientName = filter.getClient();
+			String clientAccount = filter.getClientAccount();
+			String status = filter.getStatus();
+			String scheduleNo = filter.getScheduleNo();
+			String creditNoteNo = filter.getName();
+			String customer = filter.getCustomer();
+			Date fr = filter.getFrCreatedDate();
+			Date to = filter.getToCreatedDate();
 
-		// Replace first
-		if (!where.isEmpty()) {
-			where = where.replaceFirst("AND", "WHERE");
-		}
-
-		Query q = _em.createNativeQuery(sql + where + limit);
-
-		// Set parameter
-		if (!where.isEmpty()) {
-			int i = where.indexOf(":clientName");
-			if (i > 0) {
-				q.setParameter("clientName", clientName);
+			// Where
+			String where = "";
+			if (!clientName.isEmpty()) {
+				where += " AND a.client__c = :clientName";
 			}
-			i = where.indexOf(":clientAccount");
-			if (i > 0) {
-				q.setParameter("clientAccount", clientAccount);
+			if (!clientAccount.isEmpty()) {
+				where += " AND a.client_account__c = :clientAccount";
 			}
-			i = where.indexOf(":status");
-			if (i > 0) {
-				q.setParameter("status", status);
+			if (!status.isEmpty()) {
+				where += " AND a.status__c = :status";
 			}
-			i = where.indexOf(":scheduleNo");
-			if (i > 0) {
-				q.setParameter("scheduleNo", scheduleNo);
+			if (!scheduleNo.isEmpty()) {
+				where += " AND c.schedule_no__c ILIKE :scheduleNo";
 			}
-			i = where.indexOf(":creditNoteNo");
-			if (i > 0) {
-				q.setParameter("creditNoteNo", creditNoteNo);
+			if (!creditNoteNo.isEmpty()) {
+				where += " AND a.name ILIKE :creditNoteNo";
 			}
-			i = where.indexOf(":customer");
-			if (i > 0) {
-				q.setParameter("customer", customer);
+			if (!customer.isEmpty()) {
+				where += " AND b.name = :customer";
 			}
 			if (fr != null && to != null) {
-				fr = ZDate.getStartOfDay(fr);
-				q.setParameter("fr", fr);
-
-				to = ZDate.getEndOfDay(to);
-				q.setParameter("to", to);
+				where += " AND a.createddate BETWEEN :fr AND :to";
 			} else if (fr != null && to == null) {
-				fr = ZDate.getStartOfDay(fr);
-				q.setParameter("fr", fr);
+				where += " AND :fr <= a.createddate";
 			} else if (fr == null && to != null) {
-				to = ZDate.getEndOfDay(to);
-				q.setParameter("to", to);
+				where += " AND a.createddate <= :to";
+			}
+
+			// Replace first
+			if (!where.isEmpty()) {
+				where = where.replaceFirst("AND", "WHERE c.schedule_status__c = 'Submitted' AND");
+			}
+
+			q = _em.createNativeQuery(sql + where + limit);
+
+			// Set parameter
+			if (!where.isEmpty()) {
+				int i = where.indexOf(":clientName");
+				if (i > 0) {
+					q.setParameter("clientName", clientName);
+				}
+				i = where.indexOf(":clientAccount");
+				if (i > 0) {
+					q.setParameter("clientAccount", clientAccount);
+				}
+				i = where.indexOf(":status");
+				if (i > 0) {
+					q.setParameter("status", status);
+				}
+				i = where.indexOf(":scheduleNo");
+				if (i > 0) {
+					q.setParameter("scheduleNo", scheduleNo);
+				}
+				i = where.indexOf(":creditNoteNo");
+				if (i > 0) {
+					q.setParameter("creditNoteNo", creditNoteNo);
+				}
+				i = where.indexOf(":customer");
+				if (i > 0) {
+					q.setParameter("customer", customer);
+				}
+				if (fr != null && to != null) {
+					fr = ZDate.getStartOfDay(fr);
+					q.setParameter("fr", fr);
+
+					to = ZDate.getEndOfDay(to);
+					q.setParameter("to", to);
+				} else if (fr != null && to == null) {
+					fr = ZDate.getStartOfDay(fr);
+					q.setParameter("fr", fr);
+				} else if (fr == null && to != null) {
+					to = ZDate.getEndOfDay(to);
+					q.setParameter("to", to);
+				}
+			}
+		} catch (Exception ex) {
+			if (ZConfig._printTrace) {
+				ex.printStackTrace();
+			}
+			if (ZConfig._writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
 

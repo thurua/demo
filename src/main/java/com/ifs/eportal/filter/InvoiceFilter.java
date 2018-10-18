@@ -5,7 +5,7 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZConfig;
 
 /**
  * 
@@ -159,7 +159,7 @@ public class InvoiceFilter {
 				e.printStackTrace();
 			}
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
 		}

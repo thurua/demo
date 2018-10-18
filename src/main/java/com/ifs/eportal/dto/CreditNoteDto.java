@@ -74,6 +74,18 @@ public class CreditNoteDto extends BaseDto {
 	@JsonProperty(value = "uuId")
 	private String uuId;
 
+	@JsonProperty(value = "totalAppliedCnAmount")
+	private String totalAppliedCnAmount;
+
+	@JsonProperty(value = "reassignedAmount")
+	private String reassignedAmount;
+
+	@JsonProperty(value = "reversedAmount")
+	private String reversedAmount;
+
+	@JsonProperty(value = "invoiceAppliedAmount")
+	private String invoiceAppliedAmount;
+
 	// end
 
 	// region -- Get set --
@@ -236,6 +248,38 @@ public class CreditNoteDto extends BaseDto {
 
 	public void setUuId(String uuId) {
 		this.uuId = uuId;
+	}
+
+	public String getTotalAppliedCnAmount() {
+		return totalAppliedCnAmount;
+	}
+
+	public void setTotalAppliedCnAmount(String totalAppliedCnAmount) {
+		this.totalAppliedCnAmount = totalAppliedCnAmount;
+	}
+
+	public String getReassignedAmount() {
+		return reassignedAmount;
+	}
+
+	public void setReassignedAmount(String reassignedAmount) {
+		this.reassignedAmount = reassignedAmount;
+	}
+
+	public String getReversedAmount() {
+		return reversedAmount;
+	}
+
+	public void setReversedAmount(String reversedAmount) {
+		this.reversedAmount = reversedAmount;
+	}
+
+	public String getInvoiceAppliedAmount() {
+		return invoiceAppliedAmount;
+	}
+
+	public void setInvoiceAppliedAmount(String invoiceAppliedAmount) {
+		this.invoiceAppliedAmount = invoiceAppliedAmount;
 	}
 
 	// end

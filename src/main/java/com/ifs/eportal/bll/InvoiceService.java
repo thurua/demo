@@ -104,9 +104,31 @@ public class InvoiceService {
 	 * @param clientAccountId
 	 * @return
 	 */
+	public List<CustomDto> getOverdueOutstandingSup(List<LineItemDto> l, String clientAccountId) {
+		List<String> names = Utils.getNames(l);
+		return invoiceDao.getOverdueOutstandingSup(names, clientAccountId);
+	}
+
+	/**
+	 * 
+	 * @param l
+	 * @param clientAccountId
+	 * @return
+	 */
 	public List<CustomDto> getInvoiceAvg(List<LineItemDto> l, String clientAccountId) {
 		List<String> names = Utils.getNames(l);
 		return invoiceDao.getInvoiceAvg(names, clientAccountId);
+	}
+
+	/**
+	 * 
+	 * @param l
+	 * @param clientAccountId
+	 * @return
+	 */
+	public List<CustomDto> getInvoiceAvgSup(List<LineItemDto> l, String clientAccountId) {
+		List<String> names = Utils.getNames(l);
+		return invoiceDao.getInvoiceAvgSup(names, clientAccountId);
 	}
 
 	/**
@@ -117,7 +139,7 @@ public class InvoiceService {
 	 * @return
 	 */
 	public List<CustomDto> getListBy(List<LineItemDto> l, String accountId, boolean amendSchedule) {
-		List<String> names = Utils.getNames(l);
+		List<String> names = Utils.getNo(l);
 		return invoiceDao.getListBy(names, accountId, amendSchedule);
 	}
 
@@ -141,6 +163,17 @@ public class InvoiceService {
 	public List<CustomDto> getTotalOutstanding(List<LineItemDto> l, String clientAccountId) {
 		List<String> names = Utils.getNames(l);
 		return invoiceDao.getTotalOutstanding(names, clientAccountId);
+	}
+
+	/**
+	 * 
+	 * @param l
+	 * @param clientAccountId
+	 * @return
+	 */
+	public List<CustomDto> getTotalOutstandingSup(List<LineItemDto> l, String clientAccountId) {
+		List<String> names = Utils.getNames(l);
+		return invoiceDao.getTotalOutstandingSup(names, clientAccountId);
 	}
 
 	/**

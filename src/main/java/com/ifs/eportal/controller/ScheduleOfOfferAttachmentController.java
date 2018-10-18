@@ -23,10 +23,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ifs.eportal.bll.ScheduleOfOfferAttachmentService;
-import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZConfig;
 import com.ifs.eportal.common.ZFile;
+import com.ifs.eportal.common.ZToken;
 import com.ifs.eportal.dto.AttachmentDto;
-import com.ifs.eportal.dto.PayloadDto;
 import com.ifs.eportal.dto.SortDto;
 import com.ifs.eportal.filter.AttachmentFilter;
 import com.ifs.eportal.model.ScheduleOfOfferAttachment;
@@ -55,7 +55,7 @@ public class ScheduleOfOfferAttachmentController {
 	// region -- Methods --
 
 	public ScheduleOfOfferAttachmentController() {
-		// Utils.allowUpload = true;
+		// ZConfig._allowUpload = true;
 	}
 
 	/**
@@ -76,8 +76,7 @@ public class ScheduleOfOfferAttachmentController {
 			AttachmentReq o = mapper.readValue(req, AttachmentReq.class);
 
 			// Get data
-			PayloadDto pl = Utils.getTokenInfor(header);
-			String sfId = pl.getSfId();
+			String sfId = ZToken.getSfId(header);
 			String parentUuId = o.getParentUuId();
 
 			for (int i = 0; i < files.length; i++) {
@@ -96,7 +95,7 @@ public class ScheduleOfOfferAttachmentController {
 
 				// Upload file to S3
 				String url = "";
-				if (Utils.allowUpload) {
+				if (ZConfig._allowUpload) {
 					InputStream in = files[i].getInputStream();
 					url = ZFile.upload(in, name, path);
 				}
@@ -154,10 +153,10 @@ public class ScheduleOfOfferAttachmentController {
 
 			res.setResult(data);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 		}
@@ -179,10 +178,10 @@ public class ScheduleOfOfferAttachmentController {
 			// Handle
 			res = scheduleOfOfferAttachmentService.delete(id);
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
-			if (Utils.writeLog) {
+			if (ZConfig._writeLog) {
 				_log.log(Level.SEVERE, ex.getMessage(), ex);
 			}
 

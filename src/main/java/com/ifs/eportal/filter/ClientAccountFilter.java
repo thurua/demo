@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ifs.eportal.common.Utils;
+import com.ifs.eportal.common.ZConfig;
 
 /**
  * 
@@ -19,6 +19,12 @@ public class ClientAccountFilter {
 
 	@JsonProperty(value = "status")
 	private String status;
+
+	@JsonProperty(value = "clientAccount")
+	private String clientAccount;
+
+	@JsonProperty(value = "recordType")
+	private String recordType;
 
 	// end
 
@@ -40,6 +46,22 @@ public class ClientAccountFilter {
 		this.status = status;
 	}
 
+	public String getClientAccount() {
+		return clientAccount;
+	}
+
+	public void setClientAccount(String clientAccount) {
+		this.clientAccount = clientAccount;
+	}
+
+	public String getRecordType() {
+		return recordType;
+	}
+
+	public void setRecordType(String recordType) {
+		this.recordType = recordType;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -49,6 +71,9 @@ public class ClientAccountFilter {
 	 */
 	public ClientAccountFilter() {
 		client = "";
+		status = "";
+		clientAccount = "";
+		recordType = "";
 	}
 
 	/**
@@ -70,7 +95,7 @@ public class ClientAccountFilter {
 				e.printStackTrace();
 			}
 		} catch (Exception ex) {
-			if (Utils.printStackTrace) {
+			if (ZConfig._printTrace) {
 				ex.printStackTrace();
 			}
 		}
