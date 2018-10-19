@@ -8,10 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ifs.eportal.common.Utils;
 import com.ifs.eportal.common.ZFile;
-import com.ifs.eportal.req.PortalUserSignInReq;
 
 /**
  * 
@@ -39,25 +36,6 @@ public class PortalUserControllerTest {
 
 	@Test
 	public void test01() {
-		try {
-			String s = _path + "portal-user-sign-in.json";
-			s = ZFile.read(s);
-
-			ObjectMapper mapper = new ObjectMapper();
-			PortalUserSignInReq req = mapper.readValue(s, PortalUserSignInReq.class);
-
-			PortalUserController c = new PortalUserController();
-			ResponseEntity<?> rsp = c.signIn(req);
-
-			Object o = rsp.getBody();
-			Utils.toString(o, true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Test
-	public void test02() {
 		try {
 			String s = _path + "portal-user-sign-in.json";
 			s = ZFile.read(s);

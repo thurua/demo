@@ -14,7 +14,7 @@ import javax.persistence.TemporalType;
 
 /**
  * 
- * @author ToanNguyen 2018-Oct-08 (verified)
+ * @author ToanNguyen 2018-Oct-19 (verified)
  *
  */
 @Entity
@@ -49,7 +49,7 @@ public class PortalUserAccess extends BaseModel {
 	@Column(columnDefinition = "varchar(18)", name = "user__c")
 	private String user;
 
-	@Column(columnDefinition = "varchar(18)", name = "otp__c")
+	@Column(columnDefinition = "varchar(10)", name = "otp__c")
 	private String otp;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -58,6 +58,12 @@ public class PortalUserAccess extends BaseModel {
 
 	@Column(columnDefinition = "varchar(100)", name = "uuid__c")
 	private String uuId;
+
+	@Column(columnDefinition = "varchar(255)", name = "user_agent__c")
+	private String userAgent;
+
+	@Column(columnDefinition = "varchar(255)", name = "host__c")
+	private String host;
 
 	// end
 
@@ -141,6 +147,22 @@ public class PortalUserAccess extends BaseModel {
 
 	public void setUuId(String uuId) {
 		this.uuId = uuId;
+	}
+
+	public String getUserAgent() {
+		return userAgent;
+	}
+
+	public void setUserAgent(String userAgent) {
+		this.userAgent = userAgent;
+	}
+
+	public String getHost() {
+		return host;
+	}
+
+	public void setHost(String host) {
+		this.host = host;
 	}
 
 	// end

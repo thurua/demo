@@ -124,6 +124,33 @@ public class ClientAccountDao implements Repository<ClientAccount, Integer> {
 	}
 
 	/**
+	 * Read by
+	 * 
+	 * @param sfId
+	 * @return
+	 */
+	public void update(boolean autoReq, String sfId) {
+		try {
+			String sql = "UPDATE salesforce.client_account__c\r\n" + "SET auto_request__c = :autoReq\r\n"
+					+ "WHERE sfid = :sfid";
+
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("autoReq", autoReq);
+			q.setParameter("sfid", sfId);
+			q.executeUpdate();
+
+		} catch (Exception ex) {
+			if (ZConfig._printTrace) {
+				ex.printStackTrace();
+			}
+			if (ZConfig._writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+	}
+
+	/**
 	 * Search by
 	 * 
 	 * @param req

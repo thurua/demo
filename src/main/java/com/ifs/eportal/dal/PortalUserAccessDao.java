@@ -22,7 +22,7 @@ import com.ifs.eportal.req.PagingReq;
 
 /**
  * 
- * @author ToanNguyen 2018-Oct-10 (verified)
+ * @author ToanNguyen 2018-Oct-19 (verified)
  *
  */
 @Service(value = "portalUserAccessAccessDao")
@@ -87,147 +87,59 @@ public class PortalUserAccessDao implements Repository<PortalUserAccess, Integer
 	}
 
 	/**
-	 * Update logout on
+	 * Get by
 	 * 
 	 * @param uuId
 	 * @return
 	 */
-	public int updateLogoutOn(String uuId) {
+	public PortalUserAccessDto getBy(String uuId) {
+		PortalUserAccessDto res = new PortalUserAccessDto();
+
+		try {
+			String sql = _sql + " WHERE a.uuid__c = :uuId";
+
+			// Execute
+			Query q = _em.createNativeQuery(sql);
+			q.setParameter("uuId", uuId);
+			Object[] t = (Object[]) q.getSingleResult();
+
+			// Convert
+			res = PortalUserAccessDto.convert(t);
+		} catch (Exception ex) {
+			if (ZConfig._printTrace) {
+				ex.printStackTrace();
+			}
+			if (ZConfig._writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return res;
+	}
+
+	/**
+	 * Update logout on
+	 * 
+	 * @param id         UUID or User SFID
+	 * @param signOutAll If true update by User SFID, else update by UUID
+	 * @return
+	 */
+	public int updateLogoutOn(String id, boolean signOutAll) {
 		int res = 0;
 
 		try {
 			String sql = ZFile.read(_path + "update_logout_on__c.sql");
 
-			// Execute
-			Query q = _em.createNativeQuery(sql);
-			q.setParameter("uuId", uuId);
-			res = q.executeUpdate();
-		} catch (Exception ex) {
-			if (ZConfig._printTrace) {
-				ex.printStackTrace();
+			if (signOutAll) {
+				sql += " WHERE user__c = :id AND logout_on__c IS NULL";
+			} else {
+				sql += " WHERE uuid__c = :id";
 			}
-			if (ZConfig._writeLog) {
-				_log.log(Level.SEVERE, ex.getMessage(), ex);
-			}
-		}
-
-		return res;
-	}
-
-	/**
-	 * Get by
-	 * 
-	 * @param id
-	 * @return
-	 */
-	public PortalUserAccessDto getBy(Integer id) {
-		PortalUserAccessDto res = new PortalUserAccessDto();
-
-		try {
-			String sql = _sql + " WHERE a.id = :id";
 
 			// Execute
 			Query q = _em.createNativeQuery(sql);
 			q.setParameter("id", id);
-			Object[] t = (Object[]) q.getSingleResult();
-
-			// Convert
-			res = PortalUserAccessDto.convert(t);
-		} catch (Exception ex) {
-			if (ZConfig._printTrace) {
-				ex.printStackTrace();
-			}
-			if (ZConfig._writeLog) {
-				_log.log(Level.SEVERE, ex.getMessage(), ex);
-			}
-		}
-
-		return res;
-	}
-
-	/**
-	 * Get by
-	 * 
-	 * @param sfId
-	 * @return
-	 */
-	public PortalUserAccessDto getBy(String sfId) {
-		PortalUserAccessDto res = new PortalUserAccessDto();
-
-		try {
-			String sql = _sql + " WHERE a.sfid = :sfId";
-
-			// Execute
-			Query q = _em.createNativeQuery(sql);
-			q.setParameter("sfId", sfId);
-			Object[] t = (Object[]) q.getSingleResult();
-
-			// Convert
-			res = PortalUserAccessDto.convert(t);
-		} catch (Exception ex) {
-			if (ZConfig._printTrace) {
-				ex.printStackTrace();
-			}
-			if (ZConfig._writeLog) {
-				_log.log(Level.SEVERE, ex.getMessage(), ex);
-			}
-		}
-
-		return res;
-	}
-
-	/**
-	 * Get by
-	 * 
-	 * @param token
-	 * @return
-	 */
-	public PortalUserAccessDto getByToken(String token) {
-		PortalUserAccessDto res = new PortalUserAccessDto();
-
-		try {
-			String sql = _sql;
-			sql += " WHERE a.uuid__c = :token";
-
-			// Execute
-			Query q = _em.createNativeQuery(sql);
-			q.setParameter("token", token);
-			Object[] t = (Object[]) q.getSingleResult();
-
-			// Convert
-			res = PortalUserAccessDto.convert(t);
-		} catch (Exception ex) {
-			if (ZConfig._printTrace) {
-				ex.printStackTrace();
-			}
-			if (ZConfig._writeLog) {
-				_log.log(Level.SEVERE, ex.getMessage(), ex);
-			}
-		}
-
-		return res;
-	}
-
-	/**
-	 * Get by
-	 * 
-	 * @param userId
-	 * @return
-	 */
-	public PortalUserAccessDto getByUserId(String userId) {
-		PortalUserAccessDto res = new PortalUserAccessDto();
-
-		try {
-			String sql = _sql;
-			sql += " WHERE a.user__c = :userId";
-
-			// Execute
-			Query q = _em.createNativeQuery(sql);
-			q.setParameter("userId", userId);
-			Object[] t = (Object[]) q.getSingleResult();
-
-			// Convert
-			res = PortalUserAccessDto.convert(t);
+			res = q.executeUpdate();
 		} catch (Exception ex) {
 			if (ZConfig._printTrace) {
 				ex.printStackTrace();

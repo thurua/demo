@@ -133,5 +133,28 @@ public class ClientAccountController {
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 
+	/**
+	 * Get by
+	 * 
+	 * @param sfId
+	 * @return
+	 */
+	@PostMapping("/update-factoring")
+	public ResponseEntity<?> update(@RequestBody ClientAccountReq req) {
+		SingleRsp res = new SingleRsp();
+
+		try {
+			// Handle
+			boolean autoReq = req.isAutoRequest();
+			String sfId = req.getSfId();
+
+			clientAccountService.update(autoReq, sfId);
+		} catch (Exception ex) {
+			res.setError(ex.getMessage());
+		}
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
 	// end
 }

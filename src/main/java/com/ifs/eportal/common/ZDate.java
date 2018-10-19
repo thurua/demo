@@ -1,16 +1,21 @@
 package com.ifs.eportal.common;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 
- * @author ToanNguyen 2018-Oct-16 (verified)
+ * @author ToanNguyen 2018-Oct-19 (verified)
  *
  */
 public class ZDate {
 	// region -- Fields --
+
+	private static final Logger _log = Logger.getLogger(ZDate.class.getName());
 
 	// end
 
@@ -98,6 +103,54 @@ public class ZDate {
 		cal.set(Calendar.MILLISECOND, ms);
 
 		return cal;
+	}
+
+	/**
+	 * Convert String to Date
+	 * 
+	 * @param s String date & time
+	 * @return
+	 */
+	public static Date toDate(String s) {
+		Date res = null;
+
+		try {
+			SimpleDateFormat t = new SimpleDateFormat(Const.DateTime.FULL);
+			res = t.parse(s);
+		} catch (Exception ex) {
+			if (ZConfig._printTrace) {
+				ex.printStackTrace();
+			}
+			if (ZConfig._writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+		return res;
+	}
+
+	/**
+	 * Convert Date to String
+	 * 
+	 * @param d Date & time
+	 * @param s Format date e.g: dd/MM/yyyy
+	 * @return
+	 */
+	public static String toString(Date d, String s) {
+		String res = "";
+
+		try {
+			SimpleDateFormat t = new SimpleDateFormat(s);
+			res = t.format(d);
+		} catch (Exception ex) {
+			if (ZConfig._printTrace) {
+				ex.printStackTrace();
+			}
+			if (ZConfig._writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
+
+		return res;
 	}
 
 	// end

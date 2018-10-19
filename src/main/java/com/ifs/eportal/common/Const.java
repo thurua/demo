@@ -32,4 +32,8 @@ public class Const {
 
 		public static final String RSA = "RSA_MODE";
 	}
+
+	public class DateTime {
+		public static final String FULL = "yyyy-MM-dd HH:mm:ss";
+	}
 }

@@ -146,6 +146,8 @@ export class ClientAccountFactoringDetailsComponent implements OnInit {
         }
     };
 
+    public isChecked = false;
+
     constructor(private act: ActivatedRoute,
         private pro: ClientAccountProvider) { }
 
@@ -262,6 +264,28 @@ export class ClientAccountFactoringDetailsComponent implements OnInit {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 this.data = rsp.result;
                 this.dataFu = rsp.result.fundings;
+                this.isChecked = rsp.result.autoRequest;
+            } else {
+                let msg = rsp.message;
+            }
+        });
+
+        setTimeout(function () {
+            document.getElementById('preloader').style.display = 'none';
+        }, 500);
+    }
+
+    public saveAutoReq() {
+        document.getElementById('preloader').style.display = 'block';
+
+        let obj = {
+            sfId: this.id,
+            autoRequest: this.isChecked
+        }
+
+        this.pro.update(obj).subscribe((rsp: any) => {
+            if (rsp.status === HTTP.STATUS_SUCCESS) {
+                //console.log("ok");
             } else {
                 let msg = rsp.message;
             }

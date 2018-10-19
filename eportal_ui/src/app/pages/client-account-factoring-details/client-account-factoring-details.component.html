@@ -6,7 +6,7 @@
                     <div class="card-header">
                         <strong>Status Details</strong>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" style="padding-bottom: 0">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group row">
@@ -33,14 +33,6 @@
                                         <label class="col-form-label">{{data.accountActivationDate | date: 'dd-MMM-yyyy'}}</label>
                                     </div>
                                 </div>
-                                <div class="form-group row">
-                                    <div class="col-md-8">
-                                        <strong>Account Closed Date</strong>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="col-form-label">{{data.accountClosedDate | date: 'dd-MMM-yyyy'}}</label>
-                                    </div>
-                                </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group row">
@@ -53,18 +45,10 @@
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-md-8">
-                                        <strong>Availability Period (Months)</strong>
+                                        <strong>Account Closed Date</strong>
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="col-form-label">{{data.availabilityPeriodMonths}}</label>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col-md-8">
-                                        <strong>Account Maturity Date</strong>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="col-form-label">{{data.accountMaturityDate | date: 'dd-MMM-yyyy'}}</label>
+                                        <label class="col-form-label">{{data.accountClosedDate | date: 'dd-MMM-yyyy'}}</label>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -83,7 +67,7 @@
                     <div class="card-header">
                         <strong>Account Details</strong>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" style="padding-bottom: 0">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group row">
@@ -145,7 +129,7 @@
                     <div class="card-header">
                         <strong>Interest Rate</strong>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" style="padding-bottom: 0">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group row">
@@ -198,7 +182,7 @@
                     <div class="card-header">
                         <strong>Factoring Charge</strong>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" style="padding-bottom: 0">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group row">
@@ -267,7 +251,7 @@
                     <div class="card-header">
                         <strong>Additional Factoring Charge on Overdue Invoice</strong>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" style="padding-bottom: 0">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group row">
@@ -312,7 +296,7 @@
                     <div class="card-header">
                         <strong>Other Fees / Charges</strong>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" style="padding-bottom: 0">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group row">
@@ -341,7 +325,7 @@
                     <div class="card-header">
                         <strong>Funding Details</strong>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" style="padding-bottom: 0">
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group row">
@@ -350,7 +334,7 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input checkbox-primary" id="checkboxPrimary" [checked]="data.autoRequest">
+                                            <input type="checkbox" class="custom-control-input checkbox-primary" [(ngModel)]="isChecked" [value]="isChecked" id="checkboxPrimary" [checked]="data.autoRequest">
                                             <label class="custom-control-label" for="checkboxPrimary"> </label>
                                         </div>
                                     </div>
@@ -377,8 +361,8 @@
                     <div class="col-md-4">
                     </div>
                     <div class="col-md-8">
-                        <button class="btn btn-primary" type="button">Cancel</button> &nbsp;
-                        <button class="btn btn-primary" type="button">Save</button>
+                        <button class="btn btn-gray" type="button">Cancel</button> &nbsp;
+                        <button class="btn btn-primary" type="button" (click)="saveAutoReq()">Save</button>
                     </div>
                 </div>
             </tab>

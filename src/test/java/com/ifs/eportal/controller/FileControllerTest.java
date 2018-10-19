@@ -1,7 +1,5 @@
 package com.ifs.eportal.controller;
 
-import java.io.FileInputStream;
-
 import org.junit.Test;
 import org.springframework.mock.web.MockMultipartFile;
 
@@ -39,27 +37,6 @@ public class FileControllerTest {
 		MockMultipartFile js;
 		js = new MockMultipartFile("test.json", "", "application/json", "{\"key1\": \"value1\"}".getBytes());
 		Utils.toString(js, true);
-	}
-
-	@Test
-	public void test02() {
-		try {
-			String s = _path + "excel\\Factoring-INV-0.3.xlsx";
-			FileInputStream file = new FileInputStream(s);
-
-			MockMultipartFile x = new MockMultipartFile(s, file);
-
-			s = _path + "json\\file-upload.json";
-			String req = ZFile.read(s);
-
-			FileController c = new FileController();
-			// ResponseEntity<?> rsp = c.upload(x, req);
-
-			// Object o = rsp.getBody();
-			// Utils.toString(o, true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	// end

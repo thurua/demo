@@ -10,6 +10,11 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Oct-19 (verified)
+ *
+ */
 @Component
 public class JwtEntryPoint implements AuthenticationEntryPoint, Serializable {
 	// region -- Fields --

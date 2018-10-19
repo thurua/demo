@@ -6,28 +6,54 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Oct-19 (verified)
+ *
+ */
 public class PortalUserAccessDto extends BaseDto {
-
 	// region -- Fields --
 
-	@JsonProperty(value = "loginOn")
-	private Date loginOn;
-
-	@JsonProperty(value = "logilogoutOnnOn")
-	private Date logoutOn;
-
-	@JsonProperty(value = "otp")
-	private String otp;
+	@JsonProperty(value = "uuId")
+	private String uuId;
 
 	@JsonProperty(value = "name")
 	private String name;
 
-	@JsonProperty(value = "createdDate")
-	private Date createdDate;
+	@JsonProperty(value = "loginOn")
+	private Date loginOn;
+
+	@JsonProperty(value = "logoutOn")
+	private Date logoutOn;
+
+	@JsonProperty(value = "lastAccessOn")
+	private Date lastAccessOn;
+
+	@JsonProperty(value = "userAgent")
+	private String userAgent;
+
+	@JsonProperty(value = "host")
+	private String host;
 
 	// end
 
 	// region -- Get set --
+
+	public String getUuId() {
+		return uuId;
+	}
+
+	public void setUuId(String uuId) {
+		this.uuId = uuId;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	public Date getLoginOn() {
 		return loginOn;
@@ -45,28 +71,24 @@ public class PortalUserAccessDto extends BaseDto {
 		this.logoutOn = logoutOn;
 	}
 
-	public String getOtp() {
-		return otp;
+	public Date getLastAccessOn() {
+		return lastAccessOn;
 	}
 
-	public void setOtp(String otp) {
-		this.otp = otp;
+	public void setLastAccessOn(Date lastAccessOn) {
+		this.lastAccessOn = lastAccessOn;
 	}
 
-	public String getName() {
-		return name;
+	public void setUserAgent(String userAgent) {
+		this.userAgent = userAgent;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public String getHost() {
+		return host;
 	}
 
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
+	public void setHost(String host) {
+		this.host = host;
 	}
 
 	// end
@@ -77,11 +99,11 @@ public class PortalUserAccessDto extends BaseDto {
 	public PortalUserAccessDto() {
 		super();
 
+		uuId = "";
+		name = "";
 		loginOn = null;
 		logoutOn = null;
-		otp = "";
-		name = "";
-		createdDate = null;
+		lastAccessOn = null;
 	}
 
 	/**
@@ -94,7 +116,14 @@ public class PortalUserAccessDto extends BaseDto {
 		PortalUserAccessDto res = new PortalUserAccessDto();
 
 		res.setId((Integer) o[0]);
-		res.setName((String) o[1]);
+		res.setSfId((String) o[1]);
+		res.setUuId((String) o[2]);
+		res.setName((String) o[3]);
+		res.setLoginOn((Date) o[4]);
+		res.setLogoutOn((Date) o[5]);
+		res.setLastAccessOn((Date) o[6]);
+		res.setUserAgent((String) o[7]);
+		res.setHost((String) o[8]);
 
 		return res;
 	}

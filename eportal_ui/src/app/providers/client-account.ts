@@ -29,4 +29,12 @@ export class ClientAccountProvider {
     public getClientAccountCustomer(info: any) {
         return this.api.post('client-account/client-account-customer', info);
     }
+
+    /**
+     * Update
+     * @param info
+     */
+    public update(info: any) {
+        return this.api.post('client-account/update-factoring', info);
+    }
 }

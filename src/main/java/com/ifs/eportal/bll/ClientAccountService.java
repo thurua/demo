@@ -94,6 +94,17 @@ public class ClientAccountService {
 	}
 
 	/**
+	 * Update
+	 * 
+	 * @param autoReq
+	 * @param sfId
+	 * @return
+	 */
+	public void update(boolean autoReq, String sfId) {
+		clientAccountDao.update(autoReq, sfId);
+	}
+
+	/**
 	 * Search by
 	 * 
 	 * @param req

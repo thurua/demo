@@ -3,20 +3,22 @@ package com.ifs.eportal.bll;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ifs.eportal.common.ZConfig;
 import com.ifs.eportal.dal.PortalUserAccessDao;
 import com.ifs.eportal.dto.PortalUserAccessDto;
-import com.ifs.eportal.dto.PortalUserDto;
 import com.ifs.eportal.model.PortalUserAccess;
 import com.ifs.eportal.req.PagingReq;
 
 /**
  * 
- * @author ToanNguyen 2018-Oct-10 (verified)
+ * @author ToanNguyen 2018-Oct-19 (verified)
  *
  */
 @Service(value = "portalUserAccessService")
@@ -27,6 +29,8 @@ public class PortalUserAccessService {
 	@Autowired
 	private PortalUserAccessDao portalUserAccessDao;
 
+	private static final Logger _log = Logger.getLogger(PortalUserAccessDao.class.getName());
+
 	// end
 
 	// region -- Methods --
@@ -34,95 +38,65 @@ public class PortalUserAccessService {
 	/**
 	 * Create
 	 * 
-	 * @param o
+	 * @param id        User SFID
+	 * @param host
+	 * @param userAgent
 	 * @return
 	 */
-	public String create(PortalUserDto o) {
-		Date now = new Date();
-		String res = UUID.randomUUID().toString();
+	public String create(String id, String host, String userAgent) {
+		String res = "";
 
-		PortalUserAccess m = new PortalUserAccess();
-		m.setLoginOn(now);
-		m.setLastAccessOn(now);
-		m.setCreatedDate(now);
-		m.setUuId(res);
+		try {
+			res = UUID.randomUUID().toString();
+			Date now = new Date();
 
-		m.setUser(o.getSfId());
-		m.setDeleted(false);
+			PortalUserAccess m = new PortalUserAccess();
+			m.setLoginOn(now);
+			m.setLastAccessOn(now);
+			m.setCreatedDate(now);
+			m.setUuId(res);
+			m.setHost(host);
+			m.setUserAgent(userAgent);
+			m.setUser(id);
+			m.setDeleted(false);
+			portalUserAccessDao.create(m);
+		} catch (Exception ex) {
+			if (ZConfig._printTrace) {
+				ex.printStackTrace();
+			}
+			if (ZConfig._writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
+		}
 
-		portalUserAccessDao.create(m);
+		return res;
+	}
 
+	/**
+	 * Get by
+	 * 
+	 * @param uuId
+	 * @return
+	 */
+	public PortalUserAccessDto getBy(String uuId) {
+		PortalUserAccessDto res = portalUserAccessDao.getBy(uuId);
 		return res;
 	}
 
 	/**
 	 * Update logout on
 	 * 
-	 * @param uuId
+	 * @param id         UUID or User SFID
+	 * @param signOutAll If true update by User SFID, else update by UUID
 	 * @return
 	 */
-	public int updateLogoutOn(String uuId) {
-		int res = portalUserAccessDao.updateLogoutOn(uuId);
+	public int updateLogoutOn(String id, boolean signOutAll) {
+		int res = portalUserAccessDao.updateLogoutOn(id, signOutAll);
 		return res;
 	}
 
 	/**
-	 * Get by
-	 * 
-	 * @param id
-	 * @return
-	 */
-	public PortalUserAccessDto getBy(int id) {
-		PortalUserAccessDto res = portalUserAccessDao.getBy(id);
-		return res;
-	}
-
-	/**
-	 * Get by
-	 * 
-	 * @param sfId
-	 * @return
-	 */
-	public PortalUserAccessDto getBy(String sfId) {
-		PortalUserAccessDto res = portalUserAccessDao.getBy(sfId);
-		return res;
-	}
-
-	/**
-	 * Get by
-	 * 
-	 * @param token
-	 * @return
-	 */
-	public PortalUserAccessDto getByToken(String token) {
-		PortalUserAccessDto res = portalUserAccessDao.getByToken(token);
-		return res;
-	}
-
-	/**
-	 * Get by
-	 * 
-	 * @param userId
-	 * @return
-	 */
-	public PortalUserAccessDto getByUserId(String userId) {
-		PortalUserAccessDto res = portalUserAccessDao.getByUserId(userId);
-		return res;
-	}
-
-	/**
-	 * Update
-	 * 
-	 * @param m
-	 * @return
-	 */
-	public PortalUserAccess update(PortalUserAccess m) {
-		PortalUserAccess res = portalUserAccessDao.update(m);
-		return res;
-	}
-
-	/**
-	 * Search by
+	 * Search
 	 * 
 	 * @param req
 	 * @return

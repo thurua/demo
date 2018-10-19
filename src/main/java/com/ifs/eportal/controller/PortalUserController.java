@@ -27,7 +27,6 @@ import com.ifs.eportal.common.Const;
 import com.ifs.eportal.common.ZHash;
 import com.ifs.eportal.common.ZRsa;
 import com.ifs.eportal.common.ZToken;
-import com.ifs.eportal.config.JwtTokenUtil;
 import com.ifs.eportal.dto.PayloadDto;
 import com.ifs.eportal.dto.PortalUserDto;
 import com.ifs.eportal.req.BaseReq;
@@ -56,9 +55,6 @@ public class PortalUserController {
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
-
-	@Autowired
-	private JwtTokenUtil jwtTokenUtil;
 
 	// end
 
@@ -137,7 +133,7 @@ public class PortalUserController {
 				PortalUserDto m = (PortalUserDto) res.getResult();
 
 				List<SimpleGrantedAuthority> z = portalUserService.getRoleBy(m.getId());
-				String t = jwtTokenUtil.doGenerateToken(m, z);
+				String t = ZToken.create(m, z);
 				res.setResult(t);
 			}
 		} catch (Exception ex) {
@@ -208,13 +204,15 @@ public class PortalUserController {
 	 * @return
 	 */
 	@PostMapping("/sign-in")
-	public ResponseEntity<?> signIn(@RequestBody PortalUserSignInReq req) {
+	public ResponseEntity<?> signIn(@RequestHeader HttpHeaders header, @RequestBody PortalUserSignInReq req) {
 		SingleRsp res = new SingleRsp();
 
 		try {
 			// Get data
 			String email = req.getEmail();
 			String password = req.getPassword();
+			String host = header.get("host").get(0);
+			String userAgent = header.get("user-agent").get(0);
 
 			// Decrypt
 			password = ZRsa.decrypt(password);
@@ -238,12 +236,17 @@ public class PortalUserController {
 					res.setError("Unauthorized/Invalid email or password!");
 				}
 
-				String uuid = portalUserAccessService.create(m);
-				m.setUuId(uuid);
+				// Add user access
+				String uuId = portalUserAccessService.create(m.getSfId(), host, userAgent);
+				if (uuId.isEmpty()) {
+					res.setError("Cannot create user access");
+				} else {
+					m.setUuId(uuId);
 
-				List<SimpleGrantedAuthority> z = portalUserService.getRoleBy(m.getId());
-				t = jwtTokenUtil.doGenerateToken(m, z);
-				res.setResult(t);
+					List<SimpleGrantedAuthority> z = portalUserService.getRoleBy(m.getId());
+					t = ZToken.create(m, z);
+					res.setResult(t);
+				}
 			}
 		} catch (AuthenticationException e) {
 			res.setError("Unauthorized/Invalid email or password!");
@@ -272,17 +275,24 @@ public class PortalUserController {
 				PayloadDto user = ZToken.getUser(header);
 				String userId = user.getUserId();
 				String uuId = user.getUuId();
-				PortalUserDto m = portalUserService.getByUserId(userId);
+				String host = header.get("host").get(0);
+				String userAgent = header.get("user-agent").get(0);
 
 				// Handle
-				portalUserAccessService.updateLogoutOn(uuId);
+				portalUserAccessService.updateLogoutOn(uuId, false);
+				PortalUserDto m = portalUserService.getByUserId(userId);
 
-				String uuid = portalUserAccessService.create(m);
-				m.setUuId(uuid);
+				// Add user access
+				uuId = portalUserAccessService.create(m.getSfId(), host, userAgent);
+				if (uuId.isEmpty()) {
+					res.setError("Cannot create user access");
+				} else {
+					m.setUuId(uuId);
 
-				List<SimpleGrantedAuthority> z = portalUserService.getRoleBy(m.getId());
-				String t = jwtTokenUtil.doGenerateToken(m, z);
-				res.setResult(t);
+					List<SimpleGrantedAuthority> z = portalUserService.getRoleBy(m.getId());
+					String t = ZToken.create(m, z);
+					res.setResult(t);
+				}
 			}
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
@@ -302,10 +312,10 @@ public class PortalUserController {
 		SingleRsp res = new SingleRsp();
 
 		try {
-			String uuId = ZToken.getUuId(header);
+			String sfId = ZToken.getSfId(header);
 
 			// Handle
-			portalUserAccessService.updateLogoutOn(uuId);
+			portalUserAccessService.updateLogoutOn(sfId, true);
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}

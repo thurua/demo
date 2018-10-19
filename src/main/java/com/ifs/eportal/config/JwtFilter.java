@@ -1,6 +1,9 @@
 package com.ifs.eportal.config;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -9,64 +12,79 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.ifs.eportal.bll.PortalUserAccessService;
 import com.ifs.eportal.common.Const;
+import com.ifs.eportal.common.ZLog;
+import com.ifs.eportal.common.ZToken;
+import com.ifs.eportal.dto.PayloadDto;
+import com.ifs.eportal.dto.PortalUserAccessDto;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.Claims;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Oct-19 (verified)
+ *
+ */
 public class JwtFilter extends OncePerRequestFilter {
 	// region -- Fields --
 
 	@Autowired
-	private UserDetailsService userDetailsService;
-
-	@Autowired
-	private JwtTokenUtil jwtTokenUtil;
+	private PortalUserAccessService portalUserAccessService;
 
 	// end
 
 	// region -- Methods --
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
+	protected void doFilterInternal(HttpServletRequest req, HttpServletResponse rsp, FilterChain chn)
 			throws IOException, ServletException {
-		String header = req.getHeader(Const.Authentication.HEADER_STRING);
-		String username = null;
-		String authToken = null;
+		String token = req.getHeader(Const.Authentication.HEADER_STRING);
+		Claims claim = ZToken.getInfo(token);
 
-		if (header != null && header.startsWith(Const.Authentication.TOKEN_PREFIX)) {
-			authToken = header.replace(Const.Authentication.TOKEN_PREFIX, "");
+		if (!claim.isEmpty()) {
+			if (!ZToken.isExpired(claim)) {
+				PayloadDto payload = ZToken.getUser(claim);
+				String uuId = payload.getUuId();
 
-			try {
-				username = jwtTokenUtil.getUsernameFromToken(authToken);
-			} catch (IllegalArgumentException e) {
-				logger.error("An error occured during getting username from token", e);
-			} catch (ExpiredJwtException e) {
-				logger.warn("The token is expired and not valid anymore", e);
-			} catch (SignatureException e) {
-				logger.error("Authentication Failed. Username or Password not valid.");
+				// Check logout
+				PortalUserAccessDto m = portalUserAccessService.getBy(uuId);
+				boolean ok = m.getId() > 0 && m.getLogoutOn() == null;
+				if (!ok) {
+					return;
+				}
+
+				String userId = payload.getUserId();
+				Date iat = claim.getIssuedAt();
+				Date exp = claim.getExpiration();
+
+				List<SimpleGrantedAuthority> sga;
+				sga = new ArrayList<SimpleGrantedAuthority>();
+
+				UserDetails userDetails = new User(userId, "", sga);
+
+				UsernamePasswordAuthenticationToken upat;
+				upat = new UsernamePasswordAuthenticationToken(userDetails, null, sga);
+
+				upat.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
+
+				String t = "Time life [" + iat + "-" + exp + "]";
+				ZLog.println(t);
+				t = "Authenticated user " + userId + ", setting security context";
+				ZLog.println(t);
+
+				SecurityContextHolder.getContext().setAuthentication(upat);
 			}
 		}
 
-		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-			UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-			if (jwtTokenUtil.validateToken(authToken, userDetails)) {
-				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-						userDetails, null, userDetails.getAuthorities());
-				authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
-				logger.info("Authenticated user " + username + ", setting security context");
-				SecurityContextHolder.getContext().setAuthentication(authentication);
-			}
-		}
-
-		chain.doFilter(req, res);
+		chn.doFilter(req, rsp);
 	}
 
 	// end

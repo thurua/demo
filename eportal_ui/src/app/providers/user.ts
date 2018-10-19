@@ -120,6 +120,10 @@ export class UserProvider {
      * @param redirect
      */
     public saveAuth(token: string, redirect: boolean = true) {
+        if (this.timerSignOut) {
+            clearInterval(this.timerSignOut);
+        }
+
         Token.setToken(token);
 
         this.timerSignOut = setInterval(() => {

@@ -16,6 +16,9 @@ public class ClientAccountReq {
 	@JsonProperty(value = "type")
 	private String type;
 
+	@JsonProperty(value = "autoRequest")
+	private boolean autoRequest;
+
 	// end
 
 	// region -- Get set --
@@ -34,6 +37,14 @@ public class ClientAccountReq {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public boolean isAutoRequest() {
+		return autoRequest;
+	}
+
+	public void setAutoRequest(boolean autoRequest) {
+		this.autoRequest = autoRequest;
 	}
 
 	// end

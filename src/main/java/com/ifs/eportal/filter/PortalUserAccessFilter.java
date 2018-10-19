@@ -8,7 +8,7 @@ import com.ifs.eportal.common.ZConfig;
 
 /**
  * 
- * @author ToanNguyen 2018-Oct-10 (verified)
+ * @author ToanNguyen 2018-Oct-19 (verified)
  *
  */
 public class PortalUserAccessFilter {

@@ -470,3 +470,12 @@ span.k-tooltip {
 .nav-tabs .nav-link {
     font-weight: bold;
 }
+
+.nav-tabs .nav-link.active,
+.nav-tabs .nav-item.show .nav-link.active {
+    color: #3E50B4;
+}
+
+.nav-item a {
+    color: #495057;
+}

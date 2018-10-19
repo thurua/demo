@@ -83,7 +83,7 @@ export class LoginComponent implements OnInit {
                 this.pro.saveAuth(rsp.result);
             } else {
                 this.showMsg = true;
-                this.message = rsp.message;
+                this.message = " Invalid User ID or Password";
             }
             this.loader = false;
         }, err => console.log(err));
