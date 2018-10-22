@@ -177,6 +177,10 @@ public class ZToken {
 		Claims res = Jwts.claims();
 
 		try {
+			if (token == null) {
+				return res;
+			}
+
 			String jwt = token.replace(Const.Authentication.TOKEN_PREFIX, "");
 			if (jwt.isEmpty()) {
 				return res;

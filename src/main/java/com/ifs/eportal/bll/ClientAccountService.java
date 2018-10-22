@@ -70,7 +70,7 @@ public class ClientAccountService {
 	 * @return
 	 */
 	public LoanDetailDto getLoanDetail(String sfid) {
-		return clientAccountDao.getLoanDetail(sfid);
+		return clientAccountDao.getLoanDetailBy(sfid);
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class ClientAccountService {
 	 * @return
 	 */
 	public FactoringDetailDto getFactoringDetail(String sfid) {
-		return clientAccountDao.getFactoringDetail(sfid);
+		return clientAccountDao.getFactoringDetailBy(sfid);
 	}
 
 	/**
@@ -90,18 +90,18 @@ public class ClientAccountService {
 	 * @return
 	 */
 	public LctrDetailDto getLctrDetail(String sfid) {
-		return clientAccountDao.getLctrDetail(sfid);
+		return clientAccountDao.getLctrDetailBy(sfid);
 	}
 
 	/**
 	 * Update
 	 * 
-	 * @param autoReq
+	 * @param autoRequest
 	 * @param sfId
 	 * @return
 	 */
-	public void update(boolean autoReq, String sfId) {
-		clientAccountDao.update(autoReq, sfId);
+	public int updateAutoRequest(boolean autoRequest, String sfId) {
+		return clientAccountDao.updateAutoRequest(autoRequest, sfId);
 	}
 
 	/**

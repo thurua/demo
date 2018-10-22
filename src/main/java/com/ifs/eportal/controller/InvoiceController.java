@@ -12,10 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ifs.eportal.bll.ClientAccountCustomerService;
 import com.ifs.eportal.bll.InvoiceService;
-import com.ifs.eportal.dto.ClientAccountCustomerDto;
-import com.ifs.eportal.dto.ExcelDto;
 import com.ifs.eportal.dto.InvoiceDto;
 import com.ifs.eportal.model.Invoice;
 import com.ifs.eportal.req.PagingReq;
@@ -31,8 +28,6 @@ public class InvoiceController {
 	@Autowired
 	private InvoiceService invoiceService;
 
-	@Autowired
-	private ClientAccountCustomerService clientAccountCustomerService;
 	// end
 
 	// region -- Methods --
@@ -94,15 +89,6 @@ public class InvoiceController {
 		}
 
 		return new ResponseEntity<>(res, HttpStatus.OK);
-	}
-
-	public void validateInvoice() {
-		String s = "D:\\CTY\\Working\\SyncIFS\\IFS-CWS\\document\\json\\Factoring-INV-0.3.json";
-		ExcelDto o = ExcelDto.read(s);
-
-		// get List Client_Account_Customer__c
-		List<ClientAccountCustomerDto> lcc = clientAccountCustomerService.getByClientId("a0Hp0000003T9hvEAC");
-
 	}
 
 	/**

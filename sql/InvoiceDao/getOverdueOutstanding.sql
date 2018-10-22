@@ -1,5 +1,10 @@
 SELECT 
-	b.name as code, SUM(outstanding_amount__c) as value 
+	b.name as code,
+	SUM(a.invoice_amount__c - COALESCE(a.reversed_amount__c, 0) -
+  		COALESCE(a.reassigned_amount__c, 0) -
+		(SELECT COALESCE(sum(c.amount__c), 0)
+		FROM salesforce.credit_note_application__c c
+		WHERE c.invoice__c = a.sfid)) as value  
 FROM salesforce.invoice__c a 
 JOIN salesforce.account b 
 	ON a.customer__c = b.sfid 

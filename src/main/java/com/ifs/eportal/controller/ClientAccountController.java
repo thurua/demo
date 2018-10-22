@@ -145,10 +145,10 @@ public class ClientAccountController {
 
 		try {
 			// Handle
-			boolean autoReq = req.isAutoRequest();
+			boolean autoRequest = req.isAutoRequest();
 			String sfId = req.getSfId();
 
-			clientAccountService.update(autoReq, sfId);
+			clientAccountService.updateAutoRequest(autoRequest, sfId);
 		} catch (Exception ex) {
 			res.setError(ex.getMessage());
 		}

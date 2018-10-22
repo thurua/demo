@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HTTP, Utils, Token, Rsa } from 'app/utilities';
-import { ApiProvider } from 'app/providers';
+import { ApiProvider } from 'app/providers/api';
 import { Router } from '@angular/router';
-import { interval } from 'rxjs';
 
 @Injectable()
 export class UserProvider {

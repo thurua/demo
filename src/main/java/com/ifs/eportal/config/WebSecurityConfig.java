@@ -24,6 +24,11 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.ifs.eportal.common.Const;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Oct-19 (verified)
+ *
+ */
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -34,7 +39,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	private UserDetailsService userDetailsService;
 
 	@Autowired
-	private JwtEntryPoint unauthorizedHandler;
+	private JwtEntryPoint jwtEntryPoint;
 
 	// end
 
@@ -72,7 +77,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/", "/portal-user/sign-in", "/portal-user/reset-password", "/portal-user/update-token",
 						"/portal-user/get-config", "/portal-user/check-expired", "/file/read")
 				.permitAll().anyRequest().authenticated().and().exceptionHandling()
-				.authenticationEntryPoint(unauthorizedHandler).and().sessionManagement()
+				.authenticationEntryPoint(jwtEntryPoint).and().sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
 		http.addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);

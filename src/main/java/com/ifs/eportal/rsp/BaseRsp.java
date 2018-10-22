@@ -3,6 +3,11 @@ package com.ifs.eportal.rsp;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ifs.eportal.common.Const;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Oct-19 (verified)
+ *
+ */
 public class BaseRsp {
 	// region -- Fields --
 
@@ -36,16 +41,30 @@ public class BaseRsp {
 
 	// region -- Methods --
 
+	/**
+	 * Initialize
+	 */
 	public BaseRsp() {
 		this.status = Const.HTTP.STATUS_SUCCESS;
 		this.message = "";
 	}
 
+	/**
+	 * Initialize
+	 * 
+	 * @param status
+	 * @param message
+	 */
 	public BaseRsp(String status, String message) {
 		this.status = status;
 		this.message = message;
 	}
 
+	/**
+	 * Set error
+	 * 
+	 * @param message
+	 */
 	public void setError(String message) {
 		this.status = Const.HTTP.STATUS_ERROR;
 		this.message = message;

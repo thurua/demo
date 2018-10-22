@@ -2,6 +2,11 @@ package com.ifs.eportal.rsp;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Oct-19 (verified)
+ *
+ */
 public class SingleRsp extends BaseRsp {
 	// region -- Fields --
 
@@ -24,11 +29,22 @@ public class SingleRsp extends BaseRsp {
 
 	// region -- Methods --
 
+	/**
+	 * Initialize
+	 */
 	public SingleRsp() {
 	}
 
+	/**
+	 * Initialize
+	 * 
+	 * @param status
+	 * @param message
+	 * @param result
+	 */
 	public SingleRsp(String status, String message, Object result) {
 		super(status, message);
+
 		this.result = result;
 	}
 

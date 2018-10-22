@@ -21,6 +21,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.ifs.eportal.bll.PortalUserAccessService;
 import com.ifs.eportal.common.Const;
+import com.ifs.eportal.common.ZConfig;
+import com.ifs.eportal.common.ZDate;
 import com.ifs.eportal.common.ZLog;
 import com.ifs.eportal.common.ZToken;
 import com.ifs.eportal.dto.PayloadDto;
@@ -52,18 +54,26 @@ public class JwtFilter extends OncePerRequestFilter {
 		if (!claim.isEmpty()) {
 			if (!ZToken.isExpired(claim)) {
 				PayloadDto payload = ZToken.getUser(claim);
-				String uuId = payload.getUuId();
 
-				// Check logout
-				PortalUserAccessDto m = portalUserAccessService.getBy(uuId);
-				boolean ok = m.getId() > 0 && m.getLogoutOn() == null;
-				if (!ok) {
-					return;
+				// Calculate last access
+				long now = new Date().getTime() / 1000;
+				long span = now - ZConfig._lastAccess;
+				ZConfig._lastAccess = now;
+
+				if (span > 120) { // second
+					String uuId = payload.getUuId();
+
+					// Check logout
+					PortalUserAccessDto m = portalUserAccessService.getBy(uuId);
+					boolean ok = m.getId() > 0 && m.getLogoutOn() == null;
+					if (!ok) {
+						return;
+					}
 				}
 
 				String userId = payload.getUserId();
-				Date iat = claim.getIssuedAt();
-				Date exp = claim.getExpiration();
+				String iat = ZDate.toString(claim.getIssuedAt(), Const.DateTime.FULL);
+				String exp = ZDate.toString(claim.getExpiration(), Const.DateTime.FULL);
 
 				List<SimpleGrantedAuthority> sga;
 				sga = new ArrayList<SimpleGrantedAuthority>();
@@ -75,7 +85,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
 				upat.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
 
-				String t = "Time life [" + iat + "-" + exp + "]";
+				String t = "JWT time [" + iat + " - " + exp + "]";
 				ZLog.println(t);
 				t = "Authenticated user " + userId + ", setting security context";
 				ZLog.println(t);

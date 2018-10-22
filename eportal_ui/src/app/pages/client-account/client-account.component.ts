@@ -68,17 +68,16 @@ export class ClientAccountComponent implements OnInit {
                 code: "Activated",
                 value: "Activated"
             }, {
-                code: "Terminated",
-                value: "Terminated"
+                code: "Closed",
+                value: "Closed"
             }, {
                 code: "Suspended",
                 value: "Suspended"
             }, {
-                code: "Closed",
-                value: "Closed"
-            }
-            ]
-        }
+                code: "Terminated",
+                value: "Terminated"
+            }]
+        };
 
         this.lstStatus = tmpStatus.data;
     }
@@ -238,7 +237,6 @@ export class ClientAccountComponent implements OnInit {
             }
 
             if (rsp.status === HTTP.STATUS_SUCCESS) {
-                console.log(rsp);
                 rsp.result.data.unshift(item);
                 this.lstCA = rsp.result.data;
             }

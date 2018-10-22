@@ -130,16 +130,16 @@
                         <div class="col-md-8">
                             <strong>Interest Rate / Spread 1 % </strong>
                         </div>
-                        <div class="col-md-4">
-                            <label class="col-form-label">{{data.interestRateSpread1}}</label>
+                        <div class="col-md-4" *ngIf="data.interestRateSpread1">
+                            <label class="col-form-label">{{data.interestRateSpread1 | number: '0.2' }}%</label>
                         </div>
                     </div>
                     <div class="form-group row">
                         <div class="col-md-8">
                             <strong>Interest Rate / Spread 2 % </strong>
                         </div>
-                        <div class="col-md-4">
-                            <label class="col-form-label">{{data.interestRateSpread2}}</label>
+                        <div class="col-md-4" *ngIf="data.interestRateSpread2">
+                            <label class="col-form-label">{{data.interestRateSpread2 | number: '0.2'}}%</label>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -181,8 +181,8 @@
                         <div class="col-md-8">
                             <strong>Interest Rate / Spread % </strong>
                         </div>
-                        <div class="col-md-4">
-                            <label class="col-form-label">{{data.overdueInterestRateSpread}}</label>
+                        <div class="col-md-4" *ngIf="data.overdueInterestRateSpread">
+                            <label class="col-form-label">{{data.overdueInterestRateSpread | number: '0.2'}}%</label>
                         </div>
                     </div>
                 </div>
@@ -270,16 +270,16 @@
                         <div class="col-md-8">
                             <strong>Facility Fee (% of the Loan Limit)</strong>
                         </div>
-                        <div class="col-md-4">
-                            <label class="col-form-label">{{data.facilityFeeOfLoanAmount}}</label>
+                        <div class="col-md-4" *ngIf="data.facilityFeeOfLoanAmount">
+                            <label class="col-form-label">{{data.facilityFeeOfLoanAmount | number: '0.2'}}%</label>
                         </div>
                     </div>
                     <div class="form-group row">
                         <div class="col-md-8">
                             <strong>Cancellation Fee (% of Undrawn Amount)</strong>
                         </div>
-                        <div class="col-md-4">
-                            <label class="col-form-label">{{data.cancellationFee}}</label>
+                        <div class="col-md-4" *ngIf="data.cancellationFee">
+                            <label class="col-form-label">{{data.cancellationFee | number: '0.2'}}%</label>
                         </div>
                     </div>
                 </div>
@@ -305,8 +305,8 @@
                         <div class="col-md-8">
                             <strong>Prepayment Fee (% of Prepaid Amount)</strong>
                         </div>
-                        <div class="col-md-4">
-                            <label class="col-form-label">{{data.prepaymentFee}}</label>
+                        <div class="col-md-4" *ngIf="data.prepaymentFee">
+                            <label class="col-form-label">{{data.prepaymentFee | number: '0.2'}}%</label>
                         </div>
                     </div>
                 </div>

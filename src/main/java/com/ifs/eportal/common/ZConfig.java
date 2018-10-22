@@ -1,5 +1,7 @@
 package com.ifs.eportal.common;
 
+import java.util.Date;
+
 /**
  * 
  * @author ToanNguyen 2018-Oct-16 (verified)
@@ -17,6 +19,8 @@ public final class ZConfig {
 	public static int _jwtTime = 0;
 
 	public static String _jwtSigning = "";
+
+	public static long _lastAccess = new Date().getTime() / 1000;
 
 	// end
 }

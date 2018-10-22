@@ -4,6 +4,11 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * 
+ * @author ToanNguyen 2018-Oct-19 (verified)
+ *
+ */
 public class MultipleRsp extends BaseRsp {
 	// region -- Fields --
 
@@ -26,11 +31,22 @@ public class MultipleRsp extends BaseRsp {
 
 	// region -- Methods --
 
+	/**
+	 * Initialize
+	 */
 	public MultipleRsp() {
 	}
 
+	/**
+	 * Initialize
+	 * 
+	 * @param status
+	 * @param message
+	 * @param result
+	 */
 	public MultipleRsp(String status, String message, Map<String, Object> result) {
 		super(status, message);
+
 		this.result = result;
 	}
 
