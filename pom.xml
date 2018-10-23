@@ -25,7 +25,7 @@
 		<java.version>1.8</java.version>
 		<frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
 		<node.version>v8.12.0</node.version>
-		<npm.version>v6.4.1</npm.version>
+		<yarn.version>v1.10.1</yarn.version>
 	</properties>
 
 	<dependencies>
@@ -133,36 +133,32 @@
 					<installDirectory>temp</installDirectory>
 				</configuration>
 				<executions>
-					<!-- It will install nodejs and npm -->
 					<execution>
-						<id>install node and npm</id>
+						<id>install node and yarn</id>
 						<phase>prepare-package</phase>
 						<goals>
-							<goal>install-node-and-npm</goal>
+							<goal>install-node-and-yarn</goal>
 						</goals>
 						<configuration>
 							<nodeVersion>${node.version}</nodeVersion>
-							<npmVersion>${npm.version}</npmVersion>
+							<yarnVersion>${yarn.version}</yarnVersion>
 						</configuration>
 					</execution>
-					<!-- It will execute command "npm install" inside "/angular" directory -->
 					<execution>
-						<id>npm install</id>
+						<id>yarn install</id>
 						<phase>prepare-package</phase>
 						<goals>
-							<goal>npm</goal>
+							<goal>yarn</goal>
 						</goals>
 						<configuration>
 							<arguments>install</arguments>
 						</configuration>
 					</execution>
-					<!-- It will execute command "npm build" inside "/angular" directory 
-						to clean and create "/dist" directory -->
 					<execution>
-						<id>npm build</id>
+						<id>yarn build</id>
 						<phase>prepare-package</phase>
 						<goals>
-							<goal>npm</goal>
+							<goal>yarn</goal>
 						</goals>
 						<configuration>
 							<arguments>run build</arguments>
@@ -183,7 +179,6 @@
 				<executions>
 					<execution>
 						<id>copy-resources</id>
-						<!-- Here the phase you need -->
 						<phase>prepare-package</phase>
 						<goals>
 							<goal>copy-resources</goal>
