@@ -23,6 +23,9 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
+		<frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
+		<node.version>v8.12.0</node.version>
+		<yarn.version>v1.10.1</yarn.version>
 	</properties>
 
 	<dependencies>
@@ -124,42 +127,38 @@
 			<plugin>
 				<groupId>com.github.eirslett</groupId>
 				<artifactId>frontend-maven-plugin</artifactId>
-				<version>1.6</version>
+				<version>${frontend-maven-plugin.version}</version>
 				<configuration>
 					<workingDirectory>eportal_ui</workingDirectory>
 					<installDirectory>temp</installDirectory>
 				</configuration>
 				<executions>
-					<!-- It will install nodejs and npm -->
 					<execution>
-						<id>install node and npm</id>
+						<id>install node and yarn</id>
 						<phase>prepare-package</phase>
 						<goals>
-							<goal>install-node-and-npm</goal>
+							<goal>install-node-and-yarn</goal>
 						</goals>
 						<configuration>
-							<nodeVersion>v8.12.0</nodeVersion>
-							<npmVersion>6.4.1</npmVersion>
+							<nodeVersion>${node.version}</nodeVersion>
+							<yarnVersion>${yarn.version}</yarnVersion>
 						</configuration>
 					</execution>
-					<!-- It will execute command "npm install" inside "/angular" directory -->
 					<execution>
-						<id>npm install</id>
+						<id>yarn install</id>
 						<phase>prepare-package</phase>
 						<goals>
-							<goal>npm</goal>
+							<goal>yarn</goal>
 						</goals>
 						<configuration>
 							<arguments>install</arguments>
 						</configuration>
 					</execution>
-					<!-- It will execute command "npm build" inside "/angular" directory 
-						to clean and create "/dist" directory -->
 					<execution>
-						<id>npm build</id>
+						<id>yarn build</id>
 						<phase>prepare-package</phase>
 						<goals>
-							<goal>npm</goal>
+							<goal>yarn</goal>
 						</goals>
 						<configuration>
 							<arguments>run build</arguments>
@@ -177,14 +176,9 @@
 						<nonFilteredFileExtension>woff2</nonFilteredFileExtension>
 					</nonFilteredFileExtensions>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
 				<executions>
 					<execution>
 						<id>copy-resources</id>
-						<!-- Here the phase you need -->
 						<phase>prepare-package</phase>
 						<goals>
 							<goal>copy-resources</goal>
