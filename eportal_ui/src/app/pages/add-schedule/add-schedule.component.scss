@@ -60,3 +60,29 @@
     margin-left: 20px !important;
     margin-bottom: 20px !important;
 }
+
+.btn-block + .btn-block {
+    margin-top: 0;
+}
+
+.format-div {
+    margin-top: 1%;
+    display: flex;
+    position: absolute;
+    left: 40%;
+}
+
+.btn-Pro {
+    margin-right: 10%;
+    padding-left: 25px;
+    padding-right: 25px;
+}
+
+@media (max-width: 576px) {
+    .format-div {
+        margin-top: 1%;
+        display: flex;
+        position: unset;
+        left: 40%;
+    }
+}

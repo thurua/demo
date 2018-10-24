@@ -50,3 +50,39 @@
 .modal {
     top: 25%;
 }
+
+@media (max-width: 1024px) {
+    .app.combined .login-container .card {
+        width: 180%;
+        position: relative;
+        right: 35%;
+    }
+
+    .center {
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 576px) {
+    .app.combined .login-container .card {
+        background-color: white;
+        height: 100%;
+        width: 250%;
+        position: relative;
+        right: 72%;
+    }
+
+    img {
+        height: 75%;
+    }
+
+    .center {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 375px) {
+    .center {
+        font-size: 10px;
+    }
+}
