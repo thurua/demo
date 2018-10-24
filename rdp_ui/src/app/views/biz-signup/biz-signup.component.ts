@@ -56,7 +56,7 @@ export class BizSignupComponent implements OnInit {
         document.getElementById("business").scrollIntoView();
     }
 
-    public resolved() {
+    public resolved(e) {
         const response = grecaptcha.getResponse();
         if (response.length === 0) {
             this.captchaError = true;
