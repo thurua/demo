@@ -207,6 +207,11 @@
                                     </span>
                                 </div>
                             </div>
+                            <div class="text-xs-center">
+                                <re-captcha class="g-recaptcha" siteKey="{{siteKey}}" (resolved)="resolved($event)"></re-captcha>
+                                <div *ngIf="captchaError" class="error" style="color: red">Recaptcha not verified.</div>
+                            </div>
+                            <input type=hidden name='captcha_settings' value='{"keyname":"BizFormCaptchaKeys","fallback":"true","orgId":"00D0k000000DSAD","ts":""}'>
                             <input type="hidden" id="recordType" name="recordType" value="01228000000TDif">
                             <input type="hidden" id="00N2800000J8ksN" name="00N2800000J8ksN" value="1" />
                             <input type="hidden" id="{{vm.f1}}" name="{{vm.f1}}" value="1" />
@@ -216,7 +221,7 @@
             </div>
             <div class="row text-center">
                 <div class="col-md-12" style="padding:15px;">
-                    <button type="submit" class="btn btn-primary btn-lg btn-hover" role="button" style="margin:0 5px;">Submit </button>
+                    <button id="btnSubmit" disabled="true" type="submit" class="btn btn-primary btn-lg btn-hover" role="button" style="margin:0 5px;">Submit </button>
                 </div>
             </div>
         </form>
