@@ -60,7 +60,8 @@
     <div class="card-body">
         <tabset class="nav-justified">
             <tab heading="Schedule">
-                <form enctype="multipart/form-data" class="form-horizontal" novalidate #frm="ngForm" (ngSubmit)="UpdateSchedule(frm.valid)" *ngIf="entity">
+                <form enctype="multipart/form-data" class="form-horizontal" novalidate #frm="ngForm" (ngSubmit)="UpdateSchedule(frm.valid)"
+                    *ngIf="entity">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6">
@@ -68,8 +69,12 @@
                                     <div class="col-md-4">
                                         <strong>Schedule of Offer</strong>
                                     </div>
-                                    <div class="col-md-8">
-                                        <input type="text" name="scheduleNo" #scheduleNo="ngModel" [(ngModel)]="entity.scheduleNo" value="{{entity.scheduleNo}}" class="form-control">
+                                    <div class="col-md-8" *ngIf="entity.portalStatus == 'Reversed'">
+                                        <label class="col-form-label">{{entity.scheduleNo}}</label>
+                                    </div>
+                                    <div class="col-md-8" *ngIf="entity.portalStatus != 'Reversed'">
+                                        <input type="text" name="scheduleNo" #scheduleNo="ngModel" [(ngModel)]="entity.scheduleNo"
+                                            value="{{entity.scheduleNo}}" class="form-control">
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -77,15 +82,18 @@
                                         <strong>Total No. of {{(entity.isCreditNote) ? "Credit Notes":'Invoice' }}</strong>
                                     </div>
                                     <div class="col-md-8">
-                                        <label class="col-form-label">{{(entity.isCreditNote) ? entity.totalCn :entity.total}}</label>
+                                        <label class="col-form-label">{{(entity.isCreditNote) ? entity.totalCn
+                                            :entity.total}}</label>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-md-4">
-                                        <strong>Total Amount of  {{(entity.isCreditNote) ? "Credit Notes":'Invoice' }}</strong>
+                                        <strong>Total Amount of {{(entity.isCreditNote) ? "Credit Notes":'Invoice' }}</strong>
                                     </div>
                                     <div class="col-md-8">
-                                        <label class="col-form-label"> {{entity.currencyIsoCode}} {{(entity.isCreditNote) ? entity.totalAmountCn :entity.totalAmount | number: '0.2'}}</label>
+                                        <label class="col-form-label"> {{entity.currencyIsoCode}}
+                                            {{(entity.isCreditNote) ? entity.totalAmountCn :entity.totalAmount |
+                                            number: '0.2'}}</label>
                                     </div>
                                 </div>
                             </div>
@@ -149,7 +157,9 @@
                 </div>
                 <div class="card-body col-md-6" *ngIf="entity.portalStatus=='Pending Authorisation' && checkAuhorise == true">
                     <div class="row">
-                        <div class="col-md-6"></div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-4" *ngIf="checkDiscard == true">
+                            <button class="btn btn-primary btn-block" type="button" (click)="discardModal.show();">Discard</button></div>
                         <div class="col-md-4">
                             <button class="btn btn-primary btn-block" type="button" (click)="authorsiedModal.show();">Authorise</button>
                         </div>
@@ -177,7 +187,9 @@
                 </div>
                 <div class="card-body col-md-6" *ngIf="entity.portalStatus=='Pending Authorisation'">
                     <div class="row">
-                        <div class="col-md-6"></div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-4" *ngIf="checkDiscard == true">
+                            <button class="btn btn-primary btn-block" type="button" (click)="discardModal.show();">Discard</button></div>
                         <div class="col-md-4">
                             <button class="btn btn-primary btn-block" type="button" (click)="authorsiedModal.show();">Authorsie</button>
                         </div>
@@ -192,21 +204,23 @@
                         <div class="form-group row">
                             <div class="col-md-8">
                                 <div class="input-group file-upload">
-                                    <input type="file" ngFileSelect [options]="options" (uploadOutput)="onUploadOutput($event)" [uploadInput]="uploadInput" accept=".pdf,.tiff,.jpeg,.gif,.png" multiple class="file-upload-btn">
+                                    <input type="file" ngFileSelect [options]="options" (uploadOutput)="onUploadOutput($event)"
+                                        [uploadInput]="uploadInput" accept=".pdf,.tiff,.jpeg,.gif,.png" multiple class="file-upload-btn">
                                     <input type="text" class="form-control" placeholder="Choose file...">
                                     <!-- <i class="fa fa-times delete-file" (click)="removeAllFiles()" *ngIf="file"></i> -->
                                     <span class="input-group-append upload">
-                                                <button class="btn btn-primary" type="button"><i class="fa fa-upload"> </i></button>
+                                        <button class="btn btn-primary" type="button"><i class="fa fa-upload"> </i></button>
                                     </span>
                                 </div>
                                 <ul class="k-upload-files k-reset">
                                     <li class="k-file k-file-success" *ngFor="let i of files">
                                         <div>
                                             <span class="k-icon k-i-jpg"></span>
-                                            <i class="fa fa-times delete-file k-upload-action k-button" (click)="removeFile(i.fileIndex)" style="float: right;display: block;margin-top: 12px;"></i>
+                                            <i class="fa fa-times delete-file k-upload-action k-button" (click)="removeFile(i.fileIndex)"
+                                                style="float: right;display: block;margin-top: 12px;"></i>
                                             <a>
                                                 {{i.name}}
-                                        </a>
+                                            </a>
                                         </div>
                                     </li>
                                 </ul>
@@ -232,7 +246,8 @@
                             <div widget class="card border-0 box-shadow">
                                 <div class="card-body pt-0 widget-body">
                                     <div class="table-responsive">
-                                        <ng2-smart-table class="table table-hover" [settings]="settingsAtt" [source]="attList" (deleteConfirm)="onDelete($event)" (custom)="onDownload($event)"></ng2-smart-table>
+                                        <ng2-smart-table class="table table-hover" [settings]="settingsAtt" [source]="attList"
+                                            (deleteConfirm)="onDelete($event)" (custom)="onDownload($event)"></ng2-smart-table>
                                     </div>
                                 </div>
                             </div>
@@ -320,7 +335,8 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
-<div bsModal #infoModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div bsModal #infoModal="bs-modal" [config]="{backdrop: 'static'}" class="modal fade" tabindex="-1" role="dialog"
+    aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -346,6 +362,48 @@
                 </div>
                 <div class="col-md-10">
                     <button type="button" class="btn btn-success btn-block text-bold" routerLink="/pages/schedule">OK</button>
+                </div>
+                <div class="col-md-1">
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<div bsModal #discardModal="bs-modal" [config]="{backdrop: 'static'}" class="modal fade" tabindex="-1" role="dialog"
+    aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Confirm Authorsie</h4>
+                <button type="button" class="close" (click)="discardModal.hide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body size-text-content-modal text-center">
+                <!-- <div class="form-group row">
+                        <div class="col-md-12">
+                            <i class="fa fa-check-circle-o icon-check-square"></i>
+                        </div>
+                    </div> -->
+                <div class="form-group row">
+                    <div class="col-md-12 text-bold">
+                        <span>Are you sure you want to discard?</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-1">
+                </div>
+                <div class="col-md-10 row">
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-block" (click)="discardModal.hide();">No</button>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-primary btn-block" (click)="Discard();">Yes</button>
+                    </div>
                 </div>
                 <div class="col-md-1">
                 </div>

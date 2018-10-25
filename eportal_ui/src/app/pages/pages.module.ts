@@ -40,6 +40,9 @@ import { ClientAccountComponent } from './client-account/client-account.componen
 import { ClientAccountFactoringDetailsComponent } from './client-account-factoring-details/client-account-factoring-details.component';
 import { ClientAccountLctrDetailsComponent } from './client-account-lctr-details/client-account-lctr-details.component';
 import { ClientAccountLoanDetailsComponent } from './client-account-loan-details/client-account-loan-details.component';
+import { FundRequestComponent } from './fund-request/fund-request.component';
+import { AddFundRequestComponent } from './add-fund-request/add-fund-request.component';
+import { FundAvailabilityComponent } from './fund-availability/fund-availability.component';
 
 @NgModule({
     imports: [
@@ -79,7 +82,10 @@ import { ClientAccountLoanDetailsComponent } from './client-account-loan-details
         ClientAccountFactoringDetailsComponent,
         ClientAccountLctrDetailsComponent,
         ClientAccountComponent,
-        ClientAccountLoanDetailsComponent
+        ClientAccountLoanDetailsComponent,
+        FundRequestComponent,
+        AddFundRequestComponent,
+        FundAvailabilityComponent
     ],
     providers: [
         {

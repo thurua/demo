@@ -1,0 +1,124 @@
+<form enctype="multipart/form-data" class="form-horizontal" novalidate="novalidate" #frm="ngForm" (ngSubmit)="proceed(frm.valid)"
+    class="full-width">
+    <div class="card header-margin">
+        <div class="card-header">
+        </div>
+        <div class="card-body">
+            <div class="body row">
+                <div class="col-md 6">
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <strong>Client</strong>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="col-form-label">{{clientName}}</label>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <strong>Type</strong>
+                        </div>
+                        <div class="col-md-8">
+                            <select name="status" #status="ngModel" [(ngModel)]="fundType" class="form-control">
+                                <option *ngFor="let i of lstType" value="{{i.code}}">{{i.value}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-4">
+                            <strong>Client Account</strong>
+                        </div>
+                        <div class="col-md-8">
+                            <select name="clientAccount" #clientAccount="ngModel" [(ngModel)]="clientAccountId" class="form-control">
+                                <option *ngFor="let i of lstCA" value="{{i.sfId}}">{{i.clientAccount}}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md 6">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group format-div">
+        <button class="btn btn-primary btn-block btn-Pro" type="submit" (click)="discardModal.show();">Proceed</button>
+        <button class="btn btn-gray btn-block" type="button" routerLink="../fund-request">Cancel</button>
+    </div>
+</form>
+<div bsModal #infoModal="bs-modal" [config]="{backdrop: 'static'}" class="modal fade" tabindex="-1" role="dialog"
+    aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>{{title}}</h4>
+                <button type="button" class="close" (click)="hideAndReset()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body size-text-content-modal text-center">
+                <div class="form-group row">
+                    <div class="col-md-12">
+                        <i class="fa fa-check-circle-o icon-check-square"></i>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-md-12 text-bold">
+                        <span>{{msgInfo}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-1">
+                </div>
+                <div class="col-md-10">
+                    <button type="button" class="btn btn-success btn-block text-bold" routerLink="/pages/fund-request">OK</button>
+                </div>
+                <div class="col-md-1">
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<div bsModal #discardModal="bs-modal" [config]="{backdrop: 'static'}" class="modal fade" tabindex="-1" role="dialog"
+    aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Confirm</h4>
+                <button type="button" class="close" (click)="discardAndReset()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body size-text-content-modal text-center">
+                <!-- <div class="form-group row">
+                        <div class="col-md-12">
+                            <i class="fa fa-check-circle-o icon-check-square"></i>
+                        </div>
+                    </div> -->
+                <div class="form-group row">
+                    <div class="col-md-12 text-bold">
+                        <span>Are you sure you want to proceed?</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-1">
+                </div>
+                <div class="col-md-10 row">
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-block" (click)="discardModal.hide();">No</button>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-primary btn-block" (click)="Discard();">Yes</button>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>

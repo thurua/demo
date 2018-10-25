@@ -31,15 +31,6 @@ export class CreditNoteProvider {
     }
 
     /**
-     * Search Customer
-     * @param info
-     */
-    public searchCustomer(info: any) {
-        let x = {};
-        return this.api.post('common/search-customer', info);
-    }
-
-    /**
      * Get by Id
      * @param info
      */

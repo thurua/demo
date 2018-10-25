@@ -19,7 +19,8 @@ import {
     InvoiceProvider,
     ReasonProvider,
     ClientAccountProvider,
-    ClientAccountCustomerProvider
+    ClientAccountCustomerProvider,
+    FundRequestProvider
 } from './providers';
 
 // Import utilities
@@ -49,7 +50,8 @@ import { Rsa, Utils } from './utilities';
         InvoiceProvider,
         ReasonProvider,
         ClientAccountProvider,
-        ClientAccountCustomerProvider
+        ClientAccountCustomerProvider,
+        FundRequestProvider
     ],
     bootstrap: [AppComponent]
 })

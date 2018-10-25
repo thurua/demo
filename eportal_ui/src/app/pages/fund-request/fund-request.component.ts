@@ -1,38 +1,33 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { HTTP, Utils, Token } from 'app/utilities';
-import { CommonProvider, CreditNoteProvider } from 'app/providers';
+import { Utils, Token, HTTP } from 'app/utilities';
+import { FundRequestProvider, CommonProvider } from 'app/providers';
 
 @Component({
-    selector: 'app-credit-notes',
-    templateUrl: './credit-notes.component.html',
-    styleUrls: ['./credit-notes.component.scss',
+    selector: 'app-fund-request',
+    templateUrl: './fund-request.component.html',
+    styleUrls: ['./fund-request.component.scss',
         '../../../scss/vendors/bs-datepicker/bs-datepicker.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class CreditNotesComponent implements OnInit {
-    public portalStatus: string = "";
-    public accountName: string = "";
+export class FundRequestComponent implements OnInit {
     public clientId: string = "";
+    public fundRequestNo: string = "";
+    public portalStatus: string = "";
+    public fundType = "";
     public clientName: string = "";
+    public lstStatus: any[] = [];
+    public lstType: any[] = [];
+    public total: number = 0;
     public pageSize = 10;
     public curentPage = 1;
-    public total: number = 0;
-    public lstCustomer: any[] = [];
-    public lstStatus: any[] = [];
-    public lstCA: any[] = [];
-    public data = [];
-    public clientAccountId = "";
-    public customerId = "";
-    public pagedItems: any[];
     public pager: any = {};
+    public pagedItems: any[];
     public fromDate = new Date();
     public toDate = new Date();
     public minDate = new Date();
     public maxDate = new Date();
-    public scheduleNo = "";
-    public creditNoteNo = "";
+    public data = [];
     public isCollapsed: boolean = false;
-
     public settings = {
         selectMode: 'single',  //single|multi
         hideHeader: false,
@@ -48,44 +43,39 @@ export class CreditNotesComponent implements OnInit {
         },
         noDataMessage: 'No data found',
         columns: {
-            name: {
-                title: 'Credit Note No.',
+            fundRequestNo: {
+                title: 'Fund Request No.',
                 filter: false,
-                type: 'html',
-                valuePrepareFunction: (cell, row) => {
-                    return `<a href="/#/pages/credit-notes-details/${row.uuId}">${row.name}</a>`
-                },
+                type: 'string'
             },
-            scheduleNo: {
-                title: 'Schedule No.',
-                type: 'string',
-                filter: false
-            },
-            clientAccountNo: {
-                title: 'Client Account No.',
-                type: 'string',
-                filter: false
-            },
-            accountName: {
-                title: 'Customer',
-                type: 'string',
-                filter: false
-            },
-            creditNoteDate: {
-                title: 'Credit Note Date',
-                type: 'date',
-                valuePrepareFunction: (value) => { return Utils.format(value, 'dd-MMM-yyyy') },
-                filter: false
-            },
-            creditAmount: {
-                title: 'Credit Note Amount',
+            type: {
+                title: 'Type',
                 type: 'string',
                 filter: false
             },
             status: {
                 title: 'Status',
-                type: 'string',
-                filter: false
+                type: 'html',
+                filter: false,
+                valuePrepareFunction: (value) => {
+                    let css = 'color-pend';
+                    if (value == 'Cancelled') {
+                        css = 'color-auth';
+                    }
+                    if (value == 'Rejected') {
+                        css = 'color-acce';
+                    }
+                    if (value == 'Pending Approval') {
+                        css = 'color-rever';
+                    }
+                    if (value == 'Pending Payment') {
+                        css = 'color-rever';
+                    }
+                    if (value == 'Paid') {
+                        css = 'color-rever';
+                    }
+                    return `<span class="${css}">${value}</span>`;
+                }
             },
             createdBy: {
                 title: 'Created By',
@@ -93,7 +83,7 @@ export class CreditNotesComponent implements OnInit {
                 filter: false
             },
             createdDate: {
-                title: 'Created Date / Time',
+                title: 'Created Date/Time',
                 type: 'date',
                 valuePrepareFunction: (value) => { return Utils.format(value, 'dd-MMM-yyyy HH:mm:ss') },
                 filter: false
@@ -101,7 +91,7 @@ export class CreditNotesComponent implements OnInit {
         }
     };
 
-    constructor(private pro: CreditNoteProvider,
+    constructor(private pro: FundRequestProvider,
         private proCommon: CommonProvider) { }
 
     ngOnInit() {
@@ -112,36 +102,59 @@ export class CreditNotesComponent implements OnInit {
         this.clientId = user.clientId;
         this.clientName = user.clientName;
 
-        this.searchCA();
         this.searchClick(1);
 
         let tmpStatus = {
-            dataS: [{
+            data: [{
                 code: "",
                 value: "-- Please Select --"
             }, {
-                code: "Accepted",
-                value: "Accepted"
+                code: "Cancelled",
+                value: "Cancelled"
             }, {
-                code: "Reassigned",
-                value: "Reassigned"
+                code: "Paid",
+                value: "Paid"
+            }, {
+                code: "Pending Approval",
+                value: "Pending Approval"
+            }, {
+                code: "Pending Payment",
+                value: "Pending Payment"
             }, {
                 code: "Rejected",
                 value: "Rejected"
-            }, {
-                code: "Reversed",
-                value: "Reversed"
             }]
         }
-        this.lstStatus = tmpStatus.dataS;
+
+        let tmpType = {
+            data: [{
+                code: "",
+                value: "-- Please Select --"
+            }, {
+                code: "Factoring",
+                value: "Factoring"
+            }, {
+                code: "LC_TR",
+                value: "LC/TR"
+            }, {
+                code: "Loan",
+                value: "Loan"
+            }]
+        }
+
+        this.lstStatus = tmpStatus.data;
+        this.lstType = tmpType.data;
+    }
+
+    public searchClick(page: any) {
+        this.search(page);
+        this.curentPage = page;
     }
 
     public resetClick() {
         this.portalStatus = "";
-        this.clientAccountId = "";
-        this.customerId = "";
-        this.scheduleNo = "";
-        this.creditNoteNo = "";
+        this.clientId = "";
+        this.fundType = "";
         this.data = [];
 
         // Reset Date
@@ -163,29 +176,20 @@ export class CreditNotesComponent implements OnInit {
         }
     }
 
-    // serach function
-    public searchClick(page: any) {
-        this.search(page);
-        this.curentPage = page;
-    }
-
     public search(page: any) {
         document.getElementById('preloader').style.display = 'block';
-
         let fr = this.fromDate == null ? null : this.fromDate.toISOString();
         let to = this.toDate == null ? null : this.toDate.toISOString();
-
         let x = {
             filter: {
                 client: this.clientId,
-                clientAccount: this.clientAccountId,
-                customer: this.customerId,
+                fundRequestNo: "%" + this.fundRequestNo + "%",
                 status: this.portalStatus,
-                scheduleNo: "%" + this.scheduleNo + "%",
-                name: "%" + this.creditNoteNo + "%",
+                recordType: this.fundType,
                 frCreatedDate: fr,
-                toCreatedDate: to
+                toCreatedDate: to,
             },
+
             page: page,
             size: this.pageSize,
             sort: [
@@ -195,21 +199,9 @@ export class CreditNotesComponent implements OnInit {
                 }
             ]
         }
-
         this.pro.search(x).subscribe((rsp: any) => {
             if (rsp.status === HTTP.STATUS_SUCCESS) {
                 this.data = rsp.result.data;
-                if (this.data != null) {
-                    var option = {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    };
-                    var formatter = new Intl.NumberFormat("en-US", option);
-                    this.data.forEach(element => {
-                        //element.creditAmount = Intl.NumberFormat('en-US', { style: 'currency', currency: element.currencyIsoCode }).format(element.creditAmount);
-                        element.creditAmount = element.currencyIsoCode + " " + formatter.format(element.creditAmount);
-                    });
-                }
                 this.total = rsp.result.total;
                 this.setPage(page);
             }
@@ -225,71 +217,6 @@ export class CreditNotesComponent implements OnInit {
     public setPage(page: number) {
         this.pager = this.getPager(this.total, page, this.pageSize);
         this.pagedItems = this.data.slice(this.pager.startIndex, this.pager.endIndex + 1);
-    }
-
-    public searchCA() {
-        let x = {
-            filter: {
-                client: this.clientId,
-                status: "Activated"
-            },
-            page: 1,
-            size: 20,
-            sort: [
-                {
-                    direction: "ASC",
-                    field: "clientAccount"
-                }
-            ]
-        }
-
-        this.proCommon.searchCA(x).subscribe((rsp: any) => {
-            let itemCA = {
-                sfid: "",
-                clientAccount: "-- Please select --"
-            }
-            if (rsp.status === HTTP.STATUS_SUCCESS) {
-                rsp.result.data.unshift(itemCA);
-                this.lstCA = rsp.result.data;
-            }
-            else {
-                this.lstCA.unshift(itemCA);
-            }
-        }, (err) => {
-            console.log(err);
-        });
-    }
-
-    public searchCustomer(event: any) {
-        let x = {
-            filter: {
-                clientAccount: event.target.value,
-                status:""
-            },
-            page: 1,
-            size: 20,
-            sort: [
-                {
-                    direction: "ASC",
-                    field: "name"
-                }
-            ]
-        }
-        this.proCommon.searchCustomer(x).subscribe((rsp: any) => {
-            let itemCM = {
-                sfid: "",
-                name: "-- Please select --"
-            }
-            if (rsp.status === HTTP.STATUS_SUCCESS) {
-                rsp.result.data.unshift(itemCM);
-                this.lstCustomer = rsp.result.data;  
-            }
-            else {
-                this.lstCustomer.unshift(itemCM);
-            }
-        }, (err) => {
-            console.log(err);
-        });
     }
 
     private getPager(totalItems: number, currentPage: number = 1, pageSize: number = 1) {
@@ -319,7 +246,6 @@ export class CreditNotesComponent implements OnInit {
                 endPage = currentPage + 4;
             }
         }
-
         // calculate start and end item indexes
         let startIndex = (currentPage - 1) * pageSize;
         let endIndex = Math.min(startIndex + pageSize - 1, totalItems - 1);

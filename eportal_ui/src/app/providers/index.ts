@@ -8,6 +8,7 @@ import { InvoiceProvider } from './invoice';
 import { ReasonProvider } from './reason';
 import { ClientAccountProvider } from './client-account';
 import { ClientAccountCustomerProvider } from './client-account-customer';
+import { FundRequestProvider } from './fund-request';
 
 export {
     ApiProvider,
@@ -19,5 +20,6 @@ export {
     InvoiceProvider,
     ReasonProvider,
     ClientAccountProvider,
-    ClientAccountCustomerProvider
+    ClientAccountCustomerProvider,
+    FundRequestProvider
 };

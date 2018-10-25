@@ -68,6 +68,12 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 	@JsonProperty(value = "attachments")
 	private List<AttachmentDto> attachments;
 
+	@JsonProperty(value = "dropdownCustomer")
+	private List<SODropdownDto> dropdownCustomer;
+
+	@JsonProperty(value = "dropdownSupplier")
+	private List<SODropdownDto> dropdownSupplier;
+
 	// end
 
 	// region -- Get set --
@@ -216,6 +222,22 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 		this.attachments = attachments;
 	}
 
+	public List<SODropdownDto> getDropdownCustomer() {
+		return dropdownCustomer;
+	}
+
+	public void setDropdownCustomer(List<SODropdownDto> dropdownCustomer) {
+		this.dropdownCustomer = dropdownCustomer;
+	}
+
+	public List<SODropdownDto> getDropdownSupplier() {
+		return dropdownSupplier;
+	}
+
+	public void setDropdownSupplier(List<SODropdownDto> dropdownSupplier) {
+		this.dropdownSupplier = dropdownSupplier;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -252,8 +274,8 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 	 * @param o
 	 * @return
 	 */
-	public static ScheduleOfOfferDetailDto convert(Object[] o, List<Object[]> lc, List<Object[]> li,
-			List<Object[]> la) {
+	public static ScheduleOfOfferDetailDto convert(Object[] o, List<Object[]> lc, List<Object[]> li, List<Object[]> la,
+			List<Object[]> ld, List<Object[]> ls) {
 		ScheduleOfOfferDetailDto res = new ScheduleOfOfferDetailDto();
 
 		res.setId((Integer) o[0]);
@@ -277,7 +299,8 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 		res.setCreditNotes(SOCreditNoteDto.convert(lc));
 		res.setInvoices(SOInvoiceDto.convert(li));
 		res.setAttachments(AttachmentDto.convert(la));
-
+		res.setDropdownCustomer(SODropdownDto.convert(ld));
+		res.setDropdownSupplier(SODropdownDto.convert(ls));
 		return res;
 	}
 
@@ -291,7 +314,7 @@ public class ScheduleOfOfferDetailDto extends BaseDto {
 		List<ScheduleOfOfferDetailDto> res = new ArrayList<ScheduleOfOfferDetailDto>();
 
 		for (Object[] o : l) {
-			res.add(convert(o, null, null, null));
+			res.add(convert(o, null, null, null, null, null));
 		}
 
 		return res;

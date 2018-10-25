@@ -32,4 +32,13 @@ export class CommonProvider {
     public searchSU(info: any) {
         return this.api.post('common/search-supplier', info);
     }
+
+    /**
+     * Search Customer
+     * @param info
+     */
+    public searchCustomer(info: any) {
+        let x = {};
+        return this.api.post('common/search-customer', info);
+    }
 }

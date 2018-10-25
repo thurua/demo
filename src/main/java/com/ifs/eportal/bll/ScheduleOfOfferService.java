@@ -131,6 +131,11 @@ public class ScheduleOfOfferService {
 				m.setPortalStatus(portalStatus);
 			}
 
+			if ("Discarded".equals(portalStatus)) {
+				m.setPortalStatus(portalStatus);
+				m.setScheduleStatus("Draft");
+			}
+
 			scheduleOfOfferDao.update(m);
 		}
 

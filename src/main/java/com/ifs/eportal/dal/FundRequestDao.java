@@ -2,6 +2,7 @@ package com.ifs.eportal.dal;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,27 +14,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ifs.eportal.common.ZConfig;
+import com.ifs.eportal.common.ZDate;
 import com.ifs.eportal.common.ZFile;
-import com.ifs.eportal.dto.ClientAccountCustomerDto;
+import com.ifs.eportal.dto.FundRequestDto;
 import com.ifs.eportal.dto.SortDto;
-import com.ifs.eportal.filter.ClientAccountCustomerFilter;
-import com.ifs.eportal.model.ClientAccountCustomer;
+import com.ifs.eportal.filter.FundRequestFilter;
+import com.ifs.eportal.model.FundRequest;
 import com.ifs.eportal.req.PagingReq;
 
 /**
  * 
- * @author HoanNguyen 2018-Oct-2
+ * @author VanPhan 2018-Oct-25
  *
  */
-@Service(value = "clientAccountCustomerDao")
-public class ClientAccountCustomerDao implements Repository<ClientAccountCustomer, Integer> {
+@Service(value = "fundRequestDao")
+public class FundRequestDao implements Repository<FundRequest, Integer> {
 	// region -- Implements --
 
 	/**
 	 * Create
 	 */
 	@Override
-	public void create(ClientAccountCustomer entity) {
+	public void create(FundRequest entity) {
 		_em.persist(entity);
 	}
 
@@ -41,15 +43,14 @@ public class ClientAccountCustomerDao implements Repository<ClientAccountCustome
 	 * Read
 	 */
 	@Override
-	public ClientAccountCustomer read(Integer id) {
-		return _em.find(ClientAccountCustomer.class, id);
+	public FundRequest read(Integer id) {
+		return _em.find(FundRequest.class, id);
 	}
 
 	/**
-	 * Update
 	 */
 	@Override
-	public ClientAccountCustomer update(ClientAccountCustomer entity) {
+	public FundRequest update(FundRequest entity) {
 		return _em.merge(entity);
 	}
 
@@ -57,7 +58,7 @@ public class ClientAccountCustomerDao implements Repository<ClientAccountCustome
 	 * Delete
 	 */
 	@Override
-	public void delete(ClientAccountCustomer entity) {
+	public void delete(FundRequest entity) {
 		_em.remove(entity);
 	}
 
@@ -68,11 +69,11 @@ public class ClientAccountCustomerDao implements Repository<ClientAccountCustome
 	@Autowired
 	private EntityManager _em;
 
-	private String _sql;
-
 	private String _path;
 
-	private static final Logger _log = Logger.getLogger(ClientAccountDao.class.getName());
+	private String _sql;
+
+	private static final Logger _log = Logger.getLogger(FundRequestDao.class.getName());
 
 	// end
 
@@ -81,69 +82,9 @@ public class ClientAccountCustomerDao implements Repository<ClientAccountCustome
 	/**
 	 * Initialize
 	 */
-	public ClientAccountCustomerDao() {
-		_path = ZFile.getPath("/sql/" + ClientAccountCustomerDao.class.getSimpleName());
+	public FundRequestDao() {
+		_path = ZFile.getPath("/sql/" + FundRequestDao.class.getSimpleName());
 		_sql = ZFile.read(_path + "_sql.sql");
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<ClientAccountCustomerDto> getByClientId(String clientId) {
-		List<ClientAccountCustomerDto> res = new ArrayList<ClientAccountCustomerDto>();
-
-		try {
-			String sql = _sql + " WHERE a.client_account__c = :clientId";
-
-			// Execute
-			Query q = _em.createNativeQuery(sql);
-			q.setParameter("clientId", clientId);
-			List<Object[]> l = q.getResultList();
-
-			// Convert
-			res = ClientAccountCustomerDto.convert(l);
-		} catch (Exception ex) {
-			if (ZConfig._printTrace) {
-				ex.printStackTrace();
-			}
-			if (ZConfig._writeLog) {
-				_log.log(Level.SEVERE, ex.getMessage(), ex);
-			}
-		}
-
-		return res;
-	}
-
-	/**
-	 * Get by ClientAccountCustomer
-	 * 
-	 * @param sfId
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public List<ClientAccountCustomerDto> getBy(String sfId) {
-		List<ClientAccountCustomerDto> res = new ArrayList<ClientAccountCustomerDto>();
-
-		try {
-			_sql = ZFile.read(_path + "_sql.sql");
-			String sql = _sql + " WHERE a.client_account__c =:sfId";
-
-			// Execute
-			Query q = _em.createNativeQuery(sql);
-			q.setParameter("sfId", sfId);
-
-			List<Object[]> l = q.getResultList();
-
-			// Convert
-			res = ClientAccountCustomerDto.convert(l);
-		} catch (Exception ex) {
-			if (ZConfig._printTrace) {
-				ex.printStackTrace();
-			}
-			if (ZConfig._writeLog) {
-				_log.log(Level.SEVERE, ex.getMessage(), ex);
-			}
-		}
-
-		return res;
 	}
 
 	/**
@@ -153,8 +94,8 @@ public class ClientAccountCustomerDao implements Repository<ClientAccountCustome
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public List<ClientAccountCustomerDto> search(PagingReq req) {
-		List<ClientAccountCustomerDto> res = new ArrayList<ClientAccountCustomerDto>();
+	public List<FundRequestDto> search(PagingReq req) {
+		List<FundRequestDto> res = new ArrayList<FundRequestDto>();
 
 		try {
 			// Get data
@@ -175,13 +116,6 @@ public class ClientAccountCustomerDao implements Repository<ClientAccountCustome
 						orderBy += ",";
 					}
 					orderBy += " a.id " + direction;
-				}
-
-				if ("name".equals(field)) {
-					if (!orderBy.isEmpty()) {
-						orderBy += ",";
-					}
-					orderBy += " c.name " + direction;
 				}
 			}
 
@@ -207,7 +141,7 @@ public class ClientAccountCustomerDao implements Repository<ClientAccountCustome
 			List<Object[]> l = q.getResultList();
 
 			// Convert
-			res = ClientAccountCustomerDto.convert(l);
+			res = FundRequestDto.convert(l);
 		} catch (Exception ex) {
 			if (ZConfig._printTrace) {
 				ex.printStackTrace();
@@ -231,35 +165,73 @@ public class ClientAccountCustomerDao implements Repository<ClientAccountCustome
 		Query q = null;
 
 		try {
-			ClientAccountCustomerFilter filter = ClientAccountCustomerFilter.convert(o);
-
-			String clientAccount = filter.getClientAccount();
+			FundRequestFilter filter = FundRequestFilter.convert(o);
+			String client = filter.getClient();
+			String fundRequestNo = filter.getFundRequestNo();
+			String recordType = filter.getRecordType();
 			String status = filter.getStatus();
-
+			Date fr = filter.getFrCreatedDate();
+			Date to = filter.getToCreatedDate();
 			// Where
 			String where = "";
-			if (!clientAccount.isEmpty()) {
-				where += " AND a.client_account__c = :clientAccount ";
+			if (!client.isEmpty()) {
+				where += " AND a.client__c = :client ";
+			}
+			if (!fundRequestNo.isEmpty()) {
+				where += " AND a.name ILIKE :fundRequestNo ";
+			}
+			if (!recordType.isEmpty()) {
+				where += " AND a.recordtypeid = :recordType ";
 			}
 			if (!status.isEmpty()) {
 				where += " AND a.status__c = :status ";
 			}
+
+			if (fr != null && to != null) {
+				where += " AND a.createddate BETWEEN :fr AND :to";
+			} else if (fr != null && to == null) {
+				where += " AND :fr <= a.createddate";
+			} else if (fr == null && to != null) {
+				where += " AND a.createddate <= :to";
+			}
+
 			// Replace first
 			if (!where.isEmpty()) {
-				where = where.replaceFirst("AND", "WHERE");
+				where = where.replaceFirst("AND", "WHERE a.is_eportal_fr__c = true AND");
 			}
 
 			q = _em.createNativeQuery(sql + where + limit);
 
 			// Set parameter
 			if (!where.isEmpty()) {
-				int i = where.indexOf(":clientAccount");
+				int i = where.indexOf(":client");
 				if (i > 0) {
-					q.setParameter("clientAccount", clientAccount);
+					q.setParameter("client", client);
+				}
+				i = where.indexOf(":fundRequestNo");
+				if (i > 0) {
+					q.setParameter("fundRequestNo", fundRequestNo);
+				}
+				i = where.indexOf(":recordType");
+				if (i > 0) {
+					q.setParameter("recordType", recordType);
 				}
 				i = where.indexOf(":status");
 				if (i > 0) {
 					q.setParameter("status", status);
+				}
+
+				if (fr != null && to != null) {
+					fr = ZDate.getStartOfDay(fr);
+					q.setParameter("fr", fr);
+					to = ZDate.getEndOfDay(to);
+					q.setParameter("to", to);
+				} else if (fr != null && to == null) {
+					fr = ZDate.getStartOfDay(fr);
+					q.setParameter("fr", fr);
+				} else if (fr == null && to != null) {
+					to = ZDate.getEndOfDay(to);
+					q.setParameter("to", to);
 				}
 			}
 		} catch (Exception ex) {

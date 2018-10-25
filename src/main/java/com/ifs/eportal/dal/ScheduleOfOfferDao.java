@@ -233,8 +233,26 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 			q.setParameter("id", id);
 			List<Object[]> la = q.getResultList();
 
+			// CustomerDropdown
+			sql = ZFile.read(_path + "detail_customer.sql");
+			sql += " WHERE a.id = :id";
+
+			// Execute
+			q = _em.createNativeQuery(sql);
+			q.setParameter("id", id);
+			List<Object[]> ld = q.getResultList();
+
+			// Supplier Dropdown
+			sql = ZFile.read(_path + "detail_customer.sql");
+			sql += " WHERE a.id = :id";
+
+			// Execute
+			q = _em.createNativeQuery(sql);
+			q.setParameter("id", id);
+			List<Object[]> ls = q.getResultList();
+
 			// Convert
-			res = ScheduleOfOfferDetailDto.convert(t, lc, li, la);
+			res = ScheduleOfOfferDetailDto.convert(t, lc, li, la, ld, ls);
 		} catch (Exception ex) {
 			if (ZConfig._printTrace) {
 				ex.printStackTrace();
@@ -293,8 +311,26 @@ public class ScheduleOfOfferDao implements Repository<ScheduleOfOffer, Integer> 
 			q.setParameter("sfId", sfId);
 			List<Object[]> la = q.getResultList();
 
+			// CustomerDropdown
+			sql = ZFile.read(_path + "detail_customer.sql");
+			sql += " WHERE a.sfid = :sfId OR a.uuid__c = :sfId AND b.status__c = 'Activated'";
+
+			// Execute
+			q = _em.createNativeQuery(sql);
+			q.setParameter("sfId", sfId);
+			List<Object[]> ld = q.getResultList();
+
+			// Supplier Dropdown
+			sql = ZFile.read(_path + "detail_supplier.sql");
+			sql += " WHERE a.sfid = :sfId OR a.uuid__c = :sfId";
+
+			// Execute
+			q = _em.createNativeQuery(sql);
+			q.setParameter("sfId", sfId);
+			List<Object[]> ls = q.getResultList();
+
 			// Convert
-			res = ScheduleOfOfferDetailDto.convert(t, lc, li, la);
+			res = ScheduleOfOfferDetailDto.convert(t, lc, li, la, ld, ls);
 		} catch (Exception ex) {
 			if (ZConfig._printTrace) {
 				ex.printStackTrace();

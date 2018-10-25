@@ -7,6 +7,7 @@ import { ModalDirective } from 'ngx-bootstrap';
 import { UploadOutput, UploadInput, UploadFile, humanizeBytes, UploaderOptions } from 'ngx-uploader';
 import { DomSanitizer } from '@angular/platform-browser';
 import { saveAs } from "file-saver";
+import { element } from 'protractor';
 
 const URL = 'http://localhost:8080/api/upload';
 
@@ -31,6 +32,7 @@ export class ScheduleDetailsComponent implements OnInit {
     public checkCd = false;
     public checkAtt = false;
     public checkAuhorise = false;
+    public checkDiscard = false;
     public entity: any = {};
     public file: any;
     public pageSize = 5;
@@ -46,68 +48,8 @@ export class ScheduleDetailsComponent implements OnInit {
     public ivList = [];
     public caList = [];
     public attList = [];
-    public settings = {
-        selectMode: 'single',  //single|multi
-        hideHeader: false,
-        hideSubHeader: false,
-        actions: {
-            add: false,
-            edit: false,
-            delete: false,
-            custom: [],
-        },
-        handle: {
-            editable: false
-        },
-        noDataMessage: 'No data found',
-        columns: {
-            no: {
-                title: 'No',
-                filter: false,
-                type: 'html',
-                valuePrepareFunction: (cell, row) => {
-                    return `<a href="/#/pages/credit-notes-details/${row.uuId}">${row.no}</a>`
-                },
-            },
-            customerBranch: {
-                title: 'Customer / Branch',
-                type: 'string',
-                filter: false
-            },
-            creditNo: {
-                title: 'CN No.',
-                type: 'string',
-                filter: false
-            },
-            creditDate: {
-                title: 'CN Date',
-                type: 'date',
-                valuePrepareFunction: (value) => { return Utils.format(value, 'dd-MMM-yyyy') },
-                filter: false
-            },
-            amountInvNo: {
-                title: 'CN Amount / Applied INV No.',
-                type: 'string',
-                filter: false
-            },
-            status: {
-                title: 'Status',
-                type: 'string',
-                filter: false
-            },
-            applyCN: {
-                title: 'Apply CN',
-                type: 'html',
-                filter: false,
-                valuePrepareFunction: (value) => { return this._sanitizer.bypassSecurityTrustHtml('<input type="checkbox" ' + value + ' disabled />'); },
-            },
-            unappliedReason: {
-                title: 'Unapplied Reason',
-                type: 'string',
-                filter: false
-            }
-        }
-    };
+    public cus = [];
+    public settings = {};
 
     public settingsIv = {
         selectMode: 'single',  //single|multi
@@ -244,6 +186,7 @@ export class ScheduleDetailsComponent implements OnInit {
     @ViewChild('authorsiedModal') public authorsiedModal: ModalDirective;
     @ViewChild('uploadModal') public uploadModal: ModalDirective;
     @ViewChild('infoModal') public infoModal: ModalDirective;
+    @ViewChild('discardModal') public discardModal: ModalDirective;
 
     constructor(private act: ActivatedRoute,
         private pro: ScheduleProvider,
@@ -262,11 +205,16 @@ export class ScheduleDetailsComponent implements OnInit {
             this.getDetail(this.sfId);
 
             let user = Token.getUser();
+
             if (user.accessRights.indexOf("Schedules - Authorise Uploaded Schedule") > 0) {
                 this.checkAuhorise = true;
             }
             else {
                 this.checkAuhorise = false;
+            }
+
+            if (user.accessRights.indexOf("Schedules - Discard Uploaded Schedule") > 0) {
+                this.checkDiscard = true;
             }
         });
     }
@@ -403,9 +351,10 @@ export class ScheduleDetailsComponent implements OnInit {
                                 let re = / \/ /gi;
                                 element.amountInvNo = element.amountInvNo.replace(re, '');
                             }
-                            element.customerBranch = element.customer + ' / ' + element.customerBranch;
+                            //element.customerBranch = element.customer + ' / ' + element.customerBranch;
                         });
                         this.cnList = tmpCNList;
+                        this.getSetting();
                     }
                 }
                 else {
@@ -413,7 +362,7 @@ export class ScheduleDetailsComponent implements OnInit {
                     if (this.entity.invoices != null) {
                         let tmpIVList = this.entity.invoices;
                         let i = 0;
-                        let isRejected = false;
+                        let isRejected = true;
                         var option = {
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2
@@ -435,14 +384,14 @@ export class ScheduleDetailsComponent implements OnInit {
                                 let re = / \/ /gi;
                                 element.po = element.po.replace(re, '');
                             }
-                            if ((this.entity.portalStatus == 'Pending Authorisation' || this.entity.portalStatus == 'Authorised') && element.status == 'Unfunded') {
+                            if (this.entity.portalStatus == 'Pending Authorisation' || this.entity.portalStatus == 'Authorised') {
                                 element.status = 'Processing';
                             }
                             if (this.entity.portalStatus == 'Submitted') {
                                 element.status = 'Undunded';
                             }
-                            if (element.status == 'Rejected') {
-                                isRejected = true;
+                            if (element.status == 'Processing') {
+                                isRejected = false;
                             }
                         });
 
@@ -562,5 +511,123 @@ export class ScheduleDetailsComponent implements OnInit {
             .subscribe(blob => {
                 saveAs(blob, e.data.name);
             });
+    }
+
+    public Discard() {
+        let x = {
+            scheduleNo: this.entity.scheduleNo,
+            portalStatus: "Discarded",
+            id: this.entity.id
+        }
+        this.pro.update(x).subscribe((rsp: any) => {
+            if (rsp.status === HTTP.STATUS_SUCCESS) {
+                this.entity.portalStatus = "Discarded";
+                this.title = 'Confirmation';
+                this.msgInfo = 'Schedule is updated successfully!';
+                this.infoModal.show();
+                this.discardModal.hide();
+            }
+        }, (err) => {
+            console.log(err);
+        });
+    }
+
+    public getSetting() {
+        this.settings = {
+            mode: 'inline',
+            selectMode: 'single',  //single|multi
+            hideHeader: false,
+            hideSubHeader: false,
+            actions: {
+                add: false,
+                edit: true,
+                delete: false,
+                custom: [],
+                position: 'right'
+            },
+            handle: {
+                editable: false
+            },
+            edit: {
+                editButtonContent: '<i class="fa fa-pencil mr-3 text-primary"></i>',
+                saveButtonContent: '<i class="fa fa-check mr-3 text-success"></i>',
+                cancelButtonContent: '<i class="fa fa-times text-danger"></i>'
+            },
+            noDataMessage: 'No data found',
+            columns: {
+                no: {
+                    title: 'No',
+                    filter: false,
+                    type: 'html',
+                    editable:false,
+                    valuePrepareFunction: (cell, row) => {
+                        return `<a href="/#/pages/credit-notes-details/${row.uuId}">${row.no}</a>`
+                    },
+                },
+                customerId: {
+                    title: 'Customer / Branch',
+                    type: 'html',
+                    valuePrepareFunction: (cell, row) => {
+                        let a = this.getCustomerName(row.customerId);
+                        return a + ' / ' + row.customerBranch;
+                    },
+                    editor: {
+                        type: 'list',
+                        config: {
+                            list: this.entity.dropdownCustomer
+                        }
+                    }
+                },
+                creditNo: {
+                    title: 'CN No.',
+                    type: 'string',
+                    filter: false
+                },
+                creditDate: {
+                    title: 'CN Date',
+                    type: 'date',
+                    valuePrepareFunction: (value) => { return Utils.format(value, 'dd-MMM-yyyy') },
+                    filter: false
+                },
+                amountInvNo: {
+                    title: 'CN Amount / Applied INV No.',
+                    type: 'string',
+                    filter: false
+                },
+                status: {
+                    title: 'Status',
+                    type: 'string',
+                    filter: false,
+                    editable: false
+                },
+                applyCN: {
+                    title: 'Apply CN',
+                    type: 'html',
+                    filter: false,
+                    editable: false,
+                    valuePrepareFunction: (value) => { return this._sanitizer.bypassSecurityTrustHtml('<input type="checkbox" ' + value + ' disabled />'); },
+                },
+                unappliedReason: {
+                    title: 'Unapplied Reason',
+                    type: 'string',
+                    filter: false,
+                    editable: false
+                }
+            }
+        };
+    }
+
+    private getCustomerName(sfId: String) {
+        let title;
+        this.entity.dropdownCustomer.forEach(element => {
+            if (element.value == sfId) {
+                title = element.title;
+
+            }
+        });
+        if (title == undefined) {
+            title = sfId;
+        }
+        return title;
     }
 }

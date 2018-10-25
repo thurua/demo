@@ -16,7 +16,9 @@ import { ClientAccountComponent } from './client-account/client-account.componen
 import { ClientAccountFactoringDetailsComponent } from './client-account-factoring-details/client-account-factoring-details.component';
 import { ClientAccountLctrDetailsComponent } from './client-account-lctr-details/client-account-lctr-details.component';
 import { ClientAccountLoanDetailsComponent } from './client-account-loan-details/client-account-loan-details.component';
-
+import { AddFundRequestComponent } from './add-fund-request/add-fund-request.component';
+import { FundRequestComponent } from './fund-request/fund-request.component';
+import { FundAvailabilityComponent } from './fund-availability/fund-availability.component';
 export const routes: Routes = [
     {
         path: '',
@@ -38,7 +40,10 @@ export const routes: Routes = [
             { path: 'client-account', component: ClientAccountComponent, data: { breadcrumb: 'Client Accounts' } },
             { path: 'factoring-details/:_id', component: ClientAccountFactoringDetailsComponent, data: { breadcrumb: 'Factoring Details' } },
             { path: 'lctr-details/:_id', component: ClientAccountLctrDetailsComponent, data: { breadcrumb: 'LCTR Details' } },
-            { path: 'loan-details/:_id', component: ClientAccountLoanDetailsComponent, data: { breadcrumb: 'Loan Details' } }
+            { path: 'loan-details/:_id', component: ClientAccountLoanDetailsComponent, data: { breadcrumb: 'Loan Details' } },
+            { path: 'add-fund-request', component: AddFundRequestComponent, data: { breadcrumb: 'Fund Requests / New Fund Request' } },
+            { path: 'fund-request', component: FundRequestComponent, data: { breadcrumb: 'Fund Requests' } },
+            { path: 'fund-availability', component: FundAvailabilityComponent, data: { breadcrumb: 'Fund Availability' } }
         ]
     }
 ];

@@ -77,11 +77,13 @@ export class ScheduleComponent implements OnInit {
                     let css = 'color-pend';
                     if (value == 'Authorised') {
                         css = 'color-auth';
-                    }
+                    } 
                     if (value == 'Accepted') {
                         css = 'color-acce';
                     }
-
+                    if (value == 'Reversed') {
+                        css = 'color-rever';
+                    }
                     return `<span class="${css}">${value}</span>`;
                 }
             },
@@ -126,6 +128,9 @@ export class ScheduleComponent implements OnInit {
             }, {
                 code: "Pending Authorisation",
                 value: "Pending Authorisation"
+            }, {
+                code: "Reversed",
+                value: "Reversed"
             }]
         }
 

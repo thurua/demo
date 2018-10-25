@@ -17,8 +17,10 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ifs.eportal.bll.AccountService;
@@ -27,10 +29,12 @@ import com.ifs.eportal.bll.ClientAccountService;
 import com.ifs.eportal.bll.CodeService;
 import com.ifs.eportal.bll.SupplierService;
 import com.ifs.eportal.common.ZConfig;
+import com.ifs.eportal.common.ZHash;
 import com.ifs.eportal.common.ZRsa;
 import com.ifs.eportal.dto.AccountDto;
 import com.ifs.eportal.dto.ClientAccountCustomerDto;
 import com.ifs.eportal.dto.ClientAccountDto;
+import com.ifs.eportal.dto.ExcelDto;
 import com.ifs.eportal.dto.SupplierDto;
 import com.ifs.eportal.dto.TokenDto;
 import com.ifs.eportal.model.Code;
@@ -230,11 +234,11 @@ public class CommonController {
 	}
 
 	/**
-	 * Call SF
+	 * Call SF (not used)
 	 * 
 	 * @return
 	 */
-	@PostMapping("/call")
+	@PostMapping("/call-sfx")
 	public ResponseEntity<?> call() {
 		SingleRsp res = new SingleRsp();
 
@@ -277,6 +281,62 @@ public class CommonController {
 			res.setResult(s);
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
+
+	/**
+	 * Call to API upload (not used)
+	 * 
+	 * @param file
+	 * @param req
+	 * @return
+	 * @author ToanNguyen 2018-Oct-02
+	 */
+	@PostMapping("/call-api")
+	public ResponseEntity<?> call(@RequestParam("file") MultipartFile file, @RequestParam("req") String req) {
+		SingleRsp res = new SingleRsp();
+
+		try {
+			// Select API URL
+			String url = System.getenv("UPLOAD_URL") + "/";
+			String name = file.getOriginalFilename();
+			if (name.contains("Factoring-INV")) {
+				url += "upload-factoring-inv";
+			} else if (name.contains("Loan-INV")) {
+				url += "upload-loan-inv";
+			} else {
+				url += "upload-factoring-cn";
+			}
+
+			RestTemplate rest = new RestTemplate();
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+			headers.add("Auth", ZHash.getAuth());
+
+			LinkedMultiValueMap<String, String> mapFile = new LinkedMultiValueMap<>();
+			mapFile.add("Content-disposition", "form-data; name=file; filename=" + file.getOriginalFilename());
+			HttpEntity<byte[]> doc = new HttpEntity<byte[]>(file.getBytes(), mapFile);
+
+			LinkedMultiValueMap<String, Object> mapReq = new LinkedMultiValueMap<>();
+			mapReq.add("file", doc);
+
+			HttpEntity<LinkedMultiValueMap<String, Object>> reqEntity = new HttpEntity<>(mapReq, headers);
+			ResponseEntity<String> resE = rest.exchange(url, HttpMethod.POST, reqEntity, String.class);
+			String s = resE.getBody();
+
+			ObjectMapper mapper = new ObjectMapper();
+			ExcelDto o = mapper.readValue(s, ExcelDto.class);
+
+			res.setResult(o);
+		} catch (Exception ex) {
+			if (ZConfig._printTrace) {
+				ex.printStackTrace();
+			}
+			if (ZConfig._writeLog) {
+				_log.log(Level.SEVERE, ex.getMessage(), ex);
+			}
 		}
 
 		return new ResponseEntity<>(res, HttpStatus.OK);

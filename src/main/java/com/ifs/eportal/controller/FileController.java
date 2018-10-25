@@ -17,21 +17,17 @@ import java.util.stream.Stream;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.ResponseEntity.BodyBuilder;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.services.s3.model.S3Object;
@@ -322,62 +318,6 @@ public class FileController {
 		}
 
 		return res;
-	}
-
-	/**
-	 * Call to API upload (not used)
-	 * 
-	 * @param file
-	 * @param req
-	 * @return
-	 * @author ToanNguyen 2018-Oct-02
-	 */
-	@PostMapping("/call")
-	public ResponseEntity<?> call(@RequestParam("file") MultipartFile file, @RequestParam("req") String req) {
-		SingleRsp res = new SingleRsp();
-
-		try {
-			// Select API URL
-			String url = System.getenv("UPLOAD_URL") + "/";
-			String name = file.getOriginalFilename();
-			if (name.contains("Factoring-INV")) {
-				url += "upload-factoring-inv";
-			} else if (name.contains("Loan-INV")) {
-				url += "upload-loan-inv";
-			} else {
-				url += "upload-factoring-cn";
-			}
-
-			RestTemplate rest = new RestTemplate();
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-			headers.add("Auth", ZHash.getAuth());
-
-			LinkedMultiValueMap<String, String> mapFile = new LinkedMultiValueMap<>();
-			mapFile.add("Content-disposition", "form-data; name=file; filename=" + file.getOriginalFilename());
-			HttpEntity<byte[]> doc = new HttpEntity<byte[]>(file.getBytes(), mapFile);
-
-			LinkedMultiValueMap<String, Object> mapReq = new LinkedMultiValueMap<>();
-			mapReq.add("file", doc);
-
-			HttpEntity<LinkedMultiValueMap<String, Object>> reqEntity = new HttpEntity<>(mapReq, headers);
-			ResponseEntity<String> resE = rest.exchange(url, HttpMethod.POST, reqEntity, String.class);
-			String s = resE.getBody();
-
-			ObjectMapper mapper = new ObjectMapper();
-			ExcelDto o = mapper.readValue(s, ExcelDto.class);
-
-			res.setResult(o);
-		} catch (Exception ex) {
-			if (ZConfig._printTrace) {
-				ex.printStackTrace();
-			}
-			if (ZConfig._writeLog) {
-				_log.log(Level.SEVERE, ex.getMessage(), ex);
-			}
-		}
-
-		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 
 	/**
@@ -893,26 +833,30 @@ public class FileController {
 							int t1 = arr.indexOf("CC9");
 							int t2 = arr.indexOf("CCA");
 							int t3 = arr.indexOf("CCB");
+							/* TriNguyen 2018-Oct-24 IFS-1458 */
+							int t4 = arr.indexOf("CC1");
 
-							if (t1 > -1 || t2 > -1 || t3 > -1) {
+							if (t1 > -1 || t2 > -1 || t3 > -1 || t4 > -1) {
 								/* ToanNguyen 2018-Aug-23 IFS-1040,1041,1042 */
 								res.setInvoiceValid(false);
 							} else {
 								/* ToanNguyen 2018-Aug-23 IFS-974,1025,1026 */
 								res.setSuccess(false);
 							}
+						} else {
+							// ToanNguyen 2018-Aug-23 IFS-1025
+							// Customer Name is not found in Client Account.
+							err = "CC1";
+							errors = ZError.addError(errors, err, i.getName());
+							/* TriNguyen 2018-Oct-24 IFS-1458 */
+							// res.setSuccess(false);
+							res.setInvoiceValid(false);
 						}
-					} else {
-						// ToanNguyen 2018-Aug-23 IFS-1025
-						// Customer Name is not found in Client Account.
-						err = "CC1";
-						errors = ZError.addError(errors, err, i.getName());
-						res.setSuccess(false);
-					}
 
-					/* TriNguyen 2018-Sep-01 IFS-1036,1037,1038,1039 */
-					err = ZValid.acl(i, lcl, ca.getFactoringType(), arTotalAmount);
-					errors = ZError.addError(errors, err, i.getName());
+						/* TriNguyen 2018-Sep-01 IFS-1036,1037,1038,1039 */
+						err = ZValid.acl(i, lcl, ca.getFactoringType(), arTotalAmount);
+						errors = ZError.addError(errors, err, i.getName());
+					}
 				}
 			}
 		}
@@ -1012,9 +956,26 @@ public class FileController {
 							req.getAcceptanceDate(), ca, i.getCustomerBranch(), lbr.get(0));
 					errors = ZError.addError(errors, err, i.getName());
 					if (!err.isEmpty()) {
-						/* ToanNguyen 2018-Aug-23 IFS-974,1025,1026 */
-						res.setSuccess(false);
+						List<String> arr = Arrays.asList(err.split(","));
+						/* TriNguyen 2018-Oct-24 IFS-1459 */
+						int t1 = arr.indexOf("CC1");
+
+						if (t1 > -1) {
+							res.setCreditValid(false);
+						} else {
+							/* ToanNguyen 2018-Aug-23 IFS-974,1025,1026 */
+							res.setSuccess(false);
+						}
 					}
+
+				} else {
+					// ToanNguyen 2018-Aug-23 IFS-1025
+					// Customer Name is not found in Client Account.
+					err = "CC1";
+					errors = ZError.addError(errors, err, i.getName());
+					/* TriNguyen 24-Oct-2018 IFS-1459 */
+					// res.setSuccess(false);
+					res.setCreditValid(false);
 				}
 
 				/* ToanNguyen 2018-Sep-02 IFS-1056 */

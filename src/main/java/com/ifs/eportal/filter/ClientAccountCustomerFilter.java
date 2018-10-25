@@ -17,6 +17,9 @@ public class ClientAccountCustomerFilter {
 	@JsonProperty(value = "clientAccount")
 	private String clientAccount;
 
+	@JsonProperty(value = "status")
+	private String status;
+
 	// end
 
 	// region -- Get set --
@@ -29,6 +32,14 @@ public class ClientAccountCustomerFilter {
 		this.clientAccount = clientAccount;
 	}
 
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
 	// end
 
 	// region -- Methods --
@@ -38,6 +49,7 @@ public class ClientAccountCustomerFilter {
 	 */
 	public ClientAccountCustomerFilter() {
 		clientAccount = "";
+		status = "";
 	}
 
 	/**
