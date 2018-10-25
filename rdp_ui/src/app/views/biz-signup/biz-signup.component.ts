@@ -38,6 +38,16 @@ export class BizSignupComponent implements OnInit {
         this.getFormData();
         document.getElementById("residentialTab").setAttribute("class", "");
         document.getElementById("welcomeDiv").focus();
+
+        setTimeout(function () {
+            const response = (<HTMLInputElement[]><any>document.getElementsByName("g-recaptcha-response"))[0];
+            if (response == null || response.value.trim() == "") {
+                let x = (<HTMLInputElement[]><any>document.getElementsByName("captcha_settings"))[0];
+                var elems = JSON.parse(x.value);
+                elems["ts"] = JSON.stringify(new Date().getTime());
+                x.value = JSON.stringify(elems);
+            }
+        }, 500);
     }
 
     ngAfterViewChecked() {
