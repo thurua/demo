@@ -211,7 +211,9 @@
                                 <re-captcha class="g-recaptcha" siteKey="{{siteKey}}" (resolved)="resolved($event)"></re-captcha>
                                 <div *ngIf="captchaError" class="error" style="color: red">Recaptcha not verified.</div>
                             </div>
-                            <input type=hidden name='captcha_settings' value='{"keyname":"BizFormCaptchaKeys","fallback":"true","orgId":"00D0k000000DSAD","ts":""}'>
+                            <input type="hidden" name="captcha_settings" value='{"keyname":"BizFormCaptchaKeys","fallback":"true","orgId":"00D0k000000DSAD","ts":""}'>
+                            <!-- <input type="hidden" name="debug" value="1"> 
+                            <input type="hidden" name="debugEmail" value="toan.nguyen@tanvieta.co"> -->
                             <input type="hidden" id="recordType" name="recordType" value="01228000000TDif">
                             <input type="hidden" id="00N2800000J8ksN" name="00N2800000J8ksN" value="1" />
                             <input type="hidden" id="{{vm.f1}}" name="{{vm.f1}}" value="1" />
